@@ -54,6 +54,69 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 21 Noviembre 2026: Elementos de Byko en el Probador (paso 2 de las estrategias de Byko y Dale)
+
+**Pedido:** "Sigue con Byko", tras aprobar el concepto y bajar el OI de 5 minutos.
+
+**Cambios:**
+1. **Cifras fijadas antes de correr**, en `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md` (paso 2):
+   - las reglas: 1 hora, las cajas de la pestaña Régimen, entrada a mercado, stop en el borde lejano de la zona con 0.1 ATR y objetivo de 3R;
+   - las variantes declaradas;
+   - la condición para ser candidata a la fase 2: R positivo, ventaja sobre el azar y el tramo, y diferencia positiva contra "sin la firma", las tres con margen.
+2. **Cuatro elementos** en el probador (`backend/byko.py`):
+   - **FB, falso rompimiento:** perfora el borde de una caja y vuelve adentro. Firma: llegada impulsiva y volumen 3 veces o más el de su hora;
+   - **BA, ruptura tras acumulación:** firma, 6 velas pegadas al borde con mínimos crecientes;
+   - **TA, trampa de absorción:** en el borde, el OI salta y el precio no avanza;
+   - **PO, purga de OI:** el OI cae de golpe al final de un movimiento acelerado con volumen.
+3. **Control "sin la firma":** cada corrida repite la regla con los candidatos que no la cumplen (como el barrido sin liquidaciones). El informe "Todas" lo junta para todas las monedas.
+4. **Ventana:** las fichas, sus parámetros con las cifras del plan, «Vas a correr» y "¿Aporta la firma de Byko?".
+5. **Pruebas:** `tests/test_byko.py` (9). `test_stocks.py` se ajustó: las acciones no tienen OI, así que tampoco trampa ni purga. Todas las del backend de App 1: pasan todas, salvo las 2 de siempre.
+
+**IMPORTANTE:**
+- El backend del usuario corre desde main y no conoce estos elementos hasta que se una esta rama. Por eso la fase 1 se corrió con un script aparte que no guarda corridas en su registro: `OrderFlowData/research/byko/2026-11-21/fase1.py`, con los resultados en `resultados.json` y `resumen.md` de esa carpeta.
+- **Fase 1:**
+  - el falso rompimiento no funciona: en 1 hora, con 6,135 trades, pierde como el azar, y en 4 horas la firma empeora;
+  - la ruptura tras acumulación es candidata a la fase 2 solo en 4 horas y en las monedas nuevas: 95 trades, +0.58 R, con margen sobre el azar, el tramo y las rupturas sin la firma. La pone casi toda 2022 y los cortos, y fue una de 10 corridas.
+- **Fase 2 de la ruptura en 4 horas** (aprobada por el usuario, con el criterio fijado antes): **no pasa y queda descartada.** En las monedas nuevas da 74 trades y −0.43 R, y pierde con margen contra los tres controles. En las de siempre, 11 trades y +0.07 R; en las acciones, 33 y −0.59 R.
+- **Trampa y purga** (fase 1, al terminar la bajada del OI):
+  - **trampa:** no es candidata. En 1 hora, en las monedas nuevas, el salto del OI separa algo (+0.29 R contra las llegadas sin él, con margen), pero no le gana al azar ni al tramo, y con el OI de Bybit solo se va;
+  - **purga:** pierde como el azar.
+- **Cierre:** ninguna de las cuatro reglas de Byko da ventaja (22 corridas de la fase 1 y una de la fase 2). Resumen en `OrderFlowData/research/byko/2026-11-21/resumen.md`.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ELEMENTOS DE BYKO EN EL PROBADOR (21/11/2026)"
+
+---
+
+### App 1 - 21 Noviembre 2026: OI de 5 Minutos de Bybit y Binance (paso 1 de las estrategias de Byko y Dale)
+
+**Pedido:** leer tres PDF de estrategias aparte y dar un concepto para App 1 y la suite: dos de Byko (Bikotrading: tres firmas del OI, falso rompimiento y ruptura) y *Order Flow Trading Setups*, de Trader Dale. El usuario aprobó el concepto: dos experimentos, cómo llega el precio al borde y la zona con el primer regreso. Después preguntó por qué bajar el OI de 1 hora de Bybit y el de 5 minutos de Binance, en vez de los dos marcos de los dos.
+
+**Cambios:**
+1. **Plan:** `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, con:
+   - las reglas literales de los PDF y lo que falta fijar antes de correrlas;
+   - los controles propios: el mismo borde sin la firma y zonas al azar con la misma mecánica;
+   - cuatro pasos.
+2. **OI de 5 minutos** de Bybit y de Binance, desde que listan cada moneda (`backend/oi_history.py`, en `OrderFlowData/oi/5m/`):
+   - el OI es una foto: 15 minutos, 1 hora y 4 horas salen de tomar el de 5 minutos en su marca;
+   - Binance trae, además, las proporciones de largos y cortos y la de compra contra venta agresiva;
+   - la lectura no mira el futuro: cada dato se usa 5 minutos después de su marca;
+   - da la suma de los dos: Binance + Bybit ÷ 2;
+   - `market_update.py` pone al día lo nuevo al arrancar el backend.
+3. **Pruebas:** `tests/test_oi_history.py` (14). Pasan también las de `test_market_update.py`.
+
+**IMPORTANTE:**
+- La nota "5min ~416 días (límites de Bybit)" era el tope del descargador viejo: Bybit da 5 minutos desde que lista cada moneda. Quedó corregida en `1.Altagracia_Crypto_Backtester/CLAUDE.md`.
+- **Ningún filtro usa todavía esta serie**, así que ninguna regla ya corrida cambia. La usarán los elementos de Byko (paso 2).
+- **La bajada completa de las 50 monedas** se lanzó aparte el 21/11. Si se corta, se retoma con `python -B oi_history.py --backfill`. Registro en `OrderFlowData/oi/5m/descarga.log`.
+- **Comprobado en ARB:**
+  - las 3,333 marcas de 4 horas son iguales a las de `ARBUSDT_4h.json`;
+  - Binance trae ceros sueltos (57) y 4 huecos propios.
+- El código está en la rama de esta sesión: la actualización automática llega al backend del usuario cuando se una a main.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "OI DE 5 MINUTOS DE BYBIT Y BINANCE (21/11/2026)" y `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`
+
+---
+
 ### Altagracia Trading Suite - 21 Noviembre 2026: Grabación de Hyperliquid (paso 2 del plan on-chain)
 
 **Pedido:** grabar Hyperliquid, el paso 2 de `docs/PLAN_INDICADORES_ONCHAIN.md`. Sus posiciones con precio de liquidación son públicas, pero su historia gratis empieza en 2025.

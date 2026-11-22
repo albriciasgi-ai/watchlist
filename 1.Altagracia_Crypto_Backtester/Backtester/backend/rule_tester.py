@@ -29,6 +29,7 @@ import uuid
 import numpy as np
 
 import box_elements
+import byko
 import flow_filters
 import fvg_swing
 import footprint_store as fs
@@ -74,7 +75,7 @@ PATTERN_OF = {"HAMMER": "HM", "SHOOTING_STAR": "HM", "ENGULFING_BULLISH": "EN", 
               "DOJI_DRAGONFLY": "DJ", "DOJI_GRAVESTONE": "DJ"}
 LINE_TYPES = ("vwap", "ema")   # VWAP móvil de N velas y EMA de N velas, sobre las velas de la regla
 RV_CODES = tuple(response_volume.CODES)  # Flecha y rombo del Volumen de Respuesta
-EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES) + tuple(box_elements.CODES) + tuple(fvg_swing.CODES) + tuple(williams.CODES) + tuple(smc.CODES) + tuple(vpa.CODES)  # Elementos del probador que no son de of_elements
+EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES) + tuple(box_elements.CODES) + tuple(fvg_swing.CODES) + tuple(williams.CODES) + tuple(smc.CODES) + tuple(vpa.CODES) + tuple(byko.CODES)  # Elementos del probador que no son de of_elements
 VP_CONTROL_RUNS = 3       # Corridas con los perfiles desplazados al azar que se juntan en el control
 MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
@@ -101,7 +102,7 @@ def _iso(ms):
 # liquidaciones (LIQ) no lo necesitan: en las demás monedas la regla corre sobre el caché de velas de App 1.
 
 CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
-CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC", "BX", "BE", "CP", "FV", "SP", "IM") + tuple(williams.CODES) + tuple(smc.CODES) + tuple(vpa.CODES)
+CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC", "BX", "BE", "CP", "FV", "SP", "IM") + tuple(williams.CODES) + tuple(smc.CODES) + tuple(vpa.CODES) + tuple(byko.CODES)
 CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1), 1440: ("4h", 6)}  # marco → (clave del caché, velas que se unen)
 MIN_STORE_DAYS = 60
 _candles = {}
@@ -256,7 +257,7 @@ def codes_for(symbol, tf):
     """Elementos que puede usar una regla en ese símbolo y marco: None si todos (almacén de trades). Las acciones, los
     de velas menos el barrido de liquidaciones (no hay liquidaciones de acciones)."""
     if is_stock(symbol):
-        return set(CANDLE_CODES) - {"LIQ"}
+        return set(CANDLE_CODES) - {"LIQ"} - set(byko.OI_CODES)  # Ni liquidaciones ni OI de acciones
     return set(CANDLE_CODES) if _on_candles(symbol, tf) else None
 
 
@@ -481,6 +482,9 @@ def clean_rule(raw):
         sp = raw.get("sp") or {}
         extra["sp"] = {"bars": int(_num(sp.get("bars"), 5, 2, 20)),
                        "minZ": None if sp.get("minZ") in (None, "") else _num(sp.get("minZ"), 1.0, -3.0, 10.0)}
+    for code, key in byko.KEYS.items():
+        if code in codes_used:
+            extra[key] = byko.clean(key, raw.get(key))  # Los elementos de Byko (byko.py), con las cifras del plan de fábrica
     flow = raw.get("flow") or {}
     clean_flow = {}
     if flow.get("cvd"):
@@ -1566,7 +1570,30 @@ def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
     """Elementos del probador que no son de of_elements: liquidaciones, volumen, perfil por sesión y estructura."""
     return (_liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span)
             + _rv_events(rule, span) + _gc_events(rule, span) + _box_events(rule, span) + _fs_events(rule, span)
-            + _williams_events(rule, span) + _smc_events(rule, span) + _vpa_events(rule, span))
+            + _williams_events(rule, span) + _smc_events(rule, span) + _vpa_events(rule, span) + _byko_events(symbol, rule, span, control))
+
+
+def _byko_codes(rule):
+    return tuple(c for slot in rule["recipe"]["slots"] for c in slot["codes"] if c in byko.CODES)
+
+
+def _byko_events(symbol, rule, span, control=False):
+    """Los elementos de Byko (byko.py): los que cumplen la firma, o con `control` los que no."""
+    codes = _byko_codes(rule)
+    bars = span["bars"]
+    if not codes or not bars:
+        return []
+    cfg = {key: rule[key] for key in byko.KEYS.values() if key in rule}
+    key = (_bars_key(bars), symbol, rule["tf"], "byko", json.dumps(cfg, sort_keys=True), codes, byko.oi_stamp(symbol, cfg))
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        found = byko.candidates(symbol, bars, rule["tf"], cfg, codes)
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    return [e for e in found if e["info"]["sig"] != control]
 
 
 def _vpa_cfg(rule):
@@ -1671,7 +1698,8 @@ LABELS = {"WD": "Barra divergente", "WA": "AO tres barras", "WF": "Ruptura de fr
           "EN": "Envolvente", "DJ": "Doji", "RF": "Flecha de volumen", "RB": "Rombo de volumen", "GC": "Canal gaussiano",
           "BX": "Ruptura de caja", "BE": "Borde de caja", "FV": "FVG nuevo", "SP": "Swing",
           "QA": "Esfuerzo sin resultado", "QB": "Ruptura con volumen", "QF": "Ruptura sin volumen", "QR": "Retroceso sin volumen",
-          "QT": "Prueba de poco volumen", "QS": "Frenado o techo", "QC": "Clímax de volumen", "QE": "Medidor VPA"}
+          "QT": "Prueba de poco volumen", "QS": "Frenado o techo", "QC": "Clímax de volumen", "QE": "Medidor VPA",
+          "FB": "Falso rompimiento", "BA": "Ruptura tras acumulación", "TA": "Trampa de absorción", "PO": "Purga de OI"}
 
 
 def _labels(codes):
@@ -1880,6 +1908,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     wise_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in williams.CODES}
     smc_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in smc.CODES}
     vpa_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in vpa.CODES}
+    byko_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in byko.CODES}
     index = {t: i for i, t in enumerate(ctx["T"])}
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
@@ -2040,6 +2069,12 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             trade["box"] = boxed  # La caja de la ruptura o del borde, para dibujarla con el trade
         elif ctx["vp"] is not None:
             trade["vp"] = ctx["vp"]  # El valor de la sesión anterior que usó la regla, y dónde abrió la sesión
+        read = next((byko_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in byko_info), None)
+        if read is not None:
+            # Lo que midió la firma de Byko (llegada, volumen, OI) y si la cumplía; su caja se dibuja con el trade
+            trade["byko"] = {k: v for k, v in read.items() if k != "box"}
+            if read.get("box") and "box" not in trade:
+                trade["box"] = read["box"]
         broken = next((cc_info[(m["dir"], t + tf_ms)] for code, t in m["votes"] if code == "CC" and (m["dir"], t + tf_ms) in cc_info), None)
         if broken is not None:
             trade["cc"] = broken  # El swing roto y el extremo de la tendencia
@@ -2117,18 +2152,21 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             # Seguir el tramo en velas al azar: lo que el mercado ya daba por ir a favor del movimiento
             result["legBaseline"] = _leg_baseline(rule, ctx, trades, symbol)
             result["legEdge"] = _edge(s, result["legBaseline"])
-        if "liq" in rule and not control:
-            # El mismo gatillo tras barrer un swing sin liquidaciones: dice si las liquidaciones aportan algo
+        if ("liq" in rule or _byko_codes(rule)) and not control:
+            # LIQ: el mismo gatillo tras barrer un swing sin liquidaciones. Byko: los mismos candidatos sin su firma
+            # (llegada, volumen u OI). Dice si esa pieza aporta algo
             other = run(symbol, rule, span, phase, table, base=False, control=True)
             c = other.get("summary") or {}
             result["control"] = {key: c.get(key) for key in ("n", "winRate", "avgR", "seR", "profitFactor", "smallSample")}
+            result["controlKind"] = "liq" if "liq" in rule else "byko"
             if s.get("n") and c.get("n"):
                 edge = s["avgR"] - c["avgR"]
                 se = math.sqrt(s["seR"] ** 2 + c["seR"] ** 2)
                 result["control"]["edge"] = {"r": round(edge, 3), "low": round(edge - 1.96 * se, 3), "high": round(edge + 1.96 * se, 3),
                                              "clear": abs(edge) > 1.96 * se and not s["smallSample"] and not c["smallSample"]}
-            first = liq_sweeps.first_day(symbol)
-            result["liqFrom"] = _iso(first) if first else None
+            if "liq" in rule:
+                first = liq_sweeps.first_day(symbol)
+                result["liqFrom"] = _iso(first) if first else None
     if base and rule.get("vp") and not control and vp_shift is None:
         # La misma regla con los perfiles desplazados al azar: dice si importa dónde estuvo el volumen
         pooled = []
@@ -3026,7 +3064,7 @@ def consolidated(raw_rule, phase_number, group="base"):
     if rule is None:
         return {"success": False, "message": "La regla no tiene elementos conocidos"}
     plan = _plan(rule, phase_number, group)
-    rows, pooled, weights, leg_weights = [], [], [], []
+    rows, pooled, weights, leg_weights, controls = [], [], [], [], []
     pooled_quarters = {}
     for row in plan:
         result = with_quarter_baseline(with_leg_baseline(load_run(row["run"]))) if row["run"] else None
@@ -3041,6 +3079,8 @@ def consolidated(raw_rule, phase_number, group="base"):
         leg = result.get("legBaseline") or {}
         if s.get("n") and leg.get("n"):
             leg_weights.append((s["n"], leg))
+        if "control" in result:
+            controls.append((result.get("controlKind", "liq"), result["control"]))
         for t in trades:
             pooled.append({"r": t["r"], "dir": t["dir"], "entry_t": t["entry_t"], "exit_t": t["exit_t"], "mfe": t.get("mfe"), "mae": t.get("mae"),
                            "bars": t.get("bars"), "reach": t.get("reach"), "symbol": row["symbol"]})
@@ -3083,7 +3123,27 @@ def consolidated(raw_rule, phase_number, group="base"):
         out["legEdge"] = _edge(out["summary"], pooled_leg)
         out["legBaseline"] = {"avgR": round(pooled_leg["avgR"], 3), "seR": round(pooled_leg["seR"], 4), "leg": leg_weights[0][1].get("leg"),
                               "winRate": round(sum(n * b["winRate"] for n, b in leg_weights) / total, 1)}
+    # El control propio (sin liquidaciones, o sin la firma de Byko) de todas las monedas juntas: sus trades se juntan
+    # a partir del resumen de cada moneda. Solo si lo tienen todas las corridas
+    if controls and ordered and len(controls) == len(rows):
+        pooled_control = _pool_summaries([c for _, c in controls])
+        if pooled_control:
+            out["control"] = {**pooled_control, "kind": controls[0][0], "edge": _edge(out["summary"], pooled_control)}
     return out
+
+
+def _pool_summaries(parts):
+    """Media y error de todos los trades de varios resúmenes (n, avgR, seR) juntos, sin tenerlos uno por uno."""
+    parts = [p for p in parts if p.get("n")]
+    total = sum(p["n"] for p in parts)
+    if not total:
+        return None
+    mean = sum(p["n"] * p["avgR"] for p in parts) / total
+    # Varianza de cada grupo (seR² · n) más lo que separa su media de la de todos
+    ss = sum((p["n"] - 1) * (p["seR"] ** 2) * p["n"] + p["n"] * (p["avgR"] - mean) ** 2 for p in parts)
+    se = math.sqrt(ss / max(1, total - 1) / total)
+    win = sum(p["n"] * (p.get("winRate") or 0) for p in parts) / total
+    return {"n": total, "avgR": round(mean, 4), "seR": round(se, 4), "winRate": round(win, 1), "smallSample": total < SMALL_SAMPLE}
 
 
 def job_status(job_id):

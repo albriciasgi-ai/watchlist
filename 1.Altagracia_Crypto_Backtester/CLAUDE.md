@@ -6,6 +6,14 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Elementos de Byko en el Probador
+
+Cuatro elementos de los PDF de Byko (Bikotrading), con las cifras fijadas antes de correrlos (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, paso 2): falso rompimiento (FB), ruptura tras acumulación (BA), trampa de absorción (TA) y purga de OI (PO). Cada corrida suma el control "sin la firma": los mismos candidatos sin la llegada, el volumen o el OI que pide Byko. Detalle en `Backtester/CLAUDE.md`, "ELEMENTOS DE BYKO EN EL PROBADOR (21/11/2026)".
+
+### Noviembre 2026: OI de 5 Minutos de Bybit y Binance
+
+El OI de 5 minutos de los dos exchanges, desde que listan cada moneda. Es el paso 1 del plan de estrategias de Byko y de Trader Dale (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`). De él salen 15 minutos, 1 hora y 4 horas, y la suma de los dos. Binance trae, además, las proporciones de largos y cortos y la de compra contra venta agresiva. Ningún filtro lo usa todavía. Detalle en `Backtester/CLAUDE.md`, "OI DE 5 MINUTOS DE BYBIT Y BINANCE (21/11/2026)".
+
 ### Noviembre 2026: Flujos On-Chain en el Probador
 
 Datos diarios gratis de Coin Metrics: flujos de BTC y ETH a los exchanges desde 2011 y 2015, y emisión de USDT y USDC. Con ellos, el filtro "Flujos on-chain (diarios)" del probador y de la búsqueda genética, sin futuro: cada dato se usa desde las 06:00 UTC del día siguiente. En la fase 1 de 4h, la emisión a favor sube el R del Impulso y del FVG nuevo sobre los controles; con pocos días distintos, es candidata. Detalle en `Backtester/CLAUDE.md`, "FLUJOS ON-CHAIN (21/11/2026)", y el plan en `docs/PLAN_INDICADORES_ONCHAIN.md`.
@@ -352,7 +360,7 @@ BACKTESTING_CONFIG = {
 
 **Notas:**
 - Open Interest usa resolucion real del timeframe (1m/5m→5min OI, 15m→15min OI, 1h→1h OI, 4h→4h OI). No hay forward-fill.
-- Cobertura historica OI: 5min ~416 dias, 15min ~1249 dias, 1h/4h ~2268 dias (limites de Bybit)
+- Cobertura historica OI: 5min ~416 dias, 15min ~1249 dias, 1h/4h ~2268 dias. Es el tope de este descargador (600 pedidos de 200 datos), no de Bybit: Bybit da 5 minutos desde que lista cada moneda (21/11, ver "OI DE 5 MINUTOS DE BYBIT Y BINANCE" en `Backtester/CLAUDE.md`)
 - MAX_OI_REQUESTS = 600 (hasta 120,000 puntos por descarga)
 - Subdivisiones tienen su propio campo `days` independiente del timeframe principal
 - La fecha de inicio por defecto varia por timeframe (1m=30d atras, 5m=90d, 15m=6mo, 1h=1yr, 4h=2yr)

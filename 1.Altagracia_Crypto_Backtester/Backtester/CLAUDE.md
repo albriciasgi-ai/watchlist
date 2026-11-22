@@ -1684,6 +1684,146 @@ R total, de siempre / nuevas:
 - Pasan `test_rule_tester`, `test_rule_search`, `test_trade_context`, `test_crowd_constancy` y `test_market_update` (42 con las nuevas), y `ruletester.test.mjs` (15). La página se arma.
 - **No se vio en pantalla.**
 
+## OI DE 5 MINUTOS DE BYBIT Y BINANCE (21/11/2026)
+
+Paso 1 del plan de estrategias de Byko y de Trader Dale (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md` en la raíz del repositorio).
+
+**Pedido del usuario:** se había propuesto bajar el OI de 1 hora de Bybit y el de 5 minutos de Binance. El usuario preguntó por qué no los dos marcos de los dos.
+
+**Lo que se encontró:**
+- **Bybit** da el OI de 5 minutos desde que lista cada moneda: BTC desde 2020, DOGE desde mediados de 2021.
+  - La nota "5min ~416 días" de `1.Altagracia_Crypto_Backtester/CLAUDE.md` era el tope del descargador viejo (600 pedidos de 200 datos), no de Bybit.
+- **El OI es una foto:** el de 15 minutos, 1 hora y 4 horas es el de 5 minutos en su marca. En ARB, las 3,333 marcas de 4 horas de la serie nueva son iguales a las de `ARBUSDT_4h.json`. Basta bajar 5 minutos.
+- **Binance** solo publica 5 minutos, en un archivo por día (`data.binance.vision/data/futures/um/daily/metrics/`); su API da 30 días. BTC desde 2020-09-01, casi todas desde 2021-12-01.
+
+### Datos (`backend/oi_history.py`)
+
+- **Dónde:** `OrderFlowData/oi/5m/bybit/{moneda}.npz` y `.../binance/{moneda}.npz`. `TESTER_OI5M` cambia la carpeta.
+- **Bybit** (`/v5/market/open-interest`, `intervalTime=5min`):
+  - `t` (ms) y `oi`, en monedas y contando los dos lados (su `singleOpenInterest` es justo la mitad);
+  - baja de lo más nuevo hacia atrás, de a 200 datos, y guarda cada 400 páginas: lo guardado queda seguido y un corte se retoma desde lo más viejo;
+  - lo nuevo se guarda de una vez, porque un corte a medias dejaría un hueco;
+  - `done` dice que se llegó al primer dato de Bybit.
+- **Binance:**
+  - lista los días por S3 y baja los archivos de a 24 (cada uno tarda más de 1 s en llegar, aunque pesa 12 KB);
+  - guarda `t`, `oi` (un lado, en monedas) y `usd`;
+  - y, del mismo archivo, `top_acc` y `top_pos` (largos ÷ cortos de las cuentas grandes, por cuentas y por posiciones), `ls_acc` (de todas las cuentas) y `taker` (compra ÷ venta agresiva, un delta aproximado para las monedas sin almacén);
+  - `days` son los días bajados y `bad` los que Binance lista pero no se pudieron leer: la bajada completa los repite;
+  - SHIB1000USDT es 1000SHIBUSDT. CROUSDT no está en Binance.
+- **Bajada:**
+  - `python -B oi_history.py --backfill [monedas]` baja toda la historia, con 16 monedas a la vez y a lo sumo 20 pedidos por segundo a Bybit (la sexta parte de su límite por IP). Cada página de Bybit tarda de 0.5 a 2 s.
+  - Sin `--backfill` pone al día lo que ya tiene archivo; `--source bybit` o `binance`, solo uno.
+  - Una bajada a la vez: candado `OrderFlowData/oi/5m/descarga.lock`, que se renueva con cada guardado y vence a las 2 horas sin renovarse.
+  - `market_update.py` pone al día lo nuevo al arrancar el backend (con la bajada completa corriendo, lo deja para la vuelta siguiente).
+
+### Lectura
+
+- `series(moneda, fuente, campo)`, con fuente `bybit`, `binance` o `sum`.
+  - **`sum`:** Binance + Bybit ÷ 2, en monedas y de un lado, solo en las marcas que tienen los dos.
+  - **Datos descartados:** los vacíos y, en `oi` y `usd`, los ceros. Binance trae ceros sueltos (57 en ARB), y sin ellos la vela usa el dato anterior.
+- `at_close(moneda, velas, marco, fuente, campo)`: el valor conocido al cierre de cada vela.
+  - **Sin futuro:** cada dato se usa 5 minutos después de su marca (`LAG_MS`), por si la marca es el inicio de su intervalo. La vela de 00:00 a 01:00 ve el dato de las 00:55.
+  - **Huecos:** un dato más viejo que 2 pasos de la serie (o que 2 velas) es un hueco: NaN.
+
+### IMPORTANTE
+
+- **Ningún filtro usa todavía esta serie.** El filtro de OI y el OI sostenido siguen con `{moneda}_4h.json` (BTC, con su CSV de 5 minutos), así que ninguna regla ya corrida cambia. La usarán los elementos de Byko (paso 2 del plan).
+- **Comprobado en ARB:**
+  - Binance tiene 385,318 datos (23/03/2023 a 20/11/2026) en 1,339 días, ninguno ilegible;
+  - Binance tiene 4 huecos propios; el mayor, de 10.5 horas, el 16/02/2024;
+  - Bybit de un lado es, en la mediana, 0.46 veces Binance (de 0.35 a 0.58).
+- **Bajada completa (21/11):**
+  - las 50 monedas de Bybit y 49 de Binance (CRO no está), sin fallas;
+  - ocupa 179 MB la de Bybit y 622 MB la de Binance, que guarda también las proporciones;
+  - Bybit tardó unas 2.5 horas, con cada página de 0.5 a 2 s;
+  - Binance tardó unas 4 horas: cada archivo tarda de 1 a 18 s aun pidiendo 24 a la vez, y cada página del listado de S3, unos 15 s.
+
+  Desde entonces, `market_update.py` solo pone al día lo nuevo.
+- **La convención de los dos lados de Bybit** sale de su campo `singleOpenInterest`; no se comparó con otra fuente. Solo pesa en la suma: los cambios de cada exchange no dependen de ella.
+- **Pruebas:** `tests/test_oi_history.py` (14):
+  - Bybit hacia atrás y después solo lo nuevo;
+  - sin archivo no empieza solo;
+  - reintentos y moneda que no existe;
+  - un corte que se retoma;
+  - Binance con y sin encabezado, por páginas, el día ilegible y SHIB;
+  - el retraso de 5 minutos, los huecos, los ceros y la suma;
+  - el candado, y que una moneda que falla no detenga a las demás.
+
+  Pasan también las de `test_market_update.py`.
+
+## ELEMENTOS DE BYKO EN EL PROBADOR (21/11/2026)
+
+Paso 2 del plan de estrategias de Byko y de Trader Dale (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`). Las cifras de cada regla
+quedaron fijadas en el plan antes de la primera corrida, y solo se corren las variantes declaradas allí.
+
+**Pedido del usuario:** seguir con Byko después de aprobar el concepto: sus dos PDF dicen que la forma en que el precio llega a un borde separa la ruptura real de la falsa, y que el OI marca la trampa y la purga.
+
+### Elementos (`backend/byko.py`)
+
+| Código | Nombre | Evento | Firma | Zona (stop "borde lejano") |
+|---|---|---|---|---|
+| FB | Falso rompimiento | Una vela pasa el borde de una caja vigente (la anterior cerró dentro) y esa vela o una de las 3 siguientes cierra dentro; en contra | Llegada impulsiva (en las 4 velas hasta la que perfora, el precio estuvo a 2 ATR o más del borde) y volumen (3 veces o más el de su hora) | Del borde a la mecha |
+| BA | Ruptura tras acumulación | La vela que cierra fuera de la caja y la termina (la de la Ruptura de caja); a favor | Las 6 velas anteriores cerraron a 1 ATR o menos del borde, con mínimos crecientes | Del borde al mínimo de esas velas |
+| TA | Trampa de absorción | Dentro de una caja, una vela llega al quinto del borde tras 2 ATR desde el extremo de las 10 velas anteriores; en contra | El OI de 3 velas sube con z ≥ 2 y el cierre avanza 0.5 ATR o menos | Del cierre al extremo de esas 3 velas |
+| PO | Purga de OI | El cierre recorre 3 ATR en 6 velas, acelerando, con 3 veces el volumen de su hora; en contra del movimiento | El OI de 2 velas cae con z ≤ −2 | Del cierre al extremo del movimiento |
+
+- **Cajas:** las de la eficiencia con caja (`regime_detectors.er_box`), las mismas de la Ruptura de caja.
+- **FB y TA** se rearman cuando un cierre vuelve al tercio central de la caja. **PO** espera 6 velas tras cada candidato.
+- **El ATR** es el de la vela anterior. **El volumen** se mide contra la mediana de su hora en 30 días (`measures.hour_volume`).
+- **El OI** es el de `oi_history.at_close`, conocido 5 minutos después de su marca. De fábrica, la suma de Binance y Bybit; también puede ser Bybit o Binance solo.
+- **El z del OI** es el del cambio de N velas en logaritmo, contra los de los 30 días anteriores, sin el de la vela. Un candidato de TA o PO sin OI no cuenta en ningún grupo.
+- Cada candidato lleva `sig` en su `info`: si cumple la firma. Los parámetros van en `fb`, `ba`, `ta` y `po` de la regla, y solo entran si la regla usa el elemento: ninguna regla anterior cambia de identidad.
+- **Sin almacén de trades:** valen en las 50 monedas. En las acciones solo FB y BA, porque no hay OI.
+
+### Control "sin la firma"
+
+- `run()` corre la regla dos veces. La segunda, con `control`, toma los candidatos que **no** cumplen la firma, con todo lo demás igual: la entrada, el stop, la salida y los filtros. Es el mismo mecanismo del barrido sin liquidaciones de LIQ.
+- La corrida guarda `control` y `controlKind: "byko"`. El resumen lo muestra en "¿Aporta la firma de Byko?".
+- `consolidated()` junta el control de todas las monedas (`_pool_summaries`, a partir del resumen de cada una) si lo tienen todas. El informe "Todas" lo muestra bajo el control del tramo, y vale también para LIQ.
+
+### Ventana y página
+
+- Las fichas de los cuatro elementos y sus parámetros, con las cifras del plan de fábrica (`ruleTester.js`), una nota y la ficha de cada uno en «Vas a correr» (`ruleFacets.js`).
+- Cada trade guarda `byko` (lo que midió la firma) y la caja, que se dibuja con el trade.
+- Nombres en `elementLabels.js` y en `rule_tester.LABELS`.
+
+### Fase 1 del falso rompimiento y la ruptura tras acumulación (21/11)
+
+- **Cómo se corrió:** `OrderFlowData/research/byko/2026-11-21/fase1.py`, con `rule_tester.run` y sin guardar corridas: el backend del usuario corre desde main y no conocía los elementos. Resultados en `resultados.json` y `resumen.md` de esa carpeta.
+- **Falso rompimiento:** no funciona.
+  - En 1 hora, con 6,135 trades entre los dos grupos, pierde como el azar (−0.04 y −0.06 R por trade). La firma suma de +0.05 a +0.08 R, sin margen.
+  - En 4 horas, en las monedas de siempre, la firma empeora: −0.37 R contra los falsos rompimientos sin ella, con margen.
+- **Ruptura tras acumulación:** es candidata a la fase 2 solo en 4 horas y en las monedas nuevas.
+  - **El resultado:** 95 trades, +0.58 R. Gana con margen al azar (+0.57), al tramo (+0.55) y a las rupturas sin la firma de esas cajas (+0.55; esas dan +0.03 R en 1,194 trades). Positiva en 23 de 39 monedas.
+  - **Lo que la debilita:**
+    - 2022 pone la mayor parte (45 trades a +1.03 R);
+    - los cortos ponen casi todo (52 a +0.98 R, contra 43 largos a +0.09);
+    - tres monedas ponen el 41% del R;
+    - en las monedas de siempre son 14 trades a +0.97 R, sin margen;
+    - fue una de 10 corridas.
+  - **En 1 hora** no gana, y con el OI sostenido pierde 0.27 R más que el azar, con margen.
+  - **Fase 2** (aprobada por el usuario; criterio fijado antes de correrla): **no pasa y queda descartada.**
+    - En las monedas nuevas: 74 trades, −0.43 R. Pierde con margen contra los tres controles; las rupturas sin la firma dan +0.01 R.
+    - En las de siempre: 11 trades, +0.07 R. En las acciones: 33 trades, −0.59 R.
+    - Lo de la fase 1 era de 2022 y de los cortos (`resultados_fase2.json`).
+- **Trampa de absorción** (OI de Binance + Bybit; variante, Bybit solo): no es candidata.
+  - En 1 hora, en las monedas nuevas, las llegadas al borde con el salto del OI dan +0.06 R (163 trades), y las mismas sin él pierden unos −0.23 R. La diferencia, +0.29 R, tiene margen.
+  - Pero no supera al azar ni al tramo, y con el OI de Bybit solo la diferencia se va.
+- **Purga de OI:** no funciona. Entrar al giro pierde como el azar, de −0.12 a −0.24 R en 1 hora (más de 1,000 trades en las monedas nuevas), y la caída del OI no suma.
+- **Cierre del paso 2:** ninguna de las cuatro reglas de Byko da ventaja, en 22 corridas de la fase 1 y una de la fase 2. Detalle en `OrderFlowData/research/byko/2026-11-21/resumen.md`.
+
+### Pruebas
+
+- `tests/test_byko.py` (9):
+  - el falso rompimiento con y sin volumen, y el que vuelve dos velas después;
+  - la ruptura con y sin acumulación;
+  - la trampa con y sin el salto del OI, y sin OI;
+  - la purga con y sin la caída del OI;
+  - que lo sabido no cambie con velas posteriores;
+  - la identidad de las reglas;
+  - el control en la corrida y su suma en todas las monedas.
+- `rulefacets.test.mjs` (13) y `ruletester.test.mjs` (15) siguen pasando, y los cuatro archivos cambiados de la página compilan.
+
 ## REVISIÓN DE CANDIDATOS POR SESIONES (18/11/2026)
 
 Pedido del usuario: sus trades manuales (24 cerrados, 42% de acierto y +0.26 R ±0.71 al 18/11) rinden más que las reglas del probador, y cree que es por intuición que una regla rígida no recoge. Esto lo mide: una regla floja propone y él decide. Además notó que en una corrida de trades seguidos los primeros le salen peor, porque va leyendo el mercado: por eso las sesiones son un tramo seguido y en orden, no momentos sueltos.

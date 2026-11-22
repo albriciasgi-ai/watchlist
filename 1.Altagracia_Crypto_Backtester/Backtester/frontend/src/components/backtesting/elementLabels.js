@@ -24,7 +24,9 @@ export const ELEMENT_LABELS = {
   BS: 'Ruptura de estructura', OB: 'Order block', BK: 'Breaker', EQ: 'Barrido de iguales',
   // Lector VPA de Coulling (21/11)
   QA: 'Esfuerzo sin resultado', QB: 'Ruptura con volumen', QF: 'Ruptura sin volumen', QR: 'Retroceso sin volumen',
-  QT: 'Prueba de poco volumen', QS: 'Frenado o techo', QC: 'Clímax de volumen', QE: 'Medidor VPA'
+  QT: 'Prueba de poco volumen', QS: 'Frenado o techo', QC: 'Clímax de volumen', QE: 'Medidor VPA',
+  // Byko, de Bikotrading (21/11)
+  FB: 'Falso rompimiento', BA: 'Ruptura tras acumulación', TA: 'Trampa de absorción', PO: 'Purga de OI'
 };
 
 /** Nombre corto de un código; sin nombre conocido, el código o el nombre que se pase. */

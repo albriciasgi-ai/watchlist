@@ -1333,6 +1333,59 @@ const RuleTesterApp = () => {
             </div>
           </>
         )}
+        {['FB', 'BA', 'TA', 'PO'].some(code => rule.codes.includes(code)) && (
+          <>
+            {rule.codes.includes('FB') && (
+              <div className="rt-row">
+                <span title="Una vela pasa el borde de una caja vigente y esa vela o una de las siguientes cierra dentro">Falso rompimiento: vuelve en</span>
+                <Num value={rule.fbBack} min={0} max={20} onChange={(fbBack) => patch({ fbBack })} /><span>velas · firma: llega desde</span>
+                <Num value={rule.fbApproachAtr} min={0} max={20} step={0.5} onChange={(fbApproachAtr) => patch({ fbApproachAtr })} /><span>ATR en</span>
+                <Num value={rule.fbApproachBars} min={1} max={50} onChange={(fbApproachBars) => patch({ fbApproachBars })} /><span>velas y volumen ≥</span>
+                <Num value={rule.fbVol} min={0} max={50} step={0.5} onChange={(fbVol) => patch({ fbVol })} /><span>× el de su hora</span>
+              </div>
+            )}
+            {rule.codes.includes('BA') && (
+              <div className="rt-row">
+                <span title="La vela que cierra fuera de la caja, tras velas pegadas al borde con mínimos crecientes">Ruptura tras acumulación: firma,</span>
+                <Num value={rule.baBars} min={2} max={100} onChange={(baBars) => patch({ baBars })} /><span>velas a</span>
+                <Num value={rule.baNear} min={0.1} max={20} step={0.1} onChange={(baNear) => patch({ baNear })} /><span>ATR o menos del borde, con mínimos crecientes</span>
+              </div>
+            )}
+            {rule.codes.includes('TA') && (
+              <div className="rt-row">
+                <span title="Dentro de una caja, una vela llega a su borde tras un movimiento">Trampa: llega al</span>
+                <Num value={rule.taShare} min={0.05} max={0.5} step={0.05} onChange={(taShare) => patch({ taShare })} /><span>del borde tras</span>
+                <Num value={rule.taRise} min={0} max={20} step={0.5} onChange={(taRise) => patch({ taRise })} /><span>ATR en</span>
+                <Num value={rule.taRiseBars} min={1} max={200} onChange={(taRiseBars) => patch({ taRiseBars })} /><span>velas · firma: OI en</span>
+                <Num value={rule.taOiBars} min={1} max={100} onChange={(taOiBars) => patch({ taOiBars })} /><span>velas con z ≥</span>
+                <Num value={rule.taZ} min={0} max={10} step={0.5} onChange={(taZ) => patch({ taZ })} /><span>y avance ≤</span>
+                <Num value={rule.taAdvance} min={-5} max={20} step={0.1} onChange={(taAdvance) => patch({ taAdvance })} /><span>ATR · OI de</span>
+                <select value={rule.taSource} onChange={(e) => patch({ taSource: e.target.value })}>
+                  <option value="sum">Binance + Bybit</option><option value="bybit">Bybit</option><option value="binance">Binance</option>
+                </select>
+              </div>
+            )}
+            {rule.codes.includes('PO') && (
+              <div className="rt-row">
+                <span title="El cierre recorrió tantos ATR en tantas velas, acelerando al final, con mucho volumen">Purga: movimiento de</span>
+                <Num value={rule.poMove} min={0.5} max={50} step={0.5} onChange={(poMove) => patch({ poMove })} /><span>ATR en</span>
+                <Num value={rule.poBars} min={2} max={100} onChange={(poBars) => patch({ poBars })} /><span>velas, volumen ≥</span>
+                <Num value={rule.poVol} min={0} max={50} step={0.5} onChange={(poVol) => patch({ poVol })} /><span>× · firma: OI en</span>
+                <Num value={rule.poOiBars} min={1} max={100} onChange={(poOiBars) => patch({ poOiBars })} /><span>velas con z ≤ −</span>
+                <Num value={rule.poZ} min={0} max={10} step={0.5} onChange={(poZ) => patch({ poZ })} /><span>· OI de</span>
+                <select value={rule.poSource} onChange={(e) => patch({ poSource: e.target.value })}>
+                  <option value="sum">Binance + Bybit</option><option value="bybit">Bybit</option><option value="binance">Binance</option>
+                </select>
+              </div>
+            )}
+            <div className="rt-note">
+              Las reglas de Byko (Bikotrading), con las cifras fijadas en <code>docs/PLAN_ESTRATEGIAS_BYKO_DALE.md</code> antes de correrlas. Las cajas son las de la pestaña Régimen.
+              <b> Falso rompimiento</b> va en contra de la perforación; <b>ruptura tras acumulación</b>, a favor de la ruptura; <b>trampa</b>, en contra de la llegada; <b>purga</b>, en contra del movimiento.
+              Con el stop "Borde lejano de la zona" queda tras la mecha, tras el último retroceso o tras el extremo. Cada corrida suma el control <b>sin la firma</b>: los mismos candidatos que no la cumplen.
+              La trampa y la purga usan el OI de 5 minutos (<code>oi_history.py</code>): sin OI en la vela, el candidato no cuenta.
+            </div>
+          </>
+        )}
         {usesResponse(rule) && (
           <>
             <div className="rt-row">
@@ -1973,10 +2026,14 @@ const RuleTesterApp = () => {
       )}
       {result.control && (
         <div className="rt-group">
-          <h4>¿Aportan las liquidaciones?</h4>
+          <h4>{result.controlKind === 'byko' ? '¿Aporta la firma de Byko?' : '¿Aportan las liquidaciones?'}</h4>
           <div className="rt-note">
-            La misma regla tras barrer un swing <b>sin</b> liquidaciones: {result.control.n ?? 0} trades{result.control.n ? <>, acierto {fmtPct(result.control.winRate)}, <R value={result.control.avgR} digits={3} /> R por trade</> : null}.
-            {result.control.edge && <> Diferencia a favor de las liquidaciones: <R value={result.control.edge.r} digits={3} /> R (de {result.control.edge.low} a {result.control.edge.high}). {result.control.edge.clear ? 'Se distingue.' : 'No se distingue de un barrido cualquiera.'}</>}
+            {result.controlKind === 'byko'
+              ? <>Los mismos candidatos <b>sin</b> la firma (la llegada y el volumen, o el OI): </>
+              : <>La misma regla tras barrer un swing <b>sin</b> liquidaciones: </>}
+            {result.control.n ?? 0} trades{result.control.n ? <>, acierto {fmtPct(result.control.winRate)}, <R value={result.control.avgR} digits={3} /> R por trade</> : null}.
+            {result.control.edge && <> Diferencia a favor {result.controlKind === 'byko' ? 'de la firma' : 'de las liquidaciones'}: <R value={result.control.edge.r} digits={3} /> R (de {result.control.edge.low} a {result.control.edge.high}).{' '}
+              {result.control.edge.clear ? 'Se distingue.' : result.controlKind === 'byko' ? 'No se distingue de los candidatos sin la firma.' : 'No se distingue de un barrido cualquiera.'}</>}
             {result.liqFrom && <> Liquidaciones desde el {result.liqFrom.split('-').reverse().join('/')}.</>}
           </div>
         </div>
@@ -2231,6 +2288,13 @@ const RuleTesterApp = () => {
                   {allReport.legEdge.clear ? 'El margen no incluye el cero.' : 'No se distingue de seguir el tramo.'}{' '}
                   El tramo es el del Volumen de Respuesta: gira cuando un cierre se aleja {allReport.legBaseline.leg} ATR de su extremo.
                   Si la regla sigue el movimiento, esta es la comparación que importa: dice cuánto pone la señal y cuánto el mercado.
+                </div>
+              )}
+              {allReport.control && (
+                <div className="rt-note" style={{ marginTop: 4 }}>
+                  {allReport.control.kind === 'byko' ? 'Sin la firma de Byko' : 'Barridos sin liquidaciones'}: {allReport.control.n} trades, <R value={allReport.control.avgR} digits={3} /> R por trade.{' '}
+                  {allReport.control.edge && <>Diferencia a favor {allReport.control.kind === 'byko' ? 'de la firma' : 'de las liquidaciones'}: <R value={allReport.control.edge.r} digits={3} /> R
+                    (entre {fmtR(allReport.control.edge.low, 3)} y {fmtR(allReport.control.edge.high, 3)}). {allReport.control.edge.clear ? 'El margen no incluye el cero.' : 'No se distingue.'}</>}
                 </div>
               )}
             </div>

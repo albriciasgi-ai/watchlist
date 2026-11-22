@@ -35,6 +35,10 @@ export const FACETS = {
   im: ['elementos', 'Impulso'],
   fv: ['elementos', 'FVG nuevo'],
   sp: ['elementos', 'Swing'],
+  fb: ['elementos', 'Falso rompimiento'],
+  ba: ['elementos', 'Ruptura tras acumulación'],
+  ta: ['elementos', 'Trampa de absorción'],
+  po: ['elementos', 'Purga de OI'],
   wise: ['elementos', 'Tres sabios'],
   smc: ['elementos', 'Estructura SMC'],
   vpa: ['elementos', 'Lector VPA'],
@@ -182,6 +186,11 @@ export function ruleFacets(rule, labels = {}) {
     add('smc', parts.join(', '));
   }
   if (rule.sp && has('SP')) add('sp', `${rule.sp.bars} velas por lado${rule.sp.minZ !== null && rule.sp.minZ !== undefined ? `, volumen z ≥ ${n(rule.sp.minZ)}` : ''}`);
+  const oiFrom = (source) => ({ sum: 'Binance + Bybit', bybit: 'Bybit', binance: 'Binance' }[source] || 'Binance + Bybit');
+  if (rule.fb && has('FB')) add('fb', `vuelve en ${rule.fb.back} velas; firma: llega desde ${n(rule.fb.approachAtr)} ATR en ${rule.fb.approachBars} velas, volumen ≥ ${n(rule.fb.vol)}x`);
+  if (rule.ba && has('BA')) add('ba', `firma: ${rule.ba.bars} velas a ${n(rule.ba.near)} ATR o menos del borde, mínimos crecientes`);
+  if (rule.ta && has('TA')) add('ta', `al ${n(rule.ta.share)} del borde tras ${n(rule.ta.rise)} ATR en ${rule.ta.riseBars} velas; firma: OI de ${oiFrom(rule.ta.source)} en ${rule.ta.oiBars} velas con z ≥ ${n(rule.ta.z)}, avance ≤ ${n(rule.ta.advance)} ATR`);
+  if (rule.po && has('PO')) add('po', `${n(rule.po.move)} ATR en ${rule.po.bars} velas, volumen ≥ ${n(rule.po.vol)}x; firma: OI de ${oiFrom(rule.po.source)} en ${rule.po.oiBars} velas con z ≤ −${n(rule.po.z)}`);
   const resting = !!rule.vp && has('VE') && rule.vp.veEntry === 'resting';
   if (rule.vp && codes.some(code => VP_CODES.includes(code))) {
     const vp = rule.vp;
