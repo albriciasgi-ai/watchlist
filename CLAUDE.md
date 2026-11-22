@@ -55,6 +55,31 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 22 Noviembre 2026: Deslizamiento Real de QB con el Libro y Guía del VPA con Imágenes
+
+**Pedido:** medir el deslizamiento real de la ruptura con volumen (QB), y una guía en PDF del VPA con imágenes reales de la app. Debe enseñar a usar lo programado y relacionarlo con el libro de Coulling, con un informe de las reglas corridas y recomendaciones.
+
+**Cambios:**
+1. **Deslizamiento real** (`OrderFlowData/research/vpa/deslizamiento_real_qb.py`, `DESLIZAMIENTO_REAL_QB.md`): órdenes a mercado simuladas sobre el libro completo grabado por la suite (13/11 al 22/11, 22 monedas), en la apertura de 4h y en la salida por el stop en movimientos rápidos.
+   - A 10k USD cuesta de 0 R (BTC, ETH) a 0.04 R (GALA) por trade; RUNE, 0.12.
+   - Fase 3, monedas nuevas con libro (546 trades): de +0.134 R a +0.120 con 10k, +0.107 con 50k y +0.069 con 250k.
+   - El supuesto de 0.05% por lado (+0.104) era más duro que lo real hasta 50k.
+   - Las de siempre siguen en negativo (−0.034 con 10k).
+2. **Guía** `1.Altagracia_Crypto_Backtester/Backtester/GUIA_VPA.pdf` (21 páginas, reemplaza la del 21/11):
+   - las ideas y la tabla «del libro al código»;
+   - el tutorial con capturas reales: lector, panel, cuadro de la vela, modal, velas con ancho, probador, trade elegido, Observador;
+   - el informe de todas las reglas;
+   - qué explorar después.
+
+**IMPORTANTE:**
+- No cambió código de las apps: no hay que reiniciar nada.
+- El libro cubre solo 9 días sin un desplome fuerte, aplicados a trades de otras fechas.
+- Las capturas se tomaron en una copia aislada de App 1 con BTC.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "LECTOR VPA", "Deslizamiento real con el libro" y "Guía en PDF"
+
+---
+
 ### App 1 - 22 Noviembre 2026: El Ripple entre Marcos del VPA (Estudio y Filtro)
 
 **Pedido:** el «ripple» de Coulling (el marco mayor manda): primero un estudio y, después, el filtro.
