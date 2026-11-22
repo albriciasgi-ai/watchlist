@@ -2086,7 +2086,18 @@ La candidata de la fase 1: QB, 4h, a mercado, stop 1.5 ATR (máximo 8), objetivo
 
 - En las monedas nuevas pasa el criterio en las dos fases (los dos controles con margen y R positivo). En las de siempre, la fase 2 supera al azar con margen y al tramo sin él.
 - Los cortos rinden más: en la fase 2 de las nuevas, +0.31 R contra +0.12 de los largos.
-- Es la primera regla del VPA que pasa la fase 2. La fase 3 no se corrió.
+- Es la primera regla del VPA que pasa la fase 2.
+
+**Fase 3 (21/11, `fase3_qb.py`, `FASE3_QB.md`), desde el 01/07/2025:**
+
+| Monedas | Trades | R por trade | Sobre el azar | Sobre el tramo | Monedas + | Trimestres + |
+|---|---|---|---|---|---|---|
+| De siempre (7) | 474 | −0.02 ±0.16 | −0.04 (−0.20 a +0.12) | +0.02 (−0.14 a +0.18) | 3 de 7 | 3 de 6 |
+| Nuevas (43) | 2,765 | +0.09 ±0.07 | +0.09 (+0.03 a +0.16) | +0.13 (+0.07 a +0.20) | 31 de 43 | 3 de 6 |
+
+- **En las monedas nuevas pasa la fase 3:** los dos controles con margen y R positivo, en 2025 (+0.10) y en 2026 (+0.08). Pero la ventaja se achica a la mitad frente a la fase 2 (+0.22 → +0.09 sobre el azar), la constancia baja a 3 de 6 trimestres y los cortos ponen más (+0.13 contra +0.04).
+- **En las de siempre cae:** −0.02 R, sin ventaja sobre ninguno de los dos controles.
+- Lectura: queda una ventaja chica que se sostiene en muchas monedas, no una regla fuerte. Con 0.05% de deslizamiento por lado, no medido, buena parte de los +0.09 R podría irse.
 
 ### Velas con ancho por volumen (21/11)
 
@@ -2115,7 +2126,7 @@ Lo demás:
 
 - El "ripple" entre marcos.
 - Que el Observador compare las lecturas del usuario con las del lector.
-- La fase 3 de la ruptura con volumen.
+- Medir el deslizamiento de la ruptura con volumen antes de pensar en operarla.
 
 ## RANGOS HORIZONTALES (20/11/2026)
 
