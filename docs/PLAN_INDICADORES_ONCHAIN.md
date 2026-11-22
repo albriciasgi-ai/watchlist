@@ -83,6 +83,8 @@ De paso, Impulso, FVG nuevo y la Ruptura de caja con 3R pasaron la fase 2 contra
   - sus posiciones, con el precio de liquidación, cada 15 minutos.
 - Ruta `/api/hyperliquid/liqmap/{símbolo}`. Detalle en el CLAUDE.md de la suite, sección "Hyperliquid".
 - **Medido el 21/11 en BTC:** 150 M USD de largos y 170 M de cortos se liquidarían a menos de 25% del precio.
+- **21/11:** el estado pasa a cada minuto, se suma la vuelta rápida cada minuto y el indicador "Liquidaciones Hyperliquid" del gráfico principal.
+- **22/11, en la nube y gratis:** el collector de Northflank corre el mismo grabador (14 días) y la suite baja lo nuevo (`hl_cloud.py`), para tener semanas seguidas aunque la suite esté cerrada. La lista de cuentas se lee por partes (de 350 a 58 MB de memoria). Falta desplegarlo.
 
 **Original:**
 

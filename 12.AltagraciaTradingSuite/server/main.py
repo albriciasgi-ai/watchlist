@@ -52,6 +52,7 @@ import recorder  # noqa: E402  grabacion propia de trades (live/local), un solo 
 import book_recorder  # noqa: E402  libro completo de Bybit (live/book), un solo proceso a la vez
 import hl_recorder  # noqa: E402  Hyperliquid: estado por moneda y posiciones de las ballenas (live/hyperliquid), solo lectura
 import book_cloud  # noqa: E402  tapa los huecos del libro con lo que graba la nube (live/book_cloud)
+import hl_cloud  # noqa: E402  baja de la nube lo que grabo de Hyperliquid (live/hyperliquid_cloud)
 import book_heatmap  # noqa: E402  mapa de liquidez por vela y precio, para la pestana "Mapa"
 import book_levels  # noqa: E402  niveles de liquidez sostenida, para la pestana "Mapa"
 import book_defense  # noqa: E402  defensa de las zonas dibujadas, para la pestana "Mapa"
@@ -78,6 +79,7 @@ app.include_router(market_routes.router)
 app.include_router(book_recorder.make_router())
 app.include_router(book_cloud.make_router())
 app.include_router(hl_recorder.make_router())
+app.include_router(hl_cloud.make_router())
 app.include_router(book_heatmap.make_router())
 app.include_router(ladder.make_router())
 app.include_router(book_levels.make_router())
@@ -106,6 +108,7 @@ async def _startup():
     await book_recorder.start(coins, DATA, CONFIG["bybit_url"], _http, candles.bybit_turn)
     await hl_recorder.start(coins, DATA, _http)
     book_cloud.start(DATA, os.environ.get("SUITE_CLOUD_URL", book_cloud.DEFAULT_URL), _official_symbols, _http)
+    hl_cloud.start(DATA, os.environ.get("SUITE_CLOUD_URL", book_cloud.DEFAULT_URL), _http)
     official.start(DATA, _official_symbols)
     await SWING.start()
     await WSMC.start()
@@ -123,6 +126,7 @@ async def _shutdown():
     await WSMC.stop()
     official.stop()
     await book_cloud.stop()
+    await hl_cloud.stop()
     await hl_recorder.stop()
     await book_recorder.stop()
     await recorder.stop()
@@ -490,7 +494,7 @@ async def suite_status():
     return {"success": True, "version": app.version, "now": int(time.time() * 1000), "store": store,
             "local_tape": tape, "bot": bot_state,
             "recorder": recorder.status(), "book": book_recorder.brief(), "book_cloud": book_cloud.brief(),
-            "hyperliquid": hl_recorder.brief(),
+            "hyperliquid": hl_recorder.brief(), "hyperliquid_cloud": hl_cloud.brief(),
             "official": official.status(), "swing": SWING.brief(), "wsmc": WSMC.brief()}
 
 

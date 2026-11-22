@@ -42,6 +42,31 @@ check("las de más capital y las más activas, en minúsculas y sin direcciones 
       [x[0] for x in w] == ["0xbbb", "0xddd", "0xaaa"], w)
 check("sin repetir", len(hl.top_wallets(ROWS, 5, 5)) == 3)
 
+# ---------- leaderboard por partes (22/11) ----------
+TRICKY = [lb("0xabc", "10", "5"), {"ethAddress": "0xd{e}f", "displayName": 'a "}{ ] [ \\ ñ 🚀', "accountValue": "7",
+                                   "windowPerformances": [["month", {"vlm": "3"}]]}, lb("0x999", "10", "8")] + ROWS
+for doc in (json.dumps({"leaderboardRows": TRICKY, "otro": [1, {"a": "]"}]}, ensure_ascii=False),
+            json.dumps(TRICKY, ensure_ascii=False), json.dumps({"leaderboardRows": TRICKY}, indent=2)):
+    raw = doc.encode("utf-8")
+    ok = True
+    for size in (1, 3, 7, 64, len(raw)):
+        st, got = hl.RowStream(), []
+        for i in range(0, len(raw), size):
+            got += st.feed(raw[i:i + size])
+        ok = ok and got == TRICKY and st.done
+    check(f"por partes da las mismas filas que json.loads, en pedazos de 1 a {len(raw)} bytes", ok)
+picker = hl.WalletPicker(2, 2)
+for r in TRICKY:
+    picker.add(r)
+check("las cuentas elegidas por partes son las de ordenar la lista entera, a igual valor la primera",
+      picker.result() == hl.top_wallets(TRICKY, 2, 2) and picker.result()[0][0] == "0xbbb", picker.result())
+bad = hl.RowStream()
+try:
+    bad.feed(b'{"leaderboardRows": [{"a": ' + b"x" * (hl.MAX_ROW_CHARS + 10))
+    check("una fila ilegible no se acumula sin fin", False)
+except ValueError:
+    check("una fila ilegible no se acumula sin fin", True)
+
 # ---------- posiciones ----------
 STATE = {"assetPositions": [
     {"position": {"coin": "BTC", "szi": "-2", "entryPx": "61000", "liquidationPx": "66000", "leverage": {"value": 10}, "positionValue": "120000"}},

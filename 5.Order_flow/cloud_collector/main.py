@@ -25,6 +25,8 @@ from tape_recorder import TapeRecorder, DAY_RE
 # Libro completo (13/11/2026): copias exactas de 12.AltagraciaTradingSuite/server/book_recorder.py y book_store.py
 import book_recorder
 import book_store
+# Hyperliquid (22/11/2026): copia exacta de 12.AltagraciaTradingSuite/server/hl_recorder.py
+import hl_recorder
 
 # Configuracion de logging
 logging.basicConfig(
@@ -62,10 +64,19 @@ BOOK_KEEP_DAYS = int(os.environ.get("BOOK_KEEP_DAYS", "7"))
 BOOK_MIN_FREE_MB = int(os.environ.get("BOOK_MIN_FREE_MB", "150"))
 BOOK_ROOT = book_store.root(DATA_DIR)
 
+# Hyperliquid: el grabador de la suite (estado por moneda cada minuto, posiciones de unas 1,200 cuentas cada 15 minutos
+# y las de liquidacion cercana cada minuto), para tener historia con la suite cerrada. Solo lee la API publica.
+# HL=0 lo apaga. HL_SYMBOLS cambia las monedas (de fabrica, las del libro). Unos 13 MB por dia: se guardan HL_KEEP_DAYS.
+HL_ON = os.environ.get("HL", "1") != "0"
+HL_SYMBOLS = [s.strip().upper() for s in os.environ.get("HL_SYMBOLS", ",".join(BOOK_SYMBOLS)).split(",") if s.strip()]
+HL_KEEP_DAYS = int(os.environ.get("HL_KEEP_DAYS", "14"))
+HL_ROOT = hl_recorder.root(DATA_DIR)
+
 # Instancia del collector
 collector: Optional[FootprintCollector] = None
 tape: Optional[TapeRecorder] = None
 book_http = None
+hl_http = None
 _book_slots: List[float] = []
 
 
@@ -114,6 +125,21 @@ async def book_guard():
             break
         except Exception as e:
             logger.error(f"Libro, limpieza: {e}")
+
+
+async def hl_guard():
+    """Cada hora: borra los dias de Hyperliquid mas viejos que HL_KEEP_DAYS."""
+    while True:
+        try:
+            gone = await asyncio.to_thread(hl_recorder.cleanup_days, HL_ROOT, HL_KEEP_DAYS, int(time.time() * 1000))
+            if gone:
+                logger.info(f"Hyperliquid: {gone} archivos viejos borrados")
+            await asyncio.sleep(3600)
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            logger.error(f"Hyperliquid, limpieza: {e}")
+            await asyncio.sleep(3600)
 
 
 @asynccontextmanager
@@ -171,12 +197,31 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.error(f"No se pudo iniciar el libro: {e}")
 
+    # Hyperliquid: si falla, lo demas sigue
+    global hl_http
+    hl_task = None
+    if HL_ON:
+        try:
+            import httpx
+            hl_http = httpx.AsyncClient(timeout=httpx.Timeout(30.0, connect=10.0),
+                                        headers={"User-Agent": "footprint-collector-hl/1.0"})
+            await hl_recorder.start(HL_SYMBOLS, DATA_DIR, hl_http)
+            hl_task = asyncio.create_task(hl_guard())
+            logger.info(f"Hyperliquid: {len(HL_SYMBOLS)} monedas en {HL_ROOT} ({HL_KEEP_DAYS} dias)")
+        except Exception as e:
+            logger.error(f"No se pudo iniciar Hyperliquid: {e}")
+
     yield
 
     # Shutdown
     logger.info("Deteniendo collector...")
     if guard_task:
         guard_task.cancel()
+    if hl_task:
+        hl_task.cancel()
+    await hl_recorder.stop()
+    if hl_http:
+        await hl_http.aclose()
     await book_recorder.stop()
     if book_http:
         await book_http.aclose()
@@ -250,12 +295,17 @@ async def health():
         "stats": stats,
         "tape": tape.get_stats() if tape else None,
         "book": book_recorder.brief(),
+        "hyperliquid": hl_recorder.brief(),
         "disk": {"total_mb": usage.total // (1024 * 1024), "free_mb": usage.free // (1024 * 1024)},
     }
 
 
 # ---------- libro completo: estado, dias y bloques de minutos (los pide book_cloud.py de la suite) ----------
 app.include_router(book_recorder.make_router())
+
+# ---------- Hyperliquid: estado, mapa y dias grabados (los pide hl_cloud.py de la suite) ----------
+app.include_router(hl_recorder.make_router())
+app.include_router(hl_recorder.make_files_router(DATA_DIR, HL_KEEP_DAYS))
 
 
 @app.get("/api/book/days")
