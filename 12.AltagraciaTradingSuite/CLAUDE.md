@@ -26,6 +26,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 - **Sabios de Williams y estructura SMC (20/11):** los indicadores de App 1 en el gráfico, la detección en el servidor (sin enviar nada), los order blocks en la defensa de zona y sus medidas en el journal. Ver "Sabios de Williams y estructura SMC".
 - **Hyperliquid (21/11):** la suite graba el estado de cada moneda y las posiciones de las ballenas de Hyperliquid, con su precio de liquidación, para el plan on-chain. Ver "Hyperliquid".
 - **Lector VPA (21/11):** el indicador de App 1 en el gráfico y en la Watchlist (lista de livianos), con su modal. Ver `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md`, "LECTOR VPA". El servidor no lo detecta.
+- **DX en vivo (22/11):** el servidor registra la hipótesis de los apilados desplazados con la regla y el código del probador de App 1, y mide la ejecución con la cinta, sin enviar nada. Ver "DX en vivo".
 - **Falta:**
   - las alertas del Swing quedan para la central de alertas de confluencia;
   - al final, la mudanza a un servidor 24/7 con acceso protegido y celular.
@@ -67,10 +68,11 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── wise_smc_watch.py  Sabios de Williams y estructura SMC del servidor (williams.py y smc.py de App 1): anota en data/wsmc; nunca envía
 │   ├── wise_smc_measures.py   Medidas de Williams y SMC de cada trade del journal (grupo "Williams y SMC")
+│   ├── dx_watch.py        DX en vivo: la regla del probador de App 1 sobre el almacén en vivo; anota en data/dx y nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
 │   ├── alpaca_data.py     Acciones de EE. UU. desde Alpaca: trades con lado del agresor, footprints, velas y OI de opciones (ver "Alpaca")
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40) y hl_checks.py (22), sin conexión
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (22) y dx_checks.py (39), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -995,6 +997,57 @@ Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de c
   - el estado y las ballenas elegidas por capital y por volumen;
   - las posiciones y el mapa;
   - el grabador con un HTTP falso: anota por día, una cuenta caída no corta la vuelta, solo pide `info` y retoma al arrancar.
+
+## DX en vivo (22/11)
+
+Paso 4 del plan de las estrategias de Byko y Dale (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, "DX en vivo"). DX, los apilados desplazados, es la única regla de esos PDF que pasó las fases 2 y 3 del probador, por poco y sensible a la ejecución. Se registra en vivo antes de creerla, y cómo se juzga quedó fijado en el plan antes de registrar nada. Nunca envía nada: ni al bot ni a otro lado.
+
+- **La regla:** la de las fases 2 y 3, sin cambios (`dx_watch.RULE_RAW`, la de `OrderFlowData/research/dale/2026-11-22/dx.py`).
+  - Monedas: las 7 con almacén (BTC, ETH, SOL, ARB, GALA, SUI y XRP), en 30 minutos.
+  - No se configura: solo se enciende o se apaga.
+- **Cómo registra** (`server/dx_watch.py`):
+  - 75 s después de cada cierre de 30 minutos, si el almacén en vivo ya tiene la vela (`market_routes._store_until`), pide a `of_elements` de App 1 (`live=True`) las velas y los desequilibrios apilados nuevos. Si el almacén va detrás, vuelve a mirar cada 30 s, hasta 10 minutos;
+  - cada vela se guarda tal como se vio y no se vuelve a calcular (`data/dx/span/{moneda}.json.gz`): el registro es lo que se sabía en ese momento;
+  - corre `rule_tester.run` de App 1 desde que arrancó el registro de esa moneda (`since`), con 20 días de velas antes para el ATR diario y las zonas;
+  - compara con lo anotado y suma lo nuevo: la orden armada, su entrada, su salida con su R, las que vencen, las que se llenan con otra posición abierta y las que no se operan;
+  - lo final no se reescribe: si una corrida posterior dijera otra cosa, queda una "revisión" en el registro;
+  - al arrancar la suite pone al día lo que pasó mientras estuvo cerrada, con lo que grabó la nube.
+- **La ejecución, con la cinta** (`OrderFlowData/tape` o, donde falta, `live/tape`):
+  - cuándo se llenó la limit: el primer trade que la pasa;
+  - en cada salida, el disparo (el primer trade en el stop o el objetivo) y el precio de una orden a mercado: el peor entre el trade del disparo y el promedio, pesado por cantidad, de los trades a mercado del lado de la salida en los 100 ms siguientes. Con medio segundo, lo primero que se fijó, en una mecha de BTC el promedio tomaba precios de después de la vuelta, que una orden a mercado no consigue;
+  - con ese precio, el R con la ejecución medida, con las comisiones del probador;
+  - en el objetivo, si el precio lo pasó en el minuto siguiente (una limit ahí se habría llenado);
+  - si la cinta tocó antes el stop o el objetivo, aunque el minuto a minuto diga otra cosa.
+- **Rutas:** `GET /api/dx/status`, `/api/dx/report` (trades, R por trade con su margen, con la cuenta del probador y con la ejecución medida, por moneda y lado, deslizamiento y las lecturas a los 3, 6 y 12 meses del plan), `/api/dx/log` y `GET/POST /api/dx/config` (`{"enabled": bool}`). `/api/suite/status` trae `dx`.
+- **Datos** en `data/dx`: `config.json`, `span/`, `orders/{moneda}.json`, `log/AAAA-MM-DD.jsonl` y `detector.lock` (un solo proceso registra por carpeta). `SUITE_DX=0` lo apaga; sin esa variable vale `SUITE_SWING`, que las pruebas ponen en 0.
+- **Panel:** en el panel del Swing de la Watchlist, debajo de los sabios y SMC:
+  - si registra, desde cuándo, los trades con su R y su margen, y el R con la ejecución medida;
+  - las lecturas del plan, cuando llegan;
+  - la posición abierta de cada moneda y las 3 órdenes que esperan más cerca del precio, con el total. Hay muchas a la vez: en la prueba con datos reales, unas 40 por moneda;
+  - lo último anotado.
+
+  Un clic abre la moneda en 15m.
+- **Defensa de zona:** la limit de las órdenes, su precio ±0.05%, va a las zonas automáticas de la pestaña Mapa (`book_defense.ZONE_SOURCES`). De las que esperan van las 2 más cerca del precio de cada lado, y además las que se llenaron, hasta una hora después. Así se ve lo que hizo el libro donde esperaba la orden.
+- **Una versión refinada** (por ejemplo, con la tendencia a favor) sería otro registro: `DxWatch` con su regla y su carpeta, y `make_router` con su prefijo. Antes de registrarla, su regla se fija en el plan.
+- **Pruebas:** `server/tests/dx_checks.py` (39), sin conexión:
+  - el registro hecho vela a vela da los mismos trades que una corrida del probador sobre las mismas velas, con revisiones cada 2 o cada 5 velas;
+  - lo anotado hasta una hora es igual con o sin las velas posteriores, y una vela ya vista no cambia aunque después cambien los datos;
+  - tras reiniciar sigue igual, cada orden pasa por sus pasos en orden y, si el almacén va detrás, espera la vela;
+  - la medición con una cinta armada a mano, también una mecha que se da vuelta;
+  - el informe, sus lecturas, las zonas de la defensa, el estado y las rutas.
+- **Probado con datos reales (22/11):** una repetición como si el registro hubiera arrancado el 15/11, con revisiones cada 2 horas hasta el 22/11 a las 16:00 UTC, sobre el almacén y la cinta reales (solo leyendo, en una carpeta aparte).
+  - En las 7 monedas, lo anotado es igual a una corrida del probador sobre las mismas velas.
+  - La primera revisión de cada moneda tarda de 3 a 6 s (los 20 días de antes); después, de 0.2 a 0.3 s por moneda.
+  - **Lo que dio:** 164 trades en 7.6 días (unos 650 por mes, como en las fases 2 y 3). Con la cuenta del probador, +0.27 R por trade; con la ejecución medida, +0.26. Son días que ya estaban en la fase 3 (salvo el 22/11): sirve para probar el código, no como resultado.
+  - **Deslizamiento medido** en los stops: 0.011% en la mediana; el 10% peor, más de 0.048%. Los 75 objetivos fueron pasados por el precio: una limit ahí se habría llenado.
+  - La copia aislada del servidor (13300, sin grabar ni bot, con DX encendido) siguió desde la repetición y registró en vivo: la vuelta de las 7 monedas tardó 0.6 s. El panel se vio en la Watchlist a 1024 px, sin desborde.
+- **Observado** en la repetición:
+  - en cada moneda esperan unas 40 órdenes a la vez, y 759 se llenaron con otra posición abierta, contra 164 que entraron. Un bot que la operara tendría que manejar muchas órdenes en espera;
+  - **zonas unidas:** cuando dos zonas se arman en la misma vela y del mismo lado, el probador las une en una sola orden. Entra en el borde de una y pone el stop en el borde lejano de la otra. Así el stop queda lejos de lo que pide Dale (10% a 20% del ATR diario). Pasó en 63 de 1,327 señales y en 17 de los 164 trades, con un riesgo medio del 2.8% del precio (0.7% en los demás) y −0.32 R (+0.34 en los demás). Las fases 2 y 3 se corrieron igual, así que el registro lo conserva. Una orden por zona sería parte de la versión refinada.
+- **Falta:**
+  - el registro de la suite del usuario empieza cuando su suite corra este código, al unir la rama;
+  - con la suite cerrada no registra; al abrirla, pone al día lo que grabó la nube;
+  - el deslizamiento no mira la profundidad del libro: una orden grande deslizaría más.
 
 ## Escritorio (Electron)
 

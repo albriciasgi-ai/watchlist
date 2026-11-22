@@ -9,6 +9,8 @@
 #   - Swing: detecta al cierre de cada vela con las reglas de App 1 y lo anota en data/swing (swing_watch.py).
 #     No envia nada: las alertas quedan para la central de confluencia.
 #   - Los tres sabios de Williams y la estructura SMC, igual, en data/wsmc (wise_smc_watch.py). Tampoco envia nada.
+#   - DX en vivo (22/11): la hipotesis de los apilados desplazados, con la regla y el codigo del probador de App 1, en
+#     data/dx (dx_watch.py). Registra ordenes, entradas y salidas sin enviar nada.
 # Las rutas del mercado responden igual que las del backend de App 1, para que el grafico de App 1
 # (MiniChart) se use tal cual, sin copiarlo.
 #
@@ -58,6 +60,7 @@ import book_defense  # noqa: E402  defensa de las zonas dibujadas, para la pesta
 import ladder  # noqa: E402  price ladder de la pestana "Mapa", del libro en memoria
 import swing_watch  # noqa: E402  Swing del servidor: detecta y anota, nunca envia
 import wise_smc_watch  # noqa: E402  Sabios de Williams y estructura SMC del servidor: detecta y anota, nunca envia
+import dx_watch  # noqa: E402  DX en vivo: la regla del probador de App 1 sobre el almacen en vivo, registra y nunca envia
 import alpaca_data  # noqa: E402  acciones de EE. UU. desde Alpaca: footprints, velas y OI de opciones
 from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
 
@@ -83,6 +86,9 @@ SWING = swing_watch.SwingWatch(Path(CONFIG["data_dir"]) / "swing", DRAWINGS_DIR)
 app.include_router(swing_watch.make_router(SWING))
 WSMC = wise_smc_watch.WiseSmcWatch(Path(CONFIG["data_dir"]) / "wsmc", symbols_source=lambda: SYMBOLS.load())
 app.include_router(wise_smc_watch.make_router(WSMC))
+DX = dx_watch.DxWatch(Path(CONFIG["data_dir"]) / "dx", DATA, store_until=market_routes._store_until)
+app.include_router(dx_watch.make_router(DX))
+book_defense.ZONE_SOURCES.append(DX.zones)   # las limit de DX en la defensa de zona de la pestana Mapa
 app.include_router(alpaca_data.make_router())
 
 
@@ -106,6 +112,7 @@ async def _startup():
     official.start(DATA, _official_symbols)
     await SWING.start()
     await WSMC.start()
+    await DX.start()
     print(f"[SUITE] Servidor en http://{CONFIG['host']}:{CONFIG['port']} | almacen {DATA} | bot {CONFIG['bot_url']}")
 
 
@@ -113,6 +120,7 @@ async def _startup():
 async def _shutdown():
     await SWING.stop()
     await WSMC.stop()
+    await DX.stop()
     official.stop()
     await book_cloud.stop()
     await hl_recorder.stop()
@@ -472,7 +480,7 @@ async def suite_status():
             "local_tape": tape, "bot": bot_state,
             "recorder": recorder.status(), "book": book_recorder.brief(), "book_cloud": book_cloud.brief(),
             "hyperliquid": hl_recorder.brief(),
-            "official": official.status(), "swing": SWING.brief(), "wsmc": WSMC.brief()}
+            "official": official.status(), "swing": SWING.brief(), "wsmc": WSMC.brief(), "dx": DX.brief()}
 
 
 # Frontend ya armado (web/dist), servido desde aqui: una sola direccion para todo

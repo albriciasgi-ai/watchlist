@@ -223,3 +223,33 @@ def test_la_corrida_de_dx_suma_las_anclas_al_azar():
     res = rt.run("TEST", rule, {"bars": bars, "events": zones}, {"phase": 1, "from": "2024-01-01", "to": "2024-01-30"}, None, base=True)
     assert res["success"] and res["controlKind"] == "daleAnchor" and res["control"]["n"]
     assert res["trades"] and res["trades"][0]["dale"]["code"] == "DX"
+
+
+def test_run_desde_una_hora_y_con_las_posiciones_abiertas_para_el_registro_en_vivo():
+    """El registro en vivo de DX de la suite (22/11): run con since (no toma las señales anteriores y da las posiciones
+    abiertas) y con otro lector de minutos. Sin ellos, nada cambia."""
+    bars, zones = dx_case()
+    rule = rt.clean_rule({"name": "DX", "tf": 30, "recipe": {"slots": [{"codes": ["DX"]}]},
+                          "entry": {"type": "limit", "at": "near", "expiry": 200}, "stop": {"type": "zone", "buffer": 0, "maxAtr": 20},
+                          "exit": {"targetR": 2}, "oneAtATime": True, "cooldown": 0, "volFilter": 0})
+    phase = {"phase": 1, "from": "2024-01-01", "to": "2024-01-30"}
+    span = {"bars": bars, "events": zones}
+    full = rt.run("TEST", rule, span, phase, None, base=False)
+    assert len(full["trades"]) > 4 and "openTrades" not in full
+    same = rt.run("TEST", rule, span, phase, None, base=False, since=0)
+    assert [(t["known"], t["entry_t"], t["r"]) for t in same["trades"]] == [(t["known"], t["entry_t"], t["r"]) for t in full["trades"]]
+    cut = full["trades"][len(full["trades"]) // 2]["known"]
+    late = rt.run("TEST", rule, span, phase, None, base=False, since=cut)
+    assert late["trades"] and all(t["known"] >= cut for t in late["trades"]) and late["signals"] < full["signals"]
+    # Con las velas hasta antes de la salida de un trade, queda abierto: openTrades lo trae, sin salida
+    last = next(t for t in reversed(full["trades"]) if t["exit_t"] // M30 * M30 > t["entry_t"])
+    end = last["exit_t"] // M30 * M30
+    upto = {"bars": [b for b in bars if b["t"] < end], "events": [e for e in zones if e["known"] <= end]}
+    reader = lambda symbol, a, b: None
+    trace = {}
+    cut_run = rt.run("TEST", rule, upto, phase, None, base=False, trace=trace, since=0, minutes=reader)
+    assert trace["ctx"]["minutes"] is reader
+    assert cut_run["open"] == 1 and len(cut_run["openTrades"]) == 1
+    o = cut_run["openTrades"][0]
+    assert o["open"] and o["entry_t"] == last["entry_t"] and o["stop"] == last["stop"] and o["target"] == last["target"]
+    assert "exit" not in o and "k" not in o and "entry_i" not in o

@@ -281,3 +281,37 @@ Solo con lo que pase la fase 2:
 - un detector en vivo como el de Williams y SMC, sin enviar nada al bot;
 - las zonas de Dale y los bordes de Byko pasan solos a la defensa de zona y al estudio del libro;
 - un panel con la firma del OI de cada moneda.
+
+#### DX en vivo
+
+**Fijado el 22/11/2026, antes de registrar nada.** Es la cuarta mirada a DX y la primera con datos que nadie vio: las tres fases ya se usaron, y lo que diga el registro no se puede ajustar con el histórico.
+
+- **La regla:** la de las fases 2 y 3, sin cambiar nada (la de `OrderFlowData/research/dale/2026-11-22/dx.py`), en las 7 monedas con almacén: 30 minutos, una posición a la vez por moneda.
+- **Desde cuándo:** desde que la suite corre este código, moneda por moneda. Una orden que se armó antes no cuenta.
+- **Cómo:**
+  - al cierre de cada vela de 30 minutos, con el almacén en vivo al día, la suite corre la función del probador (`rule_tester.run`) sobre lo visto en vivo;
+  - cada vela se guarda tal como se vio al cerrar y no se vuelve a calcular: el registro es lo que se sabía en ese momento.
+- **Qué se anota:**
+  - cada orden armada: su limit, su stop, su objetivo y hasta cuándo vale;
+  - su entrada, su salida y su R con la cuenta del probador (entrada maker, salidas taker);
+  - las que vencen sin llenarse y las que se llenan con otra posición abierta.
+- **La ejecución, con la cinta** (lo que el probador no mide):
+  - en cada salida, el precio de una orden a mercado disparada en el stop o el objetivo, como las de Bybit: el peor entre el primer trade que toca el nivel y el promedio, pesado por cantidad, de los trades a mercado del lado de la salida en los 100 ms siguientes;
+  - con ese precio, el R con la ejecución medida;
+  - si el precio pasó el objetivo en el minuto siguiente al toque: una orden limit ahí se habría llenado.
+  - **Corregido el 22/11, antes de registrar nada.** Primero se fijó el promedio del medio segundo siguiente. Probado con la cinta real del 15 al 22/11, en una mecha de BTC ese medio segundo tenía 960 trades, de 65,549 a 65,417: el promedio tomaba precios de después de la vuelta, que una orden a mercado no consigue. Así, 13 de 89 stops salían con deslizamiento a favor. Con la regla nueva ninguno sale a favor.
+- **Cuánto hace falta:**
+  - las 7 dan de 600 a 700 trades por mes, y cada trade varía unos 1.5 R;
+  - el margen al 95% del R por trade queda en ±0.07 a los 3 meses, ±0.05 a los 6 y ±0.03 a los 12;
+  - confirmar los +0.03 R de la fase 3 con margen pide un año, y aun así queda justo.
+- **El juicio**, con el R por trade de las 7 juntas con la ejecución medida:
+  - a los 3 y a los 6 meses se descarta si su margen al 95% queda entero bajo cero; si no, sigue;
+  - a los 12 meses pasa si su margen queda entero sobre cero; si no, no pasa.
+- **Se informa, sin exigirlo:** el R con la cuenta del probador, cada moneda, cada lado, el deslizamiento medido y la parte de los objetivos que el precio pasó.
+- **Nada se ajusta mientras corre.** Un cambio (sin BTC, un stop mínimo en % del precio) es otra hipótesis, con su propio registro.
+
+**Observado al probar el registro (22/11), con días ya usados (del 15 al 22/11):**
+- **Zonas unidas:** dos zonas que se arman en la misma vela y del mismo lado se unen en una sola orden. Su stop queda en el borde lejano de la otra zona, lejos del 10% al 20% del ATR diario. Pasó en 17 de los 164 trades, con un riesgo medio del 2.8% del precio y −0.32 R. Las fases 2 y 3 se corrieron así, y el registro lo conserva.
+- **Para una versión refinada**, otra hipótesis que se explora en la fase 1 y se juzga con su propio registro:
+  - una orden por zona;
+  - la tendencia a favor. Es la idea del usuario: una zona de agresión no garantiza un movimiento después.

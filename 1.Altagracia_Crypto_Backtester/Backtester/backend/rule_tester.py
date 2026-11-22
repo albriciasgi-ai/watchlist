@@ -1928,14 +1928,19 @@ def _vp_events(symbol, rule, span, shift=None):
     return [e for e in found if e["info"].get("shape") in shapes] if shapes else found
 
 
-def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shift=None, trace=None):
+def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shift=None, trace=None, since=None, minutes=None):
     """La regla sobre las velas y elementos de la fase. Devuelve resumen, cortes y cada trade.
-    trace (un dict): guarda ahí el contexto de las velas, los elementos y qué pasó con cada señal (trade_context)."""
+    trace (un dict): guarda ahí el contexto de las velas, los elementos y qué pasó con cada señal (trade_context).
+    since (ms, 22/11): las señales que se conocen antes no se toman, aunque sus velas estén (sirven para el ATR y las
+    zonas), y el resultado trae además `openTrades`, las posiciones abiertas al final. minutes: otro lector de los minutos
+    de cada vela (el de footprint_store con live=True). Los dos los usa el registro en vivo de DX de la suite."""
     bars, events, tf = span["bars"], span["events"], rule["tf"]
     tf_ms = tf * 60000
     if len(bars) < 100:
         return {"success": False, "message": "Sin velas suficientes en el almacén para esa fase"}
     ctx = _context(symbol, tf, bars)
+    if minutes is not None:
+        ctx["minutes"] = minutes
     ctx["bars"] = bars
     if rule.get("gc"):
         gc = rule["gc"]
@@ -1977,6 +1982,8 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         zones.setdefault((e["code"], e["dir"], e["known"]), []).append((e["lo"], e["hi"], e["t"]))
     matches = os_.match_recipes(bars, events, [rule["recipe"]], tf)
     matches.sort(key=lambda m: m["known"])
+    if since is not None:
+        matches = [m for m in matches if m["known"] >= since]
     flip = -1 if rule["invert"] else 1
     known_at = {1: set(), -1: set()}
     for m in matches:
@@ -1985,6 +1992,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             known_at[m["dir"] * flip].add(k)
 
     trades, skipped, open_count, busy_until, busy = [], {}, 0, -1, 0
+    open_trades = []
 
     def skip(reason, k, side):
         skipped[reason] = skipped.get(reason, 0) + 1
@@ -2089,6 +2097,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
                 open_count += 1
                 busy_until = len(bars)
                 trade["_fate"] = "abierta al final de la fase"
+                open_trades.append(trade)
             continue
         lo = max(0, k - window + 1)
         trade["votes"] = sorted({code for code, _ in m["votes"]})
@@ -2176,6 +2185,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             open_count += 1
             busy_until = len(bars)
             trade["_fate"] = "abierta al final de la fase"
+            open_trades.append(trade)
         else:
             trades.append(trade)
             busy_until = trade.pop("exit_i") + 1
@@ -2203,6 +2213,8 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         "summary": summary(ordered), "breakdowns": _breakdowns(trades, rule),
         "equity": _equity(ordered), "measuresAvailable": table is not None, "trades": trades,
     }
+    if since is not None:
+        result["openTrades"] = [{key: v for key, v in t.items() if not key.startswith("_") and key not in ("k", "entry_i")} for t in open_trades]
     if base:
         result["baseline"] = _baseline(rule, ctx, trades, symbol)
         s, b = result["summary"], result["baseline"]

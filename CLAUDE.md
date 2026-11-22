@@ -54,6 +54,44 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 22 Noviembre 2026: DX en Vivo (paso 4 de las estrategias de Byko y Dale)
+
+**Pedido:** seguir con el paso 4 del plan: llevar a la suite DX, la única regla de Byko y Dale que pasó las fases 2 y 3, como un detector en vivo que no envía nada al bot. El usuario pidió además entender la estrategia. Después opinó que le falta mirar la tendencia del mercado, y que podría servir refinando la lógica.
+
+**Cambios:**
+1. **Fijado antes de registrar,** en `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, "DX en vivo":
+   - la regla de las fases 2 y 3, sin cambiar nada, en las 7 monedas con almacén;
+   - cómo se mide la ejecución con la cinta;
+   - el juicio, con el R por trade de las 7 con la ejecución medida: a los 3 y a los 6 meses se descarta si su margen al 95% queda entero bajo cero; a los 12 meses pasa si queda entero sobre cero.
+2. **Registro en vivo** (`12.AltagraciaTradingSuite/server/dx_watch.py`):
+   - al cierre de cada vela de 30 minutos corre `rule_tester.run` de App 1 sobre lo visto en vivo;
+   - anota las órdenes armadas, las entradas, las salidas con su R, las vencidas y las que se llenan con otra posición abierta;
+   - cada vela se guarda como se vio y no se recalcula.
+3. **La ejecución con la cinta:** en cada salida, el precio de una orden a mercado disparada en el stop o el objetivo, y con él el R con la ejecución medida. Además, si el precio pasó el objetivo.
+   - Ese precio es el peor entre el trade del disparo y el promedio de los 100 ms siguientes.
+   - Antes de registrar nada se corrigió el medio segundo que se había fijado primero: en una mecha de BTC tomaba precios de después de la vuelta.
+4. **En la suite:** un panel en la Watchlist, debajo del Swing y de los sabios. Además, las limit de DX en la defensa de zona de la pestaña Mapa.
+5. **App 1:** `rule_tester.run` suma `since` y `minutes` para el registro. Sin ellos, nada cambia.
+6. **Pruebas:**
+   - `dx_checks.py` de la suite (39): el registro vela a vela da los mismos trades que el probador, sin futuro, y al reiniciar no repite nada;
+   - `test_dale.py` de App 1 suma 1 (13);
+   - todas las del backend de App 1: 557 pasan y fallan las 2 de siempre. También pasan `run_checks.py`, `book_defense_checks.py` y `wise_smc_checks.py`.
+
+**IMPORTANTE:**
+- **El registro empieza cuando la suite corre este código.** La del usuario corre desde main: empieza al unir esta rama.
+- **Probado con datos reales,** como si hubiera arrancado el 15/11, solo leyendo el almacén y la cinta. Esos días ya estaban en la fase 3: prueba el código, no la estrategia.
+  - En las 7 monedas, lo anotado es igual a una corrida del probador.
+  - 164 trades en 7.6 días: +0.27 R con la cuenta del probador y +0.26 con la ejecución medida.
+  - Deslizamiento en los stops: 0.011% en la mediana; el 10% peor, más de 0.048%.
+  - Una copia aislada del servidor registró en vivo, y el panel se vio en la Watchlist.
+- **Zonas unidas:** si dos zonas se arman en la misma vela y del mismo lado, el probador las une. El stop queda lejos del 10% al 20% del ATR diario que pide Dale: 17 de 164 trades, con 2.8% del precio de riesgo y −0.32 R. Las fases 2 y 3 se corrieron así, y el registro lo conserva.
+- **Confirmar la ventaja lleva tiempo:** las 7 monedas dan unos 650 trades por mes. Para confirmar con margen los +0.03 R de la fase 3 hace falta un año.
+- **Una versión refinada** sería otra hipótesis: la tendencia a favor y una orden por zona. Se explora en la fase 1 y se juzga con su propio registro, sin tocar el de DX.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "DX en vivo (22/11)" y `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, "DX en vivo"
+
+---
+
 ### App 1 - 22 Noviembre 2026: Hipótesis de los Apilados Desplazados (DX), Juzgada en las Fases 2 y 3
 
 **Pedido:** juzgar la curiosidad de la fase 1 de Dale (las zonas desplazadas de los apilados ganaban) como una hipótesis nueva, fijada antes de correrla y juzgada en las fases 2 y 3.

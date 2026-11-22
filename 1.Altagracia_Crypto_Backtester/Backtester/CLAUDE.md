@@ -1918,11 +1918,14 @@ en el plan antes de la primera corrida, y solo se corren las variantes declarada
   - con las dos salidas taker y 0.02%, −0.008.
 
   Aguanta solo si el objetivo va como limit y el stop desliza poco.
-- **Lo que sigue,** según el plan, es el paso 4: un detector en vivo en la suite, sin enviar nada al bot. Las tres fases están usadas, así que un ajuste (dejar fuera BTC, un stop mínimo en % del precio) solo lo podría juzgar el registro en vivo.
+- **En vivo, el paso 4 (22/11):** la suite registra DX en vivo con la regla y el código de aquí, sin enviar nada al bot (`12.AltagraciaTradingSuite/CLAUDE.md`, «DX en vivo»). Cómo se juzga quedó fijado antes, en el plan («DX en vivo»). Las tres fases están usadas: un ajuste (dejar fuera BTC, un stop mínimo en % del precio, la tendencia a favor) es otra hipótesis, con su propio registro.
+  - Para eso `rule_tester.run` suma dos opciones. Sin ellas, nada cambia:
+    - `since`: las señales que se conocen antes no se toman, aunque sus velas sigan (sirven para el ATR y las zonas), y el resultado trae además `openTrades`, las posiciones abiertas al final;
+    - `minutes`: otro lector de los minutos de cada vela (el de la suite lee también los días en vivo).
 
 ### Pruebas
 
-- `tests/test_dale.py` (12):
+- `tests/test_dale.py` (13):
   - el ATR diario sin el día en curso;
   - el perfil por velas;
   - el armado (velas seguidas, la cuenta que vuelve a empezar, el plazo y el lado);
@@ -1933,10 +1936,11 @@ en el plan antes de la primera corrida, y solo se corren las variantes declarada
   - que lo sabido no cambie;
   - la corrida con el control;
   - DX da los mismos eventos que el control de DS, y su control ancla en otras velas, siempre igual;
-  - la corrida de DX con sus anclas al azar.
+  - la corrida de DX con sus anclas al azar;
+  - `run` con `since` y `minutes` (22/11): sin ellos da lo mismo; con `since` no toma las señales anteriores y da la posición abierta, sin salida.
 - `tests/test_rule_tester.py` suma 1 (17): un tramo con un día sin flujo no se guarda; con el flujo completo se guarda y se usa; si después se escribe un día, se vuelve a detectar. Sin el candado, falla.
 - `rulefacets.test.mjs` (13) y `ruletester.test.mjs` (15) siguen pasando, y la página compila.
-- Las del probador que pasan por el tramo (13 archivos, 115 pruebas) pasan con el candado. Todas las del backend, con DX: 556 pasan y fallan las 2 de siempre (`test_endpoints` por la versión y `test_lru_cache::test_clear`).
+- Las del probador que pasan por el tramo (13 archivos, 115 pruebas) pasan con el candado. Todas las del backend, con DX: 556 pasan y fallan las 2 de siempre (`test_endpoints` por la versión y `test_lru_cache::test_clear`). Con `since` y `minutes` (22/11), 557 y las mismas 2.
 
 ## REVISIÓN DE CANDIDATOS POR SESIONES (18/11/2026)
 
