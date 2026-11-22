@@ -8,7 +8,8 @@ libro de Bybit. Solo lee, con la API pública `info` (sin clave): nunca envía �
 Qué graba, en OrderFlowData/live/hyperliquid/:
 - `ctx/AAAA-MM-DD.jsonl`, cada CTX_SECONDS (1 min desde el 21/11; antes 5): por moneda de la suite, interés abierto, funding, precio marca y de
   oráculo, prima y volumen de 24 h (`metaAndAssetCtxs`, un pedido para todas).
-- `wallets.json`, una vez al día: del leaderboard público (stats-data, ~38 MB, unos 3 minutos), las BY_VALUE cuentas de
+- `wallets.json`, una vez al día: del leaderboard público (stats-data, ~38 MB, unos 3 minutos, leído por partes desde
+  el 22/11 para no tenerlo entero en memoria: RowStream y WalletPicker), las BY_VALUE cuentas de
   más capital y las BY_VOLUME de más volumen operado en el mes, sin repetir. Las de más capital usan poco apalancamiento y
   se liquidarían lejísimos; las muy activas son las que tienen liquidaciones cerca del precio (medido el 21/11: de 150
   por volumen, 16 posiciones con la liquidación a menos de 25%, 124 M USD).
@@ -22,11 +23,19 @@ Qué graba, en OrderFlowData/live/hyperliquid/:
 
 Un solo grabador por carpeta (`recorder.lock`). SUITE_HL=0 lo apaga; sin esa variable vale SUITE_RECORD.
 Rutas: /api/hyperliquid/status, /api/hyperliquid/ctx/{símbolo}, /api/hyperliquid/liqmap/{símbolo}.
+
+En la nube (22/11): el collector de Northflank corre este mismo archivo (copia exacta en 5.Order_flow/cloud_collector),
+guarda HL_KEEP_DAYS días (cleanup_days) y da /api/hyperliquid/days y /api/hyperliquid/file/{carpeta}/{día}?offset
+(make_files_router). La suite baja lo nuevo con hl_cloud.py a live/hyperliquid_cloud, y read_rows junta las dos.
 """
 import asyncio
+import bisect
+import codecs
+import heapq
 import json
 import logging
 import os
+import re
 import time
 from datetime import datetime, timezone
 from pathlib import Path
@@ -60,6 +69,11 @@ def enabled() -> bool:
 
 def root(data_dir: Path) -> Path:
     return Path(data_dir) / "live" / "hyperliquid"
+
+
+def cloud_root(data_dir: Path) -> Path:
+    """Lo bajado de la nube (hl_cloud.py de la suite), aparte de lo grabado en el PC."""
+    return Path(data_dir) / "live" / "hyperliquid_cloud"
 
 
 def hl_coin(symbol: str) -> str:
@@ -108,21 +122,103 @@ def _month_volume(row):
     return 0.0
 
 
+class WalletPicker:
+    """Elige las cuentas a seguir fila por fila, sin guardar la lista entera (22/11: el leaderboard pesa ~38 MB y,
+    leído de una vez, pasaba de 300 MB de memoria; el collector de la nube tiene 512 MB). Guarda solo las by_value de
+    más capital y las by_volume de más volumen del mes. Da lo mismo que ordenar la lista entera: a igual valor, primero
+    la que llegó antes."""
+
+    def __init__(self, by_value=BY_VALUE, by_volume=BY_VOLUME):
+        self.sizes = (by_value, by_volume)
+        self.heaps = ([], [])
+        self.n = 0
+
+    def add(self, row):
+        if not isinstance(row, dict):
+            return
+        address, value = row.get("ethAddress"), _num(row.get("accountValue"))
+        if not (isinstance(address, str) and address.startswith("0x") and value):
+            return
+        w = [address.lower(), round(value, 2), round(_month_volume(row), 2)]
+        self.n += 1
+        for heap, size, key in zip(self.heaps, self.sizes, (w[1], w[2])):
+            item = (key, -self.n, w)   # -n es único: la tupla nunca llega a comparar w
+            if size <= 0:
+                continue
+            if len(heap) < size:
+                heapq.heappush(heap, item)
+            elif item[:2] > heap[0][:2]:
+                heapq.heapreplace(heap, item)
+
+    def result(self):
+        """[[dirección, capital, volumen del mes], ...]: primero las de más capital y después las de más volumen, sin repetir."""
+        picked, seen = [], set()
+        for heap in self.heaps:
+            for _, _, w in sorted(heap, key=lambda x: (-x[0], -x[1])):
+                if w[0] not in seen:
+                    seen.add(w[0])
+                    picked.append(w)
+        return picked
+
+
 def top_wallets(rows, by_value=BY_VALUE, by_volume=BY_VOLUME):
     """Las cuentas a seguir: las by_value de más capital y las by_volume de más volumen del mes, sin repetir.
     [[dirección, capital, volumen del mes], ...]."""
-    valid = []
+    picker = WalletPicker(by_value, by_volume)
     for row in rows:
-        address, value = row.get("ethAddress"), _num(row.get("accountValue"))
-        if isinstance(address, str) and address.startswith("0x") and value:
-            valid.append([address.lower(), round(value, 2), round(_month_volume(row), 2)])
-    picked, seen = [], set()
-    for group in (sorted(valid, key=lambda x: -x[1])[:by_value], sorted(valid, key=lambda x: -x[2])[:by_volume]):
-        for w in group:
-            if w[0] not in seen:
-                seen.add(w[0])
-                picked.append(w)
-    return picked
+        picker.add(row)
+    return picker.result()
+
+
+_ROWS_KEY = re.compile(r'"leaderboardRows"\s*:\s*\[')
+_SEP = re.compile(r"[\s,]*")
+_DECODER = json.JSONDecoder()
+MAX_ROW_CHARS = 1_000_000    # una fila a medio llegar más larga que esto es un archivo ilegible, no una fila
+
+
+class RowStream:
+    """Lee la lista de filas del leaderboard a medida que llegan los bytes (22/11). feed() devuelve las filas que ya
+    llegaron completas; en memoria queda solo la fila a medio llegar. Acepta {"leaderboardRows": [...]} o una lista
+    sola. Cada fila la lee el decodificador de JSON de Python (raw_decode): si todavía no llegó entera, espera al
+    pedazo siguiente."""
+
+    def __init__(self):
+        self.decoder = codecs.getincrementaldecoder("utf-8")()
+        self.buf = ""
+        self.inside = False
+        self.done = False
+
+    def feed(self, chunk: bytes):
+        if self.done:
+            return []
+        self.buf += self.decoder.decode(chunk)
+        if not self.inside:
+            head = self.buf.lstrip()
+            if head.startswith("["):
+                self.buf, self.inside = head[1:], True
+            else:
+                m = _ROWS_KEY.search(self.buf)
+                if not m:
+                    self.buf = self.buf[-64:] if head else ""   # la llave puede venir partida entre dos pedazos
+                    return []
+                self.buf, self.inside = self.buf[m.end():], True
+        out, buf, i, n = [], self.buf, 0, len(self.buf)
+        while True:
+            i = _SEP.match(buf, i).end()
+            if i >= n:
+                break
+            if buf[i] == "]":       # el cierre de la lista
+                self.done = True
+                break
+            try:
+                row, i = _DECODER.raw_decode(buf, i)
+            except ValueError:      # la fila todavía no llegó entera
+                if n - i > MAX_ROW_CHARS:
+                    raise ValueError("el leaderboard trae una fila ilegible")
+                break
+            out.append(row)
+        self.buf = "" if self.done else buf[i:]
+        return out
 
 
 def parse_positions(user, state, coins):
@@ -201,6 +297,131 @@ def last_line(path: Path):
     return None
 
 
+# ---------- archivos por día: limpieza, lista y lectura por partes (22/11, para la nube) ----------
+KINDS = {"ctx": CTX_SECONDS, "positions": POS_SECONDS, "fast": FAST_SECONDS}   # carpeta → cada cuánto se anota
+DAY_FILE = re.compile(r"^(\d{4}-\d{2}-\d{2})\.jsonl$")
+MAX_FILE_CHUNK = 8 << 20     # lo que entrega la nube por pedido
+
+
+def complete_size(path: Path) -> int:
+    """Bytes hasta la última línea completa: una línea a medio escribir no se entrega."""
+    try:
+        with open(path, "rb") as fh:
+            fh.seek(0, os.SEEK_END)
+            size = fh.tell()
+            back = min(size, 4_000_000)
+            fh.seek(size - back)
+            tail = fh.read(back)
+    except OSError:
+        return 0
+    cut = tail.rfind(b"\n")
+    return size - back + cut + 1 if cut >= 0 else (0 if back == size else size - back)
+
+
+def list_days(base: Path) -> dict:
+    """{carpeta: {día: bytes completos}} de ctx, positions y fast."""
+    out = {}
+    for kind in KINDS:
+        folder = base / kind
+        if not folder.is_dir():
+            continue
+        for f in sorted(folder.iterdir()):
+            m = DAY_FILE.match(f.name)
+            if m:
+                out.setdefault(kind, {})[m.group(1)] = complete_size(f)
+    return out
+
+
+def read_from(base: Path, kind: str, day: str, offset: int, limit: int = MAX_FILE_CHUNK) -> bytes:
+    """Desde offset, a lo sumo limit bytes, terminando en una línea completa."""
+    if kind not in KINDS or not re.fullmatch(r"\d{4}-\d{2}-\d{2}", day or ""):
+        raise ValueError("carpeta o día inválido")
+    path = base / kind / f"{day}.jsonl"
+    end = complete_size(path)
+    if offset >= end:
+        return b""
+    with open(path, "rb") as fh:
+        fh.seek(offset)
+        data = fh.read(min(limit, end - offset))
+    if offset + len(data) < end:   # cortado por el tope: hasta la última línea entera
+        cut = data.rfind(b"\n")
+        data = data[:cut + 1] if cut >= 0 else b""
+    return data
+
+
+def cleanup_days(base: Path, keep_days: int, now_ms: int) -> int:
+    """Borra los días de ctx, positions y fast más viejos que keep_days (el de hoy cuenta). Devuelve cuántos."""
+    if keep_days <= 0:
+        return 0
+    first = day_of(now_ms - (keep_days - 1) * 86_400_000)
+    gone = 0
+    for kind in KINDS:
+        folder = base / kind
+        if not folder.is_dir():
+            continue
+        for f in folder.iterdir():
+            m = DAY_FILE.match(f.name)
+            if m and m.group(1) < first:
+                try:
+                    f.unlink()
+                    gone += 1
+                except OSError:
+                    pass
+    return gone
+
+
+def read_rows(data_dir: Path, kind: str, day: str) -> list:
+    """Las líneas de un día, juntando lo del PC y lo bajado de la nube, en orden. Manda el PC: una línea de la nube
+    entra solo si el PC no tiene ninguna a menos de media vuelta de ella (las dos graban las mismas vueltas, a otras
+    horas)."""
+    def load(path):
+        rows = []
+        try:
+            with open(path, encoding="utf-8") as fh:
+                for line in fh:
+                    try:
+                        rows.append(json.loads(line))
+                    except ValueError:
+                        continue
+        except OSError:
+            pass
+        return [r for r in rows if isinstance(r, dict) and isinstance(r.get("t"), int)]
+
+    mine = sorted(load(root(data_dir) / kind / f"{day}.jsonl"), key=lambda r: r["t"])
+    cloud = load(cloud_root(data_dir) / kind / f"{day}.jsonl")
+    half = KINDS.get(kind, 60) * 1000 // 2
+    times = [r["t"] for r in mine]
+    out = list(mine)
+    for r in cloud:
+        i = bisect.bisect_left(times, r["t"])
+        near = [times[j] for j in (i - 1, i) if 0 <= j < len(times)]
+        if all(abs(t - r["t"]) >= half for t in near):
+            out.append(r)
+    out.sort(key=lambda r: r["t"])
+    return out
+
+
+def make_files_router(data_dir: Path, keep_days: int) -> APIRouter:
+    """Rutas para bajar los días grabados (las usa la suite contra el collector de la nube). Solo lectura."""
+    r = APIRouter()
+    base = root(data_dir)
+
+    @r.get("/api/hyperliquid/days")
+    async def hl_days():
+        return {"now": int(time.time() * 1000), "keep_days": keep_days, "files": await asyncio.to_thread(list_days, base)}
+
+    @r.get("/api/hyperliquid/file/{kind}/{day}")
+    async def hl_file(kind: str, day: str, offset: int = 0):
+        from fastapi.responses import Response
+        try:
+            data = await asyncio.to_thread(read_from, base, kind, day, max(0, int(offset)))
+        except ValueError:
+            raise HTTPException(status_code=404, detail="carpeta o día inválido")
+        return Response(content=data, media_type="application/octet-stream")
+
+    return r
+
+
 class HlRecorder:
     def __init__(self, symbols, data_dir: Path, http, now=time.time, sleep=asyncio.sleep):
         self.base = root(data_dir)
@@ -262,12 +483,26 @@ class HlRecorder:
         self.latest_ctx = {"t": t, "coins": found}
         self.state["ctx"].update(last=t, error=None, count=len(found))
 
+    async def _leaderboard_chunks(self):
+        """Los bytes del leaderboard a medida que llegan (httpx.stream). Un cliente sin stream (las pruebas) da todo junto."""
+        if hasattr(self.http, "stream"):
+            async with self.http.stream("GET", LEADERBOARD_URL, timeout=600) as r:
+                r.raise_for_status()
+                async for chunk in r.aiter_bytes():
+                    yield chunk
+        else:
+            r = await self.http.get(LEADERBOARD_URL, timeout=600)
+            r.raise_for_status()
+            yield r.content
+
     async def wallets_once(self):
-        r = await self.http.get(LEADERBOARD_URL, timeout=600)
-        r.raise_for_status()
-        data = await asyncio.to_thread(json.loads, r.content)
-        rows = data.get("leaderboardRows") if isinstance(data, dict) else data
-        picked = top_wallets(rows or [])
+        stream, picker, rows = RowStream(), WalletPicker(BY_VALUE, BY_VOLUME), 0
+        async for chunk in self._leaderboard_chunks():
+            for row in stream.feed(chunk):
+                picker.add(row)
+                rows += 1
+        picked = picker.result()
+        self.state["wallets"]["rows"] = rows
         if not picked:
             raise RuntimeError("el leaderboard llegó vacío")
         t = int(self.now() * 1000)

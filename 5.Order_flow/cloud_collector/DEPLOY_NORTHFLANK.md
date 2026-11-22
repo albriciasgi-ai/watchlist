@@ -253,6 +253,38 @@ Ver `12.AltagraciaTradingSuite/CLAUDE.md`, seccion "Nube contra el archivo ofici
 - **Despliegue:** copiar a la rama `deploy` de `albriciasgi-ai/footprint-collector` `main.py`, `Dockerfile`, `requirements.txt` (suma httpx), `book_recorder.py` y `book_store.py`.
 
 
+## Hyperliquid (22/11/2026)
+
+**Pedido:** la suite graba Hyperliquid (estado por moneda y posiciones de las ballenas con su precio de liquidación, para el plan on-chain) solo mientras está abierta, y el estudio necesita semanas seguidas. Tiene que ser gratis: va dentro de este servicio, sin pedir más recursos.
+
+- **Qué graba:** el grabador de la suite. `hl_recorder.py` es copia exacta de `12.AltagraciaTradingSuite/server/hl_recorder.py`, y `tests/hl_cloud_checks.py` de la suite comprueba que siga igual. Solo lee la API pública `info` de Hyperliquid y su leaderboard. En `/data/live/hyperliquid/`:
+  - `ctx/`, cada minuto: interés abierto, funding, precios, prima y volumen de cada moneda;
+  - `wallets.json`, una vez al día: unas 1,200 cuentas del leaderboard;
+  - `positions/`, cada 15 minutos: las posiciones de esas cuentas;
+  - `fast/`, cada minuto: las de las cuentas con liquidación a menos de 10% del precio.
+- **Memoria:** la lista de cuentas (~38 MB) se lee por partes. Leída entera pasaba de 250 MB, la mitad del servicio, y los reinicios por memoria del 13/11 ya dejaron huecos en los trades.
+- **Variables nuevas** (sin rehacer la imagen: basta reiniciar):
+  - `HL`: 1 por omisión; 0 lo apaga;
+  - `HL_SYMBOLS`: las de `BOOK_SYMBOLS` por omisión;
+  - `HL_KEEP_DAYS`: 14. Unos 13 MB por día, así que unos 180 MB.
+- **Pedidos:** desde la IP de Northflank, aparte de la del PC: el límite de la API (1,200 de peso por minuto) no se comparte con la suite.
+- **Rutas nuevas:**
+  - `GET /api/hyperliquid/status`, `/api/hyperliquid/ctx/{simbolo}` y `/api/hyperliquid/liqmap/{simbolo}`, como en la suite;
+  - `GET /api/hyperliquid/days`: por carpeta y día, los bytes hasta la última línea entera;
+  - `GET /api/hyperliquid/file/{ctx|positions|fast}/{dia}?offset=`: desde ese byte, hasta 8 MB, solo líneas enteras.
+- **`/health`** suma `hyperliquid`.
+- **En el PC:** `12.AltagraciaTradingSuite/server/hl_cloud.py` baja cada 10 minutos lo nuevo de cada archivo a `OrderFlowData/live/hyperliquid_cloud`.
+- **Despliegue:** copiar a la rama `deploy` de `albriciasgi-ai/footprint-collector` `main.py`, `Dockerfile` y `hl_recorder.py`, y "Deploy" en Builds.
+
+**Desplegado el 22/11:** build `clear-muscle-9783` (commit 0db5b61 de la rama `deploy`), con el botón "Deploy" desde el navegador integrado y la sesión del usuario.
+- **Antes de reiniciar**, tras 8 días encendido sin reinicios: 362 de 512 MB y 19% de la CPU. Al desplegar el 13/11 estaba en 167 MB. Habrá que mirar si la memoria vuelve a subir así.
+- **Después:** 181 MB y 31% de la CPU durante la primera vuelta de Hyperliquid.
+  - la lista de cuentas (46,409 filas, 1,217 cuentas) bajó en segundos desde el datacenter;
+  - la vuelta completa tardó 226 s, con las 1,217 cuentas y 1,009 posiciones;
+  - el libro siguió con sus 20 monedas.
+- **La página de Northflank** tardó unos 3 minutos en cargar, porque su archivo principal baja a unos 25 KB/s. Una dirección escrita a mano la vuelve a cargar entera: conviene moverse con clics dentro de la página.
+
+
 ## Trades sumados al final del día, sin quedarse sin memoria (13/11/2026)
 
 **Problema:** al ir a desplegar el libro, Northflank mostraba el servicio con 4 reinicios en un día, el último "Out-of-Memory killed (OOMKilled)". Fueron hoy a las 12:51, 13:34 y 14:58 de Colombia, todos por la tarde UTC. El plan es `nf-compute-20`: 0.2 vCPU y 512 MB. Cada reinicio deja un hueco en los trades.

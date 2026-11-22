@@ -60,7 +60,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── book_recorder.py   Graba el libro completo de Bybit (orderbook.full) de las monedas de la suite (ver "Libro completo")
 │   ├── book_store.py      Formato y lectura del libro grabado (OrderFlowData/live/book, y live/book_cloud de la nube)
 │   ├── book_cloud.py      Baja de la nube (Northflank) los minutos del libro que el PC no tiene completos
-│   ├── hl_recorder.py     Graba Hyperliquid: estado por moneda y posiciones de las ballenas (ver "Hyperliquid")
+│   ├── hl_recorder.py     Graba Hyperliquid: estado por moneda y posiciones de las ballenas (ver "Hyperliquid"); copia exacta en el collector
+│   ├── hl_cloud.py        Baja de la nube (Northflank) lo que grabó de Hyperliquid, a live/hyperliquid_cloud
 │   ├── book_heatmap.py    Mapa de liquidez por vela y precio, para la pestaña "Mapa" (/api/book/heatmap)
 │   ├── book_measures.py   Medidas del libro de cada trade del journal (grupo "Libro"); App 1 las usa en su Observador (book_reading.py)
 │   ├── book_study.py      Medición de semanas: qué hace la liquidez al llegar el precio a tus zonas, contra zonas al azar
@@ -75,7 +76,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── mobile_devices.py  Celulares emparejados y pedidos firmados (ver "Puerta móvil")
 │   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
 │   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40) y hl_checks.py (29), sin conexión
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34) y hl_cloud_checks.py (16), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -1053,7 +1054,7 @@ Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de c
   - la vuelta de posiciones tardó 10.8 minutos de uno en uno (664 posiciones) y 5.05 minutos con 3 a la vez (1,218 de 1,219 cuentas respondieron, 662 posiciones);
   - en BTC (precio 60,332): 281 posiciones; se liquidarían 150 M USD de largos y 170 M de cortos a menos de 25%, en 37 franjas de 1%. La mayor, 31 M USD de largos entre 46,456 y 47,059. En ETH, 32 M de largos y 69 M de cortos.
 - **Limitaciones:**
-  - graba solo con la suite abierta. Para semanas seguidas habría que llevarlo al collector de Northflank, como el libro;
+  - graba en el PC solo con la suite abierta; para eso está la nube (ver "En la nube (22/11)", abajo);
   - el precio de liquidación de una cuenta con margen cruzado depende de toda la cuenta y cambia con sus otras posiciones: es un valor del momento de la vuelta;
   - se sigue una parte de las cuentas, no todas.
 - **Indicador "Liquidaciones Hyperliquid"** (21/11, en la lista de indicadores del gráfico principal; apagado de fábrica):
@@ -1074,7 +1075,25 @@ Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de c
 - **Falta (siguientes pasos del plan):**
   - la capa del mapa con la historia minuto a minuto (necesita una ruta que lea `fast` y `positions`);
   - con 4 a 6 semanas grabadas, el estudio: ¿el precio va a buscar esos grupos más que un nivel al azar?
-- **Pruebas:** `server/tests/hl_checks.py` (29, con la vuelta rápida y el reintento) y, en App 1, `tests/hlliquidations.test.mjs` (6), sin conexión:
+- **En la nube (22/11, pedido del usuario: semanas seguidas de datos, gratis):** el collector de Northflank corre el mismo grabador, así se graba aunque la suite esté cerrada. Va dentro del servicio que ya existe: el plan gratis no da otro.
+  - **Copia exacta:** `5.Order_flow/cloud_collector/hl_recorder.py`; `hl_cloud_checks.py` comprueba que siga igual. Un cambio se hace aquí y se copia allá.
+  - **Lista de cuentas por partes:** el leaderboard (~38 MB) se lee a medida que llega (`RowStream`, con `raw_decode` del JSON de Python, y `WalletPicker`, que guarda solo las 300 y las 1,000 que se eligen). Antes se leía entero: pasaba de 250 MB, la mitad de la memoria del servicio. Con la lista real del 22/11 (46,465 filas) da las mismas 1,218 cuentas en el mismo orden, con 1 MB de memoria contra 258 MB y 0.5 s de CPU. Vale también en el PC.
+  - **Días:** la nube guarda `HL_KEEP_DAYS` (14 de fábrica; unos 13 MB por día, medido en el PC el 22/11), y cada hora borra los más viejos (`cleanup_days`).
+  - **Rutas de la nube:** `/api/hyperliquid/status`, `/ctx`, `/liqmap` (las mismas de la suite), y `GET /api/hyperliquid/days` (bytes completos de cada carpeta y día) y `GET /api/hyperliquid/file/{ctx|positions|fast}/{día}?offset=` (desde ese byte, hasta 8 MB y solo líneas enteras).
+  - **Bajada** (`server/hl_cloud.py`): 2 minutos después de abrir la suite y luego cada 10, baja de cada archivo solo lo que se agregó desde la vuelta anterior, a `OrderFlowData/live/hyperliquid_cloud`. Un pedido cortado no se guarda, y hasta 40 MB por vuelta. `SUITE_HL_CLOUD=0` lo apaga; sin esa variable sigue a `SUITE_HL` y luego a `SUITE_RECORD`. Estado en `GET /api/hyperliquid/cloud` y en `hyperliquid_cloud` de `/api/suite/status`.
+  - **Leer las dos:** `hl_recorder.read_rows(datos, carpeta, día)` junta lo del PC y lo de la nube en orden. Manda el PC: una línea de la nube entra solo si el PC no tiene otra a menos de media vuelta. Lo usará la capa del mapa con la historia y el estudio.
+  - **Medido en el PC** (22/11, el grabador como en la nube, con las 20 monedas de fábrica y la API real; un solo pedido a la vez en las vueltas, porque la suite grababa desde la misma IP):
+- **memoria del proceso** al leer la lista de cuentas: de 54 a 58 MB. La forma de antes, en paralelo y con la misma lista, de 52 a 350 MB;
+    - **CPU:** 6 s en 21.5 minutos: la lista (46,446 filas, 1,218 cuentas, 4 a 5 minutos de bajada), una vuelta completa (1,218 cuentas, 1,016 posiciones, 14.5 minutos de a un pedido) y tres vueltas rápidas (88 cuentas). En la nube, con 3 pedidos a la vez, la vuelta completa vuelve a tardar unos 5 minutos;
+    - no se midió dentro del collector ni en Northflank: falta desplegar.
+  - **Desplegado el 22/11** (build `clear-muscle-9783`, commit 0db5b61 de la rama `deploy` de `albriciasgi-ai/footprint-collector`):
+    - en la nube, la lista de cuentas (1,217) bajó en segundos y la primera vuelta completa tardó 226 s, con las 1,217 cuentas y 1,009 posiciones;
+    - el mapa de BTC dio 109 posiciones cercanas, como la suite;
+    - el servicio quedó en 181 de 512 MB y 31% de su CPU durante esa vuelta.
+    - `hl_cloud.py` contra la nube real (carpeta temporal): la primera vuelta bajó 126 KB y la segunda, nada.
+
+    Ver `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md`, "Hyperliquid (22/11/2026)".
+- **Pruebas:** `server/tests/hl_checks.py` (34, con la vuelta rápida, el reintento y la lista por partes), `hl_cloud_checks.py` (16: la copia del collector, sus rutas corriendo en el mismo proceso, la bajada, `read_rows` y la limpieza) y, en App 1, `tests/hlliquidations.test.mjs` (6), sin conexión:
   - los nombres de las monedas;
   - el estado y las ballenas elegidas por capital y por volumen;
   - las posiciones y el mapa;

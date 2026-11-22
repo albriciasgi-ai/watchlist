@@ -101,6 +101,25 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### Altagracia Trading Suite + Collector de Northflank - 22 Noviembre 2026: Hyperliquid También en la Nube
+
+**Pedido:** el usuario preguntó por el cupo de Northflank y si convenía una segunda cuenta para guardar Hyperliquid. Como es un prototipo, tiene que ser gratis: va dentro del collector que ya existe.
+
+**Cambios:**
+1. **Lista de cuentas por partes** (`hl_recorder.py`): el leaderboard (~38 MB) se lee a medida que llega, sin tenerlo entero en memoria. Con la lista real da las mismas 1,218 cuentas, con 1 MB de memoria contra 258 MB. Vale también en el PC.
+2. **Collector de Northflank:** corre el mismo grabador (copia exacta) y guarda 14 días (`HL_KEEP_DAYS`), unos 180 MB. Rutas para bajar cada día desde un byte.
+3. **Suite** (`hl_cloud.py`): cada 10 minutos baja lo nuevo a `OrderFlowData/live/hyperliquid_cloud`. `hl_recorder.read_rows` junta PC y nube.
+4. **Pruebas:** `hl_checks.py` (34) y `hl_cloud_checks.py` (16).
+
+**IMPORTANTE:**
+- **Desplegado el 22/11** (build `clear-muscle-9783`, commit 0db5b61 de la rama `deploy`). En la nube: la lista de cuentas (46,409 filas, 1,217 cuentas) bajó en segundos y la primera vuelta completa tardó 226 s, con 1,009 posiciones. El servicio quedó en 181 de 512 MB. Antes de reiniciarlo, tras 8 días encendido, estaba en 362 MB.
+- La suite se reinicia sola al abrirla y desde ahí baja lo de la nube. Probado contra la nube real, en una carpeta temporal: la primera vuelta bajó 126 KB y la segunda, nada.
+- La página de Northflank tardó unos 3 minutos en cargar: su archivo principal baja a unos 25 KB/s.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Hyperliquid (21/11)", "En la nube (22/11)", y `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md` sección "Hyperliquid (22/11/2026)"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 21 Noviembre 2026: Indicador "Liquidaciones Hyperliquid" y Grabación Cada Minuto
 
 **Pedido:** tras ver el mapa de liquidaciones de Hyperliquid, el usuario eligió llevarlo como indicador al gráfico principal, y preguntó si se podía grabar minuto a minuto para el mapa.
