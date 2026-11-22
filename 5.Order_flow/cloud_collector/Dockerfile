@@ -29,6 +29,7 @@ COPY tape_format.py .
 COPY tape_recorder.py .
 COPY book_recorder.py .
 COPY book_store.py .
+COPY hl_recorder.py .
 
 # Puerto (Northflank usa variable PORT)
 ENV PORT=8000
