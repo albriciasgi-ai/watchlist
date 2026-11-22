@@ -6,9 +6,13 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Zonas de Trader Dale con el Primer Regreso
+
+Cinco elementos del libro de Trader Dale, con las cifras fijadas antes de correrlos (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, paso 3): apilados (DS), nodo doble (DN), orden grande (DG), acumulación (DA) y cluster del tramo (DC). La zona se arma con dos velas completas de un lado y se entra con una limit en el primer regreso, con el stop entre el 10% y el 20% del ATR diario. El control son las mismas zonas desplazadas de 1 a 3 ATR. En la fase 1 ninguna le gana a sus zonas desplazadas: quedan descartadas. De paso, el probador ya no guarda el tramo de una moneda cuyo almacén se está armando. Detalle en `Backtester/CLAUDE.md`, "ZONAS DE TRADER DALE CON EL PRIMER REGRESO (21/11/2026)".
+
 ### Noviembre 2026: Elementos de Byko en el Probador
 
-Cuatro elementos de los PDF de Byko (Bikotrading), con las cifras fijadas antes de correrlos (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, paso 2): falso rompimiento (FB), ruptura tras acumulación (BA), trampa de absorción (TA) y purga de OI (PO). Cada corrida suma el control "sin la firma": los mismos candidatos sin la llegada, el volumen o el OI que pide Byko. Detalle en `Backtester/CLAUDE.md`, "ELEMENTOS DE BYKO EN EL PROBADOR (21/11/2026)".
+Cuatro elementos de los PDF de Byko (Bikotrading), con las cifras fijadas antes de correrlos (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, paso 2): falso rompimiento (FB), ruptura tras acumulación (BA), trampa de absorción (TA) y purga de OI (PO). Cada corrida suma el control "sin la firma": los mismos candidatos sin la llegada, el volumen o el OI que pide Byko. Ninguna de las cuatro dio ventaja (fase 1, y fase 2 de la ruptura en 4 horas). Detalle en `Backtester/CLAUDE.md`, "ELEMENTOS DE BYKO EN EL PROBADOR (21/11/2026)".
 
 ### Noviembre 2026: OI de 5 Minutos de Bybit y Binance
 

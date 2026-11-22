@@ -1824,6 +1824,85 @@ quedaron fijadas en el plan antes de la primera corrida, y solo se corren las va
   - el control en la corrida y su suma en todas las monedas.
 - `rulefacets.test.mjs` (13) y `ruletester.test.mjs` (15) siguen pasando, y los cuatro archivos cambiados de la página compilan.
 
+## ZONAS DE TRADER DALE CON EL PRIMER REGRESO (21/11/2026)
+
+Paso 3 del plan de estrategias de Byko y de Trader Dale (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`). Las cifras quedaron fijadas
+en el plan antes de la primera corrida, y solo se corren las variantes declaradas allí.
+
+**Pedido del usuario:** "Sigue con Dale", tras cerrar Byko. La idea de su libro *Order Flow Trading Setups*: una zona marcada por el volumen, el precio se aleja una o dos velas completas, y se entra en el primer regreso, nunca en el segundo. El probador no lo había probado nunca: entraba en la vela del elemento o con una limit que vencía en pocas velas.
+
+### Elementos (`backend/dale.py`)
+
+| Código | Nombre | La zona | Dónde vale |
+|---|---|---|---|
+| DS | Apilados con regreso | La franja de los desequilibrios apilados (ST) | Monedas con almacén |
+| DN | Nodo doble con regreso | El POC alineado (AP): el mismo POC en dos velas | Monedas con almacén |
+| DG | Orden grande con regreso | La franja de la orden grande (GR), su "Trades Filter" | Monedas con almacén |
+| DA | Acumulación con regreso | El POC de la caja de la pestaña Régimen que termina con una ruptura; antes de armarse, el precio llega a 3 ATR del borde | Todas |
+| DC | Cluster del tramo con regreso | El pico de volumen del tramo del zigzag de 3 ATR, mirado cada 5 ATR que crece | Todas |
+
+- **La mecánica:**
+  - **Armado:** la zona se arma con 2 velas completas seguidas del mismo lado, sin tocarla; ese lado da la dirección. Si en 200 velas no se arma, se descarta.
+  - **Evento y entrada:** el evento es la vela que la arma. La regla pone ahí una limit en el borde cercano (entrada "limit", "near", 200 velas), que se llena en el primer regreso.
+  - **Stop:** queda entre el 10% y el 20% del ATR diario de 14 días. Si el borde lejano de la zona más 0.1 ATR pasa del 20%, la zona no se opera. Si queda más cerca del 10%, el stop se aleja hasta ahí.
+  - **Cómo se arma la regla:** la zona del evento ya trae el stop, así que la regla usa "borde lejano de la zona" sin margen. El botón «Entrada, stop y objetivo de Dale» pone todo eso y 2R.
+- **Volumen por precio:** en DA y DC se reparte parejo en el rango de cada vela. Es una aproximación, en todas las monedas.
+- **DS, DN y DG** salen de `span["events"]` (los elementos de order flow de la fase). Las reglas de Dale corren con `volFilter: 0`, porque Dale no pide velas de mucho volumen.
+- **Corregido antes de correr:** el cluster del tramo se miraba una sola vez, al medir 5 ATR. Así tomaba la base del movimiento y no veía las pausas posteriores. Ahora se mira cada 5 ATR que crece el tramo, y el cluster tiene que ser un pico del perfil.
+
+### Control "zonas desplazadas"
+
+- **Qué es:** con `control`, cada zona se mueve entre 1 y 3 ATR arriba o abajo. Es al azar pero siempre igual: la semilla es la zona. Mantiene el mismo alto y la misma mecánica.
+- **Dónde se ve:** `controlKind: "dale"`. El resumen lo muestra en "¿Aporta dónde estuvo el volumen?", y el informe "Todas" lo junta.
+- **Cada trade** guarda `dale`: dónde nació la zona, en cuántas velas se armó, su stop en ATR diario y el desplazamiento.
+
+### Fase 1 (21 y 22/11): ninguna es candidata
+
+- **Cómo se corrió:** `OrderFlowData/research/dale/2026-11-21/fase1.py`, como el de Byko: `rule_tester.run`, sin guardar corridas en el registro del usuario. Son 16 corridas: las cinco zonas en 30m, DA y DC en 1h, y DC en 30m con el OI sostenido. Resultados en `resultados.json` y `resumen.md` de esa carpeta.
+- **Dónde estuvo el volumen no aporta:** ninguna zona le gana con margen a las mismas zonas desplazadas.
+  - **Apilados (DS):** +0.012 R por trade en las monedas de siempre, con 16,703 trades, y +0.043 en XRP. Sus zonas desplazadas dan +0.097 y +0.091: en las de siempre, la zona real pierde con margen (−0.085).
+  - **Las otras cuatro** pierden de −0.07 a −0.19 R, igual que sus zonas desplazadas. El cluster del tramo en 30m, en las monedas nuevas: 30,266 trades, −0.111 R, positivo en 0 de 43.
+- **La mecánica le gana al azar, pero pierde.** Alejarse y entrar con una limit en el primer regreso da más que entrar a mercado en velas al azar en 15 de las 16 corridas, hasta +0.25 R por trade y con margen en 9. Parte es la comisión de maker, que con stops de 10 a 20% del ATR diario pesa. Salvo los apilados, todas pierden.
+- **El proceso del usuario** (DC 30m con el OI sostenido): −0.095 R en las de siempre y −0.125 en las nuevas, sin diferencia con las zonas desplazadas.
+- **Curiosidad sin valor de prueba:** las zonas desplazadas de los apilados ganan de +0.09 a +0.10 R. Salió de un control, después de mirar: solo vale como hipótesis nueva, fijada antes y juzgada en las fases 2 y 3.
+- **Cierre del paso 3:** las cinco zonas quedan descartadas en la fase 1, y el paso 4 (la suite) no tiene nada que llevar.
+
+### Arreglado: tramos guardados a medio armar (22/11)
+
+- **Qué pasó:** el panel armó el almacén de SUI justo mientras corría la fase 1, del 21/11 a las 23:56 al 22/11 a las 00:02.
+  - DS y DN no tomaron SUI.
+  - DG la tomó y su tramo de 30m quedó guardado en `tester/cache` con las 10,176 velas, pero sin barridos, órdenes grandes ni delta exacto: el flujo se escribió después. Dio 0 trades.
+  - `detect_span()` guarda cada tramo para siempre ("una fase no cambia"), así que se habría seguido usando.
+- **Ahora** (`_store_settled`):
+  - un tramo se guarda, en disco y en memoria, solo si cada día del almacén de la fase tiene su flujo y ningún archivo de esos días se escribió después de empezar a detectarlo (con un minuto de margen);
+  - el tramo guardado lleva `started`, cuándo empezó su detección;
+  - al leerlo, si después se escribió algún día de la fase, se vuelve a detectar.
+
+  Los de antes, sin `started`, se miden por la hora del archivo. `of_elements` ya hacía lo mismo con sus días en memoria.
+- **El archivo de SUI se borró.** Las siete monedas con almacén tienen hoy su flujo en todos los días (revisado el 22/11), así que el candado no frena a ninguna.
+- **Repetidas con SUI** (`con_sui.py`, sin cambiar las reglas): dan lo mismo.
+  - DS: 17,667 trades, +0.012 R, −0.089 contra sus zonas desplazadas, con margen.
+  - DN: 3,111 trades, −0.147 R.
+  - DG: 5,011 trades, −0.066 R, −0.013 contra sus zonas desplazadas.
+
+  DA y DC no cambian: solo usan las velas, y las de SUI estaban completas.
+
+### Pruebas
+
+- `tests/test_dale.py` (10):
+  - el ATR diario sin el día en curso;
+  - el perfil por velas;
+  - el armado (velas seguidas, la cuenta que vuelve a empezar, el plazo y el lado);
+  - el stop entre el 10% y el 20%;
+  - las zonas del almacén;
+  - la acumulación y el cluster con su pausa;
+  - el control;
+  - que lo sabido no cambie;
+  - la corrida con el control.
+- `tests/test_rule_tester.py` suma 1 (17): un tramo con un día sin flujo no se guarda; con el flujo completo se guarda y se usa; si después se escribe un día, se vuelve a detectar. Sin el candado, falla.
+- `rulefacets.test.mjs` (13) y `ruletester.test.mjs` (15) siguen pasando, y la página compila.
+- Las del probador que pasan por el tramo (13 archivos, 115 pruebas) pasan con el candado. Todas las del backend: 554 pasan y fallan las 2 de siempre (`test_endpoints` por la versión y `test_lru_cache::test_clear`).
+
 ## REVISIÓN DE CANDIDATOS POR SESIONES (18/11/2026)
 
 Pedido del usuario: sus trades manuales (24 cerrados, 42% de acierto y +0.26 R ±0.71 al 18/11) rinden más que las reglas del probador, y cree que es por intuición que una regla rígida no recoge. Esto lo mide: una regla floja propone y él decide. Además notó que en una corrida de trades seguidos los primeros le salen peor, porque va leyendo el mercado: por eso las sesiones son un tramo seguido y en orden, no momentos sueltos.

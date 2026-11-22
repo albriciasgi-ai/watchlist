@@ -39,6 +39,7 @@ export const FACETS = {
   ba: ['elementos', 'Ruptura tras acumulación'],
   ta: ['elementos', 'Trampa de absorción'],
   po: ['elementos', 'Purga de OI'],
+  dale: ['elementos', 'Zonas de Dale'],
   wise: ['elementos', 'Tres sabios'],
   smc: ['elementos', 'Estructura SMC'],
   vpa: ['elementos', 'Lector VPA'],
@@ -191,6 +192,13 @@ export function ruleFacets(rule, labels = {}) {
   if (rule.ba && has('BA')) add('ba', `firma: ${rule.ba.bars} velas a ${n(rule.ba.near)} ATR o menos del borde, mínimos crecientes`);
   if (rule.ta && has('TA')) add('ta', `al ${n(rule.ta.share)} del borde tras ${n(rule.ta.rise)} ATR en ${rule.ta.riseBars} velas; firma: OI de ${oiFrom(rule.ta.source)} en ${rule.ta.oiBars} velas con z ≥ ${n(rule.ta.z)}, avance ≤ ${n(rule.ta.advance)} ATR`);
   if (rule.po && has('PO')) add('po', `${n(rule.po.move)} ATR en ${rule.po.bars} velas, volumen ≥ ${n(rule.po.vol)}x; firma: OI de ${oiFrom(rule.po.source)} en ${rule.po.oiBars} velas con z ≤ −${n(rule.po.z)}`);
+  if (rule.dale && codes.some(code => ['DS', 'DN', 'DG', 'DA', 'DC'].includes(code))) {
+    const d = rule.dale;
+    const parts = [`se arma con ${d.away} velas completas`, `stop de ${Math.round(Number(d.minDay) * 100)}% a ${Math.round(Number(d.maxDay) * 100)}% del ATR diario`];
+    if (has('DA')) parts.push(`acumulación: llega a ${n(d.run)} ATR`);
+    if (has('DC')) parts.push(`cluster: zigzag de ${n(d.leg)} ATR, tramo de ${n(d.minLeg)}, ≥ ${n(d.bump)}x la mediana`);
+    add('dale', parts.join(', '));
+  }
   const resting = !!rule.vp && has('VE') && rule.vp.veEntry === 'resting';
   if (rule.vp && codes.some(code => VP_CODES.includes(code))) {
     const vp = rule.vp;

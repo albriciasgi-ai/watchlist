@@ -18,7 +18,7 @@ import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
   contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText, usesVpa, VPA_EXITS,
-  chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, listText
+  chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, listText, DALE_CODES
 } from './ruleTester.js';
 import { loadWilliamsSettings, mergeWilliamsConfig } from '../indicators/williams.js';
 import { loadSmcSettings, mergeSmcConfig } from '../indicators/smcStructure.js';
@@ -1386,6 +1386,41 @@ const RuleTesterApp = () => {
             </div>
           </>
         )}
+        {DALE_CODES.some(code => rule.codes.includes(code)) && (
+          <>
+            <div className="rt-row">
+              <span title="Velas completas seguidas del mismo lado de la zona, sin tocarla, para armarla">Dale: se arma con</span>
+              <Num value={rule.daleAway} min={1} max={20} onChange={(daleAway) => patch({ daleAway })} /><span>velas completas · stop entre</span>
+              <Num value={rule.daleMinDay} min={0} max={2} step={0.05} onChange={(daleMinDay) => patch({ daleMinDay })} /><span>y</span>
+              <Num value={rule.daleMaxDay} min={0.01} max={5} step={0.05} onChange={(daleMaxDay) => patch({ daleMaxDay })} /><span>del ATR diario</span>
+              <button type="button" className="rt-btn" title="Limit en el borde cercano de la zona que vale 200 velas, stop en el borde lejano sin margen (la zona ya lo trae) y objetivo de 2R"
+                onClick={() => patch({ entryType: 'limit', entryAt: 'near', entryExpiry: 200, stopType: 'zone', stopBuffer: 0, stopMaxAtr: 20, useTarget: true, targetR: 2 })}>
+                Entrada, stop y objetivo de Dale
+              </button>
+            </div>
+            {rule.codes.includes('DA') && (
+              <div className="rt-row">
+                <span title="Antes de armarse, el precio llega a tantos ATR del borde de la caja: el fuerte movimiento tras la acumulación">Acumulación: el precio llega a</span>
+                <Num value={rule.daleRun} min={0} max={50} step={0.5} onChange={(daleRun) => patch({ daleRun })} /><span>ATR del borde de la caja</span>
+              </div>
+            )}
+            {rule.codes.includes('DC') && (
+              <div className="rt-row">
+                <span title="El tramo del zigzag, la primera vez que mide tantos ATR; el cluster tiene tantas veces la mediana de las filas de su perfil">Cluster: zigzag de</span>
+                <Num value={rule.daleLeg} min={0.5} max={20} step={0.5} onChange={(daleLeg) => patch({ daleLeg })} /><span>ATR, tramo de</span>
+                <Num value={rule.daleMinLeg} min={1} max={50} step={0.5} onChange={(daleMinLeg) => patch({ daleMinLeg })} /><span>ATR, cluster ≥</span>
+                <Num value={rule.daleBump} min={1} max={20} step={0.1} onChange={(daleBump) => patch({ daleBump })} /><span>× la mediana</span>
+              </div>
+            )}
+            <div className="rt-note">
+              Las zonas de Trader Dale, con las cifras fijadas en <code>docs/PLAN_ESTRATEGIAS_BYKO_DALE.md</code> antes de correrlas. La zona se arma cuando el precio se aleja
+              y deja velas completas de un lado sin tocarla. Ese lado da la dirección: si vuelve desde arriba, largo. La regla pone ahí una limit en el borde cercano, que se llena en el primer regreso.
+              El stop ya viene en la zona, entre el 10% y el 20% del ATR diario: usa "Entrada, stop y objetivo de Dale".
+              <b> Apilados</b>, <b>nodo doble</b> y <b>orden grande</b> salen del almacén de trades. <b>Acumulación</b> y <b>cluster del tramo</b> usan un perfil por velas y valen en todas las monedas.
+              Cada corrida suma el control de las <b>zonas desplazadas</b>: las mismas zonas movidas de 1 a 3 ATR, con la misma mecánica.
+            </div>
+          </>
+        )}
         {usesResponse(rule) && (
           <>
             <div className="rt-row">
@@ -2026,14 +2061,16 @@ const RuleTesterApp = () => {
       )}
       {result.control && (
         <div className="rt-group">
-          <h4>{result.controlKind === 'byko' ? '¿Aporta la firma de Byko?' : '¿Aportan las liquidaciones?'}</h4>
+          <h4>{{ byko: '¿Aporta la firma de Byko?', dale: '¿Aporta dónde estuvo el volumen?' }[result.controlKind] || '¿Aportan las liquidaciones?'}</h4>
           <div className="rt-note">
             {result.controlKind === 'byko'
               ? <>Los mismos candidatos <b>sin</b> la firma (la llegada y el volumen, o el OI): </>
-              : <>La misma regla tras barrer un swing <b>sin</b> liquidaciones: </>}
+              : result.controlKind === 'dale'
+                ? <>Las mismas zonas <b>desplazadas</b> de 1 a 3 ATR, con la misma mecánica: </>
+                : <>La misma regla tras barrer un swing <b>sin</b> liquidaciones: </>}
             {result.control.n ?? 0} trades{result.control.n ? <>, acierto {fmtPct(result.control.winRate)}, <R value={result.control.avgR} digits={3} /> R por trade</> : null}.
-            {result.control.edge && <> Diferencia a favor {result.controlKind === 'byko' ? 'de la firma' : 'de las liquidaciones'}: <R value={result.control.edge.r} digits={3} /> R (de {result.control.edge.low} a {result.control.edge.high}).{' '}
-              {result.control.edge.clear ? 'Se distingue.' : result.controlKind === 'byko' ? 'No se distingue de los candidatos sin la firma.' : 'No se distingue de un barrido cualquiera.'}</>}
+            {result.control.edge && <> Diferencia a favor {{ byko: 'de la firma', dale: 'de la zona de volumen' }[result.controlKind] || 'de las liquidaciones'}: <R value={result.control.edge.r} digits={3} /> R (de {result.control.edge.low} a {result.control.edge.high}).{' '}
+              {result.control.edge.clear ? 'Se distingue.' : { byko: 'No se distingue de los candidatos sin la firma.', dale: 'No se distingue de una zona cualquiera.' }[result.controlKind] || 'No se distingue de un barrido cualquiera.'}</>}
             {result.liqFrom && <> Liquidaciones desde el {result.liqFrom.split('-').reverse().join('/')}.</>}
           </div>
         </div>
@@ -2292,8 +2329,8 @@ const RuleTesterApp = () => {
               )}
               {allReport.control && (
                 <div className="rt-note" style={{ marginTop: 4 }}>
-                  {allReport.control.kind === 'byko' ? 'Sin la firma de Byko' : 'Barridos sin liquidaciones'}: {allReport.control.n} trades, <R value={allReport.control.avgR} digits={3} /> R por trade.{' '}
-                  {allReport.control.edge && <>Diferencia a favor {allReport.control.kind === 'byko' ? 'de la firma' : 'de las liquidaciones'}: <R value={allReport.control.edge.r} digits={3} /> R
+                  {{ byko: 'Sin la firma de Byko', dale: 'Zonas desplazadas' }[allReport.control.kind] || 'Barridos sin liquidaciones'}: {allReport.control.n} trades, <R value={allReport.control.avgR} digits={3} /> R por trade.{' '}
+                  {allReport.control.edge && <>Diferencia a favor {{ byko: 'de la firma', dale: 'de la zona de volumen' }[allReport.control.kind] || 'de las liquidaciones'}: <R value={allReport.control.edge.r} digits={3} /> R
                     (entre {fmtR(allReport.control.edge.low, 3)} y {fmtR(allReport.control.edge.high, 3)}). {allReport.control.edge.clear ? 'El margen no incluye el cero.' : 'No se distingue.'}</>}
                 </div>
               )}

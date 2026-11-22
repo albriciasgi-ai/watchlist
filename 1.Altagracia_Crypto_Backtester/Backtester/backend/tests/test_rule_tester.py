@@ -1,4 +1,8 @@
 """Probador de reglas del Observador. Uso: python -m pytest tests/test_rule_tester.py"""
+import datetime as dt
+import os
+import time
+
 import numpy as np
 import pytest
 
@@ -196,3 +200,47 @@ def test_hueco_minimo_de_la_va_abandonada():
     assert len(go(bars, events, rule_va(vaGap=0.3))["trades"]) == 1
     far = go(bars, events, rule_va(vaGap=0.8))
     assert far["trades"] == [] and far["skipped"] == {"VA con hueco pequeño": 1}
+
+
+def test_un_tramo_no_se_guarda_mientras_se_arma_su_almacen(tmp_path, monkeypatch):
+    """El panel puede estar armando la moneda mientras corre una regla (SUI, 22/11): ese tramo no se guarda, y uno
+    guardado antes de que se escribieran sus días se vuelve a detectar."""
+    monkeypatch.setattr(rt.observer, "OBSERVER_DIR", tmp_path / "observer")
+    monkeypatch.setattr(rt.fs, "STORE_DIR", tmp_path / "store")
+    monkeypatch.setattr(rt.oe, "FLOW_DIR", tmp_path / "flow")
+    monkeypatch.setattr(rt, "has_store", lambda s: True)
+    monkeypatch.setattr(rt, "_spans", {})
+    calls = []
+
+    def detect(symbol, tf, start, *rest):
+        calls.append(start)
+        return {"bars": [{"t": start, "o": 1.0, "h": 2.0, "l": 0.5, "c": 1.5, "delta": 0.0, "vol": 10.0}], "events": []}
+    monkeypatch.setattr(rt.oe, "detect", detect)
+    old = time.time() - 3600
+
+    def write(root, day):
+        path = root / "TESTUSDT" / day.isoformat()[:4] / f"TESTUSDT_{day.isoformat()}.npz"
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b"x")
+        os.utime(path, (old, old))
+        return path
+    days = [dt.date(2024, 1, 1) + dt.timedelta(days=k) for k in range(3)]
+    for day in days:
+        write(tmp_path / "store", day)
+    for day in days[:2]:
+        write(tmp_path / "flow", day)  # Al tercer día todavía le falta su flujo
+    phase = {"phase": 1, "from": "2024-01-01", "to": "2024-01-03", "start": rt._ms("2024-01-01"), "end": rt._ms("2024-01-04")}
+    r = {"target": 0.05, "volFilter": 0}
+    path = rt._span_path("TESTUSDT", 30, phase, r)
+    assert rt.detect_span("TESTUSDT", 30, phase, r)["bars"] and not path.exists() and not rt._spans
+    flow = write(tmp_path / "flow", days[2])
+    rt.detect_span("TESTUSDT", 30, phase, r)
+    assert path.exists() and rt._spans  # Con su flujo completo se guarda
+    rt._spans.clear()
+    n = len(calls)
+    rt.detect_span("TESTUSDT", 30, phase, r)
+    assert len(calls) == n  # Y se usa lo guardado
+    os.utime(flow, None)  # El flujo de un día se escribe otra vez después del tramo guardado
+    rt._spans.clear()
+    rt.detect_span("TESTUSDT", 30, phase, r)
+    assert len(calls) > n and not rt._spans  # Se vuelve a detectar, y recién armado no se guarda

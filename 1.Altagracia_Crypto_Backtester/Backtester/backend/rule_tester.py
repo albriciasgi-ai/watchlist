@@ -30,6 +30,7 @@ import numpy as np
 
 import box_elements
 import byko
+import dale
 import flow_filters
 import fvg_swing
 import footprint_store as fs
@@ -75,7 +76,7 @@ PATTERN_OF = {"HAMMER": "HM", "SHOOTING_STAR": "HM", "ENGULFING_BULLISH": "EN", 
               "DOJI_DRAGONFLY": "DJ", "DOJI_GRAVESTONE": "DJ"}
 LINE_TYPES = ("vwap", "ema")   # VWAP móvil de N velas y EMA de N velas, sobre las velas de la regla
 RV_CODES = tuple(response_volume.CODES)  # Flecha y rombo del Volumen de Respuesta
-EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES) + tuple(box_elements.CODES) + tuple(fvg_swing.CODES) + tuple(williams.CODES) + tuple(smc.CODES) + tuple(vpa.CODES) + tuple(byko.CODES)  # Elementos del probador que no son de of_elements
+EXTRA_CODES = ("LIQ", "VH") + VP_CODES + ("CC",) + tuple(PATTERN_CODES) + RV_CODES + tuple(gaussian_channel.CODES) + tuple(box_elements.CODES) + tuple(fvg_swing.CODES) + tuple(williams.CODES) + tuple(smc.CODES) + tuple(vpa.CODES) + tuple(byko.CODES) + tuple(dale.CODES)  # Elementos del probador que no son de of_elements
 VP_CONTROL_RUNS = 3       # Corridas con los perfiles desplazados al azar que se juntan en el control
 MIN_TARGET_R = 0.3        # Un objetivo en un nivel a menos de esto del riesgo no se opera
 
@@ -102,7 +103,7 @@ def _iso(ms):
 # liquidaciones (LIQ) no lo necesitan: en las demás monedas la regla corre sobre el caché de velas de App 1.
 
 CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
-CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC", "BX", "BE", "CP", "FV", "SP", "IM") + tuple(williams.CODES) + tuple(smc.CODES) + tuple(vpa.CODES) + tuple(byko.CODES)
+CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC", "BX", "BE", "CP", "FV", "SP", "IM") + tuple(williams.CODES) + tuple(smc.CODES) + tuple(vpa.CODES) + tuple(byko.CODES) + ("DA", "DC")
 CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1), 1440: ("4h", 6)}  # marco → (clave del caché, velas que se unen)
 MIN_STORE_DAYS = 60
 _candles = {}
@@ -485,6 +486,8 @@ def clean_rule(raw):
     for code, key in byko.KEYS.items():
         if code in codes_used:
             extra[key] = byko.clean(key, raw.get(key))  # Los elementos de Byko (byko.py), con las cifras del plan de fábrica
+    if codes_used & set(dale.CODES):
+        extra["dale"] = dale.clean(raw.get("dale"))  # Las zonas de Dale con el primer regreso (dale.py)
     flow = raw.get("flow") or {}
     clean_flow = {}
     if flow.get("cvd"):
@@ -719,8 +722,32 @@ def _span_path(symbol, tf, phase, rule):
     return tester_dir() / "cache" / (key.replace(".", "p") + ".npz")
 
 
+SETTLE_S = 60  # Un día del almacén escrito hasta un minuto antes de detectar cuenta como recién armado
+
+
+def _store_settled(symbol, phase, since):
+    """Si los días de la fase ya estaban armados antes de `since` (segundos, como time.time()): cada día del almacén con
+    su flujo, y ningún archivo escrito después. El panel puede estar armando la moneda mientras corre una regla: el
+    22/11, SUI quedó con sus velas y sin barridos, órdenes grandes ni delta exacto, porque su flujo se escribió
+    después. Un tramo así no se guarda."""
+    for n in range(phase["start"] // oe.DAY_MS, -(-phase["end"] // oe.DAY_MS)):
+        day = dt.date(1970, 1, 1) + dt.timedelta(days=n)
+        try:
+            written = fs._day_path(symbol, day.isoformat()).stat().st_mtime
+        except OSError:
+            continue  # Un día sin almacén es un hueco de los datos
+        try:
+            written = max(written, oe._flow_path(symbol, day).stat().st_mtime)
+        except OSError:
+            return False  # Le falta su flujo: todavía se está armando
+        if written >= since - SETTLE_S:
+            return False
+    return True
+
+
 def detect_span(symbol, tf, phase, rule, progress=None):
-    """Velas y elementos de toda la fase. Se calcula una vez y queda en disco: una fase no cambia."""
+    """Velas y elementos de toda la fase. Se calcula una vez y queda en disco: una fase no cambia. Salvo que sus días
+    se estén armando todavía (`_store_settled`): entonces no se guarda, y uno guardado antes se vuelve a detectar."""
     path = _span_path(symbol, tf, phase, rule)
     with _lock:
         cached = _spans.get(str(path))
@@ -738,14 +765,19 @@ def detect_span(symbol, tf, phase, rule, progress=None):
             while len(_spans) > 3:
                 _spans.pop(next(iter(_spans)))
         return span
+    span, settled = None, True
     if path.exists():
         with np.load(path, allow_pickle=False) as z:
-            bars = [dict(t=int(t), o=float(o), h=float(h), l=float(l), c=float(c), delta=float(d), vol=float(v))
-                    for t, o, h, l, c, d, v in zip(z["t"], z["o"], z["h"], z["l"], z["c"], z["delta"], z["vol"])]
-            events = [dict(code=str(code), dir=int(d), t=int(t), known=int(k), lo=float(lo), hi=float(hi))
-                      for code, d, t, k, lo, hi in zip(z["e_code"], z["e_dir"], z["e_t"], z["e_known"], z["e_lo"], z["e_hi"])]
-        span = {"bars": bars, "events": events}
-    else:
+            # Desde cuándo vale lo guardado: el inicio de su detección (antes del 22/11, la hora del archivo)
+            started = float(z["started"]) if "started" in z.files else path.stat().st_mtime
+            if _store_settled(symbol, phase, started):
+                bars = [dict(t=int(t), o=float(o), h=float(h), l=float(l), c=float(c), delta=float(d), vol=float(v))
+                        for t, o, h, l, c, d, v in zip(z["t"], z["o"], z["h"], z["l"], z["c"], z["delta"], z["vol"])]
+                events = [dict(code=str(code), dir=int(d), t=int(t), known=int(k), lo=float(lo), hi=float(hi))
+                          for code, d, t, k, lo, hi in zip(z["e_code"], z["e_dir"], z["e_t"], z["e_known"], z["e_lo"], z["e_hi"])]
+                span = {"bars": bars, "events": events}
+    if span is None:
+        started = time.time()
         start, end, tf_ms = phase["start"], phase["end"], tf * 60000
         bars, events = [], []
         total = max(1, math.ceil((end - start) / (CHUNK_DAYS * oe.DAY_MS)))
@@ -763,7 +795,8 @@ def detect_span(symbol, tf, phase, rule, progress=None):
                 progress(done, total)
         span = {"bars": [dict(t=b["t"], o=b["o"], h=b["h"], l=b["l"], c=b["c"], delta=b["delta"], vol=b["vol"]) for b in bars],
                 "events": [dict(code=e["code"], dir=e["dir"], t=e["t"], known=e["known"], lo=e["lo"], hi=e["hi"]) for e in events]}
-        if span["bars"]:
+        settled = _store_settled(symbol, phase, started)
+        if span["bars"] and settled:
             path.parent.mkdir(parents=True, exist_ok=True)
             partial = path.with_suffix(".tmp.npz")
             b, e = span["bars"], span["events"]
@@ -773,12 +806,13 @@ def detect_span(symbol, tf, phase, rule, progress=None):
                 delta=np.array([x["delta"] for x in b]), vol=np.array([x["vol"] for x in b]),
                 e_code=np.array([x["code"] for x in e], dtype="U2"), e_dir=np.array([x["dir"] for x in e], np.int8),
                 e_t=np.array([x["t"] for x in e], np.int64), e_known=np.array([x["known"] for x in e], np.int64),
-                e_lo=np.array([x["lo"] for x in e]), e_hi=np.array([x["hi"] for x in e]))
+                e_lo=np.array([x["lo"] for x in e]), e_hi=np.array([x["hi"] for x in e]), started=np.float64(started))
             partial.replace(path)
-    with _lock:
-        _spans[str(path)] = span
-        while len(_spans) > 3:
-            _spans.pop(next(iter(_spans)))
+    if settled:
+        with _lock:
+            _spans[str(path)] = span
+            while len(_spans) > 3:
+                _spans.pop(next(iter(_spans)))
     return span
 
 
@@ -1570,7 +1604,31 @@ def _extra_events(symbol, rule, span, ctx, control=False, vp_shift=None):
     """Elementos del probador que no son de of_elements: liquidaciones, volumen, perfil por sesión y estructura."""
     return (_liq_vp_events(symbol, rule, span, ctx, control, vp_shift) + _cc_events(rule, span) + _pattern_events(rule, span)
             + _rv_events(rule, span) + _gc_events(rule, span) + _box_events(rule, span) + _fs_events(rule, span)
-            + _williams_events(rule, span) + _smc_events(rule, span) + _vpa_events(rule, span) + _byko_events(symbol, rule, span, control))
+            + _williams_events(rule, span) + _smc_events(rule, span) + _vpa_events(rule, span) + _byko_events(symbol, rule, span, control)
+            + _dale_events(rule, span, control))
+
+
+def _dale_codes(rule):
+    return tuple(c for slot in rule["recipe"]["slots"] for c in slot["codes"] if c in dale.CODES)
+
+
+def _dale_events(rule, span, control=False):
+    """Las zonas de Dale con el primer regreso (dale.py); con `control`, las mismas zonas desplazadas."""
+    codes = _dale_codes(rule)
+    bars = span["bars"]
+    if not codes or not bars:
+        return []
+    key = (_bars_key(bars), rule["tf"], "dale", json.dumps(rule["dale"], sort_keys=True), codes, control,
+           rule["target"], rule["volFilter"], len(span["events"]))
+    with _lock:
+        found = _extra.get(key)
+    if found is None:
+        found = dale.events(bars, rule["tf"], rule["dale"], codes, span["events"], control)
+        with _lock:
+            _extra[key] = found
+            while len(_extra) > 6:
+                _extra.pop(next(iter(_extra)))
+    return found
 
 
 def _byko_codes(rule):
@@ -1699,7 +1757,9 @@ LABELS = {"WD": "Barra divergente", "WA": "AO tres barras", "WF": "Ruptura de fr
           "BX": "Ruptura de caja", "BE": "Borde de caja", "FV": "FVG nuevo", "SP": "Swing",
           "QA": "Esfuerzo sin resultado", "QB": "Ruptura con volumen", "QF": "Ruptura sin volumen", "QR": "Retroceso sin volumen",
           "QT": "Prueba de poco volumen", "QS": "Frenado o techo", "QC": "Clímax de volumen", "QE": "Medidor VPA",
-          "FB": "Falso rompimiento", "BA": "Ruptura tras acumulación", "TA": "Trampa de absorción", "PO": "Purga de OI"}
+          "FB": "Falso rompimiento", "BA": "Ruptura tras acumulación", "TA": "Trampa de absorción", "PO": "Purga de OI",
+          "DS": "Apilados con regreso", "DN": "Nodo doble con regreso", "DG": "Orden grande con regreso",
+          "DA": "Acumulación con regreso", "DC": "Cluster del tramo con regreso"}
 
 
 def _labels(codes):
@@ -1909,6 +1969,7 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     smc_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in smc.CODES}
     vpa_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in vpa.CODES}
     byko_info = {(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in byko.CODES}
+    byko_info.update({(e["code"], e["dir"], e["known"]): {**e["info"], "code": e["code"]} for e in extra if e["code"] in dale.CODES})
     index = {t: i for i, t in enumerate(ctx["T"])}
     votes = os_._votes(bars, events, tf_ms)
     zones = {}
@@ -2070,7 +2131,9 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         elif ctx["vp"] is not None:
             trade["vp"] = ctx["vp"]  # El valor de la sesión anterior que usó la regla, y dónde abrió la sesión
         read = next((byko_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in byko_info), None)
-        if read is not None:
+        if read is not None and read["code"] in dale.CODES:
+            trade["dale"] = read  # La zona de Dale: dónde nació, cuándo se armó y su stop en ATR diario
+        elif read is not None:
             # Lo que midió la firma de Byko (llegada, volumen, OI) y si la cumplía; su caja se dibuja con el trade
             trade["byko"] = {k: v for k, v in read.items() if k != "box"}
             if read.get("box") and "box" not in trade:
@@ -2152,13 +2215,13 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             # Seguir el tramo en velas al azar: lo que el mercado ya daba por ir a favor del movimiento
             result["legBaseline"] = _leg_baseline(rule, ctx, trades, symbol)
             result["legEdge"] = _edge(s, result["legBaseline"])
-        if ("liq" in rule or _byko_codes(rule)) and not control:
+        if ("liq" in rule or _byko_codes(rule) or _dale_codes(rule)) and not control:
             # LIQ: el mismo gatillo tras barrer un swing sin liquidaciones. Byko: los mismos candidatos sin su firma
-            # (llegada, volumen u OI). Dice si esa pieza aporta algo
+            # (llegada, volumen u OI). Dale: las mismas zonas desplazadas. Dice si esa pieza aporta algo
             other = run(symbol, rule, span, phase, table, base=False, control=True)
             c = other.get("summary") or {}
             result["control"] = {key: c.get(key) for key in ("n", "winRate", "avgR", "seR", "profitFactor", "smallSample")}
-            result["controlKind"] = "liq" if "liq" in rule else "byko"
+            result["controlKind"] = "liq" if "liq" in rule else "byko" if _byko_codes(rule) else "dale"
             if s.get("n") and c.get("n"):
                 edge = s["avgR"] - c["avgR"]
                 se = math.sqrt(s["seR"] ** 2 + c["seR"] ** 2)

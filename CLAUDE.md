@@ -54,6 +54,38 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 22 Noviembre 2026: Zonas de Trader Dale con el Primer Regreso (paso 3 de las estrategias de Byko y Dale)
+
+**Pedido:** "Sigue con Dale", tras cerrar Byko. La idea de *Order Flow Trading Setups*: una zona marcada por el volumen, el precio se aleja una o dos velas completas y se entra en el primer regreso. El probador nunca lo había probado: AP y GR no se habían corrido, y ST solo a mercado en la vela del evento.
+
+**Cambios:**
+1. **Cifras fijadas antes de correr**, en `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md` (paso 3):
+   - la zona se arma con 2 velas completas seguidas del mismo lado, sin tocarla, en 200 velas como mucho;
+   - limit en su borde cercano, válida 200 velas, y stop entre el 10% y el 20% del ATR diario, como pide Dale;
+   - 2R, en 30 minutos, y las variantes declaradas;
+   - la condición para ser candidata, la misma de Byko.
+2. **Cinco elementos** en el probador (`backend/dale.py`):
+   - **DS, apilados**, **DN, nodo doble** y **DG, orden grande:** las franjas de ST, AP y GR, en las monedas con almacén;
+   - **DA, acumulación:** el POC de la caja que termina con una ruptura, tras un movimiento de 3 ATR;
+   - **DC, cluster del tramo:** el pico de volumen del tramo, mirado cada 5 ATR que crece. Es también el proceso manual del usuario.
+3. **Control "zonas desplazadas":** las mismas zonas movidas de 1 a 3 ATR, con la misma mecánica. El informe "Todas" lo junta.
+4. **Ventana:** las fichas, sus parámetros, el botón «Entrada, stop y objetivo de Dale» y "¿Aporta dónde estuvo el volumen?".
+5. **Arreglado en el probador:** el tramo de una moneda cuyo almacén se está armando ya no se guarda, y uno guardado antes de que se escribieran sus días se vuelve a detectar (`_store_settled`). Pasó con SUI durante la fase 1.
+6. **Pruebas:** `tests/test_dale.py` (10) y una más en `test_rule_tester.py` (17). Todas las del backend de App 1: 554 pasan y fallan las 2 de siempre.
+
+**IMPORTANTE:**
+- Como con Byko, el backend del usuario corre desde main y no conoce estos elementos hasta que se una esta rama. La fase 1 se corrió con `OrderFlowData/research/dale/2026-11-21/fase1.py`, sin guardar corridas en su registro.
+- **Fase 1: ninguna es candidata** (16 corridas):
+  - **dónde estuvo el volumen no aporta:** ninguna zona le gana con margen a sus zonas desplazadas. Los apilados dan +0.01 R por trade en 16,703 trades, y sus zonas desplazadas, +0.10;
+  - **la mecánica le gana al azar, pero pierde:** entrar con una limit en el primer regreso da más que entrar a mercado al azar en 15 de 16 corridas. Aun así, salvo los apilados, todas pierden de −0.07 a −0.19 R;
+  - **el proceso del usuario** (el cluster del tramo con el OI sostenido) tampoco: −0.10 y −0.13 R.
+- **Cierre:** las cinco zonas quedan descartadas. Con Byko y Dale cerrados, el paso 4 (la suite) no tiene nada que llevar. Resumen en `OrderFlowData/research/dale/2026-11-21/resumen.md`.
+- **SUI:** el panel armó su almacén mientras corría la fase 1. El tramo a medio armar que quedó guardado se borró, y DS, DN y DG se repitieron con SUI: dan lo mismo.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "ZONAS DE TRADER DALE CON EL PRIMER REGRESO (21/11/2026)" y `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`
+
+---
+
 ### App 1 - 21 Noviembre 2026: Elementos de Byko en el Probador (paso 2 de las estrategias de Byko y Dale)
 
 **Pedido:** "Sigue con Byko", tras aprobar el concepto y bajar el OI de 5 minutos.

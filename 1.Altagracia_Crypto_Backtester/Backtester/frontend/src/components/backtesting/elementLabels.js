@@ -26,7 +26,10 @@ export const ELEMENT_LABELS = {
   QA: 'Esfuerzo sin resultado', QB: 'Ruptura con volumen', QF: 'Ruptura sin volumen', QR: 'Retroceso sin volumen',
   QT: 'Prueba de poco volumen', QS: 'Frenado o techo', QC: 'Clímax de volumen', QE: 'Medidor VPA',
   // Byko, de Bikotrading (21/11)
-  FB: 'Falso rompimiento', BA: 'Ruptura tras acumulación', TA: 'Trampa de absorción', PO: 'Purga de OI'
+  FB: 'Falso rompimiento', BA: 'Ruptura tras acumulación', TA: 'Trampa de absorción', PO: 'Purga de OI',
+  // Trader Dale: la zona y el primer regreso (21/11)
+  DS: 'Apilados con regreso', DN: 'Nodo doble con regreso', DG: 'Orden grande con regreso', DA: 'Acumulación con regreso',
+  DC: 'Cluster del tramo con regreso'
 };
 
 /** Nombre corto de un código; sin nombre conocido, el código o el nombre que se pase. */

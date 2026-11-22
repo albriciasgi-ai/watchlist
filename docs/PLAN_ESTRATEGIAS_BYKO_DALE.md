@@ -163,6 +163,69 @@ Cuatro elementos del probador, cada uno con su firma y su control "sin la firma"
 
 ### Paso 3: Dale, la zona y el primer regreso
 
+**Fijado el 21/11/2026, antes de la primera corrida.** Cinco elementos nuevos, cada uno con una zona de Dale y la misma
+mecánica de regreso. Después solo se corren las variantes declaradas aquí.
+
+**La mecánica, común a los cinco:**
+- **La zona** nace en la vela en que se conoce.
+- **Se arma** cuando, después de nacer, 2 velas completas (todo su rango) quedan del mismo lado de la zona: arriba para un largo, abajo para un corto. Es el "se aleja una o dos velas completas" de Dale, y el lado da la dirección: si el precio vuelve desde arriba, largo.
+  - Las 2 velas van seguidas: si una toca la zona, la cuenta vuelve a empezar.
+  - Si en 200 velas no se arma, la zona se descarta.
+- **Entrada:** al armarse se pone una limit en el borde cercano de la zona. Vale 200 velas (unos 4 días en 30m) y se llena en el primer regreso. Cada zona da a lo sumo una entrada.
+- **Stop:** entre el 10% y el 20% del ATR diario (el de 14 días, sin el día en curso), como pide Dale.
+  - Si el borde lejano de la zona más 0.1 ATR queda más lejos que el 20%, la zona no se opera.
+  - Si queda más cerca que el 10%, el stop se aleja hasta el 10%.
+- **Objetivo:** 2R. Una posición a la vez, sin espera.
+- **Marco:** 30 minutos, como sus footprints.
+
+**Las zonas:**
+- **DS, apilados con regreso:** la franja de los desequilibrios apilados (ST) del almacén, sin el filtro de velas de mucho volumen (Dale no lo pide). Solo las 6 monedas con almacén.
+- **DN, nodo doble con regreso:** el POC alineado (AP), el mismo POC en dos velas seguidas. Solo las 6 monedas con almacén.
+- **DG, orden grande con regreso:** la franja de la orden grande (GR), su "Trades Filter". Solo las 6 monedas con almacén, y sin órdenes del 07/12/2021 al 19/12/2022.
+- **DA, acumulación con regreso:**
+  - la caja de la pestaña Régimen que termina con una ruptura;
+  - la zona es su POC: la franja de 30 filas con más volumen y las vecinas seguidas con el 70% o más;
+  - antes de armarse, el precio tiene que llegar a 3 ATR del borde de la caja: el "fuerte movimiento" de Dale.
+- **DC, cluster del tramo con regreso:**
+  - el tramo del zigzag de 3 ATR, la primera vez que mide 5 ATR o más y cada vez que crece otros 5 ATR, porque las pausas de una tendencia larga aparecen después;
+  - se toma el perfil del tramo en 30 filas;
+  - el cluster es el pico más alto del perfil (una fila con tanto o más volumen que sus vecinas) dentro del 70% central del tramo, si tiene 1.5 veces o más la mediana de las filas;
+  - la zona son esa fila y las vecinas seguidas con el 70% o más. Una franja que se cruza con otra del mismo tramo no se repite. Es también el proceso manual del usuario.
+  - **Corregido antes de la primera corrida**, al probar con velas armadas: mirando una sola vez, el perfil tomaba la base del movimiento y no veía las pausas.
+- **El volumen por precio** de DA y DC se reparte parejo en el rango de cada vela, en todas las monedas. Es una aproximación: el almacén solo lo tienen 6.
+
+**Control "zonas desplazadas":** cada zona se mueve entre 1 y 3 ATR hacia arriba o hacia abajo, al azar pero siempre igual, con el mismo alto y la misma mecánica.
+
+**Candidata a la fase 2:** las mismas tres condiciones de Byko:
+1. R por trade positivo;
+2. ventaja sobre el azar y sobre el tramo con margen;
+3. ventaja sobre las zonas desplazadas con margen.
+
+**Variantes declaradas** (no se corren otras):
+- DA y DC en 1 hora (Dale dice que los setups de perfil valen también en 1 hora);
+- DC en 30 minutos con el filtro "OI sostenido": el proceso del usuario pide el OI subiendo.
+
+**Lo que no entra todavía:**
+- el setup de rechazo, que necesita el footprint de la vela de rechazo;
+- las confirmaciones en 5m;
+- el objetivo antes del siguiente nodo;
+- la subasta sin terminar.
+
+**Hecho el 21/11:** los cinco elementos y el control de zonas desplazadas en el probador (CLAUDE.md de App 1, "ZONAS DE TRADER DALE CON EL PRIMER REGRESO").
+
+**Fase 1 (21 y 22/11): ninguna es candidata.** Son 16 corridas: las cinco zonas en 30 minutos y las variantes declaradas (`OrderFlowData/research/dale/2026-11-21/resumen.md`).
+- **Dónde estuvo el volumen no aporta.** Ninguna zona le gana con margen a las mismas zonas desplazadas.
+  - Los apilados dan +0.01 R por trade en las monedas de siempre (16,703 trades) y +0.04 en XRP. Sus zonas desplazadas dan +0.10 y +0.09: en las de siempre, la zona real pierde con margen contra una cualquiera.
+  - Las otras cuatro pierden de −0.07 a −0.19 R, como sus zonas desplazadas.
+- **La mecánica le gana al azar, pero pierde.** Alejarse y entrar con una limit en el primer regreso da más que entrar a mercado en velas al azar en 15 de las 16 corridas, hasta +0.25 R por trade y con margen en 9. Parte es la comisión de maker. Salvo los apilados, todas pierden.
+- **El proceso del usuario** (el cluster del tramo con el OI sostenido) da −0.10 R en las de siempre y −0.13 en las nuevas, sin diferencia con las zonas desplazadas.
+- **Una curiosidad sin valor de prueba:** las zonas desplazadas de los apilados ganan +0.09 a +0.10 R. Salió de un control, después de mirar los datos: solo vale como una hipótesis nueva, fijada antes de correrla y juzgada en las fases 2 y 3.
+- **SUI** pasó a tener almacén mientras corría la fase. DS, DN y DG se repitieron con ella, sin cambiar las reglas, y dan lo mismo.
+
+**Paso 3 cerrado:** las cinco zonas de Dale quedan descartadas en la fase 1.
+
+**Lo que se había propuesto** (antes de fijar las cifras):
+
 - Entrada nueva del probador: en el primer regreso a la zona, tras alejarse N velas completas, con una limit en la zona que vence en X días.
 - Zonas:
   - las que ya hay: desequilibrios apilados, POC alineado y orden grande;
@@ -174,6 +237,8 @@ Cuatro elementos del probador, cada uno con su firma y su control "sin la firma"
 - Las zonas con footprint van en las 6 monedas con almacén. El cluster del tramo también puede ir en las nuevas, con el perfil por velas.
 
 ### Paso 4: en la suite
+
+**Al 22/11 no hay nada que llevar:** ninguna regla de Byko ni de Dale pasó la fase 2.
 
 Solo con lo que pase la fase 2:
 - un detector en vivo como el de Williams y SMC, sin enviar nada al bot;
