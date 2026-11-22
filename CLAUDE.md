@@ -43,6 +43,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 | `10.TradingBotDesktop/` | **Trading Bot Desktop - Version Electron** | 5000 | 5001 |
 | `11.TradingJournalDesktop/` | **Trading Journal Desktop - Version Electron** | 12000 | 12002 |
 | `12.AltagraciaTradingSuite/` | **App nueva en tiempo real (gráfico de App 1 en vivo + bot), en construcción** | 13000 | 13001 (Vite) |
+| `13.AltagraciaMobile/` | **App Android (Capacitor) para seguir los trades del bot, solo lectura** | puerta móvil de la suite, 13002 | 13010 (Vite, desarrollo) |
 
 **Stack comun:**
 - Frontend: React 18 + Vite + uPlot
@@ -79,6 +80,54 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 - Las franjas son de cuentas concretas, a veces de una sola. No está validado contra el azar: el estudio necesita semanas de datos.
 
 **Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Hyperliquid (21/11)"
+
+---
+
+### App Android (carpeta 13) + Altagracia Trading Suite - 21 Noviembre 2026: App de Solo Lectura y Pantalla del QR (fase 2)
+
+**Pedido:** seguir con la fase 2 de la app Android: la app de solo lectura, la pantalla del QR en la suite y ver las posiciones de Bybit con el PC apagado.
+
+**Cambios:**
+1. **App** (`13.AltagraciaMobile`, React + Vite + Capacitor 7):
+   - inicio con la cuenta activa, el P&L abierto y las posiciones sin stop;
+   - posiciones con P&L, stop, objetivo, "Al SL" y "Al TP";
+   - trades de 30 días con su decisión y sus capturas;
+   - avisos, guardados en el celular;
+   - ajustes: emparejar por QR o pegando el código, avisos y claves del modo directo.
+2. **Modo directo:** sin respuesta de la suite, la app lee posiciones y saldo directo de Bybit con una clave de solo lectura guardada en el celular. Solo hace GET.
+3. **Suite:** Bot > "Configuración y riesgo" > "Celulares (app Android)": emparejar con QR, revocar y aviso de prueba.
+4. **Puerta móvil:** corrige el reloj del celular y deja leer a la página local de la app.
+5. **Pruebas:** `13.AltagraciaMobile/tests/app.test.mjs` (8) y `mobile_checks.py` de la suite (90).
+
+**IMPORTANTE:**
+- **El APK no se armó:** este PC no tiene Java ni el SDK de Android. Los pasos están en `13.AltagraciaMobile/CLAUDE.md`.
+- **Probado en el navegador** a tamaño de celular, contra una puerta de demostración con datos inventados.
+- **No probado:** en un celular, el lector de QR, los avisos push, el modo directo contra Bybit real ni la pantalla del QR de la suite en pantalla.
+- La suite se reinicia sola al abrirla e instala el paquete nuevo de la página (`qrcode`).
+- Falta la fase 3: cerrar una posición desde la app, con huella y confirmación.
+
+**Ver:** `13.AltagraciaMobile/CLAUDE.md` y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Puerta móvil"
+
+---
+
+### Altagracia Trading Suite - 21 Noviembre 2026: Puerta Móvil (fase 1 de la app Android)
+
+**Pedido:** una app Android para seguir los trades que el bot abre en Bybit y, cuando exista, en Alpaca: aviso al abrirse una posición, las capturas de apertura y cierre, y cerrar una posición desde el celular. El usuario aceptó el concepto y pidió la fase 1. También pidió ver las posiciones de Bybit con el PC apagado.
+
+**Cambios** (solo el servidor de la suite; la app todavía no existe):
+1. **Puerta móvil** (`server/mobile_gate.py`): otra aplicación, en su propio puerto (13002), apagada de fábrica. Solo lectura: resumen, posiciones, trades con sus imágenes y eventos. Sin rutas de órdenes ni de claves.
+2. **Celulares emparejados** (`server/mobile_devices.py`): el secreto se muestra una vez en el PC (para un QR) y cada pedido va firmado, con hora y número único.
+3. **Vigilante y avisos** (`server/mobile_events.py`): lee el bot cada 5 s y anota aperturas, cierres con P&L y R, avisos críticos, pausa y bot sin responder. Los envía por Firebase cuando esté configurado.
+4. **Pruebas:** `server/tests/mobile_checks.py` (86).
+
+**IMPORTANTE:**
+- **Nada cambia hasta encenderla:** hace falta `mobile_host` (la IP de Tailscale del PC) en `config/suite.json`.
+- **Avisos push:** faltan el proyecto de Firebase del usuario y el paquete `google-auth`, que no está instalado.
+- **Con el PC apagado** (fase 2): la app leerá las posiciones directo de Bybit con una clave de solo lectura guardada en el celular.
+- **Alpaca:** el bot no opera ahí. Todo lleva el campo `broker` para sumarlo después.
+- **No probado** con un celular, Tailscale, Firebase real ni el bot real.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Puerta móvil (21/11): fase 1 de la app Android"
 
 ---
 

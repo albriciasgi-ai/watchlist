@@ -59,6 +59,9 @@ import ladder  # noqa: E402  price ladder de la pestana "Mapa", del libro en mem
 import swing_watch  # noqa: E402  Swing del servidor: detecta y anota, nunca envia
 import wise_smc_watch  # noqa: E402  Sabios de Williams y estructura SMC del servidor: detecta y anota, nunca envia
 import alpaca_data  # noqa: E402  acciones de EE. UU. desde Alpaca: footprints, velas y OI de opciones
+import mobile_devices  # noqa: E402  celulares emparejados y pedidos firmados
+import mobile_events  # noqa: E402  vigilante del bot para el celular y avisos push
+import mobile_gate  # noqa: E402  puerta movil: otro puerto, apagada de fabrica
 from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
 
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
@@ -106,11 +109,16 @@ async def _startup():
     official.start(DATA, _official_symbols)
     await SWING.start()
     await WSMC.start()
+    if MOBILE_GATE.host and os.environ.get("SUITE_MOBILE", "1") != "0":
+        MOBILE_EVENTS.start()
+        MOBILE_GATE.start()
     print(f"[SUITE] Servidor en http://{CONFIG['host']}:{CONFIG['port']} | almacen {DATA} | bot {CONFIG['bot_url']}")
 
 
 @app.on_event("shutdown")
 async def _shutdown():
+    await MOBILE_GATE.stop()
+    await MOBILE_EVENTS.stop()
     await SWING.stop()
     await WSMC.stop()
     official.stop()
@@ -365,6 +373,17 @@ async def bot_pause(request: Request):
 JOURNAL = JournalStore(Path(CONFIG["data_dir"]) / "journal")
 app.include_router(bot_routes.make_router(lambda *a, **kw: _bot(*a, **kw), journal_store=JOURNAL))  # _bot se busca al llamar (las pruebas lo cambian)
 app.include_router(journal_routes.make_router(JOURNAL, lambda *a, **kw: _bot(*a, **kw)))
+
+# ---------- puerta movil (21/11): celulares emparejados, vigilante de eventos y avisos push ----------
+_MOBILE_DIR = Path(CONFIG["data_dir"]) / "mobile"
+MOBILE_DEVICES = mobile_devices.DeviceStore(_MOBILE_DIR)
+MOBILE_EVENTS = mobile_events.EventWatch(
+    _MOBILE_DIR, lambda *a, **kw: _bot(*a, **kw), MOBILE_DEVICES,
+    sender=mobile_events.FcmSender(CONFIG["mobile_fcm_credentials"], lambda: _http))
+MOBILE_GATE = mobile_gate.Gate(
+    mobile_gate.make_app(MOBILE_DEVICES, MOBILE_EVENTS, lambda *a, **kw: _bot(*a, **kw), JOURNAL, app.version),
+    CONFIG["mobile_host"], CONFIG["mobile_port"])
+app.include_router(mobile_gate.make_local_router(MOBILE_DEVICES, MOBILE_GATE, MOBILE_EVENTS))
 
 
 # ---------- monedas y precio ----------
