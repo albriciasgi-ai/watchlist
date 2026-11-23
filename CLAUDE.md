@@ -55,6 +55,28 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite + Entrenamiento - 23 Noviembre 2026: Monte Carlo de Trades, Frecuencia de la Señal y Figuras del Entrenador
+
+**Pedido:** del análisis de LuxAlgo Quant, construir lo que el usuario eligió: el Monte Carlo de trades, los informes de frecuencia dentro del probador y que Claude pueda señalar en el gráfico en `/entrenar`.
+
+**Cambios:**
+1. **Monte Carlo de trades** (`monteCarlo.js`): entre qué valores pudo quedar la curva por el orden y la suerte, remuestreando o barajando, con 2,000 corridas.
+   - Dashboard de App 1 y dashboard del journal de la suite: una tarjeta bajo "Riesgo y Recompensa", con los trades seleccionados. La suite, en dólares o en R.
+   - Probador: "Monte Carlo de los trades" en "Resumen" y en "Todas", por semanas de salida.
+2. **Frecuencia de la señal** (`rule_frequency.py`, en "Resumen" del probador): cuántas veces el precio llega a tantos ATR, llega a favor antes que en contra, o cierra a favor, en las N velas tras la señal de la regla. Sin entrada ni salida. Solo en la fase 1, contra una vela cualquiera, y cada pregunta queda anotada.
+3. **Figuras del entrenador:** `window.__app1Coach.draw()` y `clearDrawings()`: líneas, zonas y marcas en una capa aparte con la etiqueta "Claude". El skill las permite solo después de la predicción.
+4. **Pruebas:** `montecarlo.test.mjs` (13), `test_rule_frequency.py` (9) y `coach.test.mjs` (12).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) para la frecuencia y recargar su página. La suite se reinicia sola al abrirla.
+- El Monte Carlo no dice si la ventaja es real: eso lo dicen los controles al azar.
+- **No está hecho** el embudo de búsqueda por tramos, también acordado.
+- Probado: las tarjetas del Monte Carlo en una página de prueba con trades inventados, y la frecuencia con velas reales de TRX 4h. Nada se vio dentro de App 1, de la suite ni del probador, ni en una sesión de `/entrenar`.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "MONTE CARLO, FRECUENCIA DE LA SEÑAL Y FIGURAS DEL ENTRENADOR (23/11/2026)"
+
+---
+
 ### App 1 - 23 Noviembre 2026: La Búsqueda Genética con los Tres Controles del Tablero, y E-02 y E-08 Decididos
 
 **Pedido:** tras el protocolo de pruebas quedaban tres decisiones. Se midieron mientras el usuario revisaba la galería, y

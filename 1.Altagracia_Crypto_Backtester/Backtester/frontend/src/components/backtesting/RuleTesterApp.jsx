@@ -9,6 +9,8 @@ import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import RuleSearchTab from './RuleSearchTab';
 import RegimeTab from './RegimeTab';
+import RuleMonteCarlo from './RuleMonteCarlo';
+import RuleFrequency from './RuleFrequency';
 import StrategiesTab from './StrategiesTab';
 import { lastClosedIndex } from './replayClock';
 import { latestFreeBox } from './orderPlan.js';
@@ -2045,6 +2047,7 @@ const RuleTesterApp = () => {
             <div className="rt-card"><b>{s.avgBars}</b><span>Velas por trade</span></div>
           </div>
           <Equity points={result.equity} />
+          <RuleMonteCarlo trades={result.trades} />
           </>
           )}
           {result.baseline?.n > 0 && (
@@ -2153,6 +2156,7 @@ const RuleTesterApp = () => {
           <div className="rt-note">Una regla que solo gana con un valor exacto es frágil.</div>
         </div>
       )}
+      {result.phase === 1 && <RuleFrequency key={result.id} symbol={symbol} rule={result.rule} />}
     </>
   );
 
@@ -2350,6 +2354,7 @@ const RuleTesterApp = () => {
           </div>
           <Equity points={allReport.equity} />
           <div className="rt-note">Curva de todos los trades en orden de salida, con 1 R por trade. Las monedas operan a la vez: no es la curva de una sola cuenta (para eso, "Como cuenta").</div>
+          {allReport.trades && <RuleMonteCarlo trades={allReport.trades} many />}
           </>
           )}
           {allReport.baseline && (

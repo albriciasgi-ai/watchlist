@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Monte Carlo de Trades, Frecuencia de la Señal y Figuras del Entrenador
+
+Del análisis de LuxAlgo Quant, lo que el usuario quiso: Monte Carlo de los trades en el dashboard, en el journal de la suite y en el probador (por semanas de salida); "Frecuencia de la señal" en el probador, una pregunta sin entrada ni salida, solo en la fase 1 y contra una vela cualquiera, y figuras que Claude dibuja en una capa aparte al entrenar. El embudo de búsqueda por tramos queda por hacer. Detalle en `Backtester/CLAUDE.md`, "MONTE CARLO, FRECUENCIA DE LA SEÑAL Y FIGURAS DEL ENTRENADOR (23/11/2026)".
+
 ### Noviembre 2026: Apilados Desplazados (DX), Hipótesis Juzgada en las Fases 2 y 3
 
 El control de los apilados de Dale como regla, DX, fijada antes de correrla. Pasa las fases 2 y 3 por poco: +0.056 y +0.030 R por trade, con margen sobre el azar y el tramo. La ventaja antes de comisiones es estable, pero los stops son cortos: aguanta solo con el objetivo como orden limit y poco deslizamiento, y en BTC pierde. Detalle en `Backtester/CLAUDE.md`, "ZONAS DE TRADER DALE CON EL PRIMER REGRESO (21/11/2026)", "Hipótesis DX".

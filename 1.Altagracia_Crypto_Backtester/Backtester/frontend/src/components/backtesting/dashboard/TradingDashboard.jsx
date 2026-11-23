@@ -4,6 +4,7 @@ import ProfitLossHistogram from './ProfitLossHistogram';
 import WinRateGauge from './WinRateGauge';
 import AvgProfitLossGauge from './AvgProfitLossGauge';
 import DrawdownGrowthCards from './DrawdownGrowthCards';
+import MonteCarloCard from './MonteCarloCard';
 import TradesDataGrid from './TradesDataGrid';
 import ExportExcelButton from './ExportExcelButton';
 import '../../../dashboard_styles.css';
@@ -238,6 +239,11 @@ const TradingDashboard = ({ orderManager, symbol }) => {
           {/* Cards de Drawdown y Growth */}
           <div id="drawdown-growth-cards">
             <DrawdownGrowthCards metrics={selectedMetrics} />
+          </div>
+
+          {/* Monte Carlo: cuánto pudo cambiar la curva por el orden y la suerte, con los trades seleccionados */}
+          <div id="monte-carlo-card" style={{ marginBottom: 20 }}>
+            <MonteCarloCard trades={selectedTrades} />
           </div>
 
           {/* Tabla de trades con selección */}

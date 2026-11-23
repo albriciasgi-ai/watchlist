@@ -644,6 +644,8 @@ node tests/williams.test.mjs
 node tests/smc.test.mjs
 node tests/williamssmc.parity.test.mjs
 node tests/rulefacets.test.mjs
+node tests/montecarlo.test.mjs
+node tests/coach.test.mjs
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
@@ -2740,6 +2742,52 @@ OrderFlowData/alpaca/flow/<SIM>/<AAAA>/<SIM>_<día>.npz   delta dentro del minut
 - cierre temprano y feriado;
 - días casi vacíos;
 - `START`.
+
+## MONTE CARLO, FRECUENCIA DE LA SEÑAL Y FIGURAS DEL ENTRENADOR (23/11/2026)
+
+Pedido del usuario tras el análisis de LuxAlgo Quant (17/11): de lo que ofrece esa app, quiso el Monte Carlo de trades, los informes de frecuencia dentro del probador y que Claude pueda señalar en el gráfico en `/entrenar`. Descartó el bucle de búsqueda tal cual, los avisos que despiertan a la IA (la central de confluencia de la suite va sin IA), Pine Script desde una frase y las prop firms. El embudo de búsqueda por tramos, también acordado, **no está hecho**.
+
+### Monte Carlo de trades
+
+Con los resultados de los trades ya hechos, entre qué valores pudo quedar la curva por el orden y la suerte.
+
+- **Cálculo** (`components/backtesting/dashboard/monteCarlo.js`, lógica pura): `monteCarlo(resultados, { runs, method, seed, groups })`.
+  - `resample` (de fábrica): cada corrida saca al azar, con repetición, tantos trades como hay. Cambian el resultado y la caída.
+  - `shuffle`: los mismos trades en otro orden. El resultado final no cambia; cambian la caída y las rachas.
+  - `groups`: el bloque de cada trade. Con él se remuestrean o barajan bloques enteros. El probador pasa la semana de la salida (`resultsByExit`): los trades que salen la misma semana se mueven juntos, y tratarlos como independientes daría bandas angostas, lo mismo que corrige el margen del motor 6 (B-08).
+  - 2,000 corridas, con semilla que sale de los propios trades: el widget no cambia al redibujar.
+  - Da las bandas del 5, 25, 50, 75 y 95% de la curva (hasta 120 puntos), del resultado final y de la mayor caída, la racha de pérdidas típica y mala, la parte de las corridas que termina en pérdida, lo real y en qué percentil cae la caída real. `small` con menos de 30 trades (o de 30 bloques).
+- **Dónde:**
+  - **Dashboard de App 1** y **dashboard del journal de la suite:** `MonteCarloCard.jsx`, una tarjeta con Chart.js bajo "Riesgo y Recompensa", con los trades seleccionados. App 1, en dólares; la suite, en dólares o en R (`modes`) y con el estilo elegido (`themed`). Usa las clases de `dashboard_styles.css`: no hay estilos nuevos.
+  - **Probador:** `RuleMonteCarlo.jsx`, "Monte Carlo de los trades" bajo la curva, en "Resumen" y en "Todas" (solo en "Por trade"). Plegado de fábrica: se calcula al abrirlo. En R, por semanas de salida (casilla "por semanas") y con el R medio del 5% al 95%.
+- **Lo que no dice:** si la ventaja es real. Eso lo dicen los controles al azar. Supone que los próximos trades se parecen a estos. En el probador no mira datos nuevos: usa los trades ya calculados de la fase a la vista, así que no gasta ninguna fase.
+- **Ojo con las props:** la tarjeta recibe `readValue`, no `valueOf`: un prop llamado `valueOf` nunca toma su valor de fábrica, porque todo objeto ya tiene uno.
+- **Pruebas:** `tests/montecarlo.test.mjs` (13): percentiles, caída y racha, semilla, que barajar conserve el final, que el ancho al remuestrear sea el de la teoría, y que con 5 trades iguales por semana las bandas por bloques sean raíz de 5 veces más anchas.
+- **Probado** en una página de prueba con trades inventados (las dos tarjetas y el panel del probador, a la vista). No se vio dentro de App 1, de la suite ni del probador con trades reales.
+
+### Frecuencia de la señal (probador)
+
+Una pregunta sin entrada ni salida: cuando aparece la señal de una regla, ¿cuántas veces el precio hace algo en las N velas siguientes?
+
+- **Backend** (`rule_frequency.py`, `POST /api/tester/frequency/{symbol}` con `{ rule, question }`):
+  - **La señal** es la de la regla: elementos, receta y filtros (líneas, flujo, régimen, horario, medidas…), con el mismo código del probador. `signals_of()` corre `rule_tester.run` con `trace` y la regla puesta a mercado, todas las señales, sin enfriamiento ni tope de comisión (`_signal_rule`), y toma las señales que no descartó ningún filtro. La entrada, el stop y la salida de la regla no cuentan.
+  - **Preguntas** (`clean_question`): `reach`, llega a `a` ATR a favor en `bars` velas; `first`, llega a `a` ATR a favor antes que a `b` ATR en contra; `close`, a las `bars` velas cierra más de `a` ATR a favor (0 = a favor). Se mide desde la apertura de la vela siguiente a la señal, en ATR de la vela de la señal, sin comisiones. En `first`, las dos metas en la misma vela cuentan como que no, y el informe dice cuántas fueron.
+  - **Informe** (`measure`): la tasa con su muestra y su intervalo de Wilson del 95%, por lado y por año; las **señales separadas** (tras contar una, las de las `bars` velas siguientes no cuentan: sus ventanas se pisan); la tasa de **una vela cualquiera** (todas las velas en que la regla podría dar señal por régimen y horario, con la misma parte de largos y cortos), y la diferencia con su margen, que se calcula con las separadas. "Se distingue" pide 30 señales separadas y pasar el margen.
+  - **Solo la fase 1.** Un informe de frecuencia también es una mirada a los datos: las fases 2 y 3 no se ofrecen.
+  - **Cada pregunta queda anotada** en `OrderFlowData/observer/tester/frequency.jsonl`, y el informe dice cuántas distintas van sobre esa señal y en esa moneda.
+- **Ventana** (`RuleFrequency.jsx`): "Frecuencia de la señal" en "Resumen", bajo la sensibilidad, solo con una corrida de la fase 1 a la vista. Usa la regla de esa corrida.
+- **Límites:** una moneda a la vez. La vela cualquiera no copia los filtros que miran el lado (líneas, flujo, medidas), solo el régimen y el horario. Las velas se miran enteras, sin el minuto a minuto.
+- **Pruebas:** `tests/test_rule_frequency.py` (9).
+- **Probado** con velas reales de TRX 4h (fase 1, registro en una carpeta temporal) y el Impulso de 2 ATR en 3 velas, 183 señales: llega a 2 ATR en 10 velas el 33.8% de las separadas contra 30.7% de una vela cualquiera (no se distingue); cierra a favor a las 6 velas el 41.1% contra 49.5% (se distingue, en contra). La primera pregunta tarda 9 s y las siguientes 0.1 s. El panel no se vio en pantalla.
+
+### Figuras del entrenador (`/entrenar`)
+
+- `window.__app1Coach` (versión 2) suma `draw(figuras, { sumar })` y `clearDrawings()`: lo único que no es lectura. Es una capa aparte (`coachNotes` en `coachState.js`): no son dibujos del usuario, no se guardan en la sesión, no salen en las imágenes de los trades (`captureDensityRef`), no entran al análisis de ninguna orden y se van al recargar.
+- **Figuras:** `linea` (precio), `zona` (desde, hasta) y `marca` (un aro en una vela), con texto de hasta 80 caracteres y `velasAtras` (0 = la última vela cerrada a la vista). Los precios son los que ve el usuario (con fecha oculta, el índice). No hay fechas: no se puede marcar nada después de la hora simulada ni revelar la época. Hasta 20; lo desconocido, lo lejano (a más de 3 veces el rango a la vista) o lo que no está a la vista se rechaza con su motivo (`normalizeNotes`).
+- **Dibujo:** `MiniChart` las pinta en verde azulado, punteadas y con la etiqueta "Claude · texto", en los gráficos de esa moneda en reproducción. La suite (modo en vivo) no las dibuja.
+- **Regla de uso**, en el skill (`.claude/skills/entrenar/SKILL.md`, "Señalar en el gráfico"): solo después de la predicción del usuario, nunca para sugerir entrada, stop u objetivo, y se borran antes de la repetición siguiente.
+- **Pruebas:** `tests/coach.test.mjs` suma 5 (12).
+- **No se vio en pantalla** ni se probó en una sesión de `/entrenar`.
 
 ## ESTADO PARA EL ENTRENADOR (17/11/2026)
 
