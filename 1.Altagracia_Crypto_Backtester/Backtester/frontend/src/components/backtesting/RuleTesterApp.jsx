@@ -18,7 +18,7 @@ import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
   contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText, usesVpa, VPA_EXITS,
-  chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, ruleVpaConfig, listText
+  chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, ruleVpaConfig, listText, DALE_CODES, VPA_FILTER_TFS, vpaFilterTf
 } from './ruleTester.js';
 import { loadWilliamsSettings, mergeWilliamsConfig } from '../indicators/williams.js';
 import { loadSmcSettings, mergeSmcConfig } from '../indicators/smcStructure.js';
@@ -1340,6 +1340,95 @@ const RuleTesterApp = () => {
             </div>
           </>
         )}
+        {['FB', 'BA', 'TA', 'PO'].some(code => rule.codes.includes(code)) && (
+          <>
+            {rule.codes.includes('FB') && (
+              <div className="rt-row">
+                <span title="Una vela pasa el borde de una caja vigente y esa vela o una de las siguientes cierra dentro">Falso rompimiento: vuelve en</span>
+                <Num value={rule.fbBack} min={0} max={20} onChange={(fbBack) => patch({ fbBack })} /><span>velas · firma: llega desde</span>
+                <Num value={rule.fbApproachAtr} min={0} max={20} step={0.5} onChange={(fbApproachAtr) => patch({ fbApproachAtr })} /><span>ATR en</span>
+                <Num value={rule.fbApproachBars} min={1} max={50} onChange={(fbApproachBars) => patch({ fbApproachBars })} /><span>velas y volumen ≥</span>
+                <Num value={rule.fbVol} min={0} max={50} step={0.5} onChange={(fbVol) => patch({ fbVol })} /><span>× el de su hora</span>
+              </div>
+            )}
+            {rule.codes.includes('BA') && (
+              <div className="rt-row">
+                <span title="La vela que cierra fuera de la caja, tras velas pegadas al borde con mínimos crecientes">Ruptura tras acumulación: firma,</span>
+                <Num value={rule.baBars} min={2} max={100} onChange={(baBars) => patch({ baBars })} /><span>velas a</span>
+                <Num value={rule.baNear} min={0.1} max={20} step={0.1} onChange={(baNear) => patch({ baNear })} /><span>ATR o menos del borde, con mínimos crecientes</span>
+              </div>
+            )}
+            {rule.codes.includes('TA') && (
+              <div className="rt-row">
+                <span title="Dentro de una caja, una vela llega a su borde tras un movimiento">Trampa: llega al</span>
+                <Num value={rule.taShare} min={0.05} max={0.5} step={0.05} onChange={(taShare) => patch({ taShare })} /><span>del borde tras</span>
+                <Num value={rule.taRise} min={0} max={20} step={0.5} onChange={(taRise) => patch({ taRise })} /><span>ATR en</span>
+                <Num value={rule.taRiseBars} min={1} max={200} onChange={(taRiseBars) => patch({ taRiseBars })} /><span>velas · firma: OI en</span>
+                <Num value={rule.taOiBars} min={1} max={100} onChange={(taOiBars) => patch({ taOiBars })} /><span>velas con z ≥</span>
+                <Num value={rule.taZ} min={0} max={10} step={0.5} onChange={(taZ) => patch({ taZ })} /><span>y avance ≤</span>
+                <Num value={rule.taAdvance} min={-5} max={20} step={0.1} onChange={(taAdvance) => patch({ taAdvance })} /><span>ATR · OI de</span>
+                <select value={rule.taSource} onChange={(e) => patch({ taSource: e.target.value })}>
+                  <option value="sum">Binance + Bybit</option><option value="bybit">Bybit</option><option value="binance">Binance</option>
+                </select>
+              </div>
+            )}
+            {rule.codes.includes('PO') && (
+              <div className="rt-row">
+                <span title="El cierre recorrió tantos ATR en tantas velas, acelerando al final, con mucho volumen">Purga: movimiento de</span>
+                <Num value={rule.poMove} min={0.5} max={50} step={0.5} onChange={(poMove) => patch({ poMove })} /><span>ATR en</span>
+                <Num value={rule.poBars} min={2} max={100} onChange={(poBars) => patch({ poBars })} /><span>velas, volumen ≥</span>
+                <Num value={rule.poVol} min={0} max={50} step={0.5} onChange={(poVol) => patch({ poVol })} /><span>× · firma: OI en</span>
+                <Num value={rule.poOiBars} min={1} max={100} onChange={(poOiBars) => patch({ poOiBars })} /><span>velas con z ≤ −</span>
+                <Num value={rule.poZ} min={0} max={10} step={0.5} onChange={(poZ) => patch({ poZ })} /><span>· OI de</span>
+                <select value={rule.poSource} onChange={(e) => patch({ poSource: e.target.value })}>
+                  <option value="sum">Binance + Bybit</option><option value="bybit">Bybit</option><option value="binance">Binance</option>
+                </select>
+              </div>
+            )}
+            <div className="rt-note">
+              Las reglas de Byko (Bikotrading), con las cifras fijadas en <code>docs/PLAN_ESTRATEGIAS_BYKO_DALE.md</code> antes de correrlas. Las cajas son las de la pestaña Régimen.
+              <b> Falso rompimiento</b> va en contra de la perforación; <b>ruptura tras acumulación</b>, a favor de la ruptura; <b>trampa</b>, en contra de la llegada; <b>purga</b>, en contra del movimiento.
+              Con el stop "Borde lejano de la zona" queda tras la mecha, tras el último retroceso o tras el extremo. Cada corrida suma el control <b>sin la firma</b>: los mismos candidatos que no la cumplen.
+              La trampa y la purga usan el OI de 5 minutos (<code>oi_history.py</code>): sin OI en la vela, el candidato no cuenta.
+            </div>
+          </>
+        )}
+        {DALE_CODES.some(code => rule.codes.includes(code)) && (
+          <>
+            <div className="rt-row">
+              <span title="Velas completas seguidas del mismo lado de la zona, sin tocarla, para armarla">Dale: se arma con</span>
+              <Num value={rule.daleAway} min={1} max={20} onChange={(daleAway) => patch({ daleAway })} /><span>velas completas · stop entre</span>
+              <Num value={rule.daleMinDay} min={0} max={2} step={0.05} onChange={(daleMinDay) => patch({ daleMinDay })} /><span>y</span>
+              <Num value={rule.daleMaxDay} min={0.01} max={5} step={0.05} onChange={(daleMaxDay) => patch({ daleMaxDay })} /><span>del ATR diario</span>
+              <button type="button" className="rt-btn" title="Limit en el borde cercano de la zona que vale 200 velas, stop en el borde lejano sin margen (la zona ya lo trae) y objetivo de 2R"
+                onClick={() => patch({ entryType: 'limit', entryAt: 'near', entryExpiry: 200, stopType: 'zone', stopBuffer: 0, stopMaxAtr: 20, useTarget: true, targetR: 2 })}>
+                Entrada, stop y objetivo de Dale
+              </button>
+            </div>
+            {rule.codes.includes('DA') && (
+              <div className="rt-row">
+                <span title="Antes de armarse, el precio llega a tantos ATR del borde de la caja: el fuerte movimiento tras la acumulación">Acumulación: el precio llega a</span>
+                <Num value={rule.daleRun} min={0} max={50} step={0.5} onChange={(daleRun) => patch({ daleRun })} /><span>ATR del borde de la caja</span>
+              </div>
+            )}
+            {rule.codes.includes('DC') && (
+              <div className="rt-row">
+                <span title="El tramo del zigzag, la primera vez que mide tantos ATR; el cluster tiene tantas veces la mediana de las filas de su perfil">Cluster: zigzag de</span>
+                <Num value={rule.daleLeg} min={0.5} max={20} step={0.5} onChange={(daleLeg) => patch({ daleLeg })} /><span>ATR, tramo de</span>
+                <Num value={rule.daleMinLeg} min={1} max={50} step={0.5} onChange={(daleMinLeg) => patch({ daleMinLeg })} /><span>ATR, cluster ≥</span>
+                <Num value={rule.daleBump} min={1} max={20} step={0.1} onChange={(daleBump) => patch({ daleBump })} /><span>× la mediana</span>
+              </div>
+            )}
+            <div className="rt-note">
+              Las zonas de Trader Dale, con las cifras fijadas en <code>docs/PLAN_ESTRATEGIAS_BYKO_DALE.md</code> antes de correrlas. La zona se arma cuando el precio se aleja
+              y deja velas completas de un lado sin tocarla. Ese lado da la dirección: si vuelve desde arriba, largo. La regla pone ahí una limit en el borde cercano, que se llena en el primer regreso.
+              El stop ya viene en la zona, entre el 10% y el 20% del ATR diario: usa "Entrada, stop y objetivo de Dale".
+              <b> Apilados</b>, <b>nodo doble</b> y <b>orden grande</b> salen del almacén de trades. <b>Acumulación</b> y <b>cluster del tramo</b> usan un perfil por velas y valen en todas las monedas.
+              Cada corrida suma el control de las <b>zonas desplazadas</b>: las mismas zonas movidas de 1 a 3 ATR, con la misma mecánica.
+              <b> Apilados desplazados</b> es ese control de los apilados como regla, la hipótesis del 22/11; su control son las mismas zonas <b>ancladas en velas al azar</b>.
+            </div>
+          </>
+        )}
         {usesResponse(rule) && (
           <>
             <div className="rt-row">
@@ -1443,6 +1532,13 @@ const RuleTesterApp = () => {
               <option value="touch">la mecha la toca y cierra a favor</option>
             </select>
             <Check checked={rule.emaSlope} onChange={(emaSlope) => patch({ emaSlope })} title="La línea sube para un largo o baja para un corto, en las últimas 5 velas">pendiente a favor</Check>
+          </div>
+          <div className="rt-row" title="La tendencia del marco mayor: la EMA y el cierre de sus velas, en la última ya cerrada al saberse la señal">
+            <span>leída en</span>
+            <select value={vpaFilterTf(rule.tf, rule.emaTf)} onChange={(e) => patch({ emaTf: Number(e.target.value) })}>
+              <option value={0}>el marco de la regla</option>
+              {VPA_FILTER_TFS.filter(([m]) => m > Number(rule.tf) && m % Number(rule.tf) === 0).map(([m, name]) => <option key={m} value={m}>{name} (marco mayor)</option>)}
+            </select>
           </div>
         </Opt>
         <Opt id="regimen" label="Régimen: rango o fuera de él" on={rule.regimeMode !== 'any'} onToggle={toggleMode('regimeMode', 'any', 'outside')} title="Régimen de la vela de la señal, con el detector de la pestaña Régimen (eficiencia con caja afinada), sin futuro. Las entradas al azar de los controles quedan en el mismo régimen">
@@ -1565,8 +1661,16 @@ const RuleTesterApp = () => {
             <select value={rule.vpaMode} onChange={(e) => patch({ vpaMode: e.target.value })}>
               <option value="favor">a favor del trade, desde</option>
               <option value="notAgainst">que no esté en contra más de</option>
+              <option value="notFavor">que no esté a favor más de</option>
             </select>
             <Num value={rule.vpaThr} min={0} max={5} step={0.1} onChange={(vpaThr) => patch({ vpaThr })} />
+          </div>
+          <div className="rt-row" title="El ripple de Coulling: el marco mayor manda. Leído en un marco mayor, el filtro usa su última vela ya cerrada al saberse la señal">
+            <span>leído en</span>
+            <select value={vpaFilterTf(rule.tf, rule.vpaTf)} onChange={(e) => patch({ vpaTf: Number(e.target.value) })}>
+              <option value={0}>el marco de la regla</option>
+              {VPA_FILTER_TFS.filter(([m]) => m > Number(rule.tf) && m % Number(rule.tf) === 0).map(([m, name]) => <option key={m} value={m}>{name} (marco mayor)</option>)}
+            </select>
           </div>
         </Opt>
         <Opt id="premium" label="Premium y discount (SMC)" on={rule.smcPd} onToggle={(smcPd) => patch({ smcPd })} title="Un largo solo bajo la mitad del rango mayor (discount) y un corto solo sobre ella (premium). El rango va entre el último máximo y el último mínimo de la estructura mayor">
@@ -2007,10 +2111,18 @@ const RuleTesterApp = () => {
       )}
       {result.control && (
         <div className="rt-group">
-          <h4>¿Aportan las liquidaciones?</h4>
+          <h4>{{ byko: '¿Aporta la firma de Byko?', dale: '¿Aporta dónde estuvo el volumen?', daleAnchor: '¿Aporta anclar en los apilados?' }[result.controlKind] || '¿Aportan las liquidaciones?'}</h4>
           <div className="rt-note">
-            La misma regla tras barrer un swing <b>sin</b> liquidaciones: {result.control.n ?? 0} trades{result.control.n ? <>, acierto {fmtPct(result.control.winRate)}, <R value={result.control.avgR} digits={3} /> R por trade</> : null}.
-            {result.control.edge && <> Diferencia a favor de las liquidaciones: <R value={result.control.edge.r} digits={3} /> R (de {result.control.edge.low} a {result.control.edge.high}). {result.control.edge.clear ? 'Se distingue.' : 'No se distingue de un barrido cualquiera.'}</>}
+            {result.controlKind === 'byko'
+              ? <>Los mismos candidatos <b>sin</b> la firma (la llegada y el volumen, o el OI): </>
+              : result.controlKind === 'dale'
+                ? <>Las mismas zonas <b>desplazadas</b> de 1 a 3 ATR, con la misma mecánica: </>
+                : result.controlKind === 'daleAnchor'
+                  ? <>Las mismas zonas <b>ancladas en velas al azar</b>, movidas igual y con la misma mecánica: </>
+                  : <>La misma regla tras barrer un swing <b>sin</b> liquidaciones: </>}
+            {result.control.n ?? 0} trades{result.control.n ? <>, acierto {fmtPct(result.control.winRate)}, <R value={result.control.avgR} digits={3} /> R por trade</> : null}.
+            {result.control.edge && <> Diferencia a favor {{ byko: 'de la firma', dale: 'de la zona de volumen', daleAnchor: 'de los apilados' }[result.controlKind] || 'de las liquidaciones'}: <R value={result.control.edge.r} digits={3} /> R (de {result.control.edge.low} a {result.control.edge.high}).{' '}
+              {result.control.edge.clear ? 'Se distingue.' : { byko: 'No se distingue de los candidatos sin la firma.', dale: 'No se distingue de una zona cualquiera.', daleAnchor: 'No se distingue de una vela cualquiera.' }[result.controlKind] || 'No se distingue de un barrido cualquiera.'}</>}
             {result.liqFrom && <> Liquidaciones desde el {result.liqFrom.split('-').reverse().join('/')}.</>}
           </div>
         </div>
@@ -2273,6 +2385,13 @@ const RuleTesterApp = () => {
                   {allReport.quarterEdge.clear ? 'El margen no incluye el cero.' : 'No se distingue de ese azar.'}{' '}
                   Cada trade contra las entradas al azar de su mismo trimestre y su mismo lado: la regla suele operar cuando el azar también gana, y el azar de toda la fase no lo sabe.
                   Para pasar hay que ganarles a los tres. Los márgenes cuentan juntos los trades que salen la misma semana, que se mueven juntos.
+                </div>
+              )}
+              {allReport.control && (
+                <div className="rt-note" style={{ marginTop: 4 }}>
+                  {{ byko: 'Sin la firma de Byko', dale: 'Zonas desplazadas', daleAnchor: 'Ancladas en velas al azar' }[allReport.control.kind] || 'Barridos sin liquidaciones'}: {allReport.control.n} trades, <R value={allReport.control.avgR} digits={3} /> R por trade.{' '}
+                  {allReport.control.edge && <>Diferencia a favor {{ byko: 'de la firma', dale: 'de la zona de volumen', daleAnchor: 'de los apilados' }[allReport.control.kind] || 'de las liquidaciones'}: <R value={allReport.control.edge.r} digits={3} /> R
+                    (entre {fmtR(allReport.control.edge.low, 3)} y {fmtR(allReport.control.edge.high, 3)}). {allReport.control.edge.clear ? 'El margen no incluye el cero.' : 'No se distingue.'}</>}
                 </div>
               )}
             </div>

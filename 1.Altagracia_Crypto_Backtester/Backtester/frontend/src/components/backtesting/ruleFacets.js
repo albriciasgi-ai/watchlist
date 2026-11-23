@@ -35,6 +35,11 @@ export const FACETS = {
   im: ['elementos', 'Impulso'],
   fv: ['elementos', 'FVG nuevo'],
   sp: ['elementos', 'Swing'],
+  fb: ['elementos', 'Falso rompimiento'],
+  ba: ['elementos', 'Ruptura tras acumulación'],
+  ta: ['elementos', 'Trampa de absorción'],
+  po: ['elementos', 'Purga de OI'],
+  dale: ['elementos', 'Zonas de Dale'],
   wise: ['elementos', 'Tres sabios'],
   smc: ['elementos', 'Estructura SMC'],
   vpa: ['elementos', 'Lector VPA'],
@@ -183,6 +188,18 @@ export function ruleFacets(rule, labels = {}) {
     add('smc', parts.join(', '));
   }
   if (rule.sp && has('SP')) add('sp', `${rule.sp.bars} velas por lado${rule.sp.minZ !== null && rule.sp.minZ !== undefined ? `, volumen z ≥ ${n(rule.sp.minZ)}` : ''}`);
+  const oiFrom = (source) => ({ sum: 'Binance + Bybit', bybit: 'Bybit', binance: 'Binance' }[source] || 'Binance + Bybit');
+  if (rule.fb && has('FB')) add('fb', `vuelve en ${rule.fb.back} velas; firma: llega desde ${n(rule.fb.approachAtr)} ATR en ${rule.fb.approachBars} velas, volumen ≥ ${n(rule.fb.vol)}x`);
+  if (rule.ba && has('BA')) add('ba', `firma: ${rule.ba.bars} velas a ${n(rule.ba.near)} ATR o menos del borde, mínimos crecientes`);
+  if (rule.ta && has('TA')) add('ta', `al ${n(rule.ta.share)} del borde tras ${n(rule.ta.rise)} ATR en ${rule.ta.riseBars} velas; firma: OI de ${oiFrom(rule.ta.source)} en ${rule.ta.oiBars} velas con z ≥ ${n(rule.ta.z)}, avance ≤ ${n(rule.ta.advance)} ATR`);
+  if (rule.po && has('PO')) add('po', `${n(rule.po.move)} ATR en ${rule.po.bars} velas, volumen ≥ ${n(rule.po.vol)}x; firma: OI de ${oiFrom(rule.po.source)} en ${rule.po.oiBars} velas con z ≤ −${n(rule.po.z)}`);
+  if (rule.dale && codes.some(code => ['DS', 'DN', 'DG', 'DA', 'DC', 'DX'].includes(code))) {
+    const d = rule.dale;
+    const parts = [`se arma con ${d.away} velas completas`, `stop de ${Math.round(Number(d.minDay) * 100)}% a ${Math.round(Number(d.maxDay) * 100)}% del ATR diario`];
+    if (has('DA')) parts.push(`acumulación: llega a ${n(d.run)} ATR`);
+    if (has('DC')) parts.push(`cluster: zigzag de ${n(d.leg)} ATR, tramo de ${n(d.minLeg)}, ≥ ${n(d.bump)}x la mediana`);
+    add('dale', parts.join(', '));
+  }
   const resting = !!rule.vp && has('VE') && rule.vp.veEntry === 'resting';
   if (rule.vp && codes.some(code => VP_CODES.includes(code))) {
     const vp = rule.vp;
@@ -193,7 +210,8 @@ export function ruleFacets(rule, labels = {}) {
   if (has('VA') && Number(rule.vaGap) > 0) add('vaGap', `hueco ≥ ${n(rule.vaGap)} ATR`);
 
   for (const line of rule.lines || []) {
-    const text = `${line.type === 'vwap' ? 'VWAP' : 'EMA'} ${line.period} ${line.mode === 'touch' ? 'tocando' : 'a favor'}${line.slope ? ' con pendiente' : ''}${line.maxDev ? `, abre a ≤ ${n(line.maxDev)} desv.` : ''}`;
+    const frame = { 60: ' de 1 hora', 240: ' de 4 horas', 1440: ' de 1 día' }[line.tf] || '';
+    const text = `${line.type === 'vwap' ? 'VWAP' : 'EMA'} ${line.period}${frame} ${line.mode === 'touch' ? 'tocando' : 'a favor'}${line.slope ? ' con pendiente' : ''}${line.maxDev ? `, abre a ≤ ${n(line.maxDev)} desv.` : ''}`;
     add(line.type === 'vwap' ? 'vwap' : 'ema', text);
   }
   if (rule.regime?.mode) {
@@ -215,7 +233,12 @@ export function ruleFacets(rule, labels = {}) {
   if (rule.bwf?.ac) add('ac', `AC ${BW_MOMENTUM_TEXT[rule.bwf.ac]}`);
   if (rule.bwf?.gator) add('gator', `Gator ${BW_GATOR_TEXT[rule.bwf.gator]}`);
   if (rule.bwf?.mfi) add('mfi', `MFI: ${BW_MFI_TEXT[rule.bwf.mfi]}`);
-  if (rule.vpaf?.mode) add('vpaMedidor', rule.vpaf.mode === 'favor' ? `medidor VPA a favor (≥ ${n(rule.vpaf.thr)})` : `medidor VPA que no esté en contra (> −${n(rule.vpaf.thr)})`);
+  if (rule.vpaf?.mode) {
+    const frame = { 60: ' de 1 hora', 240: ' de 4 horas', 1440: ' de 1 día' }[rule.vpaf.tf] || '';
+    add('vpaMedidor', rule.vpaf.mode === 'favor' ? `medidor VPA${frame} a favor (≥ ${n(rule.vpaf.thr)})`
+      : rule.vpaf.mode === 'notFavor' ? `medidor VPA${frame} que no esté fuerte a favor (< ${n(rule.vpaf.thr)})`
+        : `medidor VPA${frame} que no esté en contra (> −${n(rule.vpaf.thr)})`);
+  }
   if (rule.smcf?.pd) add('premium', `largos en discount y cortos en premium (rango mayor de ${rule.smcf.swing} velas)`);
   if (rule.smcf?.bias) add('sesgo', `a favor de la estructura mayor de ${rule.smcf.swing} velas`);
   if (flow.steady) add('oiSostenido', `OI sube en ${Math.round(Number(flow.steadyMin) * 100)}% o más de los pasos de ${flow.steadyDays} días`);

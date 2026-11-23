@@ -69,7 +69,7 @@ def test_las_acciones_son_su_propio_grupo_y_sus_velas_conservan_la_hora(stock):
     assert all(b["t"] % H == 30 * 60000 for b in bars)  # 09:30 de Nueva York: no se llevan a la hora en punto
     assert rt.phases("AAA")[0]["available"]
     assert not rt.has_store("AAA") and rt._on_candles("AAA", 60)
-    assert rt.codes_for("AAA", 60) == set(rt.CANDLE_CODES) - {"LIQ"}
+    assert rt.codes_for("AAA", 60) == set(rt.CANDLE_CODES) - {"LIQ"} - set(rt.byko.OI_CODES)  # Sin liquidaciones ni OI de acciones
 
 
 def test_la_noche_no_cierra_el_trade_y_una_apertura_mas_alla_se_llena_ahi(stock):

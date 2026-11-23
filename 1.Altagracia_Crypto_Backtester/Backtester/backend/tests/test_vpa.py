@@ -209,3 +209,38 @@ def test_la_salida_vpa_sale_al_primer_aviso_en_contra_y_solo_entra_si_se_pide():
     armed = rule_of(("QB",), stop={"type": "atr", "atr": 2, "maxAtr": 20}, exit={"vpa": {"on": list(rt.VPA_EXITS), "fromR": 1}})
     later = rt.run("TEST", armed, {"bars": bars, "events": []}, PHASE)
     assert all(t["mfe"] >= 1 for t in later["trades"] if t["reason"].startswith("VPA: "))
+
+
+def test_el_medidor_leido_en_un_marco_mayor_sin_futuro(monkeypatch):
+    """El ripple (22/11): el filtro lee el medidor de 1 día en su última vela cerrada; solo entra si se pide."""
+    assert "tf" not in rule_of(("QB",), vpaf={"mode": "favor", "thr": 0.5})["vpaf"], "sin pedirlo, la regla de antes no cambia"
+    assert "tf" not in rule_of(("QB",), vpaf={"mode": "favor", "thr": 0.5, "tf": 60})["vpaf"], "un marco menor que el de la regla no vale"
+    assert rule_of(("QB",), vpaf={"mode": "favor", "thr": 0.5, "tf": 1440})["vpaf"]["tf"] == 1440
+    bars = walk(3000, seed=21)
+    base = dict(stop={"type": "atr", "atr": 1.5, "maxAtr": 20}, exit={"targetR": 2})
+    rule = rule_of(("QB",), vpaf={"mode": "notAgainst", "thr": 0.3, "tf": 1440}, **base)
+    ctx = rt._context("TEST", 240, bars)
+    series, index = rt._vpaf_view(rule, ctx)
+    day = 1440 * 60000
+    for k, j in enumerate(index):
+        known = bars[k]["t"] + MS
+        assert j == (k // 6 if k % 6 == 5 else k // 6 - 1), "la vela del día propio solo al cerrarse"
+        if j >= 0:
+            assert (j + 1) * day <= known, "nunca un día que no cerró"
+    # Lo leído no cambia al cortar las velas: sin futuro
+    short = rt._context("TEST", 240, bars[:2000])
+    s2, i2 = rt._vpaf_view(rule, short)
+    assert i2 == index[:2000] and all(s2["meter"][j] == series["meter"][j] for j in i2 if j >= 0 and vpa.filter_known(s2, j))
+    plain = rt.run("TEST", rule_of(("QB",), **base), {"bars": bars, "events": []}, PHASE)
+    result = rt.run("TEST", rule, {"bars": bars, "events": []}, PHASE)
+    assert 0 < result["summary"]["n"] < plain["summary"]["n"] and result["skipped"].get("filtro VPA", 0) > 0
+    at = {b["t"]: k for k, b in enumerate(bars)}
+    assert all(rt._vpaf_ok(rule, ctx, at[t["signal"]], t["dir"]) for t in result["trades"])
+
+
+def test_el_modo_que_no_este_fuerte_a_favor():
+    s = {"rv": [1.0, 1.0, 1.0], "meter": [1.5, 0.4, -2.0]}
+    vf = {"mode": "notFavor", "thr": 1.0}
+    assert [vpa.filter_ok(vf, s, k, 1) for k in range(3)] == [False, True, True]
+    assert [vpa.filter_ok(vf, s, k, -1) for k in range(3)] == [True, True, False]
+    assert rule_of(("QB",), vpaf={"mode": "notFavor", "thr": 1, "tf": 1440})["vpaf"] == {"mode": "notFavor", "thr": 1.0, "tf": 1440}

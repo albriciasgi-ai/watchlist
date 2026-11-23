@@ -1016,6 +1016,12 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
 - **Monedas sin almacén de trades (18/11):** `has_store()` pide 60 días de almacén. Hoy lo tienen BTC, ETH, SOL, ARB y GALA, que corren con todos los elementos (la primera corrida de cada fase detecta los elementos: ETH 15m fase 1, unos 4.5 minutos). SUI y TRX no: sus fases salen del caché de velas de App 1 (`backtesting_cache/{moneda}_backtesting_data.json.gz`, `candle_bars()`, 30m uniendo las de 15m) y solo valen `CANDLE_CODES` (CC, VH y LIQ); `start()` rechaza una regla con otros elementos. Sin almacén no hay minuto a minuto: una vela dudosa sigue su recorrido supuesto (desde el 20/11; antes contaba el stop, ver "Azar con el minuto a minuto"). La ventana tiene un selector de moneda (`info.symbols`, las que tienen caché de velas) y apaga los elementos que no valen (`info.storeless`, `info.candleCodes`). `CANDLE_DIR` es relativa: el backend corre en `backend/`.
 - **Patrones de rechazo como elementos (18/11):** `HM` (martillo alcista o estrella fugaz bajista), `EN` (envolvente) y `DJ` (doji libélula o lápida), con `candle_patterns.find_patterns()` sobre las velas de la regla: la misma regla del indicador Rejection Patterns. El lado lo da el patrón. `pat` = `{trend, trendBars, minZ, wick}`: tendencia previa (de fábrica sí, 5 velas), z-score mínimo del volumen de su vela contra las 20 anteriores (`None` = sin filtro) y mecha en cuerpos. La zona es la vela: el stop "extremo de la vela del elemento" queda detrás. Cada trade guarda `pat` (tipo y z). Solo necesitan velas: valen en las monedas sin almacén.
 - **Filtros de línea (18/11), para cualquier regla:** `lines`, hasta dos, `{type: vwap|ema, period, mode: side|touch, slope}`. VWAP móvil: precio típico por volumen de las últimas N velas de la regla, con la vela incluida; EMA del cierre. Se miran en la vela que da a conocer la señal y a favor del trade: `side`, cierra del lado de la línea; `touch`, además su mecha la toca; `slope`, la línea va a favor en 5 velas. Sin línea todavía (menos de N velas) la señal no pasa. Lo descartado va a `skipped` como "filtro de VWAP o EMA". Cada trade guarda el valor de cada línea y el gráfico lo dibuja al elegirlo.
+  - **La EMA leída en un marco mayor (22/11, `tf`: 1 hora, 4 horas o 1 día; «leída en» en la ventana):** para la tendencia por el precio de la versión refinada de DX.
+    - Las velas de la regla se unen en bloques UTC de ese marco, como el medidor VPA «leído en» (`_higher`). Cada vela lee la última vela mayor ya cerrada: la EMA de los cierres de ese marco y su cierre, no el de la vela de la regla (`_line_at`).
+    - La pendiente se mide en 5 velas del marco mayor. En el gráfico la línea va en escalones (`_line_view`).
+    - Solo en la EMA, y solo si se pide: una regla sin `tf` conserva su identidad.
+    - Como las demás líneas, los controles al azar no lo copian.
+    - Pruebas: `tests/test_line_tf.py` (3) y una en `rulefacets.test.mjs` (15).
 - **Patrones medidos en BTC, fase 1:** tras un patrón con volumen (z ≥ 2) el movimiento es 15 a 25% más grande que tras una vela cualquiera, pero sin dirección (a 16 velas de 15m, -0.25 ATR a favor del patrón). En 15m todas las variantes pierden igual o más que el azar. En 1h, con z ≥ 1: tocando la EMA 14, 291 trades y +0.01 R (azar -0.09); tocando el VWAP 200, 100 trades y -0.07 R; EMA 14 a favor con pendiente, 299 trades y 0.00 R. Ninguna pasa su margen, y lo que ganan lo ponen los largos.
 - **Volumen de Respuesta como elementos (18/11, `response_volume.py`):** pedido del usuario tras estudiar el indicador. Usa `measures.py` (`zigzag`, `hour_volume`, `balance`, `equilibrium`), que repite `responseBalance.js`, con la ventana, las velas principales, el dominio y el equilibrio de fábrica. Todo se conoce al cerrar la vela.
   - `RF`, la flecha: vela con `rv.spike` veces (2) la mediana del volumen de su hora en 30 días. Su lado es el color de la vela. `rv.arrow`: `with` (de fábrica, la vela va a favor del tramo), `against` o `any`. La zona es la vela.
@@ -1402,7 +1408,8 @@ corridas anteriores (siguen en el disco), así se repiten una sola vez.
 - **H18:** una señal cuya comisión de ida y vuelta pasa de 0.3 R no se toma ("Tope de la comisión" en la sección Stop;
   0 lo apaga; el tope de fábrica no entra a la identidad de la regla). Es un filtro de las señales de la regla: la caja
   propia de la Revisión de candidatos no pasa por él y se simula con su comisión y con los costos que pida la regla
-  (`candidate_review._own_trade`).
+  (`candidate_review._own_trade`). DX en vivo de la suite va sin él (`maxFeeR` 0): se juzgó así, y sus stops son
+  cortos (en BTC, comisión media de 0.20 a 0.24 R).
 - **H4:** lo máximo a favor y en contra de la vela del llenado de una limit u orden stop, solo desde el llenado.
 - **H22:** el medidor VPA es simétrico: la estrella abajo de un tramo bajista (martillo invertido) suma fuerza, como el
   hanging man resta (también en `vpa.js`, igual al bit).
@@ -1732,9 +1739,70 @@ Pedido del usuario tras el cuarto estudio. Está en la sección Salida del proba
 - **Pruebas:** `test_onchain_flows.py` suma 1 (7). `rulefacets.test.mjs` suma 1 (13).
 - **No se vio en pantalla.**
 
-**Siguiente:**
-1. ~~Llevar a la app la salida "objetivo distinto cuando pasa el filtro on-chain".~~ Hecho: arriba.
-2. Fase 2, decidida antes de mirar: la mixta (5R con el filtro, 3R sin él) contra 3R siempre, en Impulso, FVG nuevo y Ruptura de caja, en las monedas de siempre y las nuevas. Pasa si da más R total y no menos ventaja sobre los controles en las tres reglas.
+### Fase 2 del objetivo mixto: no pasa (21/11)
+
+**Cómo se corrió:** por la ruta del probador, "todas las monedas" con la fase 2 confirmada. Las corridas quedaron en el registro y en el tablero, y la fase 3 de estas reglas queda habilitada. Los datos van del 01/01/2024 al 30/06/2025, y los resultados están en `OrderFlowData/research/onchain/2026-11-21/fase2_mixta.json`.
+
+| Regla | Monedas | Salida | Trades | R | R total | Vs. azar (margen) | Vs. tramo | Monedas + |
+|---|---|---|---|---|---|---|---|---|
+| Impulso | de siempre | 3R | 583 | +0.22 | **+127** | +0.23 (+0.08 a +0.38) | +0.19 | 7/7 |
+| Impulso | de siempre | mixta | 547 | +0.23 | +124 | +0.25 | +0.22 | 7/7 |
+| Impulso | nuevas | 3R | 3138 | +0.19 | **+608** | +0.20 (+0.14 a +0.27) | +0.15 | 36/43 |
+| Impulso | nuevas | mixta | 2997 | +0.17 | +520 | +0.20 | +0.16 | 35/43 |
+| FVG nuevo | de siempre | 3R | 765 | +0.13 | +96 | +0.13 (0.00 a +0.26) | +0.09 | 6/7 |
+| FVG nuevo | de siempre | mixta | 750 | +0.14 | **+102** | +0.16 | +0.12 | 6/7 |
+| FVG nuevo | nuevas | 3R | 4488 | +0.11 | **+487** | +0.12 (+0.06 a +0.17) | +0.07 | 32/43 |
+| FVG nuevo | nuevas | mixta | 4136 | +0.08 | +348 | +0.11 | +0.08 | 30/43 |
+| Ruptura de caja | de siempre | 3R | 216 | +0.39 | +84 | +0.31 (+0.05 a +0.56) | +0.28 | 6/7 |
+| Ruptura de caja | de siempre | mixta | 216 | +0.40 | **+86** | +0.33 | +0.32 | 6/7 |
+| Ruptura de caja | nuevas | 3R | 1566 | +0.25 | **+387** | +0.23 (+0.14 a +0.32) | +0.22 | 38/43 |
+| Ruptura de caja | nuevas | mixta | 1530 | +0.23 | +346 | +0.23 | +0.23 | 32/43 |
+
+**Los trades de la mixta según el día:**
+- en la fase 2 los días con el filtro son los peores: de −0.15 a −0.01 R por trade, aun con 5R;
+- los días sin el filtro dan de +0.15 a +0.58 R;
+- en la fase 1 era al revés.
+
+**Veredicto:**
+- **No pasa el criterio decidido antes:** en las monedas nuevas da menos R total en las tres reglas (Impulso +520 contra +608), y en las de siempre empata.
+- El efecto de la fase 1 no se repite con datos nuevos. La emisión de stablecoins queda como dato del trade y no se insiste con ella.
+
+**Aparte, una buena noticia:** las tres reglas con 3R siempre pasan la fase 2 contra los dos controles con margen, salvo FVG nuevo en las monedas de siempre, que queda en el borde.
+- Impulso en las monedas nuevas: +0.20 sobre el azar, 36 de 43 monedas positivas.
+- Ruptura de caja en las monedas nuevas: +0.23, 38 de 43.
+- Son candidatas a la fase 3.
+
+### La ruptura con volumen del VPA con los flujos on-chain (21/11)
+
+**Pedido del usuario:** simular con el filtro su regla "VPA: ruptura con volumen, 1.5 ATR, 3R", que pasó las tres fases en la otra sesión:
+- QB en 4h, stop de 1.5 ATR con máximo 8 y 3R;
+- sin cierre por tiempo y con 0 velas de espera.
+
+**Cómo:** tomada del registro, en las tres fases y con las 50 monedas. Lo corrió un script aparte, sin guardar corridas; los resultados están en `OrderFlowData/research/onchain/2026-11-21/vpa_qb_fase*.json`. La regla tal cual da los mismos trades y R total que las corridas guardadas del usuario.
+
+R total, de siempre / nuevas:
+
+| Variante | Fase 1 | Fase 2 | Fase 3 |
+|---|---|---|---|
+| Regla tal cual | +102 / +279 | **+85 / +638** | −10 / +242 |
+| Filtro: emisión de 30 d a favor | +79 / +490 | +23 / **−61** | +42 / +240 |
+| Filtro: que la emisión no vaya en contra | **+135 / +580** | +59 / +428 | **+53 / +340** |
+| Objetivo mixto 5R/3R | +130 / +584 | +50 / +487 | +27 / +160 |
+
+**Los trades de la regla tal cual según el día** (monedas nuevas):
+- fase 1: con el filtro +0.28 R por trade, sin él −0.06;
+- fase 2: con el filtro −0.06, sin él +0.31;
+- fase 3: con el filtro +0.23, sin él +0.01.
+
+**Qué se lee:**
+- La señal cambia de signo en la fase 2 (2024 a mediados de 2025): depende del momento del mercado y no es confiable.
+- "Que no vaya en contra" sube el R total en las fases 1 y 3 y lo baja en la 2. En la fase 3, su ventaja sobre el azar baja a +0.02, porque el filtro también levanta al azar.
+- El objetivo mixto rinde menos que la regla tal cual en las fases 2 y 3.
+- **Conclusión:** a la regla del VPA no le conviene ninguna de las tres variantes; se queda como está.
+
+**Lo que quedaba pendiente de esta sección:**
+1. ~~Llevar a la app la salida "objetivo distinto cuando pasa el filtro on-chain".~~ Hecho. La salida queda en el probador, pero no pasó la fase 2.
+2. ~~Fase 2~~ Corrida arriba, con esta regla: la mixta (5R con el filtro, 3R sin él) contra 3R siempre, en Impulso, FVG nuevo y Ruptura de caja, en las monedas de siempre y las nuevas. Pasa si da más R total y no menos ventaja sobre los controles en las tres reglas.
 
 ### Pruebas
 
@@ -1742,6 +1810,274 @@ Pedido del usuario tras el cuarto estudio. Está en la sección Salida del proba
 - `rulefacets.test.mjs` suma la pieza al × de «Vas a correr» (11).
 - Pasan `test_rule_tester`, `test_rule_search`, `test_trade_context`, `test_crowd_constancy` y `test_market_update` (42 con las nuevas), y `ruletester.test.mjs` (15). La página se arma.
 - **No se vio en pantalla.**
+
+## OI DE 5 MINUTOS DE BYBIT Y BINANCE (21/11/2026)
+
+Paso 1 del plan de estrategias de Byko y de Trader Dale (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md` en la raíz del repositorio).
+
+**Pedido del usuario:** se había propuesto bajar el OI de 1 hora de Bybit y el de 5 minutos de Binance. El usuario preguntó por qué no los dos marcos de los dos.
+
+**Lo que se encontró:**
+- **Bybit** da el OI de 5 minutos desde que lista cada moneda: BTC desde 2020, DOGE desde mediados de 2021.
+  - La nota "5min ~416 días" de `1.Altagracia_Crypto_Backtester/CLAUDE.md` era el tope del descargador viejo (600 pedidos de 200 datos), no de Bybit.
+- **El OI es una foto:** el de 15 minutos, 1 hora y 4 horas es el de 5 minutos en su marca. En ARB, las 3,333 marcas de 4 horas de la serie nueva son iguales a las de `ARBUSDT_4h.json`. Basta bajar 5 minutos.
+- **Binance** solo publica 5 minutos, en un archivo por día (`data.binance.vision/data/futures/um/daily/metrics/`); su API da 30 días. BTC desde 2020-09-01, casi todas desde 2021-12-01.
+
+### Datos (`backend/oi_history.py`)
+
+- **Dónde:** `OrderFlowData/oi/5m/bybit/{moneda}.npz` y `.../binance/{moneda}.npz`. `TESTER_OI5M` cambia la carpeta.
+- **Bybit** (`/v5/market/open-interest`, `intervalTime=5min`):
+  - `t` (ms) y `oi`, en monedas y contando los dos lados (su `singleOpenInterest` es justo la mitad);
+  - baja de lo más nuevo hacia atrás, de a 200 datos, y guarda cada 400 páginas: lo guardado queda seguido y un corte se retoma desde lo más viejo;
+  - lo nuevo se guarda de una vez, porque un corte a medias dejaría un hueco;
+  - `done` dice que se llegó al primer dato de Bybit.
+- **Binance:**
+  - lista los días por S3 y baja los archivos de a 24 (cada uno tarda más de 1 s en llegar, aunque pesa 12 KB);
+  - guarda `t`, `oi` (un lado, en monedas) y `usd`;
+  - y, del mismo archivo, `top_acc` y `top_pos` (largos ÷ cortos de las cuentas grandes, por cuentas y por posiciones), `ls_acc` (de todas las cuentas) y `taker` (compra ÷ venta agresiva, un delta aproximado para las monedas sin almacén);
+  - `days` son los días bajados y `bad` los que Binance lista pero no se pudieron leer: la bajada completa los repite;
+  - SHIB1000USDT es 1000SHIBUSDT. CROUSDT no está en Binance.
+- **Bajada:**
+  - `python -B oi_history.py --backfill [monedas]` baja toda la historia, con 16 monedas a la vez y a lo sumo 20 pedidos por segundo a Bybit (la sexta parte de su límite por IP). Cada página de Bybit tarda de 0.5 a 2 s.
+  - Sin `--backfill` pone al día lo que ya tiene archivo; `--source bybit` o `binance`, solo uno.
+  - Una bajada a la vez: candado `OrderFlowData/oi/5m/descarga.lock`, que se renueva con cada guardado y vence a las 2 horas sin renovarse.
+  - `market_update.py` pone al día lo nuevo al arrancar el backend (con la bajada completa corriendo, lo deja para la vuelta siguiente).
+
+### Lectura
+
+- `series(moneda, fuente, campo)`, con fuente `bybit`, `binance` o `sum`.
+  - **`sum`:** Binance + Bybit ÷ 2, en monedas y de un lado, solo en las marcas que tienen los dos.
+  - **Datos descartados:** los vacíos y, en `oi` y `usd`, los ceros. Binance trae ceros sueltos (57 en ARB), y sin ellos la vela usa el dato anterior.
+- `at_close(moneda, velas, marco, fuente, campo)`: el valor conocido al cierre de cada vela.
+  - **Sin futuro:** cada dato se usa 5 minutos después de su marca (`LAG_MS`), por si la marca es el inicio de su intervalo. La vela de 00:00 a 01:00 ve el dato de las 00:55.
+  - **Huecos:** un dato más viejo que 2 pasos de la serie (o que 2 velas) es un hueco: NaN.
+
+### IMPORTANTE
+
+- **Ningún filtro usa todavía esta serie.** El filtro de OI y el OI sostenido siguen con `{moneda}_4h.json` (BTC, con su CSV de 5 minutos), así que ninguna regla ya corrida cambia. La usarán los elementos de Byko (paso 2 del plan).
+- **Comprobado en ARB:**
+  - Binance tiene 385,318 datos (23/03/2023 a 20/11/2026) en 1,339 días, ninguno ilegible;
+  - Binance tiene 4 huecos propios; el mayor, de 10.5 horas, el 16/02/2024;
+  - Bybit de un lado es, en la mediana, 0.46 veces Binance (de 0.35 a 0.58).
+- **Bajada completa (21/11):**
+  - las 50 monedas de Bybit y 49 de Binance (CRO no está), sin fallas;
+  - ocupa 179 MB la de Bybit y 622 MB la de Binance, que guarda también las proporciones;
+  - Bybit tardó unas 2.5 horas, con cada página de 0.5 a 2 s;
+  - Binance tardó unas 4 horas: cada archivo tarda de 1 a 18 s aun pidiendo 24 a la vez, y cada página del listado de S3, unos 15 s.
+
+  Desde entonces, `market_update.py` solo pone al día lo nuevo.
+- **La convención de los dos lados de Bybit** sale de su campo `singleOpenInterest`; no se comparó con otra fuente. Solo pesa en la suma: los cambios de cada exchange no dependen de ella.
+- **Pruebas:** `tests/test_oi_history.py` (14):
+  - Bybit hacia atrás y después solo lo nuevo;
+  - sin archivo no empieza solo;
+  - reintentos y moneda que no existe;
+  - un corte que se retoma;
+  - Binance con y sin encabezado, por páginas, el día ilegible y SHIB;
+  - el retraso de 5 minutos, los huecos, los ceros y la suma;
+  - el candado, y que una moneda que falla no detenga a las demás.
+
+  Pasan también las de `test_market_update.py`.
+
+## ELEMENTOS DE BYKO EN EL PROBADOR (21/11/2026)
+
+Paso 2 del plan de estrategias de Byko y de Trader Dale (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`). Las cifras de cada regla
+quedaron fijadas en el plan antes de la primera corrida, y solo se corren las variantes declaradas allí.
+
+**Pedido del usuario:** seguir con Byko después de aprobar el concepto: sus dos PDF dicen que la forma en que el precio llega a un borde separa la ruptura real de la falsa, y que el OI marca la trampa y la purga.
+
+### Elementos (`backend/byko.py`)
+
+| Código | Nombre | Evento | Firma | Zona (stop "borde lejano") |
+|---|---|---|---|---|
+| FB | Falso rompimiento | Una vela pasa el borde de una caja vigente (la anterior cerró dentro) y esa vela o una de las 3 siguientes cierra dentro; en contra | Llegada impulsiva (en las 4 velas hasta la que perfora, el precio estuvo a 2 ATR o más del borde) y volumen (3 veces o más el de su hora) | Del borde a la mecha |
+| BA | Ruptura tras acumulación | La vela que cierra fuera de la caja y la termina (la de la Ruptura de caja); a favor | Las 6 velas anteriores cerraron a 1 ATR o menos del borde, con mínimos crecientes | Del borde al mínimo de esas velas |
+| TA | Trampa de absorción | Dentro de una caja, una vela llega al quinto del borde tras 2 ATR desde el extremo de las 10 velas anteriores; en contra | El OI de 3 velas sube con z ≥ 2 y el cierre avanza 0.5 ATR o menos | Del cierre al extremo de esas 3 velas |
+| PO | Purga de OI | El cierre recorre 3 ATR en 6 velas, acelerando, con 3 veces el volumen de su hora; en contra del movimiento | El OI de 2 velas cae con z ≤ −2 | Del cierre al extremo del movimiento |
+
+- **Cajas:** las de la eficiencia con caja (`regime_detectors.er_box`), las mismas de la Ruptura de caja.
+- **FB y TA** se rearman cuando un cierre vuelve al tercio central de la caja. **PO** espera 6 velas tras cada candidato.
+- **El ATR** es el de la vela anterior. **El volumen** se mide contra la mediana de su hora en 30 días (`measures.hour_volume`).
+- **El OI** es el de `oi_history.at_close`, conocido 5 minutos después de su marca. De fábrica, la suma de Binance y Bybit; también puede ser Bybit o Binance solo.
+- **El z del OI** es el del cambio de N velas en logaritmo, contra los de los 30 días anteriores, sin el de la vela. Un candidato de TA o PO sin OI no cuenta en ningún grupo.
+- Cada candidato lleva `sig` en su `info`: si cumple la firma. Los parámetros van en `fb`, `ba`, `ta` y `po` de la regla, y solo entran si la regla usa el elemento: ninguna regla anterior cambia de identidad.
+- **Sin almacén de trades:** valen en las 50 monedas. En las acciones solo FB y BA, porque no hay OI.
+
+### Control "sin la firma"
+
+- `run()` corre la regla dos veces. La segunda, con `control`, toma los candidatos que **no** cumplen la firma, con todo lo demás igual: la entrada, el stop, la salida y los filtros. Es el mismo mecanismo del barrido sin liquidaciones de LIQ.
+- La corrida guarda `control` y `controlKind: "byko"`. El resumen lo muestra en "¿Aporta la firma de Byko?".
+- `consolidated()` junta el control de todas las monedas (`_pool_summaries`, a partir del resumen de cada una) si lo tienen todas. El informe "Todas" lo muestra bajo el control del tramo, y vale también para LIQ.
+
+### Ventana y página
+
+- Las fichas de los cuatro elementos y sus parámetros, con las cifras del plan de fábrica (`ruleTester.js`), una nota y la ficha de cada uno en «Vas a correr» (`ruleFacets.js`).
+- Cada trade guarda `byko` (lo que midió la firma) y la caja, que se dibuja con el trade.
+- Nombres en `elementLabels.js` y en `rule_tester.LABELS`.
+
+### Fase 1 del falso rompimiento y la ruptura tras acumulación (21/11)
+
+- **Cómo se corrió:** `OrderFlowData/research/byko/2026-11-21/fase1.py`, con `rule_tester.run` y sin guardar corridas: el backend del usuario corre desde main y no conocía los elementos. Resultados en `resultados.json` y `resumen.md` de esa carpeta.
+- **Falso rompimiento:** no funciona.
+  - En 1 hora, con 6,135 trades entre los dos grupos, pierde como el azar (−0.04 y −0.06 R por trade). La firma suma de +0.05 a +0.08 R, sin margen.
+  - En 4 horas, en las monedas de siempre, la firma empeora: −0.37 R contra los falsos rompimientos sin ella, con margen.
+- **Ruptura tras acumulación:** es candidata a la fase 2 solo en 4 horas y en las monedas nuevas.
+  - **El resultado:** 95 trades, +0.58 R. Gana con margen al azar (+0.57), al tramo (+0.55) y a las rupturas sin la firma de esas cajas (+0.55; esas dan +0.03 R en 1,194 trades). Positiva en 23 de 39 monedas.
+  - **Lo que la debilita:**
+    - 2022 pone la mayor parte (45 trades a +1.03 R);
+    - los cortos ponen casi todo (52 a +0.98 R, contra 43 largos a +0.09);
+    - tres monedas ponen el 41% del R;
+    - en las monedas de siempre son 14 trades a +0.97 R, sin margen;
+    - fue una de 10 corridas.
+  - **En 1 hora** no gana, y con el OI sostenido pierde 0.27 R más que el azar, con margen.
+  - **Fase 2** (aprobada por el usuario; criterio fijado antes de correrla): **no pasa y queda descartada.**
+    - En las monedas nuevas: 74 trades, −0.43 R. Pierde con margen contra los tres controles; las rupturas sin la firma dan +0.01 R.
+    - En las de siempre: 11 trades, +0.07 R. En las acciones: 33 trades, −0.59 R.
+    - Lo de la fase 1 era de 2022 y de los cortos (`resultados_fase2.json`).
+- **Trampa de absorción** (OI de Binance + Bybit; variante, Bybit solo): no es candidata.
+  - En 1 hora, en las monedas nuevas, las llegadas al borde con el salto del OI dan +0.06 R (163 trades), y las mismas sin él pierden unos −0.23 R. La diferencia, +0.29 R, tiene margen.
+  - Pero no supera al azar ni al tramo, y con el OI de Bybit solo la diferencia se va.
+- **Purga de OI:** no funciona. Entrar al giro pierde como el azar, de −0.12 a −0.24 R en 1 hora (más de 1,000 trades en las monedas nuevas), y la caída del OI no suma.
+- **Cierre del paso 2:** ninguna de las cuatro reglas de Byko da ventaja, en 22 corridas de la fase 1 y una de la fase 2. Detalle en `OrderFlowData/research/byko/2026-11-21/resumen.md`.
+
+### Pruebas
+
+- `tests/test_byko.py` (9):
+  - el falso rompimiento con y sin volumen, y el que vuelve dos velas después;
+  - la ruptura con y sin acumulación;
+  - la trampa con y sin el salto del OI, y sin OI;
+  - la purga con y sin la caída del OI;
+  - que lo sabido no cambie con velas posteriores;
+  - la identidad de las reglas;
+  - el control en la corrida y su suma en todas las monedas.
+- `rulefacets.test.mjs` (13) y `ruletester.test.mjs` (15) siguen pasando, y los cuatro archivos cambiados de la página compilan.
+
+## ZONAS DE TRADER DALE CON EL PRIMER REGRESO (21/11/2026)
+
+Paso 3 del plan de estrategias de Byko y de Trader Dale (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`). Las cifras quedaron fijadas
+en el plan antes de la primera corrida, y solo se corren las variantes declaradas allí.
+
+**Pedido del usuario:** "Sigue con Dale", tras cerrar Byko. La idea de su libro *Order Flow Trading Setups*: una zona marcada por el volumen, el precio se aleja una o dos velas completas, y se entra en el primer regreso, nunca en el segundo. El probador no lo había probado nunca: entraba en la vela del elemento o con una limit que vencía en pocas velas.
+
+### Elementos (`backend/dale.py`)
+
+| Código | Nombre | La zona | Dónde vale |
+|---|---|---|---|
+| DS | Apilados con regreso | La franja de los desequilibrios apilados (ST) | Monedas con almacén |
+| DN | Nodo doble con regreso | El POC alineado (AP): el mismo POC en dos velas | Monedas con almacén |
+| DG | Orden grande con regreso | La franja de la orden grande (GR), su "Trades Filter" | Monedas con almacén |
+| DA | Acumulación con regreso | El POC de la caja de la pestaña Régimen que termina con una ruptura; antes de armarse, el precio llega a 3 ATR del borde | Todas |
+| DC | Cluster del tramo con regreso | El pico de volumen del tramo del zigzag de 3 ATR, mirado cada 5 ATR que crece | Todas |
+
+- **La mecánica:**
+  - **Armado:** la zona se arma con 2 velas completas seguidas del mismo lado, sin tocarla; ese lado da la dirección. Si en 200 velas no se arma, se descarta.
+  - **Evento y entrada:** el evento es la vela que la arma. La regla pone ahí una limit en el borde cercano (entrada "limit", "near", 200 velas), que se llena en el primer regreso.
+  - **Stop:** queda entre el 10% y el 20% del ATR diario de 14 días. Si el borde lejano de la zona más 0.1 ATR pasa del 20%, la zona no se opera. Si queda más cerca del 10%, el stop se aleja hasta ahí.
+  - **Cómo se arma la regla:** la zona del evento ya trae el stop, así que la regla usa "borde lejano de la zona" sin margen. El botón «Entrada, stop y objetivo de Dale» pone todo eso y 2R.
+- **Volumen por precio:** en DA y DC se reparte parejo en el rango de cada vela. Es una aproximación, en todas las monedas.
+- **DS, DN y DG** salen de `span["events"]` (los elementos de order flow de la fase). Las reglas de Dale corren con `volFilter: 0`, porque Dale no pide velas de mucho volumen.
+- **Corregido antes de correr:** el cluster del tramo se miraba una sola vez, al medir 5 ATR. Así tomaba la base del movimiento y no veía las pausas posteriores. Ahora se mira cada 5 ATR que crece el tramo, y el cluster tiene que ser un pico del perfil.
+
+### Control "zonas desplazadas"
+
+- **Qué es:** con `control`, cada zona se mueve entre 1 y 3 ATR arriba o abajo. Es al azar pero siempre igual: la semilla es la zona. Mantiene el mismo alto y la misma mecánica.
+- **Dónde se ve:** `controlKind: "dale"`. El resumen lo muestra en "¿Aporta dónde estuvo el volumen?", y el informe "Todas" lo junta.
+- **Cada trade** guarda `dale`: dónde nació la zona, en cuántas velas se armó, su stop en ATR diario y el desplazamiento.
+
+### Fase 1 (21 y 22/11): ninguna es candidata
+
+- **Cómo se corrió:** `OrderFlowData/research/dale/2026-11-21/fase1.py`, como el de Byko: `rule_tester.run`, sin guardar corridas en el registro del usuario. Son 16 corridas: las cinco zonas en 30m, DA y DC en 1h, y DC en 30m con el OI sostenido. Resultados en `resultados.json` y `resumen.md` de esa carpeta.
+- **Dónde estuvo el volumen no aporta:** ninguna zona le gana con margen a las mismas zonas desplazadas.
+  - **Apilados (DS):** +0.012 R por trade en las monedas de siempre, con 16,703 trades, y +0.043 en XRP. Sus zonas desplazadas dan +0.097 y +0.091: en las de siempre, la zona real pierde con margen (−0.085).
+  - **Las otras cuatro** pierden de −0.07 a −0.19 R, igual que sus zonas desplazadas. El cluster del tramo en 30m, en las monedas nuevas: 30,266 trades, −0.111 R, positivo en 0 de 43.
+- **La mecánica le gana al azar, pero pierde.** Alejarse y entrar con una limit en el primer regreso da más que entrar a mercado en velas al azar en 15 de las 16 corridas, hasta +0.25 R por trade y con margen en 9. Parte es la comisión de maker, que con stops de 10 a 20% del ATR diario pesa. Salvo los apilados, todas pierden.
+- **El proceso del usuario** (DC 30m con el OI sostenido): −0.095 R en las de siempre y −0.125 en las nuevas, sin diferencia con las zonas desplazadas.
+- **Curiosidad sin valor de prueba:** las zonas desplazadas de los apilados ganan de +0.09 a +0.10 R. Salió de un control, después de mirar: solo vale como hipótesis nueva, fijada antes y juzgada en las fases 2 y 3.
+- **Cierre del paso 3:** las cinco zonas quedan descartadas en la fase 1. Después, la curiosidad se juzgó como hipótesis nueva, DX, y pasó las fases 2 y 3 (abajo).
+
+### Arreglado: tramos guardados a medio armar (22/11)
+
+- **Qué pasó:** el panel armó el almacén de SUI justo mientras corría la fase 1, del 21/11 a las 23:56 al 22/11 a las 00:02.
+  - DS y DN no tomaron SUI.
+  - DG la tomó y su tramo de 30m quedó guardado en `tester/cache` con las 10,176 velas, pero sin barridos, órdenes grandes ni delta exacto: el flujo se escribió después. Dio 0 trades.
+  - `detect_span()` guarda cada tramo para siempre ("una fase no cambia"), así que se habría seguido usando.
+- **Ahora** (`_store_settled`):
+  - un tramo se guarda, en disco y en memoria, solo si cada día del almacén de la fase tiene su flujo y ningún archivo de esos días se escribió después de empezar a detectarlo (con un minuto de margen);
+  - el tramo guardado lleva `started`, cuándo empezó su detección;
+  - al leerlo, si después se escribió algún día de la fase, se vuelve a detectar.
+
+  Los de antes, sin `started`, se miden por la hora del archivo. `of_elements` ya hacía lo mismo con sus días en memoria.
+- **El archivo de SUI se borró.** Las siete monedas con almacén tienen hoy su flujo en todos los días (revisado el 22/11), así que el candado no frena a ninguna.
+- **Repetidas con SUI** (`con_sui.py`, sin cambiar las reglas): dan lo mismo.
+  - DS: 17,667 trades, +0.012 R, −0.089 contra sus zonas desplazadas, con margen.
+  - DN: 3,111 trades, −0.147 R.
+  - DG: 5,011 trades, −0.066 R, −0.013 contra sus zonas desplazadas.
+
+  DA y DC no cambian: solo usan las velas, y las de SUI estaban completas.
+
+### Hipótesis DX: los apilados desplazados (22/11)
+
+**Pedido del usuario:** juzgar la curiosidad de la fase 1 (las zonas desplazadas de los apilados ganaban) como una hipótesis nueva, fijada antes de correrla y juzgada en las fases 2 y 3. El criterio quedó en el plan, "Hipótesis nueva: los apilados desplazados (DX)".
+
+- **DX, "Apilados desplazados con regreso"** (`dale.py`): es el control de DS como regla. Cada franja ST se mueve con la misma semilla del control (`"DS"` + vela + borde bajo), así que da los mismos trades.
+- **Su control** (`control=True`, `controlKind: "daleAnchor"`), "¿Aporta anclar en los apilados?":
+  - por cada franja, una vela al azar del tramo (semilla `"DXa"` + vela + borde bajo);
+  - una zona del mismo alto en ATR, centrada en su cierre y movida igual de 1 a 3 ATR;
+  - la misma mecánica.
+
+  Dice si importa el apilado o basta la mecánica. El alto sale de la franja ST, aunque la vela al azar sea anterior: es un número al azar para el control, como la distancia mediana del stop del azar.
+- **Dónde vale:** solo las monedas con almacén, como DS. En la ventana va con las demás zonas de Dale.
+- **La corrida:** `OrderFlowData/research/dale/2026-11-22/dx.py`. Antes de la fase 2 comprueba que DX en la fase 1 dé los mismos trades que el control de DS, y la fase 3 solo corre si pasó la 2.
+- **Resultado: pasa la fase 2 y la fase 3**, por poco (7 monedas juntas; `resumen.md` de esa carpeta):
+
+  | Fase | Trades | R por trade | Azar | Tramo | Anclas al azar |
+  |---|---|---|---|---|---|
+  | 1, comprobación | 15,986 | +0.099 (+0.076 a +0.122) | +0.348 ✓ | +0.356 ✓ | +0.046 ✓ |
+  | 2 | 10,747 | +0.056 (+0.028 a +0.084) | +0.262 ✓ | +0.245 ✓ | +0.053 ✓ |
+  | 3 | 11,416 | +0.030 (+0.003 a +0.057) | +0.300 ✓ | +0.287 ✓ | +0.016 |
+
+  - En la fase 1 dio los mismos trades que el control de DS (12,976 en las de siempre, ya con SUI, y 3,010 en XRP).
+  - **Antes de comisiones** da +0.18 R en las fases 2 y 3: lo que se achica es la parte de la comisión (de 0.12 a 0.14 R), porque los stops bajaron de 0.66% a 0.58% del precio.
+  - **BTC** pierde en las dos fases (−0.04 y −0.06), por la comisión sobre stops de 0.32% a 0.38%. XRP queda cerca de cero, y las otras cinco ganan.
+  - **En la fase 3,** las zonas ancladas en velas al azar casi la igualan: lo que queda es, sobre todo, la mecánica.
+- **Comisión y deslizamiento** (`costes.py`, después, sin cambiar el veredicto):
+  - con el objetivo como limit (maker) y el stop deslizando 0.02%, la fase 3 da +0.033 R (de +0.005 a +0.061);
+  - con 0.05% en el stop, −0.002;
+  - con las dos salidas taker y 0.02%, −0.008.
+
+  Aguanta solo si el objetivo va como limit y el stop desliza poco.
+- **En vivo, el paso 4 (22/11):** la suite registra DX en vivo con la regla y el código de aquí, sin enviar nada al bot (`12.AltagraciaTradingSuite/CLAUDE.md`, «DX en vivo»). Cómo se juzga quedó fijado antes, en el plan («DX en vivo»). Las tres fases están usadas: un ajuste (dejar fuera BTC, un stop mínimo en % del precio, la tendencia a favor) es otra hipótesis, con su propio registro.
+  - Para eso `rule_tester.run` suma dos opciones. Sin ellas, nada cambia:
+    - `since`: las señales que se conocen antes no se toman, aunque sus velas sigan (sirven para el ATR y las zonas), y el resultado trae además `openTrades`, las posiciones abiertas al final;
+    - `minutes`: otro lector de los minutos de cada vela (el de la suite lee también los días en vivo).
+- **El ripple del VPA en DX (22/11, solo un estudio de la fase 1):** el medidor del lector VPA leído en 4 horas y en 1 día, al armarse la orden (A) y mientras la limit espera (B), con 8 cortes y el criterio fijados antes en el plan («Versión refinada de DX: el ripple entre marcos»). Corrido con `OrderFlowData/research/dale/2026-11-22/ripple_dx.py`, sin guardar corridas (`RIPPLE_DX.md`).
+  - **Ningún corte pasa:** el ripple no le suma a DX.
+  - Con el medidor neutro DX rinde menos que con él a favor o en contra, sin una dirección. Cancelar la limit cuando el marco mayor se pone en contra habría quitado trades que ganan igual o más.
+  - Las velas de 4 horas de BTC, ETH y SOL antes del 24/10/2021 (donde empieza el caché) se arman con `early_candles`, como `daily_bars`.
+- **Stop y objetivo más lejos (22/11, exploración de la fase 1, `ancho_dx.py`):** con el stop 2 a 4 veces más lejos y el objetivo en 2R, la comisión baja de 0.13 a 0.03 R, pero el R antes de comisiones baja de +0.23 a +0.10. El neto queda en +0.06 o +0.07 contra +0.10, entran muchos menos trades y se pierde la ventaja sobre las anclas al azar. Ensanchar no ayuda.
+- **Una orden por zona y la tendencia por el precio (22/11, fase 1, `refinada_dx.py`):**
+  - con el cierre de 4 horas a favor de su EMA 200, DX da +0.143 R contra +0.055 en contra (7 de 7 monedas). También pasan el día contra su EMA 50 y la pendiente de la EMA 50 de 4 horas;
+  - una orden por zona (solo la más cercana al precio) baja el R por trade, de +0.099 a +0.084, y no se adopta;
+  - **DX con T1 por el probador (`dxt.py`), con la EMA leída en 4 horas:** 9,974 trades y +0.117 R contra +0.099 de DX. La diferencia (+0.018) no tiene margen, ni contra las anclas al azar: no se queda. Con una posición a la vez, cada señal quitada deja entrar a otra.
+  - Con esto se cierra la versión refinada, y DX sigue con su registro en vivo.
+
+### Pruebas
+
+- `tests/test_dale.py` (13):
+  - el ATR diario sin el día en curso;
+  - el perfil por velas;
+  - el armado (velas seguidas, la cuenta que vuelve a empezar, el plazo y el lado);
+  - el stop entre el 10% y el 20%;
+  - las zonas del almacén;
+  - la acumulación y el cluster con su pausa;
+  - el control;
+  - que lo sabido no cambie;
+  - la corrida con el control;
+  - DX da los mismos eventos que el control de DS, y su control ancla en otras velas, siempre igual;
+  - la corrida de DX con sus anclas al azar;
+  - `run` con `since` y `minutes` (22/11): sin ellos da lo mismo; con `since` no toma las señales anteriores y da la posición abierta, sin salida.
+- `tests/test_rule_tester.py` suma 1 (17): un tramo con un día sin flujo no se guarda; con el flujo completo se guarda y se usa; si después se escribe un día, se vuelve a detectar. Sin el candado, falla.
+- `rulefacets.test.mjs` (13) y `ruletester.test.mjs` (15) siguen pasando, y la página compila.
+- Las del probador que pasan por el tramo (13 archivos, 115 pruebas) pasan con el candado. Todas las del backend, con DX: 556 pasan y fallan las 2 de siempre (`test_endpoints` por la versión y `test_lru_cache::test_clear`). Con `since` y `minutes` (22/11), 557 y las mismas 2.
 
 ## REVISIÓN DE CANDIDATOS POR SESIONES (18/11/2026)
 
@@ -2159,7 +2495,18 @@ La candidata de la fase 1: QB, 4h, a mercado, stop 1.5 ATR (máximo 8), objetivo
 
 - En las monedas nuevas pasa el criterio en las dos fases (los dos controles con margen y R positivo). En las de siempre, la fase 2 supera al azar con margen y al tramo sin él.
 - Los cortos rinden más: en la fase 2 de las nuevas, +0.31 R contra +0.12 de los largos.
-- Es la primera regla del VPA que pasa la fase 2. La fase 3 no se corrió.
+- Es la primera regla del VPA que pasa la fase 2.
+
+**Fase 3 (21/11, `fase3_qb.py`, `FASE3_QB.md`), desde el 01/07/2025:**
+
+| Monedas | Trades | R por trade | Sobre el azar | Sobre el tramo | Monedas + | Trimestres + |
+|---|---|---|---|---|---|---|
+| De siempre (7) | 474 | −0.02 ±0.16 | −0.04 (−0.20 a +0.12) | +0.02 (−0.14 a +0.18) | 3 de 7 | 3 de 6 |
+| Nuevas (43) | 2,765 | +0.09 ±0.07 | +0.09 (+0.03 a +0.16) | +0.13 (+0.07 a +0.20) | 31 de 43 | 3 de 6 |
+
+- **En las monedas nuevas pasa la fase 3:** los dos controles con margen y R positivo, en 2025 (+0.10) y en 2026 (+0.08). Pero la ventaja se achica a la mitad frente a la fase 2 (+0.22 → +0.09 sobre el azar), la constancia baja a 3 de 6 trimestres y los cortos ponen más (+0.13 contra +0.04).
+- **En las de siempre cae:** −0.02 R, sin ventaja sobre ninguno de los dos controles.
+- Lectura: queda una ventaja chica que se sostiene en muchas monedas, no una regla fuerte. Con 0.05% de deslizamiento por lado, no medido, buena parte de los +0.09 R podría irse.
 
 ### Velas con ancho por volumen (21/11)
 
@@ -2184,11 +2531,106 @@ Lo demás:
 - **El entrenador de la página** ya conoce el lector.
 - **`verificar.py`** suma la lectura del Lector VPA de la vela: grados, medidor, tramo y elementos Q, con las velas hasta ella.
 
+### Deslizamiento de la ruptura con volumen (22/11)
+
+`OrderFlowData/research/vpa/deslizamiento_qb.py` (`DESLIZAMIENTO_QB.md`) lee las corridas guardadas de las tres fases, sin volver a correr la regla, y a cada trade le resta el deslizamiento en R: s × precio ÷ riesgo por lado. El supuesto realista desliza la entrada a mercado y el stop; el objetivo es una limit y no desliza.
+
+| Monedas | Fase | Sin deslizamiento | 0.02% por lado | 0.05% | 0.10% | Deja el R en 0 |
+|---|---|---|---|---|---|---|
+| Nuevas (43) | 1 | +0.063 | +0.054 | +0.040 | +0.016 | 0.13% |
+| Nuevas (43) | 2 | +0.214 | +0.206 | +0.193 | +0.172 | 0.52% |
+| Nuevas (43) | 3 | +0.088 ±0.067 | +0.078 | +0.063 ±0.067 | +0.037 | 0.18% |
+| De siempre (7) | 3 | −0.021 | −0.037 | −0.060 | −0.100 | — |
+
+- El stop de 1.5 ATR en 4h es ancho (unos 3 a 4% del precio): 0.05% por lado cuesta solo 0.02 a 0.04 R por trade. Con la B5, de stop corto, el mismo deslizamiento se comía casi toda la ventaja.
+- En la fase 3 de las monedas nuevas, con 0.05% el R queda en +0.06 y su margen apenas toca el cero; con 0.10%, en +0.04. Los controles al azar tienen el mismo stop en ATR y pagan casi lo mismo: la ventaja sobre ellos casi no cambia.
+- Las monedas nuevas son de menos volumen que BTC y ETH: en la apertura de una vela de 4h tras una ruptura el deslizamiento real puede pasar de 0.05%. No se midió con el libro.
+
+### El Observador contra el lector (22/11)
+
+Pedido del usuario: que el Observador compare sus lecturas con las del lector. Su lectura es la orden misma (el lado) y lo que elija del Lector VPA para el análisis.
+
+- **Lectura** (`observer._vpa_reading`): en el minuto de la orden, con las velas cerradas antes de ella, el lector en el marco de la orden, en 1 hora y en 4 horas: el medidor, el estado del lado de la orden (a favor desde +0.3, `VPA_LEAN`; en contra desde −0.3; neutro entre medio; `strong` desde ±1, el umbral del indicador), los elementos Q de las 3 últimas velas (`VPA_LOOK`) y las lecturas de la última vela con grado 0.5 o más. Va en `reading["vpa"]` de cada orden nueva (`read_at(..., tf=)`).
+- **Órdenes de antes:** `_vpa_of()` la calcula una vez con los minutos anteriores a la orden y la guarda en `OrderFlowData/observer/vpa_readings.json`. La primera vez el informe tarda unos 20 s con 39 órdenes; después, centésimas.
+- Con ±1 de umbral, 29 de 32 órdenes del usuario quedaban neutras: por eso la banda de ±0.3.
+- **Comparación de cada orden** (fila «Lector VPA»): medidor, elementos y marcos mayores. Coincide si el lector estaba a favor, no coincide si estaba en contra; neutro no cuenta.
+- **Informe:** sección «Tú contra el lector VPA» con acierto y R por estado en cada marco, y las órdenes donde citaste el lector. Seis condiciones nuevas en «Lo que leía la regla» (lector a favor o en contra en el marco de la orden, a favor en 1h y en 4h, elemento a favor o en contra) y en mejores contra peores.
+- **Suite:** el journal usa estas funciones. Sus trades traen el lector en su lectura; los guardados antes no lo tienen y no se recalculan. La fila se lee con `vpaRow` de App 1.
+- **Lo del usuario al 22/11** (BTC, 32 órdenes cerradas, marco de la orden): lector a favor, 8 órdenes, 75% y +1.24 R; neutro, 19, 21% y −0.31 R; en contra, 5, 40% y −0.02 R. Muestra muy pequeña.
+- Pruebas: tres más en `test_observer.py` (60) y una en `observer.test.mjs` (45); `journal_checks.py` de la suite (89).
+
+### Signos en el modal (22/11)
+
+Cada casilla de los elementos dice entre paréntesis el signo que dibuja sobre las velas (`VPA_GLYPHS` de `vpa.js`, el mismo del indicador): esfuerzo sin resultado (◆), ruptura con volumen (▲), ruptura sin volumen (✕), retroceso (↺), prueba (T), frenado o techo (S), clímax (C) y cruce del medidor (E). El código del probador sale al pasar el mouse.
+
+### El ripple entre marcos (22/11)
+
+La idea del libro: una señal del marco rápido es una onda y el marco lento manda. Primero se midió y después se armó el filtro. Todo en la fase 1.
+
+- **Estudio** (`OrderFlowData/research/vpa/ripple_qb.py`, `RIPPLE_QB.md`): QB en 1h y en 4h, con el medidor del marco mayor (4h y 1 día) en su última vela cerrada al saberse la señal, del lado del trade.
+  - **Va al revés del libro.** Con el marco mayor fuerte a favor (≥ 1), QB pierde en los cuatro grupos: de −0.14 a −0.48 R. Con el mayor a favor (≥ 0.3) rinde menos que neutro en tres de cuatro.
+  - Ejemplo, QB 1h en las 43 monedas nuevas con el medidor de 4h: fuerte a favor 621 trades y −0.23 R ±0.13, neutro 9,565 y 0.00, en contra 5,319 y −0.06.
+  - Lectura: cuando el marco mayor ya muestra fuerza, la ruptura llega tarde.
+- **Filtro:** el medidor del filtro VPA se puede leer en un marco mayor que el de la regla (`vpaf.tf`: 1 hora, 4 horas o 1 día; «leído en» en la ventana).
+  - Las velas de la regla se unen por bloques UTC de ese marco, y cada vela lee la última vela mayor ya cerrada (`_vpaf_view`). Un bloque incompleto, como el día de una acción, se lee cuando empieza el siguiente.
+  - Los controles al azar entran solo donde deja.
+  - Modo nuevo «que no esté a favor más de» (`notFavor`: medidor × lado < umbral), además de a favor y no en contra.
+  - Sin `tf` la regla conserva su identidad.
+- **El filtro, por el probador** (`ripple_filtro.py`, `RIPPLE_FILTRO.md`), sin entrar con el marco mayor fuerte a favor:
+  - QB 4h con el día: en las monedas nuevas, de +0.063 a +0.073 R (sobre el azar de +0.10 a +0.12); en las de siempre, de +0.14 a +0.13;
+  - QB 1h con 4h: de −0.037 a −0.033 R en las nuevas y de −0.046 a −0.033 en las de siempre.
+
+  Con una posición a la vez, cada señal quitada deja entrar a otra, y el filtro quita pocas: no mueve la ventaja. QB en 1h pierde con o sin él.
+- **Decisión:** el ripple no se lleva a la fase 2. El filtro queda en el probador para otras reglas.
+- Pruebas: dos más en `test_vpa.py` (10) y una en `rulefacets.test.mjs` (14). No se vio en pantalla: la página compila.
+
+### Deslizamiento real con el libro (22/11)
+
+`OrderFlowData/research/vpa/deslizamiento_real_qb.py` (`DESLIZAMIENTO_REAL_QB.md`) usa el libro completo de Bybit que graba la suite (`live/book`, del 13/11 16:00 al 22/11 00:00 UTC, 22 monedas).
+- **Cómo:** simula una orden a mercado de 1k, 10k, 50k y 250k USD recorriendo el libro de cada segundo. El costo es el precio medio del llenado contra el precio medio del libro, por lado. Momentos medidos:
+  - la entrada en el primer segundo de cada vela de 4h;
+  - la salida por el stop en un movimiento rápido (0.15% o más dentro del minuto);
+  - un segundo cualquiera;
+  - las 7 entradas reales de QB en esos días.
+
+  El objetivo es una limit y no desliza.
+- **Costo por trade en R a 10k:**
+  - BTC y ETH: 0;
+  - SOL, XRP y DOGE: menos de 0.01;
+  - AAVE, AVAX, ADA, UNI y ARB: 0.013 a 0.018;
+  - TRX y SHIB: unos 0.03;
+  - GALA: 0.037;
+  - RUNE: 0.119.
+
+  El stop de 1.5 ATR es ancho (2.4 a 4.5% del precio), y por eso el costo es chico.
+- **Fase 3 con el costo medido** (solo las monedas con libro):
+  - las nuevas (8, 546 trades) pasan de +0.134 a +0.120 R con 10k, +0.107 con 50k y +0.069 con 250k (0.05% por lado daba +0.104);
+  - las de siempre (6, 411 trades) bajan de −0.023 a −0.034.
+
+  El supuesto de 0.05% por lado era más duro que lo real hasta 50k.
+- **Límite:** son 9 días de libro, aplicados a trades de otras fechas, y no hubo un desplome fuerte.
+
+### Guía en PDF (22/11)
+
+`GUIA_VPA.pdf` (21 páginas, reemplaza la del 21/11), con imágenes reales de App 1 tomadas en una copia aislada con BTC. Tiene cuatro partes:
+1. **Las ideas:** el VPA en una página y la tabla «del libro al código».
+2. **Tutorial:** el lector, el panel, el cuadro de una vela, el modal, las velas con ancho, el probador (regla, filtro, salida, resumen y trade), el Observador y el Gimnasio.
+3. **Informe de las reglas:**
+   - las 16 de la fase 1;
+   - QB en las fases 2 y 3;
+   - el deslizamiento supuesto y el real;
+   - el delta real;
+   - causa y efecto;
+   - la salida VPA;
+   - el ripple;
+   - las órdenes del usuario contra el lector.
+4. **Qué explorar después**, con el porqué y el cómo.
+
+Se arma con un script de reportlab que quedó en el scratchpad de la sesión, fuera del repositorio.
+
 ### Falta
 
-- El "ripple" entre marcos.
-- Que el Observador compare las lecturas del usuario con las del lector.
-- La fase 3 de la ruptura con volumen.
+- Nada de la propuesta original. Lo abierto: seguir el informe «Tú contra el lector VPA» a medida que haya más órdenes, y repetir el deslizamiento real con más semanas de libro.
 
 ## RANGOS HORIZONTALES (20/11/2026)
 

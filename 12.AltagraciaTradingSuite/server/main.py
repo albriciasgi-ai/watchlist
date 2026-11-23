@@ -9,6 +9,8 @@
 #   - Swing: detecta al cierre de cada vela con las reglas de App 1 y lo anota en data/swing (swing_watch.py).
 #     No envia nada: las alertas quedan para la central de confluencia.
 #   - Los tres sabios de Williams y la estructura SMC, igual, en data/wsmc (wise_smc_watch.py). Tampoco envia nada.
+#   - DX en vivo (22/11): la hipotesis de los apilados desplazados, con la regla y el codigo del probador de App 1, en
+#     data/dx (dx_watch.py). Registra ordenes, entradas y salidas sin enviar nada.
 # Las rutas del mercado responden igual que las del backend de App 1, para que el grafico de App 1
 # (MiniChart) se use tal cual, sin copiarlo.
 #
@@ -50,14 +52,21 @@ from journal_store import JournalStore  # noqa: E402
 import official  # noqa: E402  dias oficiales que faltan, con las herramientas del panel
 import recorder  # noqa: E402  grabacion propia de trades (live/local), un solo proceso a la vez
 import book_recorder  # noqa: E402  libro completo de Bybit (live/book), un solo proceso a la vez
+import hl_recorder  # noqa: E402  Hyperliquid: estado por moneda y posiciones de las ballenas (live/hyperliquid), solo lectura
 import book_cloud  # noqa: E402  tapa los huecos del libro con lo que graba la nube (live/book_cloud)
+import hl_cloud  # noqa: E402  baja de la nube lo que grabo de Hyperliquid (live/hyperliquid_cloud)
 import book_heatmap  # noqa: E402  mapa de liquidez por vela y precio, para la pestana "Mapa"
 import book_levels  # noqa: E402  niveles de liquidez sostenida, para la pestana "Mapa"
 import book_defense  # noqa: E402  defensa de las zonas dibujadas, para la pestana "Mapa"
 import ladder  # noqa: E402  price ladder de la pestana "Mapa", del libro en memoria
 import swing_watch  # noqa: E402  Swing del servidor: detecta y anota, nunca envia
 import wise_smc_watch  # noqa: E402  Sabios de Williams y estructura SMC del servidor: detecta y anota, nunca envia
+import dx_watch  # noqa: E402  DX en vivo: la regla del probador de App 1 sobre el almacen en vivo, registra y nunca envia
+import scanner  # noqa: E402  scanner de monedas (22/11): mira todos los perpetuos USDT de Bybit; nunca envia ni graba
 import alpaca_data  # noqa: E402  acciones de EE. UU. desde Alpaca: footprints, velas y OI de opciones
+import mobile_devices  # noqa: E402  celulares emparejados y pedidos firmados
+import mobile_events  # noqa: E402  vigilante del bot para el celular y avisos push
+import mobile_gate  # noqa: E402  puerta movil: otro puerto, apagada de fabrica
 from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
 
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
@@ -73,6 +82,8 @@ _candle_cache = {}
 app.include_router(market_routes.router)
 app.include_router(book_recorder.make_router())
 app.include_router(book_cloud.make_router())
+app.include_router(hl_recorder.make_router())
+app.include_router(hl_cloud.make_router())
 app.include_router(book_heatmap.make_router())
 app.include_router(ladder.make_router())
 app.include_router(book_levels.make_router())
@@ -81,6 +92,11 @@ SWING = swing_watch.SwingWatch(Path(CONFIG["data_dir"]) / "swing", DRAWINGS_DIR)
 app.include_router(swing_watch.make_router(SWING))
 WSMC = wise_smc_watch.WiseSmcWatch(Path(CONFIG["data_dir"]) / "wsmc", symbols_source=lambda: SYMBOLS.load())
 app.include_router(wise_smc_watch.make_router(WSMC))
+DX = dx_watch.DxWatch(Path(CONFIG["data_dir"]) / "dx", DATA, store_until=market_routes._store_until)
+app.include_router(dx_watch.make_router(DX))
+book_defense.ZONE_SOURCES.append(DX.zones)   # las limit de DX en la defensa de zona de la pestana Mapa
+SCANNER = scanner.Scanner(Path(CONFIG["data_dir"]) / "scanner", symbols_source=lambda: SYMBOLS.load())
+app.include_router(scanner.make_router(SCANNER))
 app.include_router(alpaca_data.make_router())
 
 
@@ -99,19 +115,32 @@ async def _startup():
         coins = list(DEFAULT_SYMBOLS)
     await recorder.start(coins, DATA, SUITE_DIR.parent)
     await book_recorder.start(coins, DATA, CONFIG["bybit_url"], _http, candles.bybit_turn)
+    await hl_recorder.start(coins, DATA, _http)
     book_cloud.start(DATA, os.environ.get("SUITE_CLOUD_URL", book_cloud.DEFAULT_URL), _official_symbols, _http)
+    hl_cloud.start(DATA, os.environ.get("SUITE_CLOUD_URL", book_cloud.DEFAULT_URL), _http)
     official.start(DATA, _official_symbols)
     await SWING.start()
     await WSMC.start()
+    await DX.start()
+    await SCANNER.start()
+    if MOBILE_GATE.host and os.environ.get("SUITE_MOBILE", "1") != "0":
+        MOBILE_EVENTS.start()
+        MOBILE_GATE.start()
     print(f"[SUITE] Servidor en http://{CONFIG['host']}:{CONFIG['port']} | almacen {DATA} | bot {CONFIG['bot_url']}")
 
 
 @app.on_event("shutdown")
 async def _shutdown():
+    await MOBILE_GATE.stop()
+    await MOBILE_EVENTS.stop()
     await SWING.stop()
     await WSMC.stop()
+    await DX.stop()
+    await SCANNER.stop()
     official.stop()
     await book_cloud.stop()
+    await hl_cloud.stop()
+    await hl_recorder.stop()
     await book_recorder.stop()
     await recorder.stop()
     if _http:
@@ -362,6 +391,17 @@ JOURNAL = JournalStore(Path(CONFIG["data_dir"]) / "journal")
 app.include_router(bot_routes.make_router(lambda *a, **kw: _bot(*a, **kw), journal_store=JOURNAL))  # _bot se busca al llamar (las pruebas lo cambian)
 app.include_router(journal_routes.make_router(JOURNAL, lambda *a, **kw: _bot(*a, **kw)))
 
+# ---------- puerta movil (21/11): celulares emparejados, vigilante de eventos y avisos push ----------
+_MOBILE_DIR = Path(CONFIG["data_dir"]) / "mobile"
+MOBILE_DEVICES = mobile_devices.DeviceStore(_MOBILE_DIR)
+MOBILE_EVENTS = mobile_events.EventWatch(
+    _MOBILE_DIR, lambda *a, **kw: _bot(*a, **kw), MOBILE_DEVICES,
+    sender=mobile_events.FcmSender(CONFIG["mobile_fcm_credentials"], lambda: _http))
+MOBILE_GATE = mobile_gate.Gate(
+    mobile_gate.make_app(MOBILE_DEVICES, MOBILE_EVENTS, lambda *a, **kw: _bot(*a, **kw), JOURNAL, app.version),
+    CONFIG["mobile_host"], CONFIG["mobile_port"])
+app.include_router(mobile_gate.make_local_router(MOBILE_DEVICES, MOBILE_GATE, MOBILE_EVENTS))
+
 
 # ---------- monedas y precio ----------
 @app.get("/api/suite/symbols")
@@ -402,6 +442,7 @@ async def add_symbol(request: Request):
         raise HTTPException(status_code=400, detail=str(e))
     await recorder.add_symbol(symbol)
     await book_recorder.add_symbol(symbol)
+    hl_recorder.add_symbol(symbol)
     return {"success": True, "symbols": symbols}
 
 
@@ -466,7 +507,9 @@ async def suite_status():
     return {"success": True, "version": app.version, "now": int(time.time() * 1000), "store": store,
             "local_tape": tape, "bot": bot_state,
             "recorder": recorder.status(), "book": book_recorder.brief(), "book_cloud": book_cloud.brief(),
-            "official": official.status(), "swing": SWING.brief(), "wsmc": WSMC.brief()}
+            "hyperliquid": hl_recorder.brief(), "hyperliquid_cloud": hl_cloud.brief(),
+            "official": official.status(), "swing": SWING.brief(), "wsmc": WSMC.brief(), "dx": DX.brief(),
+            "scanner": SCANNER.brief()}
 
 
 # Frontend ya armado (web/dist), servido desde aqui: una sola direccion para todo

@@ -55,6 +55,12 @@ export function defaultRule() {
     bxMaxHeightOn: false, bxMaxHeight: 5.5, beShare: 0.2, beMaxBody: 1, beRejection: 0.6, bePattern: false,
     // FVG nuevo (hueco mínimo en ATR) y swing del detector (velas por lado y volumen mínimo)
     fvMinAtr: 0.3, spBars: 5, spVolume: false, spMinZ: 1,
+    // Elementos de Byko (21/11): las cifras fijadas en docs/PLAN_ESTRATEGIAS_BYKO_DALE.md antes de correrlos
+    fbBack: 3, fbApproachBars: 4, fbApproachAtr: 2, fbVol: 3, baBars: 6, baNear: 1,
+    taRise: 2, taRiseBars: 10, taShare: 0.2, taOiBars: 3, taZ: 2, taAdvance: 0.5, taSource: 'sum',
+    poMove: 3, poBars: 6, poVol: 3, poOiBars: 2, poZ: 2, poSource: 'sum',
+    // Zonas de Dale con el primer regreso (21/11): velas completas para armarse, stop en % del ATR diario, y lo propio de DA y DC
+    daleAway: 2, daleMinDay: 0.1, daleMaxDay: 0.2, daleBuffer: 0.1, daleRun: 3, daleLeg: 3, daleMinLeg: 5, daleBump: 1.5,
     // Filtros de flujo: CVD de N velas a favor y OI (rise, fall, conf, noconf u off)
     cvdOn: false, cvdBars: 20, oiMode: 'off', oiBars: 6, oiPct: 2,
     // Multitud por el funding (off, nocon, contra) y OI sostenido (parte de los pasos de 4 h con el OI al alza)
@@ -66,6 +72,8 @@ export function defaultRule() {
     patTrend: true, patTrendBars: 5, patVolume: false, patMinZ: 1, patWick: 2,
     // Filtros de línea: off, side (cierra del lado a favor) o touch (además la mecha la toca)
     vwapMode: 'off', vwapPeriod: 200, vwapSlope: false, vwapMaxDevOn: false, vwapMaxDev: 1, emaMode: 'off', emaPeriod: 14, emaSlope: false,
+    // emaTf (22/11): la EMA leída en un marco mayor (0 = el de la regla), con su cierre, en su última vela cerrada
+    emaTf: 0,
     // Volumen de Respuesta: ATR con que gira el tramo, veces el volumen de su hora, flecha a favor o en contra del tramo, y rombo como giro o para seguir
     rvLeg: 2, rvSpike: 2, rvArrow: 'with', rvRombo: 'turn',
     // Gaussian Channel: periodo y polos del filtro, ancho de las bandas, canal a favor y cómo sale por el canal
@@ -81,7 +89,7 @@ export function defaultRule() {
     bwAlligator: 'off', bwZone: false, smcPd: false, smcBias: false, bwAo: 'off', bwAc: 'off', bwGator: 'off', bwMfi: 'off',
     // Lector VPA (21/11): grado desde el que cuenta un elemento, umbral y memoria del medidor, rango que se rompe y retroceso;
     // filtro del medidor (off, favor, notAgainst) con su umbral
-    vpaFire: 0.5, vpaMeter: 1, vpaDecay: 0.75, vpaLeg: 2, vpaRangeBars: 20, vpaMaxRangeAtr: 6, vpaPullBars: 8, vpaMode: 'off', vpaThr: 1,
+    vpaFire: 0.5, vpaMeter: 1, vpaDecay: 0.75, vpaLeg: 2, vpaRangeBars: 20, vpaMaxRangeAtr: 6, vpaPullBars: 8, vpaMode: 'off', vpaThr: 1, vpaTf: 0,
     // Salida VPA (fase 4): sale con la primera lectura en contra; vpaExitFrom = R a favor desde los que se arma (0 = desde la entrada)
     vpaExitOn: false, vpaExit: ['climax'], vpaExitThr: 1, vpaExitFrom: 0
   };
@@ -119,10 +127,18 @@ export const VP_PERIODS = [[4, '4 horas'], [8, '8 horas'], [12, '12 horas'], [24
 export const PATTERN_CODES = ['HM', 'EN', 'DJ'];
 export const WISE_CODES = ['WD', 'WA', 'WF'];
 export const SMC_CODES = ['BS', 'OB', 'BK', 'EQ'];
+export const DALE_CODES = ['DS', 'DN', 'DG', 'DA', 'DC', 'DX'];  // Zonas de Trader Dale con el primer regreso (21/11); DX, hipótesis del 22/11
 export const VPA_CODES = ['QA', 'QB', 'QF', 'QR', 'QT', 'QS', 'QC', 'QE'];
 export const usesVpa = (rule) => (rule.codes || []).some(code => VPA_CODES.includes(code));
 /** El filtro del medidor VPA en palabras (el mismo de rule_tester en el backend) */
-export const VPA_FILTER_TEXT = { favor: 'medidor VPA a favor', notAgainst: 'medidor VPA que no esté en contra' };
+export const VPA_FILTER_TEXT = { favor: 'medidor VPA a favor', notAgainst: 'medidor VPA que no esté en contra', notFavor: 'medidor VPA que no esté fuerte a favor' };
+/** Marcos mayores en que el filtro puede leer el medidor (el "ripple" de Coulling): solo los mayores que el de la regla */
+export const VPA_FILTER_TFS = [[60, '1 hora'], [240, '4 horas'], [1440, '1 día']];
+export const vpaFilterTf = (tf, vpaTf) => {
+  const hi = Number(vpaTf) || 0;
+  return hi > Number(tf) && hi % Number(tf) === 0 && VPA_FILTER_TFS.some(([m]) => m === hi) ? hi : 0;
+};
+export const vpaFrameText = (hi) => (hi ? ` de ${VPA_FILTER_TFS.find(([m]) => m === hi)?.[1]}` : '');
 /** Las lecturas de la salida VPA, en el orden del backend (rule_tester.VPA_EXITS) */
 export const VPA_EXITS = [
   ['climax', 'clímax o frenado', 'Clímax o volumen de frenado (QC, QS) en contra del trade: el movimiento se agota'],
@@ -191,7 +207,8 @@ export function toBackendRule(rule) {
     ...(rule.vwapMode !== 'off' || rule.emaMode !== 'off' ? {
       lines: [
         ...(['side', 'touch'].includes(rule.vwapMode) ? [{ type: 'vwap', period: number(rule.vwapPeriod, 200), mode: rule.vwapMode, slope: !!rule.vwapSlope, ...(rule.vwapMaxDevOn ? { maxDev: number(rule.vwapMaxDev, 1) } : {}) }] : []),
-        ...(['side', 'touch'].includes(rule.emaMode) ? [{ type: 'ema', period: number(rule.emaPeriod, 14), mode: rule.emaMode, slope: !!rule.emaSlope }] : [])
+        ...(['side', 'touch'].includes(rule.emaMode) ? [{ type: 'ema', period: number(rule.emaPeriod, 14), mode: rule.emaMode, slope: !!rule.emaSlope,
+          ...(vpaFilterTf(rule.tf, rule.emaTf) ? { tf: vpaFilterTf(rule.tf, rule.emaTf) } : {}) }] : [])
       ]
     } : {}),
     ...(codes.includes('CC') ? { cc: { tf: number(rule.ccTf, 0) || undefined, offset: number(rule.ccOffset, 0), swing: number(rule.ccSwing, 3), legs: number(rule.ccLegs, 2) } } : {}),
@@ -203,6 +220,14 @@ export function toBackendRule(rule) {
     ...(codes.includes('IM') ? { im: { bars: number(rule.imBars, 3), atr: number(rule.imAtr, 2), range: rule.imRangeOn ? number(rule.imRange, 1.5) : null } } : {}),
     ...(codes.includes('FV') ? { fv: { minAtr: number(rule.fvMinAtr, 0.3) } } : {}),
     ...(codes.includes('SP') ? { sp: { bars: number(rule.spBars, 5), minZ: rule.spVolume ? number(rule.spMinZ, 1) : null } } : {}),
+    ...(codes.includes('FB') ? { fb: { back: number(rule.fbBack, 3), approachBars: number(rule.fbApproachBars, 4), approachAtr: number(rule.fbApproachAtr, 2), vol: number(rule.fbVol, 3) } } : {}),
+    ...(codes.includes('BA') ? { ba: { bars: number(rule.baBars, 6), near: number(rule.baNear, 1) } } : {}),
+    ...(codes.includes('TA') ? { ta: { rise: number(rule.taRise, 2), riseBars: number(rule.taRiseBars, 10), share: number(rule.taShare, 0.2), oiBars: number(rule.taOiBars, 3),
+      z: number(rule.taZ, 2), advance: number(rule.taAdvance, 0.5), source: rule.taSource || 'sum' } } : {}),
+    ...(codes.includes('PO') ? { po: { move: number(rule.poMove, 3), bars: number(rule.poBars, 6), vol: number(rule.poVol, 3), oiBars: number(rule.poOiBars, 2),
+      z: number(rule.poZ, 2), source: rule.poSource || 'sum' } } : {}),
+    ...(codes.some(code => DALE_CODES.includes(code)) ? { dale: { away: number(rule.daleAway, 2), minDay: number(rule.daleMinDay, 0.1), maxDay: number(rule.daleMaxDay, 0.2),
+      buffer: number(rule.daleBuffer, 0.1), run: number(rule.daleRun, 3), leg: number(rule.daleLeg, 3), minLeg: number(rule.daleMinLeg, 5), bump: number(rule.daleBump, 1.5) } } : {}),
     ...(rule.cvdOn || ['rise', 'fall', 'conf', 'noconf'].includes(rule.oiMode) || ['nocon', 'contra'].includes(rule.crowdMode) || rule.steadyOn
       || CHAIN_METRICS.includes(rule.chainMetric)
       ? { flow: { ...(rule.cvdOn ? { cvd: number(rule.cvdBars, 20) } : {}),
@@ -229,7 +254,7 @@ export function toBackendRule(rule) {
       vpa: { fire: number(rule.vpaFire, 0.5), meter: number(rule.vpaMeter, 1), decay: number(rule.vpaDecay, 0.75), legAtr: number(rule.vpaLeg, 2),
         rangeBars: number(rule.vpaRangeBars, 20), maxRangeAtr: number(rule.vpaMaxRangeAtr, 6), pullBars: number(rule.vpaPullBars, 8) }
     } : {}),
-    ...(VPA_FILTER_TEXT[rule.vpaMode] ? { vpaf: { mode: rule.vpaMode, thr: number(rule.vpaThr, 1) } } : {}),
+    ...(VPA_FILTER_TEXT[rule.vpaMode] ? { vpaf: { mode: rule.vpaMode, thr: number(rule.vpaThr, 1), ...(vpaFilterTf(rule.tf, rule.vpaTf) ? { tf: vpaFilterTf(rule.tf, rule.vpaTf) } : {}) } } : {}),
     ...(rule.smcPd || rule.smcBias ? { smcf: { ...(rule.smcPd ? { pd: true } : {}), ...(rule.smcBias ? { bias: true } : {}), swing: number(rule.smcSwing, 50) } } : {}),
     ...(usesProfile(rule) ? { vp: { hours: number(rule.vpHours, 24), accept: number(rule.vpAccept, 30), failBars: number(rule.vpFailBars, 3), shapes: rule.vpShapes || [], veEntry: rule.vpVeEntry === 'resting' ? 'resting' : 'touch' } } : {}),
     recipe: {
@@ -325,7 +350,7 @@ export function fromBackendRule(saved) {
     bwAo: saved.bwf?.ao || 'off', bwAc: saved.bwf?.ac || 'off', bwGator: saved.bwf?.gator || 'off', bwMfi: saved.bwf?.mfi || 'off',
     vpaFire: saved.vpa?.fire ?? 0.5, vpaMeter: saved.vpa?.meter ?? 1, vpaDecay: saved.vpa?.decay ?? 0.75, vpaLeg: saved.vpa?.legAtr ?? 2,
     vpaRangeBars: saved.vpa?.rangeBars ?? 20, vpaMaxRangeAtr: saved.vpa?.maxRangeAtr ?? 6, vpaPullBars: saved.vpa?.pullBars ?? 8,
-    vpaMode: saved.vpaf?.mode || 'off', vpaThr: saved.vpaf?.thr ?? 1,
+    vpaMode: saved.vpaf?.mode || 'off', vpaThr: saved.vpaf?.thr ?? 1, vpaTf: saved.vpaf?.tf || 0,
     vpaExitOn: !!saved.exit?.vpa, vpaExit: saved.exit?.vpa?.on || ['climax'], vpaExitThr: saved.exit?.vpa?.thr ?? 1, vpaExitFrom: saved.exit?.vpa?.fromR ?? 0,
     straddleFrom: saved.entry?.from || 'zone', straddleOffset: saved.entry?.offset ?? 0.2,
     trailMode: ['atr', 'pct', 'bars'].includes(saved.exit?.trail) ? saved.exit.trail : 'off', trailAtr: saved.exit?.trailAtr ?? 4, trailPct: saved.exit?.trailPct ?? 5,
@@ -350,12 +375,20 @@ export function fromBackendRule(saved) {
     vwapSlope: !!(saved.lines || []).find(l => l.type === 'vwap')?.slope,
     vwapMaxDevOn: (saved.lines || []).find(l => l.type === 'vwap')?.maxDev != null, vwapMaxDev: (saved.lines || []).find(l => l.type === 'vwap')?.maxDev ?? 1,
     emaMode: (saved.lines || []).find(l => l.type === 'ema')?.mode || 'off', emaPeriod: (saved.lines || []).find(l => l.type === 'ema')?.period ?? 14,
-    emaSlope: !!(saved.lines || []).find(l => l.type === 'ema')?.slope,
+    emaSlope: !!(saved.lines || []).find(l => l.type === 'ema')?.slope, emaTf: (saved.lines || []).find(l => l.type === 'ema')?.tf || 0,
     useHours: !!saved.hours, hoursFrom: saved.hours ? clock(saved.hours.from) : '17:30', hoursTo: saved.hours ? clock(saved.hours.to) : '21:30',
     hoursWeekdays: saved.hours ? !!saved.hours.weekdays : true,
     bxMaxHeightOn: saved.bx?.maxHeight != null, bxMaxHeight: saved.bx?.maxHeight ?? 5.5,
     beShare: saved.be?.share ?? 0.2, beMaxBody: saved.be?.maxBody ?? 1, beRejection: saved.be?.rejection ?? 0.6, bePattern: !!saved.be?.pattern,
     fvMinAtr: saved.fv?.minAtr ?? 0.3, spBars: saved.sp?.bars ?? 5, spVolume: saved.sp?.minZ != null, spMinZ: saved.sp?.minZ ?? 1,
+    fbBack: saved.fb?.back ?? 3, fbApproachBars: saved.fb?.approachBars ?? 4, fbApproachAtr: saved.fb?.approachAtr ?? 2, fbVol: saved.fb?.vol ?? 3,
+    baBars: saved.ba?.bars ?? 6, baNear: saved.ba?.near ?? 1,
+    taRise: saved.ta?.rise ?? 2, taRiseBars: saved.ta?.riseBars ?? 10, taShare: saved.ta?.share ?? 0.2, taOiBars: saved.ta?.oiBars ?? 3,
+    taZ: saved.ta?.z ?? 2, taAdvance: saved.ta?.advance ?? 0.5, taSource: saved.ta?.source || 'sum',
+    poMove: saved.po?.move ?? 3, poBars: saved.po?.bars ?? 6, poVol: saved.po?.vol ?? 3, poOiBars: saved.po?.oiBars ?? 2,
+    poZ: saved.po?.z ?? 2, poSource: saved.po?.source || 'sum',
+    daleAway: saved.dale?.away ?? 2, daleMinDay: saved.dale?.minDay ?? 0.1, daleMaxDay: saved.dale?.maxDay ?? 0.2, daleBuffer: saved.dale?.buffer ?? 0.1,
+    daleRun: saved.dale?.run ?? 3, daleLeg: saved.dale?.leg ?? 3, daleMinLeg: saved.dale?.minLeg ?? 5, daleBump: saved.dale?.bump ?? 1.5,
     cvdOn: !!saved.flow?.cvd, cvdBars: saved.flow?.cvd ?? 20, oiMode: saved.flow?.oi || 'off', oiBars: saved.flow?.oiBars ?? 6, oiPct: saved.flow?.oiPct ?? 2,
     crowdMode: saved.flow?.crowd || 'off', steadyOn: !!saved.flow?.steady, steadyDays: saved.flow?.steadyDays ?? 14, steadyMin: saved.flow?.steadyMin ?? 0.52,
     chainMetric: saved.flow?.chain?.metric || 'off', chainAsset: saved.flow?.chain?.asset || 'auto', chainDays: saved.flow?.chain?.days ?? 7,
@@ -432,7 +465,7 @@ export function describeRule(saved) {
     + `${saved.pat ? ` · patrón${saved.pat.trend ? ' tras tendencia' : ''}${saved.pat.minZ != null ? `, z ≥ ${saved.pat.minZ}` : ''}` : ''}`
     + `${saved.rv ? ` · tramo ${saved.rv.leg} ATR${raw.includes('RF') ? `, flecha ≥ ${saved.rv.spike}x ${{ with: 'a favor del tramo', against: 'contra el tramo', any: 'de cualquier lado' }[saved.rv.arrow]}` : ''}${raw.includes('RB') ? `, rombo ${saved.rv.rombo === 'follow' ? 'siguiendo el tramo' : 'como giro'}` : ''}` : ''}`
     + `${saved.gc ? ` · canal ${saved.gc.period}, ${saved.gc.poles} polos, ×${saved.gc.mult}${saved.gc.trend ? ', a favor' : ''}` : ''}`
-    + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${l.slope ? ' con pendiente' : ''}${l.maxDev ? `, abre a ${l.maxDev} desv. o menos` : ''}`).join('')
+    + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${vpaFrameText(l.tf)}${l.slope ? ' con pendiente' : ''}${l.maxDev ? `, abre a ${l.maxDev} desv. o menos` : ''}`).join('')
     + `${saved.hours ? ` · ${clock(saved.hours.from)}–${clock(saved.hours.to)} UTC` : ''}`
     + `${saved.vp ? ` · perfil de ${saved.vp.hours} h${saved.vp.shapes?.length ? ` (${saved.vp.shapes.join(', ')})` : ''}` : ''}`
     // La angulación y el AO en contra son de la barra divergente: con solo el AO de tres barras o el fractal confundían
@@ -444,7 +477,7 @@ export function describeRule(saved) {
     + `${saved.bwf?.gator ? ` · Gator ${BW_GATOR_TEXT[saved.bwf.gator]?.split(' (')[0]}` : ''}${saved.bwf?.mfi ? ` · MFI ${BW_MFI_TEXT[saved.bwf.mfi]?.split(' (')[0]}` : ''}`
     + `${saved.smcf?.pd ? ' · largos en discount, cortos en premium' : ''}${saved.smcf?.bias ? ' · a favor de la estructura mayor' : ''}`
     + `${saved.vpa && raw.some(code => VPA_CODES.includes(code)) ? ` · VPA desde ${Math.round(saved.vpa.fire * 100)}%` : ''}`
-    + `${saved.vpaf ? ` · ${VPA_FILTER_TEXT[saved.vpaf.mode]} (${saved.vpaf.mode === 'favor' ? '≥' : '> −'}${saved.vpaf.thr})` : ''}`
+    + `${saved.vpaf ? ` · ${VPA_FILTER_TEXT[saved.vpaf.mode]}${vpaFrameText(saved.vpaf.tf)} (${{ favor: '≥', notFavor: '<' }[saved.vpaf.mode] || '> −'}${saved.vpaf.thr})` : ''}`
     + ` · ${saved.entry?.type === 'limit' ? 'limit' : saved.entry?.type === 'straddle' ? `dos órdenes stop a ${saved.entry.offset} ATR ${saved.entry.from === 'zone' ? 'fuera de la zona' : 'del cierre'}`
       : saved.entry?.type === 'stop' ? `orden stop en el borde de la zona${saved.entry.offset ? ` + ${saved.entry.offset} ATR` : ''}` : 'mercado'} · stop ${stop} · ${exits.join(', ') || 'sin objetivo'}`
     + `${saved.cooldown > 0 ? ` · espera ${saved.cooldown} velas` : ''}`;

@@ -230,6 +230,29 @@ test('el objetivo con los flujos on-chain: su ficha, su × y sin arrastre', () =
   assert.deepEqual(ruleDifferences(toBackendRule(fromBackendRule(rule)), rule), [], 'cargarla deja el formulario igual');
 });
 
+test('el medidor VPA leído en un marco mayor: ida y vuelta, en palabras y solo con un marco mayor', () => {
+  const form = { ...defaultRule(), tf: 240, elements: ['QB'], vpaMode: 'favor', vpaThr: 0.5, vpaTf: 1440 };
+  const rule = toBackendRule(form);
+  assert.deepEqual(rule.vpaf, { mode: 'favor', thr: 0.5, tf: 1440 });
+  assert.equal(fromBackendRule(rule).vpaTf, 1440);
+  assert.match(describeRule(rule), /medidor VPA a favor de 1 día \(≥0\.5\)/);
+  assert.match(ruleFacets(rule).map(f => f.text).join(' · '), /medidor VPA de 1 día a favor \(≥ 0\.5\)/);
+  assert.deepEqual(toBackendRule({ ...form, vpaTf: 60 }).vpaf, { mode: 'favor', thr: 0.5 }, 'un marco menor no se envía');
+  assert.deepEqual(toBackendRule({ ...form, vpaTf: 0 }).vpaf, { mode: 'favor', thr: 0.5 }, 'sin pedirlo, la regla no cambia');
+});
+
+test('la EMA leída en un marco mayor (la tendencia de DX): ida y vuelta, en palabras y solo con un marco mayor', () => {
+  const form = { ...defaultRule(), tf: 30, elements: ['DX'], emaMode: 'side', emaPeriod: 200, emaTf: 240 };
+  const rule = toBackendRule(form);
+  assert.deepEqual(rule.lines, [{ type: 'ema', period: 200, mode: 'side', slope: false, tf: 240 }]);
+  assert.equal(fromBackendRule(rule).emaTf, 240);
+  assert.match(describeRule(rule), /a favor de EMA 200 de 4 horas/);
+  assert.match(ruleFacets(rule).map(f => f.text).join(' · '), /EMA 200 de 4 horas a favor/);
+  assert.deepEqual(toBackendRule({ ...form, emaTf: 0 }).lines, [{ type: 'ema', period: 200, mode: 'side', slope: false }], 'sin pedirlo, la regla no cambia');
+  assert.deepEqual(toBackendRule({ ...form, tf: 240, emaTf: 240 }).lines[0].tf, undefined, 'el marco de la regla no se envía');
+  assert.ok(ruleDifferences(toBackendRule(form), toBackendRule({ ...form, emaTf: 0 })).length > 0, 'cambiar el marco de la EMA es otra regla');
+});
+
 let failed = 0;
 for (const [name, run] of tests) {
   try {

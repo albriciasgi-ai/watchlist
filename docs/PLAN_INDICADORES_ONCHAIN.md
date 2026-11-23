@@ -64,10 +64,29 @@ como cualquier regla.
    - Sube en 2021, 2022 y 2023.
    - Mejora la salida, no la entrada.
    - Ya está en el probador como salida "Otro objetivo con los flujos on-chain a favor".
-4. **Fase 2, decidida antes de mirar:** la mixta contra 3R siempre, en Impulso, FVG nuevo y Ruptura de caja, en las monedas de siempre y las nuevas. Pasa si da más R total y no pierde ventaja sobre los controles en las tres.
-5. **Si no pasa:** el filtro queda como dato del trade y el plan sigue con el paso 2 (Hyperliquid).
+4. ~~**Fase 2, decidida antes de mirar:** la mixta contra 3R siempre.~~ **No pasó** (21/11):
+   - en las monedas nuevas da menos R total en las tres reglas;
+   - en la fase 2 los días con el filtro son los peores, al revés que en la fase 1.
+5. **También con la ruptura con volumen del VPA** (la regla que pasó las tres fases), en las fases 1 a 3:
+   - con el filtro a favor, como "que no vaya en contra" y con el objetivo mixto: ninguna variante mejora en las tres fases;
+   - la señal cambió de signo en la fase 2.
+6. **Cierre del paso 1:** la emisión de stablecoins y el flujo neto quedan como dato del trade y como opción del probador, sin uso recomendado. **Sigue el paso 2 (Hyperliquid).**
 
-### Paso 2 — Grabar Hyperliquid desde ya (pendiente)
+De paso, Impulso, FVG nuevo y la Ruptura de caja con 3R pasaron la fase 2 contra los dos controles: son candidatas a la fase 3. Eso va por el plan de las reglas, no por este.
+
+### Paso 2 — Grabar Hyperliquid desde ya (grabación hecha el 21/11/2026; falta el indicador y el estudio)
+
+**Hecho:**
+- `12.AltagraciaTradingSuite/server/hl_recorder.py` graba, con la suite abierta:
+  - el estado de cada moneda cada 5 minutos;
+  - unas 1,200 cuentas, elegidas una vez al día (300 por capital y 1,000 por volumen del mes);
+  - sus posiciones, con el precio de liquidación, cada 15 minutos.
+- Ruta `/api/hyperliquid/liqmap/{símbolo}`. Detalle en el CLAUDE.md de la suite, sección "Hyperliquid".
+- **Medido el 21/11 en BTC:** 150 M USD de largos y 170 M de cortos se liquidarían a menos de 25% del precio.
+- **21/11:** el estado pasa a cada minuto, se suma la vuelta rápida cada minuto y el indicador "Liquidaciones Hyperliquid" del gráfico principal.
+- **22/11, en la nube y gratis:** el collector de Northflank corre el mismo grabador (14 días) y la suite baja lo nuevo (`hl_cloud.py`), para tener semanas seguidas aunque la suite esté cerrada. La lista de cuentas se lee por partes (de 350 a 58 MB de memoria). Falta desplegarlo.
+
+**Original:**
 
 Solo hay historia de verdad si la grabamos nosotros, como se hizo con el libro el 13/11.
 

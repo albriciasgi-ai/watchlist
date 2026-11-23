@@ -24,8 +24,13 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
   - un día completo de la nube comparado con el archivo oficial (ver "Nube contra el archivo oficial");
   - "Exportar a Excel" en el dashboard (ver "Journal").
 - **Sabios de Williams y estructura SMC (20/11):** los indicadores de App 1 en el gráfico, la detección en el servidor (sin enviar nada), los order blocks en la defensa de zona y sus medidas en el journal. Ver "Sabios de Williams y estructura SMC".
+- **Hyperliquid (21/11):** la suite graba el estado de cada moneda y las posiciones de las ballenas de Hyperliquid, con su precio de liquidación, para el plan on-chain. Ver "Hyperliquid".
 - **Lector VPA (21/11):** el indicador de App 1 en el gráfico y en la Watchlist (lista de livianos), con su modal. Ver `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md`, "LECTOR VPA". El servidor no lo detecta.
+- **Puerta móvil (21/11):** fase 1 de la app Android: celulares emparejados, vigilante de eventos y avisos push, apagada de fábrica. Ver "Puerta móvil".
+- **DX en vivo (22/11):** el servidor registra la hipótesis de los apilados desplazados con la regla y el código del probador de App 1, y mide la ejecución con la cinta, sin enviar nada. Ver "DX en vivo".
+- **Scanner (22/11):** mira todos los perpetuos USDT de Bybit y arma listas para la Watchlist (En juego, Tendencia con fuerza, Rápidos y Mis monedas), con el costo de operar en R y el estado del mercado. Solo mira: no envía nada ni graba esas monedas. Ver "Scanner".
 - **Falta:**
+  - la app Android (fases 2 a 4 de "Puerta móvil");
   - las alertas del Swing quedan para la central de alertas de confluencia;
   - al final, la mudanza a un servidor 24/7 con acceso protegido y celular.
 
@@ -57,6 +62,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── book_recorder.py   Graba el libro completo de Bybit (orderbook.full) de las monedas de la suite (ver "Libro completo")
 │   ├── book_store.py      Formato y lectura del libro grabado (OrderFlowData/live/book, y live/book_cloud de la nube)
 │   ├── book_cloud.py      Baja de la nube (Northflank) los minutos del libro que el PC no tiene completos
+│   ├── hl_recorder.py     Graba Hyperliquid: estado por moneda y posiciones de las ballenas (ver "Hyperliquid"); copia exacta en el collector
+│   ├── hl_cloud.py        Baja de la nube (Northflank) lo que grabó de Hyperliquid, a live/hyperliquid_cloud
 │   ├── book_heatmap.py    Mapa de liquidez por vela y precio, para la pestaña "Mapa" (/api/book/heatmap)
 │   ├── book_measures.py   Medidas del libro de cada trade del journal (grupo "Libro"); App 1 las usa en su Observador (book_reading.py)
 │   ├── book_study.py      Medición de semanas: qué hace la liquidez al llegar el precio a tus zonas, contra zonas al azar
@@ -65,10 +72,15 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── swing_watch.py     Swing del servidor: detecta al cierre de cada vela y anota en data/swing; nunca envía
 │   ├── wise_smc_watch.py  Sabios de Williams y estructura SMC del servidor (williams.py y smc.py de App 1): anota en data/wsmc; nunca envía
 │   ├── wise_smc_measures.py   Medidas de Williams y SMC de cada trade del journal (grupo "Williams y SMC")
+│   ├── dx_watch.py        DX en vivo: la regla del probador de App 1 sobre el almacén en vivo; anota en data/dx y nunca envía
+│   ├── scanner.py         Scanner de monedas (22/11): todos los perpetuos USDT de Bybit, listas y estado del mercado; anota en data/scanner y nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
 │   ├── alpaca_data.py     Acciones de EE. UU. desde Alpaca: trades con lado del agresor, footprints, velas y OI de opciones (ver "Alpaca")
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18) y wise_smc_checks.py (40), sin conexión
+│   ├── mobile_devices.py  Celulares emparejados y pedidos firmados (ver "Puerta móvil")
+│   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
+│   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (48) y scanner_checks.py (100), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -76,6 +88,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── ChartView.jsx  Formato de la pestaña principal de App 1: barra de dibujo, encabezado, un MiniChart por marco, indicadores y sus ⚙️
         ├── TradingPanel.jsx   Panel de trading en vivo: caja TP/SL, tamaño fijo o por riesgo, orden al bot
         ├── tabs.js        Pestañas 1 a 5: ajustes propios, y dibujos y monedas compartidos (BroadcastChannel)
+        ├── tabChoice.js   En qué pestaña se abre una moneda del scanner (sin tocar la página, para probarlo con node)
         ├── TabsMenu.jsx   Menú "Pestañas": abre de la 2 a la 5 con el gráfico, la Watchlist, el journal o el bot
         ├── BotView.jsx    Estado, pausa, avisos críticos, posiciones, órdenes y alertas del bot
         ├── BotConfig.jsx  Configuración del bot como en App 10
@@ -88,9 +101,10 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── botNotifications.js   Avisos de Windows del bot (solo la pestaña 1)
         ├── openDecision.js    Lo elegido para un trade que se abre (su decisión en el journal), para la imagen de apertura
         ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
-        ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing
+        ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing; desde el 22/11, también las del scanner
+        ├── ScannerPanel.jsx   Panel del scanner en la Watchlist: estado del mercado, listas con su porqué, detalle de cada moneda y ajustes
         └── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
-    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5) y tapelines.test.mjs (6), con node
+    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5), tapelines.test.mjs (6) y tabchoice.test.mjs (6), con node
 ```
 
 ## Puertos
@@ -953,6 +967,288 @@ Pedido del usuario: un indicador de Smart Money Concepts (con el de LuxAlgo como
 - **Pruebas:** `server/tests/wise_smc_checks.py` (40): `detect()` igual a los eventos de App 1, lo sabido hasta una vela no cambia con las siguientes, cada señal anotada una vez y solo desde el arranque, sin repetir al reiniciar, la pausa, la moneda agregada, el marco retomado, la configuración (también la dañada), las rutas y las medidas del journal. `book_defense_checks.py` suma 6 (21): los order blocks son los de `smc.compute` y los ya sabidos no cambian con menos velas.
 - **Probado** (20/11) en una copia aislada del servidor (13300, datos en una carpeta temporal, sin grabar ni bot) con velas reales de Bybit: las 20 monedas de fábrica en 4h, revisadas en 3.4 s, anotaron las señales de los dos últimos días (por ejemplo un BOS bajista de TRX en 0.3003 y su order block nuevo de 0.3225 a 0.3242). El panel se vio en la Watchlist a 1366 px y un clic en la señal abrió TRX en 4h. Los order blocks de la defensa y las medidas del journal solo con las pruebas. No se probó en Electron.
 
+## Puerta móvil (21/11): fase 1 de la app Android
+
+Pedido del usuario: una app Android para seguir los trades del bot (Bybit y, cuando exista, Alpaca), con aviso al abrirse una posición, las capturas de apertura y cierre, y cerrar una posición desde el celular. Aceptó el concepto y pidió empezar por la fase 1: lo del servidor. La app todavía no existe.
+
+**Plan aceptado:**
+
+| Fase | Qué | Estado |
+|---|---|---|
+| 1 | Puerta móvil, emparejamiento, vigilante de eventos y avisos | Hecha (servidor), sin probar con un celular |
+| 2 | App (React + Capacitor) de solo lectura, pantalla del QR en la suite y "modo directo" | Hecha (`13.AltagraciaMobile`), probada en el navegador; el APK no se armó |
+| 3 | Cerrar posición desde la app (huella y confirmación), probado en Demo | Falta |
+| 4 | Vigía en Northflank, Alpaca cuando tenga trading y mudanza al servidor | Falta |
+
+- **Modo directo (fase 2, pedido del usuario):** con el PC apagado, la app lee las posiciones directo de Bybit con una clave de **solo lectura** guardada en el celular. Nunca las claves del bot, y sin cerrar desde ahí.
+- **Conexión:** por Tailscale (red privada entre el PC y el celular). Nada queda expuesto a internet.
+
+**Apagada de fábrica.** Sin `mobile_host` no se abre ningún puerto ni corre el vigilante. Para encenderla, en `config/suite.json`:
+
+```json
+{ "mobile_host": "100.x.y.z", "mobile_port": 13002, "mobile_fcm_credentials": "C:\\ruta\\firebase-cuenta-de-servicio.json" }
+```
+
+`mobile_host` es la IP de Tailscale del PC. `SUITE_MOBILE=0` la apaga aunque esté configurada. El servidor de la suite (13000) y el bot (5000) siguen en `127.0.0.1`.
+
+- **Dispositivos y firmas** (`server/mobile_devices.py`, `data/mobile/devices.json`):
+  - emparejar crea un celular pendiente con un secreto al azar, que la suite muestra una sola vez (para un QR). El secreto no viaja por la red; vence a los 10 minutos si no se usa. Hasta 10 celulares;
+  - cada pedido va firmado: `X-Device`, `X-Time` (±90 s), `X-Nonce` (no se acepta dos veces) y `X-Sign` = HMAC-SHA256 del método, la ruta con su consulta, la hora, el nonce y el sha256 del cuerpo. Un pedido capturado no se puede repetir ni cambiar;
+  - diez firmas malas en un minuto desde una dirección: 429;
+  - un archivo de dispositivos dañado no se pisa: nadie entra (503).
+- **Puerta** (`server/mobile_gate.py`), otra aplicación en su puerto, sin documentación pública. Fase 1, solo lectura:
+
+| Ruta | Qué da |
+|---|---|
+| `GET /m/hello` | Nombre del celular, hora del servidor y marcas (`brokers`, `can.close_position: false`). Activa el emparejamiento |
+| `GET /m/overview` | Modo, cuenta activa, pausa, posiciones abiertas, P&L sin realizar y cuántas están sin stop |
+| `GET /m/positions` | Posiciones del bot (de su WebSocket privado), cada una con `broker` |
+| `GET /m/trades?days` | Trades del journal con su decisión y sus imágenes |
+| `GET /m/image/{sesión}/{archivo}` | Una imagen del journal |
+| `GET /m/events?after` | Eventos del vigilante |
+| `POST /m/push-token` | El token de avisos del celular (`null` lo quita) |
+
+  No hay rutas de órdenes, cierre, configuración ni claves. Si la dirección todavía no existe (Tailscale sin conectar) o el puerto está ocupado, reintenta cada 30 s sin tumbar la suite.
+- **Rutas del PC** (en el 13000, con palabra): `GET /api/mobile/status`; `POST /api/mobile/pair` (`EMPAREJAR_CELULAR`; responde el contenido del QR: dirección, puerto, id y secreto); `POST /api/mobile/devices/{id}/revoke` (`REVOCAR_CELULAR`); `POST /api/mobile/test-push` (`ENVIAR_AVISO_PRUEBA`).
+- **Vigilante** (`server/mobile_events.py`): cada 5 s lee del bot el journal, el estado y los avisos críticos (solo GET; no consulta Bybit). Eventos: `trade_open`, `trade_close` (con P&L y R), `critical`, `paused`, `resumed`, `bot_down` (30 s sin respuesta) y `bot_up`.
+  - La primera vuelta es la línea de base: lo que ya había no se avisa. El estado queda en `data/mobile/watch_state.json`, así un reinicio no repite nada.
+  - Un cambio visto más de 15 minutos tarde (la suite estaba cerrada) se anota sin aviso.
+  - Los eventos quedan en `data/mobile/events.jsonl`; cada uno lleva `broker` (hoy `bybit`).
+- **Avisos push:** Firebase (FCM HTTP v1). Necesita el archivo de la cuenta de servicio del proyecto de Firebase y el paquete `google-auth` (`pip install google-auth requests`), que **no está instalado**. Sin ellos no envía y `/api/mobile/status` dice por qué; los eventos quedan igual. Un token que Firebase ya no reconoce se quita.
+- **Capturas:** las sigue tomando la página de la suite (pestaña 1): con la suite cerrada no hay capturas, y la de apertura llega unos 10 s después del aviso.
+- **Alpaca:** el bot no opera en Alpaca. Los eventos, las posiciones y los trades llevan `broker` para que entre por la misma puerta cuando exista.
+- **Pruebas:** `server/tests/mobile_checks.py` (90), sin conexión, con bot y Firebase falsos y la puerta levantada de verdad en un puerto libre de `127.0.0.1`. `run_checks.py`, `bot_checks.py` y `journal_checks.py` siguen pasando.
+- **No probado:** con un celular, con Tailscale, con Firebase real, ni dentro de la suite corriendo con el bot real.
+
+**Fase 2 (21/11):**
+- **App:** `13.AltagraciaMobile` (ver su `CLAUDE.md`): inicio, posiciones, trades con su decisión y sus capturas, avisos y ajustes.
+- **Pantalla del QR:** Bot > "Configuración y riesgo" > "Celulares (app Android)" (`web/src/MobileDevices.jsx`): estado de la puerta y de los avisos, celulares con su última vez, "Emparejar celular…" (muestra el QR una sola vez y se cierra sola cuando el celular lo usa), "Revocar…" y "Enviar aviso de prueba". La página suma el paquete `qrcode`.
+- **Reloj del celular:** si la firma es buena pero la hora no coincide, la puerta responde 401 con la hora del servidor (`now`) y la app corrige y repite. No cuenta como intento malo. Una firma mala nunca recibe la hora.
+- **CORS de la puerta:** deja leer a la página local de la app (`https://localhost` de Capacitor, o `localhost` en desarrollo). No es una barrera: no hay cookies y cada pedido va firmado.
+- **Demostración:** `server/tests/mobile_demo.py` levanta la puerta en `127.0.0.1:13092` con datos inventados, para ver la app sin el bot.
+- **Probado:** la app en el navegador a 375×812 contra la demostración (emparejar, las cinco pantallas, las capturas firmadas y el aviso de sin conexión). La página de la suite arma con la pantalla del QR, pero **no se vio en pantalla**.
+
+## Hyperliquid (21/11)
+
+Paso 2 del plan de indicadores on-chain (`docs/PLAN_INDICADORES_ONCHAIN.md` en la raíz del repositorio), pedido por el usuario.
+
+Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de cada billetera, con su apalancamiento y su precio de liquidación, son públicas. Su historia gratis empieza en 2025, así que la grabamos nosotros, como el libro de Bybit.
+
+- **Solo lee:** usa la API pública `info`, sin clave. Nunca envía órdenes ni nada a Hyperliquid.
+- **Grabador:** `server/hl_recorder.py`. Arranca con el servidor y graba en `OrderFlowData/live/hyperliquid/`:
+  - **`ctx/AAAA-MM-DD.jsonl`, cada minuto** (cada 5 hasta la tarde del 21/11): por moneda de la suite, el interés abierto (en monedas y en USD), el funding, el precio marca y el de oráculo, la prima y el volumen de 24 h (`metaAndAssetCtxs`, un pedido para todas). Unos 4 MB por día.
+  - **`wallets.json`, una vez al día:** las cuentas a seguir, sacadas del leaderboard público (`stats-data`, unos 38 MB, de 2.5 a 3.5 minutos). Son las 300 de más capital y las 1,000 de más volumen operado en el mes, sin repetir: unas 1,200.
+    - Las de más capital usan poco apalancamiento. Medido el 21/11: el short de BTC más grande, de 32.7 M USD, se liquidaría en 96,110, a +59%.
+    - Las muy activas son las que tienen liquidaciones cerca del precio. De 150 por volumen salieron 16 posiciones con la liquidación a menos de 25%, por 124 M USD.
+  - **`positions/AAAA-MM-DD.jsonl`, cada 15 minutos (la vuelta completa):** una línea por vuelta con las posiciones de esas cuentas en las monedas de la suite (`clearinghouseState`, un pedido por cuenta, 3 a la vez con 0.3 s de pausa). Cada posición es `[billetera, moneda, tamaño con signo, entrada, liquidación, apalancamiento, valor en USD]`. Unos 66 KB por vuelta, unos 6 MB por día.
+  - **`fast/AAAA-MM-DD.jsonl`, cada minuto (la vuelta rápida, 21/11, pedida para el mapa):** solo las cuentas con alguna liquidación a menos de 10% del precio (`FAST_BAND_PCT`), hasta 200 (`FAST_MAX`), de más a menos USD en riesgo. Mismo formato.
+    - **Por qué no todas cada minuto:** la API deja 1,200 de peso por minuto y cada cuenta pesa 2, así que una vuelta completa necesita al menos 2 minutos; hoy tarda 5.
+    - **Lo que se ve** (`latest_positions`, el mapa y el indicador) junta las dos: de cada cuenta, su consulta más reciente. La vuelta completa decide quién queda: una cuenta que salió de la lista o que no respondió se va, salvo que la rápida la haya consultado después.
+- **Monedas:** las de la suite, con el nombre de Hyperliquid (`hl_coin`: BTCUSDT → BTC, 1000PEPEUSDT → kPEPE, SHIB1000USDT → kSHIB). Una moneda agregada a la suite entra en la vuelta siguiente.
+- **Un solo grabador por carpeta** (`live/hyperliquid/recorder.lock`). `SUITE_HL=0` lo apaga; sin esa variable vale `SUITE_RECORD`. Al arrancar retoma la última vuelta del día. Una cuenta que falla no corta la vuelta, y un error de una vuelta reintenta en la siguiente (el leaderboard, a la media hora). Mientras la lista de cuentas sigue bajando, las vueltas de posiciones reintentan cada 30 s: hasta la tarde del 21/11 dormían la vuelta entera, y la primera llegaba unos 20 minutos después de abrir la suite.
+- **Rutas:**
+
+| Ruta | Qué hace |
+|---|---|
+| `GET /api/hyperliquid/status` | Si graba, monedas, carpeta, bytes, y por cada vuelta (estado, ballenas, posiciones) la última hora, cuántos y el último error. `/api/suite/status` trae `hyperliquid` |
+| `GET /api/hyperliquid/ctx/{símbolo}` | El último estado de la moneda |
+| `GET /api/hyperliquid/liqmap/{símbolo}?bucket_pct=0.25&top=10` | El mapa de liquidaciones de la última vuelta: en cada franja de precio, el USD de los largos (debajo del precio) y de los cortos (encima) que se liquidarían ahí, solo a menos de 25%. Trae además las posiciones más grandes de esa banda |
+
+- **Medido en vivo el 21/11** (carpeta temporal, 6 monedas, API real):
+  - el estado tardó 1.8 s;
+  - el leaderboard, 150 s, con 1,219 cuentas elegidas;
+  - la vuelta de posiciones tardó 10.8 minutos de uno en uno (664 posiciones) y 5.05 minutos con 3 a la vez (1,218 de 1,219 cuentas respondieron, 662 posiciones);
+  - en BTC (precio 60,332): 281 posiciones; se liquidarían 150 M USD de largos y 170 M de cortos a menos de 25%, en 37 franjas de 1%. La mayor, 31 M USD de largos entre 46,456 y 47,059. En ETH, 32 M de largos y 69 M de cortos.
+- **Limitaciones:**
+  - graba en el PC solo con la suite abierta; para eso está la nube (ver "En la nube (22/11)", abajo);
+  - el precio de liquidación de una cuenta con margen cruzado depende de toda la cuenta y cambia con sus otras posiciones: es un valor del momento de la vuelta;
+  - se sigue una parte de las cuentas, no todas.
+- **Indicador "Liquidaciones Hyperliquid"** (21/11, en la lista de indicadores del gráfico principal; apagado de fábrica):
+  - **Dónde está el código:** en App 1 (`HyperliquidLiqIndicator.js`, cuentas en `hlLiquidations.js`), registrado en `IndicatorManager`. App 1 no lo ofrece: no tiene esos datos. La suite lo enciende con su nombre en `DEFAULT_STATES` de `ChartView.jsx`;
+  - **Qué dibuja:** las 3 franjas de 0.5% del precio más cargadas de cada lado, de 500k USD o más. Arriba los cortos (celeste) y abajo los largos (rosa), con los colores del indicador Liquidaciones. Más USD, más firme;
+  - **Etiqueta:** "HL cortos 30M · 2 cuentas · +2.7%";
+  - **Estado:** cuántas posiciones hay a menos de 25% y la antigüedad de la consulta, bajo los otros estados;
+  - **Fuera de la vista:** las franjas que no caben se avisan en el borde de arriba o de abajo;
+  - **Análisis del trade:** cada franja se puede elegir con un clic ("Liquidaciones de cortos (Hyperliquid)"), así entra al Observador y al journal;
+  - **Ritmo:** lo pide a `/api/hyperliquid/liqmap` cada minuto. Una moneda que Hyperliquid no lista (LPT, MUBARAK) dice "moneda que Hyperliquid no lista".
+  - **Probado en pantalla** (21/11, copia aislada en 13300, con carpetas temporales y la API real):
+    - la vuelta completa tardó 4.8 minutos (1,218 cuentas, 1,026 posiciones) y la rápida 22 s (83 cuentas cercanas);
+    - en BTC 4H, 5 franjas, entre ellas 52 M USD de cortos a +13.3% y 15 M de largos a −3.3%, con los avisos de las que no caben;
+    - un clic en una franja ofreció "Liquidaciones de cortos (Hyperliquid)" en "Incluir en el análisis";
+    - la etiqueta de la franja más alta puede quedar bajo los botones del gráfico, como otras etiquetas del borde.
+
+    No se probó en Electron.
+- **Falta (siguientes pasos del plan):**
+  - la capa del mapa con la historia minuto a minuto (necesita una ruta que lea `fast` y `positions`);
+  - con 4 a 6 semanas grabadas, el estudio: ¿el precio va a buscar esos grupos más que un nivel al azar?
+- **En la nube (22/11, pedido del usuario: semanas seguidas de datos, gratis):** el collector de Northflank corre el mismo grabador, así se graba aunque la suite esté cerrada. Va dentro del servicio que ya existe: el plan gratis no da otro.
+  - **Copia exacta:** `5.Order_flow/cloud_collector/hl_recorder.py`; `hl_cloud_checks.py` comprueba que siga igual. Un cambio se hace aquí y se copia allá.
+  - **Lista de cuentas por partes:** el leaderboard (~38 MB) se lee a medida que llega (`RowStream`, con `raw_decode` del JSON de Python, y `WalletPicker`, que guarda solo las 300 y las 1,000 que se eligen). Antes se leía entero: pasaba de 250 MB, la mitad de la memoria del servicio. Con la lista real del 22/11 (46,465 filas) da las mismas 1,218 cuentas en el mismo orden, con 1 MB de memoria contra 258 MB y 0.5 s de CPU. Vale también en el PC.
+  - **Días:** la nube guarda `HL_KEEP_DAYS` (14 de fábrica; unos 13 MB por día, medido en el PC el 22/11), y cada hora borra los más viejos (`cleanup_days`).
+  - **Rutas de la nube:** `/api/hyperliquid/status`, `/ctx`, `/liqmap` (las mismas de la suite), y `GET /api/hyperliquid/days` (bytes completos de cada carpeta y día) y `GET /api/hyperliquid/file/{ctx|positions|fast}/{día}?offset=` (desde ese byte, hasta 8 MB y solo líneas enteras).
+  - **Bajada** (`server/hl_cloud.py`): 2 minutos después de abrir la suite y luego cada 10, baja de cada archivo solo lo que se agregó desde la vuelta anterior, a `OrderFlowData/live/hyperliquid_cloud`. Un pedido cortado no se guarda, y hasta 40 MB por vuelta. `SUITE_HL_CLOUD=0` lo apaga; sin esa variable sigue a `SUITE_HL` y luego a `SUITE_RECORD`. Estado en `GET /api/hyperliquid/cloud` y en `hyperliquid_cloud` de `/api/suite/status`.
+  - **Leer las dos:** `hl_recorder.read_rows(datos, carpeta, día)` junta lo del PC y lo de la nube en orden. Manda el PC: una línea de la nube entra solo si el PC no tiene otra a menos de media vuelta. Lo usará la capa del mapa con la historia y el estudio.
+  - **Medido en el PC** (22/11, el grabador como en la nube, con las 20 monedas de fábrica y la API real; un solo pedido a la vez en las vueltas, porque la suite grababa desde la misma IP):
+- **memoria del proceso** al leer la lista de cuentas: de 54 a 58 MB. La forma de antes, en paralelo y con la misma lista, de 52 a 350 MB;
+    - **CPU:** 6 s en 21.5 minutos: la lista (46,446 filas, 1,218 cuentas, 4 a 5 minutos de bajada), una vuelta completa (1,218 cuentas, 1,016 posiciones, 14.5 minutos de a un pedido) y tres vueltas rápidas (88 cuentas). En la nube, con 3 pedidos a la vez, la vuelta completa vuelve a tardar unos 5 minutos;
+    - no se midió dentro del collector ni en Northflank: falta desplegar.
+  - **Desplegado el 22/11** (build `clear-muscle-9783`, commit 0db5b61 de la rama `deploy` de `albriciasgi-ai/footprint-collector`):
+    - en la nube, la lista de cuentas (1,217) bajó en segundos y la primera vuelta completa tardó 226 s, con las 1,217 cuentas y 1,009 posiciones;
+    - el mapa de BTC dio 109 posiciones cercanas, como la suite;
+    - el servicio quedó en 181 de 512 MB y 31% de su CPU durante esa vuelta.
+    - `hl_cloud.py` contra la nube real (carpeta temporal): la primera vuelta bajó 126 KB y la segunda, nada.
+
+    Ver `5.Order_flow/cloud_collector/DEPLOY_NORTHFLANK.md`, "Hyperliquid (22/11/2026)".
+- **Pruebas:** `server/tests/hl_checks.py` (34, con la vuelta rápida, el reintento y la lista por partes), `hl_cloud_checks.py` (16: la copia del collector, sus rutas corriendo en el mismo proceso, la bajada, `read_rows` y la limpieza) y, en App 1, `tests/hlliquidations.test.mjs` (6), sin conexión:
+  - los nombres de las monedas;
+  - el estado y las ballenas elegidas por capital y por volumen;
+  - las posiciones y el mapa;
+  - el grabador con un HTTP falso: anota por día, una cuenta caída no corta la vuelta, solo pide `info` y retoma al arrancar.
+
+## DX en vivo (22/11)
+
+Paso 4 del plan de las estrategias de Byko y Dale (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, "DX en vivo"). DX, los apilados desplazados, es la única regla de esos PDF que pasó las fases 2 y 3 del probador, por poco y sensible a la ejecución. Se registra en vivo antes de creerla, y cómo se juzga quedó fijado en el plan antes de registrar nada. Nunca envía nada: ni al bot ni a otro lado.
+
+- **La regla:** la de las fases 2 y 3, sin cambios (`dx_watch.RULE_RAW`, la de `OrderFlowData/research/dale/2026-11-22/dx.py`).
+  - Desde el motor 6 del probador de App 1 (23/11), con `maxFeeR: 0`: sin el tope de la comisión, que deja fuera las
+    señales cuya comisión pasa de 0.3 R. DX se juzgó sin él, y sus stops son cortos (en BTC, comisión media de 0.20 a
+    0.24 R en las fases 2 y 3).
+  - Monedas: las 7 con almacén (BTC, ETH, SOL, ARB, GALA, SUI y XRP), en 30 minutos.
+  - No se configura: solo se enciende o se apaga.
+- **Cómo registra** (`server/dx_watch.py`):
+  - 75 s después de cada cierre de 30 minutos, si el almacén en vivo ya tiene la vela (`market_routes._store_until`), pide a `of_elements` de App 1 (`live=True`) las velas y los desequilibrios apilados nuevos. Si el almacén va detrás, vuelve a mirar cada 30 s, hasta 10 minutos;
+  - cada vela se guarda tal como se vio y no se vuelve a calcular (`data/dx/span/{moneda}.json.gz`): el registro es lo que se sabía en ese momento;
+  - desde `since` no se salta ninguna vela (22/11). La que todavía no está completa (toca un hueco de la grabación, como el de un reinicio de la suite, o pasa del último guardado) se espera hasta que la nube o el día oficial la completen, y las siguientes esperan con ella; el estado de la moneda dice cuál espera (`waiting_for`). Un registro que ya saltó una vela la vuelve a leer (`_heal`): la orden que esperaba o estaba abierta y con la vela completa no existe se anula (evento "anulada", que el panel muestra), y lo final se queda con una revisión. Una que en dos días no llega se salta, con un evento "hueco". Antes, el reinicio del 22/11 a las 21:27 UTC dejó 65 s sin grabar y la vela de las 21:00 UTC se saltó en las 7 monedas;
+  - corre `rule_tester.run` de App 1 desde que arrancó el registro de esa moneda (`since`), con 20 días de velas antes para el ATR diario y las zonas;
+  - compara con lo anotado y suma lo nuevo: la orden armada, su entrada, su salida con su R, las que vencen, las que se llenan con otra posición abierta y las que no se operan;
+  - lo final no se reescribe: si una corrida posterior dijera otra cosa, queda una "revisión" en el registro;
+  - al arrancar la suite pone al día lo que pasó mientras estuvo cerrada, con lo que grabó la nube.
+- **La ejecución, con la cinta** (`OrderFlowData/tape` o, donde falta, `live/tape`):
+  - cuándo se llenó la limit: el primer trade que la pasa;
+  - en cada salida, el disparo (el primer trade en el stop o el objetivo) y el precio de una orden a mercado: el peor entre el trade del disparo y el promedio, pesado por cantidad, de los trades a mercado del lado de la salida en los 100 ms siguientes. Con medio segundo, lo primero que se fijó, en una mecha de BTC el promedio tomaba precios de después de la vuelta, que una orden a mercado no consigue;
+  - con ese precio, el R con la ejecución medida, con las comisiones del probador;
+  - en el objetivo, si el precio lo pasó en el minuto siguiente (una limit ahí se habría llenado);
+  - si la cinta tocó antes el stop o el objetivo, aunque el minuto a minuto diga otra cosa.
+- **Rutas:** `GET /api/dx/status`, `/api/dx/report` (trades, R por trade con su margen, con la cuenta del probador y con la ejecución medida, por moneda y lado, deslizamiento y las lecturas a los 3, 6 y 12 meses del plan), `/api/dx/log` y `GET/POST /api/dx/config` (`{"enabled": bool}`). `/api/suite/status` trae `dx`.
+- **Datos** en `data/dx`: `config.json`, `span/`, `orders/{moneda}.json`, `log/AAAA-MM-DD.jsonl` y `detector.lock` (un solo proceso registra por carpeta). `SUITE_DX=0` lo apaga; sin esa variable vale `SUITE_SWING`, que las pruebas ponen en 0.
+- **Panel:** en el panel del Swing de la Watchlist, debajo de los sabios y SMC:
+  - si registra, desde cuándo, los trades con su R y su margen, y el R con la ejecución medida;
+  - las lecturas del plan, cuando llegan;
+  - la posición abierta de cada moneda y las 3 órdenes que esperan más cerca del precio, con el total. Hay muchas a la vez: en la prueba con datos reales, unas 40 por moneda;
+  - lo último anotado.
+
+  Un clic abre la moneda en 15m.
+- **Defensa de zona:** la limit de las órdenes, su precio ±0.05%, va a las zonas automáticas de la pestaña Mapa (`book_defense.ZONE_SOURCES`). De las que esperan van las 2 más cerca del precio de cada lado, y además las que se llenaron, hasta una hora después. Así se ve lo que hizo el libro donde esperaba la orden.
+- **Una versión refinada** (por ejemplo, con la tendencia a favor) sería otro registro: `DxWatch` con su regla y su carpeta, y `make_router` con su prefijo. Antes de registrarla, su regla se fija en el plan.
+- **Pruebas:** `server/tests/dx_checks.py` (48), sin conexión:
+  - el registro hecho vela a vela da los mismos trades que una corrida del probador sobre las mismas velas, con revisiones cada 2 o cada 5 velas;
+  - una vela con hueco se espera y no se salta, un registro que ya saltó una la repara (lo que anotó sin ella y no existe se anula, sin dejar una posición abierta de más), y una que en dos días no llega se salta con su evento, una sola vez;
+  - lo anotado hasta una hora es igual con o sin las velas posteriores, y una vela ya vista no cambia aunque después cambien los datos;
+  - tras reiniciar sigue igual, cada orden pasa por sus pasos en orden y, si el almacén va detrás, espera la vela;
+  - la medición con una cinta armada a mano, también una mecha que se da vuelta;
+  - el informe, sus lecturas, las zonas de la defensa, el estado y las rutas.
+- **Probado con datos reales (22/11):** una repetición como si el registro hubiera arrancado el 15/11, con revisiones cada 2 horas hasta el 22/11 a las 16:00 UTC, sobre el almacén y la cinta reales (solo leyendo, en una carpeta aparte).
+  - En las 7 monedas, lo anotado es igual a una corrida del probador sobre las mismas velas.
+  - La primera revisión de cada moneda tarda de 3 a 6 s (los 20 días de antes); después, de 0.2 a 0.3 s por moneda.
+  - **Lo que dio:** 164 trades en 7.6 días (unos 650 por mes, como en las fases 2 y 3). Con la cuenta del probador, +0.27 R por trade; con la ejecución medida, +0.26. Son días que ya estaban en la fase 3 (salvo el 22/11): sirve para probar el código, no como resultado.
+  - **Deslizamiento medido** en los stops: 0.011% en la mediana; el 10% peor, más de 0.048%. Los 75 objetivos fueron pasados por el precio: una limit ahí se habría llenado.
+  - La copia aislada del servidor (13300, sin grabar ni bot, con DX encendido) siguió desde la repetición y registró en vivo: la vuelta de las 7 monedas tardó 0.6 s. El panel se vio en la Watchlist a 1024 px, sin desborde.
+- **Observado** en la repetición:
+  - en cada moneda esperan unas 40 órdenes a la vez, y 759 se llenaron con otra posición abierta, contra 164 que entraron. Un bot que la operara tendría que manejar muchas órdenes en espera;
+  - **zonas unidas:** cuando dos zonas se arman en la misma vela y del mismo lado, el probador las une en una sola orden. Entra en el borde de una y pone el stop en el borde lejano de la otra. Así el stop queda lejos de lo que pide Dale (10% a 20% del ATR diario). Pasó en 63 de 1,327 señales y en 17 de los 164 trades, con un riesgo medio del 2.8% del precio (0.7% en los demás) y −0.32 R (+0.34 en los demás). Las fases 2 y 3 se corrieron igual, así que el registro lo conserva. Una orden por zona sería parte de la versión refinada.
+- **Falta:**
+  - el registro de la suite del usuario empezó el 22/11 a las 21:00 UTC (16:00 en Colombia);
+  - con la suite cerrada no registra; al abrirla, pone al día lo que grabó la nube;
+  - el deslizamiento no mira la profundidad del libro: una orden grande deslizaría más.
+
+## Scanner (22/11)
+
+Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el usuario el 22/11: buscar en Bybit las mejores monedas para operar según las condiciones del mercado y verlas en la Watchlist. Decidido con él: órdenes de 1,000 USDT de fábrica (opera con menos de 1,000; en la Demo prueba con cualquier monto); cripto y zona de innovación, sin las ST; las monedas del scanner no se graban hasta "Agregar a la suite"; LPT, TRB y KAS se quedan en la suite.
+
+- **Solo mira:** lee datos públicos de Bybit. Nunca envía nada al bot, no agrega monedas a la suite y no graba su libro ni su cinta.
+- **Cómo calcula** (`server/scanner.py`):
+  - cada 30 s, un pedido: el ticker de todos los perpetuos USDT (831 el 22/11), con precio, turnover, OI, funding y mejor compra y venta;
+  - candidatas: las de los grupos elegidos con 5 M USD o más en 24 h (hasta 150), más BTC y las de la suite;
+  - de cada candidata, velas de 15 min de 31 días (3 pedidos la primera vez, después uno cada 15 min) y el OI de 15 min. Las velas se guardan en arreglos de números (`BarStore`) y se arman de a una moneda al calcular;
+  - el libro (50 niveles; 500 si no alcanza) de 40 candidatas cada 5 min: primero las de las listas, después las que cumplen la regla de una lista, después las de más volumen relativo. El detalle de una moneda trae el suyo al día;
+  - cada 6 h, `instruments-info` (grupo con `symbolType`, etiqueta ST, alta, tick e intervalo del funding) y los anuncios de cierre (`/v5/announcements/index`, `type=delistings`);
+  - todo pedido pasa por `candles.bybit_turn()`. Arranca 30 s después del servidor, para no sumarse a la carga inicial.
+- **Medidas** (solo velas cerradas):
+  - volumen relativo de 1 h, 4 h y 24 h contra la misma ventana a la misma hora de los 30 días anteriores, de días del mismo tipo (entre semana o fin de semana; con menos de 4, todos los días);
+  - retornos y movimiento propio (retorno − beta × retorno de BTC; beta y correlación de 30 días con retornos de 1 h);
+  - ATR de 1 h, 4 h y diario, su expansión, eficiencia de 7 días, lugar en el rango de 30 días y ruptura del máximo o mínimo de 20 días;
+  - OI de 1 h, 4 h y 24 h con el cuadrante precio-OI, y funding llevado a 8 h y por día;
+  - costo de ida y vuelta (comisión taker 0.055% por lado, spread y deslizamiento para el tamaño) y en R de un stop de 1 ATR de 1 h y de 1.5 ATR de 4 h; con entrada limit, la comisión maker. Sin libro, estimado con el spread mediano de la última hora (`cost_estimated`);
+  - banderas: innovación, ST, menos de 30 días, acción o ETF (con su bolsa cerrada), anuncio de cierre, funding extremo, libro fino o que no alcanza, pocas velas y una semana bajo el piso (solo las de la suite, `liquidity.json`).
+- **Listas:**
+  - **En juego:** libro suficiente (ida y vuelta de 20 bps o menos para el tamaño) y volumen relativo de 24 h de 1.5 o más, o de 1 h de 3 o más. Ordena por el de 24 h;
+  - **Tendencia con fuerza:** libro suficiente, rompe el máximo o el mínimo de 20 días, eficiencia de 7 días en el tercio alto (al menos 0.15) y movimiento propio de 7 días a favor;
+  - **Rápidos:** precio 1% y OI +4% en 5 min, o precio 10% y OI +1% en 15 min, con 1 M USD por día o más (los ejemplos del Pump Screener de WunderTrading), en todo el universo de los grupos elegidos;
+  - **Mis monedas:** las de la suite, de más a menos turnover.
+- **Entrar y salir:**
+  - para entrar a En juego o Tendencia hace falta el libro medido; con el estimado entraban libros finos que salían al medirse;
+  - una moneda que deja de cumplir su regla sigue `hold_min` (60 min), marcada "(sale)" y al final de la lista;
+  - si ya no se puede operar (libro fino, grupo que no se mira, ST), sale en el acto;
+  - en Rápidos queda 30 min desde el último aviso;
+  - cada entrada y salida queda en `data/scanner/events/AAAA-MM-DD.jsonl`, con su porqué.
+- **Estado del mercado:** BTC (24 h, 7 días, promedio de 20 días, eficiencia, ATR diario contra su año), amplitud, dispersión (rango intercuartil de los retornos de 24 h), correlación con BTC de 7 y 30 días, parte mejor que BTC, funding y cambio del OI ponderados por OI, volumen relativo mediano, sesión y fin de semana. La lectura (en bloque: correlación ≥ 0.70 y dispersión ≤ 3 puntos; cada una por su lado: correlación < 0.50 o dispersión ≥ 6) es una hipótesis del plan.
+- **Registro para juzgarlo:** cada 15 min, en `data/scanner/log/AAAA-MM-DD.jsonl.gz` (un miembro gzip por vuelta, `Scanner.read_log` lo lee y salta un final cortado), la configuración, el mercado, las listas y 34 medidas de cada candidata.
+- **Datos** en `data/scanner`: `config.json` (con temporal y reemplazo; uno dañado no se pisa y el scanner queda apagado), `log/`, `events/`, `liquidity.json` y `scanner.lock` (un solo proceso por carpeta). `SUITE_SCANNER=0` lo apaga; sin esa variable vale `SUITE_SWING`, que las pruebas ponen en 0.
+- **Rutas:**
+
+| Ruta | Qué hace |
+|---|---|
+| `GET /api/scanner/status` | Si mira, universo por grupo, candidatas y cargadas, última vuelta (`cycle`, con `compute_seconds`), libros (`books`), cuántas hay en cada lista y los errores. `sends: false`. `/api/suite/status` trae `scanner` |
+| `GET /api/scanner/list?lista=enjuego\|tendencia\|rapidos\|mias&limit=` | Las filas de una lista con sus medidas, `chips` (el porqué), `flags` (los avisos) y `member` (desde cuándo, dirección y si está "saliendo"), su regla en palabras, el estado del mercado y la configuración |
+| `GET /api/scanner/coin/{símbolo}` | Todas las medidas de una moneda, en qué listas está y si es candidata. Si su libro tiene más de 5 min, lo pide antes |
+| `GET /api/scanner/market` | El estado del mercado |
+| `GET /api/scanner/events?limit=&day=&lista=` | Entradas y salidas, las más nuevas primero |
+| `GET/POST /api/scanner/config` | `enabled`, `size_usdt`, `floor_usd`, `max_candidates`, `groups`, `allow_st`, `taker_pct`, `maker_pct`, `stop_atr1h`, `stop_atr4h`, `book_max_bps`, `rvol24_min`, `rvol1h_min`, `hold_min` y `fast`. Un valor inválido o un campo desconocido: 400 y nada cambia. No mueve dinero: sin palabra de confirmación |
+
+- **En la Watchlist** (`WatchlistView.jsx`, `ScannerPanel.jsx`):
+  - botón "Scanner" en la barra, junto a "Panel del Swing": los dos paneles van en el mismo lugar, uno a la vez. Cuando la cuadrícula muestra el scanner, el botón dice la lista ("Scanner · En juego");
+  - la cuadrícula elige sus monedas: "Mis monedas" (de fábrica, como antes), "Las del scanner" o "Las dos", con la lista y cuántas (6 a 20; 12 de fábrica). Las que ya se ven conservan su lugar y una nueva entra al final. Solo con "Mis monedas" se arrastra para ordenar;
+  - en la cabecera de cada celda, el primer motivo, el costo en R (verde hasta 0.10, rojo desde 0.20; * = estimado) y "!" con los avisos;
+  - el panel: estado del scanner (encender o apagar), la cuadrícula, el estado del mercado, las cuatro listas con su regla, una tabla (moneda, porqué y R) y, con un clic, el detalle: medidas, costo, libro, si está en la suite y en el bot, y "Abrir en otra pestaña" (hasta el 23/11, "Abrir en el gráfico"), "Fijar en la cuadrícula" y "Agregar a la suite" (con confirmación; avisa que empieza a grabar). Debajo, las últimas entradas y salidas y "Ajustes del scanner";
+  - una moneda fijada se ve siempre; fijarla con "Mis monedas" pasa la cuadrícula a "Las dos";
+  - las monedas del scanner muestran los indicadores livianos de siempre (salen de las velas). Sin grabar, no tienen footprints ni libro;
+  - el gráfico abre una moneda que no es de la suite: su selector la agrega como "· sin grabar" (`ChartView.jsx`).
+- **En otra pestaña (23/11):** pedido del usuario tras ver la primera tanda: abrir una moneda del scanner en el gráfico principal cambiaba el análisis que estaba haciendo ahí.
+  - Qué abre otra pestaña: un clic en el nombre de una moneda del scanner en la cuadrícula (todas con "Las del scanner"; con "Las dos", las que no son de la suite) y "Abrir en otra pestaña" del panel. La moneda llega en el marco de la cuadrícula;
+  - cuál: la que ya abrió el scanner, si sigue con el gráfico, o la primera libre de la 2 a la 5 (`scannerTabNumber` de `tabChoice.js`, `openScannerTab` de `tabs.js`). Nunca la pestaña del clic ni un gráfico abierto a mano. En Electron es su ventana, que se trae al frente;
+  - la pestaña queda marcada como del scanner en su ventana (`?origen=scanner` y `sessionStorage`): lo sigue siendo al recargarla, deja de serlo si se abre desde el menú "Pestañas", y su título dice "Pestaña N · scanner". Su latido lo anota (`role`);
+  - su gráfico arranca ya con esa moneda y ese marco (`START_FOCUS` de `SuiteApp.jsx`, `URL_CHART_TIMEFRAME` con 1D, 1W y 1M) y los guarda como suyos, sin armar antes los de la última vez;
+  - con las pestañas 2 a 5 abiertas, la barra de la Watchlist lo avisa y nada cambia;
+  - las monedas de la suite siguen abriéndose en el gráfico principal, igual que las señales del Swing, de los sabios y de DX.
+  - **Probado** (23/11, copia aislada en 13300 con Bybit real, sin grabar ni bot, en el navegador integrado):
+    - el clic en BLESS abrió "Pestaña 2 · scanner" con BLESSUSDT en 15m ("· sin grabar"), con el papel en su ventana y en su latido, y la pestaña 1 siguió con BTC;
+    - con esa pestaña viva y la 3 con un gráfico abierto a mano, MMT fue a la 2;
+    - con la 2 abierta de nuevo desde el menú, perdió el papel y ELSA fue a la 4;
+    - con las cuatro abiertas, nada se abrió y la barra lo dijo 6 s;
+    - con "Las dos", las 21 de la suite fueron al gráfico principal (SOL) y las del scanner a otra pestaña;
+    - "Abrir en otra pestaña" del panel llevó PIEVERSE a la 5.
+
+    Ese navegador abre las ventanas nuevas en la misma pestaña, así que el reuso se comprobó con la dirección pedida. No se probó en Electron: usa la misma ventana por pestaña que el botón "Mapa" (`openTabWindow` de `desktop/main.cjs`). Una pestaña cerrada cuenta como abierta hasta 90 s si no avisó al cerrarse, como con el mapa.
+- **Limitaciones:**
+  - la suite no acepta monedas de una sola letra (H, A, B…; `symbols.py` pide 2 a 20): el scanner las mira y el panel lo dice en lugar de ofrecer "Agregar a la suite";
+  - mira solo con la suite abierta: el registro tiene huecos con el PC apagado;
+  - con más de 40 candidatas que cumplen una regla, las demás esperan su libro para entrar.
+- **Probado** (22/11, copia aislada en 13300 con datos temporales, sin grabar ni bot, Bybit real; la Watchlist a 1366×768, en Nítido y Oscuro):
+  - 831 perpetuos (406 cripto, 110 innovación, 245 acciones, 62 ETF, 4 materias primas y 4 forex) y 77 a 78 candidatas;
+  - la primera vuelta tardó de 40 a 74 s (unos 310 pedidos, ningún rechazo de Bybit), las medidas 1.3 s y los libros de 40 monedas de 4 a 17 s;
+  - memoria del proceso: de 96 a 131 MB de trabajo tras la primera vuelta. Con las velas como diccionarios eran 256 MB;
+  - En juego, de 16 a 17 monedas, con PIEVERSE (volumen de 24 h ×69, 261 M USD, costo 0.02 R) arriba; el oro tokenizado (XAUT, PAXG) entró con 0.26 R. Tendencia, entre 0 y 1: el mercado estaba entrecortado (eficiencias de 7 días de 0.02 a 0.15). Lectura: "mixto" (correlación 0.66, dispersión 3.9 puntos);
+  - la cuadrícula con "Las del scanner" y "Las dos" (32 celdas), una fijada, ajustes guardados y uno inválido rechazado, "Agregar a la suite" (en la copia) y XVG abierta en el gráfico principal como "XVGUSDT · sin grabar".
+
+  No se vio la lista Rápidos en vivo (no hubo un movimiento así), ni en Electron, ni "Agregar a la suite" grabando de verdad.
+- **Hallado al probar y corregido:**
+  - toda moneda salía "(sale)" entre dos revisiones: se medía contra la hora del pedido (`evaluated_at`);
+  - las monedas de una letra quedaban fuera del universo (13);
+  - los libros finos entraban con el costo estimado y salían al medirse;
+  - una moneda en tendencia sin volumen alto podía quedar sin libro y no entrar nunca.
+- **Pruebas:** `tests/scanner_checks.py` (100), sin conexión, con un Bybit falso: lectura de instrumentos, tickers, velas y anuncios; volumen relativo por tipo de día; ATR, eficiencia, correlación y beta; costo con un libro conocido y en R; candidatas, listas, entrar y salir, la lista rápida y el orden de los libros; registro con un final cortado, eventos, liquidez, candado, configuración y rutas.
+- **Falta** (pasos 2 a 4 del plan): posicionamiento (proporción de cuentas, liquidaciones, Hyperliquid de todas las monedas), las listas Compresión y Posicionamiento extremo, "candidata a quitar" más visible, el estudio en App 1 ("¿aporta elegir por volumen relativo?", con el universo sin sesgo de supervivencia) y, si lo confirma, los detectores y la central de alertas sobre las monedas del scanner.
+
 ## Escritorio (Electron)
 
 Pedido del usuario (12/11): que la app no se congele por inactividad (el navegador frena las pestañas en segundo plano) y no pierda datos ni alertas. La página es la misma que sirve el servidor; Electron solo la muestra sin ese freno.
@@ -999,11 +1295,12 @@ C:\Python314\python.exe -B tests\book_levels_checks.py
 C:\Python314\python.exe -B tests\book_defense_checks.py
 C:\Python314\python.exe -B tests\book_events_checks.py
 C:\Python314\python.exe -B tests\wise_smc_checks.py
+C:\Python314\python.exe -B tests\scanner_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
 
-Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5). Las líneas de la cinta: `node tests/tapelines.test.mjs` (6).
+Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5). Las líneas de la cinta: `node tests/tapelines.test.mjs` (6). La pestaña de las monedas del scanner: `node tests/tabchoice.test.mjs` (6).
 
 `journal_checks.py` pone `SUITE_ORDERFLOW_DATA` en una carpeta temporal y reemplaza el pedido de OI a Bybit por uno falso: la lectura de la regla y las medidas nunca leen el almacén real ni salen a la red.
 

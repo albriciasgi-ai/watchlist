@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 import { getJson, postJson } from './api.js';
 import BotAccounts from './BotAccounts.jsx';
+import MobileDevices from './MobileDevices.jsx';
 
 /**
  * Configuracion del bot, como en App 10: monedas y sus parametros (riesgo, SL, TP, apalancamiento, que desde el
@@ -234,6 +235,11 @@ export default function BotConfig({ active }) {
       <div className="bot-section">
         <h3>Cuentas de Bybit</h3>
         <BotAccounts active={active} onError={setError} onNotice={setNotice} />
+      </div>
+
+      <div className="bot-section">
+        <h3>Celulares (app Android)</h3>
+        <MobileDevices active={active} onError={setError} onNotice={setNotice} />
       </div>
     </div>
   );

@@ -103,6 +103,7 @@ function closeFrame(start, end, preferred) {
 const DEFAULT_STATES = {
   'Volume Delta': true, 'Volume Profile': false, 'CVD': false, 'Open Interest': false, 'OI-Volume Confluence': false,
   'Order Flow': true, 'FVG': false, 'VP Periodic': false, 'Volumen de Respuesta': false, 'Lector VPA': false, 'Liquidaciones': false,
+  'Liquidaciones Hyperliquid': false,
   'Elementos OF': false, 'VWAP': false, 'Range Detection': false, 'Rangos horizontales': false, 'Rejection Patterns': false, 'Double Top/Bottom': false,
   'Support & Resistance': false, 'S&R v2': false, 'Swing Detector': false,
   'Estructura SMC': false, 'Alligator': false, 'Fractales': false, 'Tres sabios': false, 'Zonas de Williams': false,
@@ -225,8 +226,10 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
   const saved = useMemo(loadSettings, []);
   const chartRefs = useRef({});
   const [symbols, setSymbols] = useState([saved.symbol || 'BTCUSDT']);
-  const [symbol, setSymbol] = useState(saved.symbol || 'BTCUSDT');
-  const [activeTimeframe, setActiveTimeframe] = useState(TIMEFRAMES.includes(saved.timeframe) ? saved.timeframe : '15m');
+  // Una pestaña abierta por el scanner (23/11) arranca ya con su moneda y su marco, sin armar antes los de la última vez
+  const [symbol, setSymbol] = useState(focusSymbol?.symbol || saved.symbol || 'BTCUSDT');
+  const [activeTimeframe, setActiveTimeframe] = useState(TIMEFRAMES.includes(focusSymbol?.tf) ? focusSymbol.tf
+    : TIMEFRAMES.includes(saved.timeframe) ? saved.timeframe : '15m');
   // Los gráficos de 1D, 1W y 1M se arman al abrirlos por primera vez y después quedan armados, como los demás
   const [openedTfs, setOpenedTfs] = useState(() => new Set([activeTimeframe]));
   useEffect(() => {
@@ -1145,6 +1148,8 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
           <span className="app-title">📊</span>
           <select className="suite-select symbol-select" value={symbol} onChange={(e) => setSymbol(e.target.value)} aria-label="Moneda">
             {symbols.map(s => <option key={s} value={s}>{s}</option>)}
+            {/* Una moneda abierta desde el scanner de la Watchlist (22/11) que no es de la suite: sin grabar su libro ni su cinta */}
+            {symbol && symbols.length > 0 && !symbols.includes(symbol) && <option value={symbol}>{symbol} · sin grabar</option>}
           </select>
           {adding ? (
             <span className="suite-add">

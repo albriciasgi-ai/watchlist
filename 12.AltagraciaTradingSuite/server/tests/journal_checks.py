@@ -323,7 +323,7 @@ try:
     check("lectura en el minuto de la decision, con la entrada planeada, los dias en vivo y el OI",
           call["time"] == rt["decision"]["at"] and call["entry"] == 101.9 and call["live"] is True and call["oi"] and call["side"] == 1, str(call))
     check("lectura con su comparacion por bloques y sus condiciones (las del informe de App 1)",
-          rd["available"] and rd["complete"] and rd["final"] and [r["block"] for r in rd["rows"]] == ["context_240", "context_60", "move", "zone", "oi", "volume"]
+          rd["available"] and rd["complete"] and rd["final"] and [r["block"] for r in rd["rows"]] == ["context_240", "context_60", "move", "zone", "oi", "volume", "vpa"]
           and conditions.get("ctx240_favor") is True and conditions.get("zone_near") is True and conditions.get("oi_up") is True
           and conditions.get("move60") is False, str(rd)[:300])
     check("un valor no finito de la lectura queda en None", rd["reading"]["volume"]["last_15m_ratio"] is None)
