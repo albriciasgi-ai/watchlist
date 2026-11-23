@@ -2145,7 +2145,8 @@ OrderFlowData/observer/tester/search/{id}.json   (RULE_SEARCH_DIR cambia la carp
   - Medido con 18 finalistas guardadas, con el motor 6: pedir el margen en 2023 dejaba 0 candidatas de 14, porque hay de
     85 a 423 trades; sin él, 7, como con el criterio de antes.
   - Una búsqueda de antes (sin `controls`) sigue con el suyo, también al retomarla.
-  - Pruebas: `test_rule_search.py` suma 3 (9).
+  - Pruebas: `test_rule_search.py` suma 3 (9). Probado en pantalla con una copia aislada: la casilla y una búsqueda corta
+    de 10 reglas en 4h con sus 4 finalistas (las cuatro, "No les gana a los tres controles en la validación").
 
 ### Noche de búsquedas y fase 2 (20/11)
 

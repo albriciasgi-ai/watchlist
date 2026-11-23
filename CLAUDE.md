@@ -87,7 +87,9 @@ descartar estrategias prometedoras que podrían mejorarse.
     `dx_watch.py`). En el probador, con el tope de fábrica DX deja fuera las señales de stop más corto; para repetirla
     como se juzgó, poner el tope en 0;
   - las 3 pruebas de `test_dale.py` con zonas de pocos ticks van sin el tope.
-- PROBADO_EN_PANTALLA
+- **Probado en pantalla** con una copia aislada: la casilla (un clic la guarda en la configuración), la línea de la
+  búsqueda («con los tres controles · candidatas sin margen en la validación») y una búsqueda corta de 10 reglas en 4h,
+  con sus 4 finalistas, su veredicto y sus tres ventajas. Con el margen pedido, solo con las pruebas.
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BÚSQUEDA GENÉTICA DE REGLAS (18/11/2026)", "Los tres
 controles del tablero (23/11)"

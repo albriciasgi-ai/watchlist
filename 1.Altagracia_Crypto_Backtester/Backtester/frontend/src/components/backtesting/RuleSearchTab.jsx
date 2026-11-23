@@ -327,7 +327,7 @@ export default function RuleSearchTab({ onLoadRule }) {
                   {['train', 'hold'].filter(seg => f[seg]?.three).map(seg => (
                     <tr key={`t${seg}`} title="Contra cada control del tablero, con el margen agrupado por semanas: el azar con el mismo stop y salida, seguir el tramo al azar y el azar del trimestre y el lado de cada trade">
                       <td>{seg === 'train' ? 'Búsqueda' : 'Validación'}, cada control</td>
-                      <td colSpan={4}>{THREE.filter(([k]) => f[seg].three[k]).map(([k, label], j) => (
+                      <td colSpan={4} style={{ whiteSpace: 'normal', textAlign: 'left' }}>{THREE.filter(([k]) => f[seg].three[k]).map(([k, label], j) => (
                         <span key={k}>{j ? ' · ' : ''}{label} <R value={f[seg].three[k].r} /> ({fmtR(f[seg].three[k].low, 2)} a {fmtR(f[seg].three[k].high, 2)})</span>
                       ))}</td>
                     </tr>
