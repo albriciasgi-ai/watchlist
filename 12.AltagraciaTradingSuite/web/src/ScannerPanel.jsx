@@ -428,10 +428,11 @@ export default function ScannerPanel({
             <tbody>
               {events.map(e => (
                 <tr key={`${e.at}-${e.list}-${e.symbol}-${e.type}`} className="wl-signal" onClick={() => setSelected(e.symbol)}
-                    title={`${e.type === 'entra' ? 'Entró' : 'Salió'} · ${(e.chips || []).join(' · ')}`}>
+                    title={e.gap ? 'Salió por un corte: el scanner no miró en ese tiempo, y esta es la última vez que la vio'
+                      : `${e.type === 'entra' ? 'Entró' : 'Salió'} · ${(e.chips || []).join(' · ')}`}>
                   <td>{colombiaTime(e.at)}</td>
                   <td>{short(e.symbol)}</td>
-                  <td className={e.type === 'entra' ? 'pos' : 'neg'}>{e.type === 'entra' ? 'entra a' : 'sale de'} {LIST_SHORT[e.list] || e.list}</td>
+                  <td className={e.type === 'entra' ? 'pos' : 'neg'}>{e.type === 'entra' ? 'entra a' : 'sale de'} {LIST_SHORT[e.list] || e.list}{e.gap ? ' · corte' : ''}</td>
                 </tr>
               ))}
             </tbody>

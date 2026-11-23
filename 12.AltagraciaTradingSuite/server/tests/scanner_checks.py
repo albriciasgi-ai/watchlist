@@ -111,7 +111,8 @@ def tickers():
     out = []
     for sym in KLINES:
         p = last_close(sym)
-        out.append({"symbol": sym, "lastPrice": str(p), "bid1Price": str(p * (1 - 0.00005)), "ask1Price": str(p * (1 + 0.00005)),
+        half = 0.0007 if sym == "NEWUSDT" else 0.00005   # NEW: 14 bps de spread en el ticker y un libro que alcanza
+        out.append({"symbol": sym, "lastPrice": str(p), "bid1Price": str(p * (1 - half)), "ask1Price": str(p * (1 + half)),
                     "turnover24h": str(TURNOVER[sym]), "openInterest": str(OI0[sym] * (1.2 if sym == "AAAUSDT" else 1.0)),
                     "openInterestValue": str(OI0[sym] * p), "fundingRate": "0.0001", "fundingIntervalHour": "8",
                     "prevPrice1h": str(p), "prevPrice24h": str(p), "price24hPcnt": "0.01"})
@@ -285,7 +286,14 @@ try:
     check("una nueva con pocas velas avisa", any(f["code"] == "historia" for f in sc.flags_of(scn.metrics["NEWUSDT"], scn.config)))
     check("BBB marcada con su anuncio de cierre", any(f["code"] == "cierre" for f in sc.flags_of(mB, scn.config)))
     check("LOW: una semana bajo el piso", scn.metrics["LOWUSDT"]["low_week"])
-    check("sin libro todavía, el costo se estima", mA["cost_estimated"] and mA["book_ok"])
+    check("sin libro todavía, el costo se estima (una que no cumple ninguna regla)", mB["cost_estimated"] and mB["book_ok"],
+          (mB["cost_estimated"], mB["book_ok"]))
+    first_books = [c[1]["symbol"] for c in fake.calls if c[0] == "/v5/market/orderbook"]
+    check("la vuelta mide el libro de las que cumplen una regla, y entran en esa misma vuelta",
+          not mA["cost_estimated"] and "AAAUSDT" in scn.order["enjuego"] and "AAAUSDT" in first_books
+          and "BBBUSDT" not in first_books and scn.book_extra and scn.book_round is None, (first_books, scn.book_extra))
+    check("también la de 14 bps de spread en el ticker (el estimado la descartaba): su libro alcanza y entra",
+          "NEWUSDT" in first_books and "NEWUSDT" in scn.order["enjuego"], (first_books, scn.order["enjuego"]))
     asyncio.run(scn.refresh_books())
     mA, mT = scn.metrics["AAAUSDT"], scn.metrics["THINUSDT"]
     check("con el libro, costo medido", not mA["cost_estimated"] and mA["book_ok"] and abs(mA["cost_rt_bps"] - 12.0) < 0.01, mA["cost_rt_bps"])
@@ -355,6 +363,8 @@ try:
     lines = sc.Scanner.read_log(logs[0]) if logs else []
     check("registro de la vuelta, legible", len(lines) == 1 and "AAAUSDT" in lines[0]["rows"]
           and len(lines[0]["rows"]["AAAUSDT"]) == len(lines[0]["fields"]), [p.name for p in logs])
+    check("el registro de la primera vuelta ya trae la lista (con los libros medidos)",
+          lines and "AAAUSDT" in lines[0]["lists"]["enjuego"], lines[0]["lists"] if lines else None)
     clock.t = NOW + 15 * 60_000
     asyncio.run(scn.run_cycle())
     with open(logs[0], "ab") as fh:
@@ -375,6 +385,23 @@ try:
     asyncio.run(scn.refresh_books())
     asked = [c[1]["symbol"] for c in fake.calls[n0:] if c[0] == "/v5/market/orderbook"]
     check("con un solo libro, el de la que cumple una regla", asked == ["TRDUSDT"], asked)
+    # Las listas llenas ya no dejan fuera a la que llega (el 23/11, con 40 libros para todo y las listas con más de 40
+    # monedas, ninguna nueva se medía: ACE, con volumen x147, quedó fuera de En juego)
+    def full_lists():   # dos en las listas (más que el tope de 1) y una que llega a cumplir una regla
+        scn.order.update({"enjuego": ["AAAUSDT", "NEWUSDT"], "tendencia": [], "rapidos": []})
+        scn.wanting = {"CCCUSDT"}
+
+    full_lists()
+    clock.t += 2 * 60_000
+    n0 = len(fake.calls)
+    asyncio.run(scn.refresh_books())
+    asked = [c[1]["symbol"] for c in fake.calls[n0:] if c[0] == "/v5/market/orderbook"]
+    check("listas llenas: también se mide la que llega a cumplir una regla", sorted(asked) == ["AAAUSDT", "CCCUSDT", "NEWUSDT"], asked)
+    full_lists()   # la vuelta anterior las reordena al terminar
+    n0 = len(fake.calls)
+    asyncio.run(scn.refresh_books())
+    check("un libro de hace menos de un minuto no se vuelve a pedir",
+          not [c for c in fake.calls[n0:] if c[0] == "/v5/market/orderbook"], fake.calls[n0:])
     sc.BOOK_TOP = saved_top
 
     # --- un solo proceso por carpeta ---
@@ -384,6 +411,93 @@ try:
     scn._release_lock()
     check("y se libera", other._take_lock())
     other._release_lock()
+
+    # --- un reinicio no vacía las listas ni anota entradas de las que ya estaban (23/11) ---
+    sfold = TMP / "estado"
+    sclock = Clock(NOW)
+    sfake = FakeBybit()
+
+    def started(t):
+        sclock.t = t
+        return sc.Scanner(sfold, symbols_source=lambda: ["BTCUSDT"], fetch=sfake.fetch, now=sclock.now, start_delay=0)
+
+    def disk_events():
+        out = []
+        for p in sorted((sfold / "events").glob("*.jsonl")):
+            out += [json.loads(x) for x in p.read_text(encoding="utf-8").splitlines() if x.strip()]
+        return out
+
+    def state():
+        return json.loads((sfold / "state.json").read_text(encoding="utf-8"))
+
+    s1 = started(NOW)
+    check("estado: sin archivo, arranca vacío", s1._hold_lock() and s1.restored is None and not any(s1.members.values()))
+    for step in (s1.refresh_meta, s1.refresh_tickers, s1.refresh_btc_daily, s1.run_cycle):
+        asyncio.run(step())
+    st = state()
+    check("estado: se guarda con las listas, su orden y los libros", "AAAUSDT" in st["members"]["enjuego"]
+          and "AAAUSDT" in st["books"] and st["order"]["enjuego"] == s1.order["enjuego"], (st["members"], list(st["books"])))
+    since = s1.members["enjuego"]["AAAUSDT"]["since"]
+    entries1 = sum(1 for e in disk_events() if e["type"] == "entra")
+    raw = (sfold / "state.json").read_bytes()
+    intruder = started(NOW + 60_000)
+    intruder._evaluate(NOW + 60_000)
+    check("estado: un proceso sin el candado no lo pisa", (sfold / "state.json").read_bytes() == raw)
+    s1._release_lock()
+
+    s2 = started(NOW + 2 * 60_000)   # reiniciado dos minutos después
+    check("estado: antes de tomar el candado no se lee", not any(s2.members.values()))
+    s2._hold_lock()
+    check("estado: al tomar el candado retoma las listas con su hora de entrada y su orden",
+          s2.members["enjuego"].get("AAAUSDT", {}).get("since") == since and s2.order["enjuego"] == s1.order["enjuego"]
+          and s2.restored["kept"]["enjuego"] == len(s1.members["enjuego"]), s2.restored)
+    check("estado: y los libros de menos de 15 min", "AAAUSDT" in s2.books and s2.restored["books"] > 0, s2.restored)
+    check("estado: lo retomado no aparece en espera", s2.row("AAAUSDT", "enjuego")["member"]["grace"] is False)
+    asyncio.run(s2.refresh_meta())
+    asyncio.run(s2.refresh_tickers())
+    check("estado: el primer ticker, sin medidas todavía, no lo saca ni lo reordena", s2.order["enjuego"] == s1.order["enjuego"])
+    asyncio.run(s2.refresh_btc_daily())
+    asyncio.run(s2.run_cycle())
+    entries2 = sum(1 for e in disk_events() if e["type"] == "entra")
+    check("estado: la vuelta tras el reinicio no anota entradas de las que ya estaban",
+          entries2 == entries1 and s2.members["enjuego"]["AAAUSDT"]["since"] == since, (entries1, entries2))
+    raw = (sfold / "state.json").read_bytes()
+    s2._evaluate(sclock.t + 60_000)   # nada entra ni sale
+    unchanged = (sfold / "state.json").read_bytes() == raw
+    s2._evaluate(sclock.t + 6 * 60_000)
+    check("estado: sin cambios se guarda cada 5 min, no en cada revisión", unchanged and state()["at"] == sclock.t + 6 * 60_000)
+    sclock.t += 7 * 60_000
+    asyncio.run(s2.stop())
+    check("estado: al cerrarse se guarda", state()["at"] == sclock.t and s2._lock_fh is None)
+
+    st = state()
+    s3 = started(st["at"] + 3 * sc.HOUR_MS)   # tres horas sin mirar
+    s3._hold_lock()
+    gap_out = [e for e in disk_events() if e.get("gap")]
+    check("estado: tras más de una hora sin mirar, las listas empiezan vacías", not any(s3.members.values())
+          and s3.restored["closed"] == sum(len(v) for v in st["members"].values()) and not s3.books, s3.restored)
+    check("estado: y las que estaban salen a la hora en que se vieron por última vez, marcadas",
+          gap_out and all(e["type"] == "sale" and e["at"] == st["at"] for e in gap_out)
+          and {e["symbol"] for e in gap_out if e["list"] == "enjuego"} == set(st["members"]["enjuego"]), gap_out[:3])
+    s3._release_lock()
+
+    t0 = NOW + 5 * sc.HOUR_MS
+    (sfold / "state.json").write_text(json.dumps({"v": 1, "at": t0, "members": {
+        "enjuego": {"AAAUSDT": {"since": t0 - 600_000, "last_ok": t0, "dir": 1}}, "tendencia": {},
+        "rapidos": {"BBBUSDT": {"since": t0 - 60_000, "last_ok": t0, "rule": "A", "minutes": 5, "dp": 0.02, "doi": 0.05, "dir": 1}}},
+        "order": {"enjuego": ["AAAUSDT"], "rapidos": ["BBBUSDT"]}, "books": {}}), encoding="utf-8")
+    s4 = started(t0 + 45 * 60_000)
+    s4._hold_lock()
+    check("estado: con 45 min sin mirar sigue En juego (espera de una hora) y no Rápidos (30 min)",
+          list(s4.members["enjuego"]) == ["AAAUSDT"] and not s4.members["rapidos"]
+          and any(e.get("gap") and e["symbol"] == "BBBUSDT" and e["list"] == "rapidos" for e in disk_events()), s4.restored)
+    s4._release_lock()
+
+    (sfold / "state.json").write_text("{roto", encoding="utf-8")
+    s5 = started(NOW)
+    check("estado: un archivo ilegible no detiene el arranque", s5._hold_lock() and not any(s5.members.values())
+          and any("estado" in e["text"] for e in s5.errors), list(s5.errors))
+    s5._release_lock()
 
     # --- rutas ---
     app = FastAPI()

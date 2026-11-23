@@ -198,7 +198,7 @@ Arriba del panel:
 
 ### Registro (para poder juzgarlo)
 - Cada 15 min, de cada candidata, las medidas principales y en qué listas está, y cada entrada y salida de una lista. En
-  `data/scanner/log/AAAA-MM-DD.jsonl.gz`, unos 0.5 MB por día.
+  `data/scanner/log/AAAA-MM-DD.jsonl.gz`, unos 0.5 MB por día (medido el 23/11: cerca de 1 MB).
 - Con semanas de registro se mide lo que pasó después de entrar a cada lista contra las demás líquidas a la misma hora.
 
 ### Lo que no hace
@@ -235,7 +235,15 @@ Detalle en `12.AltagraciaTradingSuite/CLAUDE.md`, sección "Scanner (22/11)". Lo
   contra su año. Se guardan en arreglos de números: con diccionarios, el servidor pasaba de 131 a 256 MB.
 - **Entrar y salir:** para entrar a una lista hace falta el libro medido (con el estimado entraban libros finos que salían
   al medirse). Una que deja de cumplir su regla sigue una hora; una que ya no se puede operar sale en el acto.
-- **Libros:** primero los de las listas, después los de las que cumplen una regla y después los de más volumen relativo.
+- **Libros:** los de todas las de las listas y de todas las que cumplen una regla, y si queda lugar hasta 40, los de más
+  volumen relativo; las que acaban de cumplir una regla, en la misma vuelta de 15 min. Cuentan también las de 10 a 20 bps
+  de spread en el ticker, que el costo estimado descartaba sin medir. Hasta el 23/11 eran 40 para todo,
+  con las de las listas primero: en la mañana del 23/11 las listas pasaron de 40 y ninguna moneda nueva entró a En juego
+  (a las 09:45 quedaron fuera ACE, con volumen ×147, y ELSA, ×34, mientras la duodécima de la lista tenía ×1.2).
+- **Reinicios (23/11):** las listas, con su hora de entrada, y los libros recientes se guardan en `data/scanner/state.json`
+  y se retoman al arrancar. Antes un reinicio las vaciaba y anotaba como entradas nuevas las que ya estaban: unas 40 de
+  las 145 entradas de ese día, que habrían ensuciado la prueba con el registro. Tras un corte más largo que la espera de
+  la lista, sus monedas salen a la hora en que se vieron por última vez, marcadas (`gap`).
 - **Monedas de una letra** (H, A, B…): el scanner las mira; la suite todavía no las acepta.
 - **Al paso 2:** la profundidad a ±1% y el volumen inflado (el libro de 50 niveles no llega a ±1% en las grandes).
 - **Medido el 22/11 en una copia aislada:** 831 perpetuos y 77 candidatas; la primera vuelta, de 40 a 74 s con unos 310

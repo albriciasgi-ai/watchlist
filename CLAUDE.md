@@ -55,6 +55,33 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 23 Noviembre 2026: El Scanner Mide a Todas las que Llegan y Retoma sus Listas al Reiniciar
+
+**Pedido:** el usuario preguntó qué seguía en el plan del scanner. El registro de su suite de esa mañana mostró dos fallos del paso 1, y pidió corregirlos.
+
+**Cambios** (`12.AltagraciaTradingSuite/server/scanner.py`):
+1. **"En juego" se tapaba en las horas de más movimiento:**
+   - para entrar hace falta el libro medido, y se medían 40 libros cada 5 min, primero los de las listas;
+   - con las listas en más de 40 monedas, ninguna nueva se medía. A las 09:45 cumplían la regla 74 monedas y en la lista había 36;
+   - quedaron fuera ACE (volumen ×147) y ELSA (×34), y la duodécima de la lista tenía ×1.2.
+
+   Ahora se miden los libros de todas las de las listas y de todas las que cumplen una regla, y las nuevas entran en la misma vuelta de 15 min. También las de 10 a 20 bps de spread en el ticker, que el costo estimado descartaba sin medir (MMT, con ×32).
+2. **Un reinicio vaciaba las listas y repetía entradas:** los dos de esa mañana anotaron unas 40 entradas de monedas que ya estaban, de las 145 del día. Ahora las listas y los libros recientes se guardan en `data/scanner/state.json` y se retoman al arrancar. Tras un corte más largo que la espera de la lista, sus monedas salen marcadas ("· corte" en el panel).
+3. **Pruebas:** `scanner_checks.py` suma 20 (120). Pasan las demás del servidor y de la página, y la página se arma.
+
+**IMPORTANTE:**
+- Llega a la suite del usuario al unir esta rama a main y poner al día su carpeta. La suite se reinicia sola al abrirla y arma la página nueva.
+- **Probado en una copia aislada** con Bybit real (sin grabar ni bot):
+  - la primera vuelta trajo en el registro todas las que cumplían con libro suficiente;
+  - un reinicio retomó las 16 de En juego con su hora de entrada, sin entradas repetidas;
+  - un estado de hace 3 h dio las listas vacías y las salidas con "· corte".
+- La lista Rápidos ya se vio en vivo en la suite del usuario (hasta 8 a la vez). El registro ocupa cerca de 1 MB por día, el doble de lo calculado.
+- Una moneda con el libro justo en el límite entra y sale según cada medición: se vio y no se cambió.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Scanner (22/11)", "Tras el primer día (23/11)"
+
+---
+
 ### App 1 + Altagracia Trading Suite + Entrenamiento - 23 Noviembre 2026: Monte Carlo de Trades, Frecuencia de la Señal y Figuras del Entrenador
 
 **Pedido:** del análisis de LuxAlgo Quant, construir lo que el usuario eligió: el Monte Carlo de trades, los informes de frecuencia dentro del probador y que Claude pueda señalar en el gráfico en `/entrenar`.
