@@ -55,6 +55,71 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 22 Noviembre 2026: La EMA Leída en un Marco Mayor y DX con T1 por el Probador
+
+**Pedido:** que el probador lea la EMA en velas de 4 horas y correr DX con T1 (el cierre de 4 horas a favor de su EMA 200) en la fase 1, con sus controles.
+
+**Cambios:**
+1. **EMA leída en un marco mayor** en el probador (`backend/rule_tester.py`, `lines[].tf`: 1 hora, 4 horas o 1 día). Las velas de la regla se unen en bloques UTC de ese marco, como el medidor VPA «leído en». Cada vela lee la EMA y el cierre de la última vela mayor ya cerrada, y la pendiente en 5 velas de ese marco. Solo en la EMA, y solo si se pide: una regla sin `tf` conserva su identidad.
+2. **Ventana:** «leída en» en el filtro de la EMA, el trade elegido con su línea en escalones, y el texto de la regla («EMA 200 de 4 horas a favor»).
+3. **El criterio de DXT** quedó fijado antes de correrlo en `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md` («DX con T1 por el probador»). Se corrió con `OrderFlowData/research/dale/2026-11-22/dxt.py`, sin guardar corridas en el registro del usuario.
+4. **Pruebas:** `tests/test_line_tf.py` (3) y una más en `rulefacets.test.mjs` (15). Pasan también `test_structure.py`, `test_rule_tester.py`, `test_dale.py` y `test_trade_context.py`, y la página compila.
+
+**IMPORTANTE:**
+- **DXT no se queda:** 9,974 trades y +0.117 R por trade, contra 15,986 y +0.099 de DX. La diferencia (+0.018, de −0.019 a +0.055) no tiene margen, ni contra las anclas al azar. Con una posición a la vez, cada señal quitada deja entrar a otra.
+- La tendencia ayuda a la mecánica, no a los apilados: con el filtro, las anclas al azar suben más que DX.
+- **Se cierra la versión refinada:** el ripple, las salidas más lejanas, una orden por zona y la tendencia por el precio no le ganan a DX con margen. DX sigue con su registro en vivo.
+- Como las demás líneas, el azar y el tramo del probador no copian el filtro de la EMA (la H1 del protocolo de pruebas).
+- Reiniciar el backend de App 1 (9000) y recargar su página para usar «leída en».
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", «Filtros de línea», y `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`
+
+---
+
+### App 1 - 22 Noviembre 2026: DX con la Tendencia por el Precio y una Orden por Zona (Fase 1)
+
+**Pedido:** probar en la fase 1 las dos ideas que quedaban para la versión refinada de DX: una orden por zona y la tendencia medida con el precio.
+
+**Cambios:**
+1. **Fijado antes de correrlo** en `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md` («Versión refinada de DX: una orden por zona y la tendencia por el precio»):
+   - DX1: de las zonas que se arman en la misma vela y del mismo lado, solo la más cercana al precio;
+   - tres cortes de tendencia al armarse la orden: T1, el cierre de 4 horas contra su EMA 200; T2, el de 1 día contra su EMA 50; T3, la pendiente de la EMA 50 de 4 horas;
+   - el criterio de cada uno.
+2. **Corrido** con `OrderFlowData/research/dale/2026-11-22/refinada_dx.py`, sin guardar corridas en el registro del usuario.
+
+**IMPORTANTE:**
+- **La tendencia por el precio pasa en los 3 cortes.** Con T1, DX da +0.143 R con la tendencia a favor contra +0.055 en contra: +0.088 (+0.042 a +0.134), en las 7 monedas, con la mitad de los trades. El medidor VPA (el ripple) no lo mostraba; el precio sí.
+- **DX1 no se adopta:** su R por trade baja de +0.099 a +0.084, en 6 de 7 monedas. Tiene un 50% más de trades porque las órdenes unidas ocupaban la posición mucho tiempo, y su R total sube, pero el criterio fijado era el R por trade.
+- **Lo que sigue:** DX con T1 por el probador en la fase 1, con sus controles. Para eso el probador tiene que leer la EMA en velas de 4 horas.
+
+**Ver:** `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md` y `OrderFlowData/research/dale/2026-11-22/REFINADA_DX.md`
+
+---
+
+### App 1 - 22 Noviembre 2026: El Ripple del VPA no le Suma a DX (Estudio de la Fase 1)
+
+**Pedido:** usar para la versión refinada de DX el ripple de la sesión de los indicadores de volumen: el medidor del lector VPA leído en un marco mayor. Se miden dos momentos:
+- A, al armarse la orden;
+- B, mientras la limit espera: cancelarla si el marco mayor se pone en contra.
+
+Así se sabe si vale la pena seguir con C, la señal en el marco mayor y la entrada DX en 30 minutos.
+
+**Cambios:**
+1. **Estudio fijado antes de correrlo** en `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md` («Versión refinada de DX: el ripple entre marcos»): 8 cortes en 4 horas y en 1 día y el criterio para seguir.
+2. **Corrido en la fase 1** de las 7 monedas con almacén, con `OrderFlowData/research/dale/2026-11-22/ripple_dx.py`, sin guardar corridas en el registro del usuario.
+
+**IMPORTANTE:**
+- **Ningún corte pasa: el ripple no le suma a DX.** El más cercano, solo con el marco mayor de 4 horas a favor, deja el 26% de los trades y gana +0.043 R sobre lo que quita, con un margen que toca el cero.
+- Con el medidor neutro, DX rinde menos que con él a favor o en contra: no hay una dirección.
+- B va al revés: cancelar la limit cuando el marco mayor se pone en contra habría quitado trades que ganan igual o más.
+- C no se hace por ahora.
+- **Después, a pregunta del usuario:** con el stop y el objetivo 2 a 4 veces más lejos, la comisión baja de 0.13 a 0.03 R, pero lo que gana cada trade baja más (de +0.23 a +0.10 R antes de comisiones). El R neto pasa de +0.10 a +0.06 o +0.07, entran muchos menos trades y se pierde lo que aportaban los apilados. Ensanchar no ayuda (`ancho_dx.py`, plan, «Stop y objetivo más lejos»).
+- La primera corrida tomó también AAVE (con almacén desde después de fijar el estudio) y le faltaba el medidor de 4 horas de BTC, ETH y SOL antes del 24/10/2021. Se repitió con las 7 monedas y las velas completas: da lo mismo.
+
+**Ver:** `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, «Versión refinada de DX: el ripple entre marcos», y `OrderFlowData/research/dale/2026-11-22/RIPPLE_DX.md`
+
+---
+
 ### Altagracia Trading Suite - 22 Noviembre 2026: DX en Vivo no Salta la Vela que Toca un Hueco
 
 **Pedido:** al reiniciar la suite con DX ya en main, la vela de las 21:00 UTC no entró al registro: cada moneda siguió en 960 velas. El usuario pidió arreglarlo y llevarlo hasta la fusión.

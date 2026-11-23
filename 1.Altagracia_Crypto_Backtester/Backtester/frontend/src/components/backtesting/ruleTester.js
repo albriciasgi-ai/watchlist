@@ -70,6 +70,8 @@ export function defaultRule() {
     patTrend: true, patTrendBars: 5, patVolume: false, patMinZ: 1, patWick: 2,
     // Filtros de línea: off, side (cierra del lado a favor) o touch (además la mecha la toca)
     vwapMode: 'off', vwapPeriod: 200, vwapSlope: false, vwapMaxDevOn: false, vwapMaxDev: 1, emaMode: 'off', emaPeriod: 14, emaSlope: false,
+    // emaTf (22/11): la EMA leída en un marco mayor (0 = el de la regla), con su cierre, en su última vela cerrada
+    emaTf: 0,
     // Volumen de Respuesta: ATR con que gira el tramo, veces el volumen de su hora, flecha a favor o en contra del tramo, y rombo como giro o para seguir
     rvLeg: 2, rvSpike: 2, rvArrow: 'with', rvRombo: 'turn',
     // Gaussian Channel: periodo y polos del filtro, ancho de las bandas, canal a favor y cómo sale por el canal
@@ -203,7 +205,8 @@ export function toBackendRule(rule) {
     ...(rule.vwapMode !== 'off' || rule.emaMode !== 'off' ? {
       lines: [
         ...(['side', 'touch'].includes(rule.vwapMode) ? [{ type: 'vwap', period: number(rule.vwapPeriod, 200), mode: rule.vwapMode, slope: !!rule.vwapSlope, ...(rule.vwapMaxDevOn ? { maxDev: number(rule.vwapMaxDev, 1) } : {}) }] : []),
-        ...(['side', 'touch'].includes(rule.emaMode) ? [{ type: 'ema', period: number(rule.emaPeriod, 14), mode: rule.emaMode, slope: !!rule.emaSlope }] : [])
+        ...(['side', 'touch'].includes(rule.emaMode) ? [{ type: 'ema', period: number(rule.emaPeriod, 14), mode: rule.emaMode, slope: !!rule.emaSlope,
+          ...(vpaFilterTf(rule.tf, rule.emaTf) ? { tf: vpaFilterTf(rule.tf, rule.emaTf) } : {}) }] : [])
       ]
     } : {}),
     ...(codes.includes('CC') ? { cc: { tf: number(rule.ccTf, 0) || undefined, offset: number(rule.ccOffset, 0), swing: number(rule.ccSwing, 3), legs: number(rule.ccLegs, 2) } } : {}),
@@ -367,7 +370,7 @@ export function fromBackendRule(saved) {
     vwapSlope: !!(saved.lines || []).find(l => l.type === 'vwap')?.slope,
     vwapMaxDevOn: (saved.lines || []).find(l => l.type === 'vwap')?.maxDev != null, vwapMaxDev: (saved.lines || []).find(l => l.type === 'vwap')?.maxDev ?? 1,
     emaMode: (saved.lines || []).find(l => l.type === 'ema')?.mode || 'off', emaPeriod: (saved.lines || []).find(l => l.type === 'ema')?.period ?? 14,
-    emaSlope: !!(saved.lines || []).find(l => l.type === 'ema')?.slope,
+    emaSlope: !!(saved.lines || []).find(l => l.type === 'ema')?.slope, emaTf: (saved.lines || []).find(l => l.type === 'ema')?.tf || 0,
     useHours: !!saved.hours, hoursFrom: saved.hours ? clock(saved.hours.from) : '17:30', hoursTo: saved.hours ? clock(saved.hours.to) : '21:30',
     hoursWeekdays: saved.hours ? !!saved.hours.weekdays : true,
     bxMaxHeightOn: saved.bx?.maxHeight != null, bxMaxHeight: saved.bx?.maxHeight ?? 5.5,
@@ -457,7 +460,7 @@ export function describeRule(saved) {
     + `${saved.pat ? ` · patrón${saved.pat.trend ? ' tras tendencia' : ''}${saved.pat.minZ != null ? `, z ≥ ${saved.pat.minZ}` : ''}` : ''}`
     + `${saved.rv ? ` · tramo ${saved.rv.leg} ATR${raw.includes('RF') ? `, flecha ≥ ${saved.rv.spike}x ${{ with: 'a favor del tramo', against: 'contra el tramo', any: 'de cualquier lado' }[saved.rv.arrow]}` : ''}${raw.includes('RB') ? `, rombo ${saved.rv.rombo === 'follow' ? 'siguiendo el tramo' : 'como giro'}` : ''}` : ''}`
     + `${saved.gc ? ` · canal ${saved.gc.period}, ${saved.gc.poles} polos, ×${saved.gc.mult}${saved.gc.trend ? ', a favor' : ''}` : ''}`
-    + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${l.slope ? ' con pendiente' : ''}${l.maxDev ? `, abre a ${l.maxDev} desv. o menos` : ''}`).join('')
+    + (saved.lines || []).map(l => ` · ${l.mode === 'touch' ? 'toca' : 'a favor de'} ${l.type === 'vwap' ? 'VWAP' : 'EMA'} ${l.period}${vpaFrameText(l.tf)}${l.slope ? ' con pendiente' : ''}${l.maxDev ? `, abre a ${l.maxDev} desv. o menos` : ''}`).join('')
     + `${saved.hours ? ` · ${clock(saved.hours.from)}–${clock(saved.hours.to)} UTC` : ''}`
     + `${saved.vp ? ` · perfil de ${saved.vp.hours} h${saved.vp.shapes?.length ? ` (${saved.vp.shapes.join(', ')})` : ''}` : ''}`
     // La angulación y el AO en contra son de la barra divergente: con solo el AO de tres barras o el fractal confundían
