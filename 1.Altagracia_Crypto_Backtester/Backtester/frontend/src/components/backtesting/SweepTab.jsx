@@ -12,6 +12,8 @@ import { elementLabel } from './elementLabels.js';
  * - Solo la fase 1 y solo los dos primeros tramos del embudo: la puerta no se mira aquí.
  * - La nota es el peor de los dos tramos. Negativa y pareja: el elemento sirve al revés.
  * - Segundo paso: marcar elementos y barrer sus parejas.
+ * - Familias (23/11/2026): un clic marca los elementos de una familia (parejas dentro de ella), o se cruzan dos
+ *   familias (cada elemento de una con cada uno de la otra).
  */
 
 const SWEEP_KEY = 'tester_sweep_v1';
@@ -69,7 +71,8 @@ export default function SweepTab() {
   const [config, setConfig] = useState(initial.config);
   const [current, setCurrent] = useState(initial.last);
   const [data, setData] = useState(null);
-  const [past, setPast] = useState({ sweeps: [], tests: 0 });
+  const [past, setPast] = useState({ sweeps: [], tests: 0, families: [], maxPairs: 150 });
+  const [cross, setCross] = useState({ a: '', b: '' });
   const [job, setJob] = useState(null);
   const [message, setMessage] = useState('');
   const [picked, setPicked] = useState([]);
@@ -110,10 +113,10 @@ export default function SweepTab() {
     return () => clearInterval(timer);
   }, [job, loadPast]);
 
-  const start = async (pairs) => {
+  const start = async (pairs, pairsB) => {
     setMessage('');
     try {
-      const answer = await api('/api/sweep/start', { config: { ...config, pairs: pairs || [] } });
+      const answer = await api('/api/sweep/start', { config: { ...config, pairs: pairs || [], pairsB: pairsB || [] } });
       if (!answer.success) {
         setMessage(answer.message);
         return;
@@ -132,8 +135,20 @@ export default function SweepTab() {
   const main = data?.mainX;
   const first = (row, part) => row.parts?.[part]?.first?.[main] || row.parts?.[part]?.first?.[String(main)] || row.parts?.[part]?.first?.[`${main}.0`];
   const of = (group, key) => group?.[key] ?? group?.[String(key)] ?? group?.[`${key}.0`];
-  const toggle = (code) => setPicked(previous => (previous.includes(code) ? previous.filter(c => c !== code) : [...previous, code].slice(0, 12)));
+  const toggle = (code) => setPicked(previous => (previous.includes(code) ? previous.filter(c => c !== code) : [...previous, code]));
   const pairsMode = !!cfg?.pairs?.length;
+  const maxPairs = past.maxPairs || 150;
+  // Las familias, con los elementos que este barrido juzgó (los que existen en ese marco y esas monedas)
+  const inTable = new Set(pairsMode ? [] : (data?.rows || []).filter(r => r.judged).map(r => r.key));
+  const families = (past.families || []).map(f => ({ ...f, codes: f.codes.filter(c => inTable.has(c)) })).filter(f => f.codes.length > 0);
+  const familyOn = (family) => family.codes.every(c => picked.includes(c));
+  const toggleFamily = (family) => setPicked(previous => (familyOn(family)
+    ? previous.filter(c => !family.codes.includes(c))
+    : [...previous, ...family.codes.filter(c => !previous.includes(c))]));
+  const pickedPairs = (picked.length * (picked.length - 1)) / 2;
+  const famA = families.find(f => f.id === cross.a);
+  const famB = families.find(f => f.id === cross.b);
+  const crossPairs = famA && famB && famA.id !== famB.id ? famA.codes.length * famB.codes.length : 0;
 
   return (
     <>
@@ -181,7 +196,7 @@ export default function SweepTab() {
             {past.sweeps.slice(0, 6).map(s => (
               <button key={s.id} type="button" className={`rt-btn${s.id === current ? ' on' : ''}`} style={{ marginRight: 4, marginTop: 4 }} onClick={() => setCurrent(s.id)}
                 title={`${date(s.at)} · ${s.tests} pruebas`}>
-                {TF_LABEL[s.tf] || s.tf}{s.pairs ? ' parejas' : ''} · {s.group === 'base' ? 'de siempre' : s.group === 'new' ? 'nuevas' : 'todas'}
+                {TF_LABEL[s.tf] || s.tf}{s.cross ? ' entre familias' : s.pairs ? ' parejas' : ''} · {s.group === 'base' ? 'de siempre' : s.group === 'new' ? 'nuevas' : 'todas'}
               </button>
             ))}
           </div>
@@ -195,6 +210,7 @@ export default function SweepTab() {
             {data.symbols.length} monedas · tramos hasta el {day(cfg.split1)} y del {day(cfg.split1)} al {day(cfg.split)}, hueco de {cfg.gapDays} días.
             {data.skipped?.length > 0 && ` Sin velas de ese marco: ${data.skipped.length}.`}
             {pairsMode && ` Pareja: las dos señales del mismo lado dentro de ${data.pairWindow} velas.`}
+            {pairsMode && cfg.pairsB?.length > 0 && ' Entre dos familias: cada elemento de una con cada uno de la otra.'}
           </div>
           <div className="rt-note" style={{ marginTop: 4 }}>
             <b>Primero, el reparto.</b> De <b>{data.tests}</b> pruebas juzgadas, <b>{data.beyond2}</b> pasan de ±2 errores con los dos tramos juntos; por azar se
@@ -210,7 +226,7 @@ export default function SweepTab() {
           <table className="rt-table" style={{ marginTop: 6 }}>
             <thead>
               <tr>
-                {!pairsMode && <th title="Marca los que quieras cruzar entre sí (hasta 12)"></th>}
+                {!pairsMode && <th title="Marca los que quieras cruzar entre sí"></th>}
                 <th>{pairsMode ? 'Pareja' : 'Elemento'}</th>
                 <th title="El peor de los dos tramos, en errores">Nota</th>
                 <th title="Señales en el primer tramo y en el segundo">Señales</th>
@@ -283,12 +299,45 @@ export default function SweepTab() {
             </tbody>
           </table>
           {!pairsMode && (
-            <div className="rt-row">
-              <button type="button" className="rt-btn" disabled={running || picked.length < 2} onClick={() => start(picked)}
-                title="Barre todas las parejas de los elementos marcados: las dos señales del mismo lado dentro de 3 velas">
-                Barrer las parejas de los {picked.length} marcados{picked.length >= 2 ? ` (${(picked.length * (picked.length - 1)) / 2} pruebas)` : ''}
-              </button>
-            </div>
+            <>
+              {families.length > 0 && (
+                <div className="rt-row" style={{ flexWrap: 'wrap' }}>
+                  <span title="Un clic marca o desmarca todos los elementos juzgados de esa familia. Con una sola marcada, el botón de abajo barre las parejas dentro de ella">Familias</span>
+                  {families.map(f => (
+                    <button key={f.id} type="button" className={`rt-btn${familyOn(f) ? ' on' : ''}`} onClick={() => toggleFamily(f)}
+                      title={f.codes.map(c => elementLabel(c, names[c])).join(', ')}>
+                      {f.name} ({f.codes.length})
+                    </button>
+                  ))}
+                  {picked.length > 0 && <button type="button" className="rt-btn" onClick={() => setPicked([])}>Desmarcar todo</button>}
+                </div>
+              )}
+              <div className="rt-row">
+                <button type="button" className="rt-btn" disabled={running || picked.length < 2 || pickedPairs > maxPairs} onClick={() => start(picked)}
+                  title="Barre todas las parejas de los elementos marcados entre sí (a mano o por familia): las dos señales del mismo lado dentro de 3 velas">
+                  Barrer las parejas de los {picked.length} marcados{picked.length >= 2 ? ` (${pickedPairs} pruebas)` : ''}
+                </button>
+                {pickedPairs > maxPairs && <span className="rt-warn">El tope es {maxPairs} parejas por barrido: desmarca algunos.</span>}
+              </div>
+              {families.length > 1 && (
+                <div className="rt-row" style={{ flexWrap: 'wrap' }}>
+                  <span title="Cada elemento de una familia con cada uno de la otra, sin las parejas internas: junta cosas que miden algo distinto">Entre dos familias</span>
+                  <select value={cross.a} onChange={(e) => setCross(previous => ({ ...previous, a: e.target.value }))}>
+                    <option value="">elige…</option>
+                    {families.map(f => <option key={f.id} value={f.id}>{f.name} ({f.codes.length})</option>)}
+                  </select>
+                  <span>×</span>
+                  <select value={cross.b} onChange={(e) => setCross(previous => ({ ...previous, b: e.target.value }))}>
+                    <option value="">elige…</option>
+                    {families.filter(f => f.id !== cross.a).map(f => <option key={f.id} value={f.id}>{f.name} ({f.codes.length})</option>)}
+                  </select>
+                  <button type="button" className="rt-btn" disabled={running || !crossPairs || crossPairs > maxPairs} onClick={() => start(famA.codes, famB.codes)}>
+                    Barrer{crossPairs ? ` (${crossPairs} pruebas)` : ''}
+                  </button>
+                  {crossPairs > maxPairs && <span className="rt-warn">El tope es {maxPairs} parejas por barrido.</span>}
+                </div>
+              )}
+            </>
           )}
           <div className="rt-note">
             Lo que salga de aquí es una pista para la búsqueda genética (con esos elementos marcados) o para una regla a mano, no un resultado: se eligió mirando

@@ -55,6 +55,29 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 23 Noviembre 2026: Barrido por Familias
+
+**Pedido:** tras su primer barrido, el usuario preguntó si tomaba los elementos por parejas y pidió poder barrer por familias. Eligió dejar el modo actual y sumar los dos de familias.
+
+**Cambios** (pestaña "Barrido", `signal_sweep.py` y `SweepTab.jsx`):
+1. **Nueve familias** de elementos: Volumen y VPA, Delta del footprint, Desequilibrios y agresión, Valor y POC, Estructura y SMC, Williams, Patrones de vela, Cajas, impulso y canal, e Interés abierto.
+2. **Tres formas de barrer parejas**, sobre la tabla de un barrido de elementos:
+   - a mano, marcando elementos (lo de antes);
+   - dentro de una familia: un clic en la familia marca sus elementos;
+   - entre dos familias: cada elemento de una con cada uno de la otra.
+3. **Tope:** 150 parejas por barrido, en lugar de 12 elementos marcados. La pestaña dice cuántas van antes de correr.
+4. **Pruebas:** `test_signal_sweep.py` suma 1 (11).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar la página.
+- Las familias salen de un barrido de elementos ya hecho, con los que ese barrido juzgó.
+- "Barrer los elementos" sigue igual: cada elemento solo.
+- No se vio en pantalla: las pruebas pasan y la pestaña compila.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BARRIDO DE SEÑALES (23/11/2026)"
+
+---
+
 ### App 1 - 23 Noviembre 2026: Barrido de Señales
 
 **Pedido:** un barrido ordenado para ver dónde puede haber algo antes de usar la búsqueda genética. La idea del usuario: no clasificar por stop y objetivo, sino mirar en cada punto de entrada hasta dónde fue el precio a favor y hasta dónde se devolvió, para ver las dos direcciones sin sesgarse por valores de ATR. En los marcos de la app: 5m, 15m, 1h, 4h y 1D.
