@@ -67,6 +67,7 @@ import alpaca_data  # noqa: E402  acciones de EE. UU. desde Alpaca: footprints, 
 import mobile_devices  # noqa: E402  celulares emparejados y pedidos firmados
 import mobile_events  # noqa: E402  vigilante del bot para el celular y avisos push
 import mobile_gate  # noqa: E402  puerta movil: otro puerto, apagada de fabrica
+import quiet_log  # noqa: E402  el registro sin los pedidos que salen bien, sin repetir errores y con los lentos (23/11)
 from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
 
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
@@ -77,6 +78,7 @@ CANDLE_CACHE_SECONDS = 5
 DRAWINGS_DIR = Path(CONFIG["data_dir"]) / "drawings"
 
 app = FastAPI(title="Altagracia Trading Suite", version="0.1.0")
+quiet_log.install(app)
 _http: Optional[httpx.AsyncClient] = None
 _candle_cache = {}
 app.include_router(market_routes.router)

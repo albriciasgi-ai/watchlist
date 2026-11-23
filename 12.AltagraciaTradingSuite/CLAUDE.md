@@ -80,7 +80,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── mobile_devices.py  Celulares emparejados y pedidos firmados (ver "Puerta móvil")
 │   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
 │   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (48) y scanner_checks.py (120), sin conexión
+│   ├── quiet_log.py       El registro del servidor sin los pedidos que salen bien, sin repetir errores y con los lentos (23/11; ver "Escritorio", "Registros")
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (48), scanner_checks.py (120) y log_checks.py (22), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -1292,6 +1293,16 @@ Pedido del usuario (12/11): que la app no se congele por inactividad (el navegad
 - **Una sola instancia:** abrirla otra vez muestra la ventana existente. Si el código cambió desde que arrancó (la página, el servidor, el backend de App 1, `local_tape.py`, `sync_nube.py` o `main.cjs`), se reinicia sola con la versión nueva (`newestCode()`, 51 ms). Antes, cerrar con la X y volver a abrir mostraba la versión vieja: el 12/11 el usuario probó así y ningún arreglo estaba corriendo. "Reiniciar" en la bandeja y en el menú Suite hace lo mismo a pedido. "Registro del servidor" abre `data/servidor_desktop.log`: en Electron el servidor corre sin ventana, mientras que `INICIAR.bat` sí abre su terminal. El servidor responde la página (`/` y `.html`) con `Cache-Control: no-cache`, para que Electron no muestre una página vieja de su caché.
 - **Menú:** Suite (nueva ventana, ocultar, salir) y Ver (recargar, recargar sin caché, herramientas de desarrollo, zoom y pantalla completa).
 - **Registros:** `data/desktop.log` (la app) y `data/servidor_desktop.log` (salida del servidor que lanzó), o en `SUITE_DATA_DIR`.
+  - **Sin crecer sin límite (23/11):** al medir los datos del scanner, el usuario vio que lo que más crecía era este registro: 221 MB en 11 días (2.3 millones de líneas y 63 arranques, unos 20 MB por día), dentro de la carpeta de OneDrive. Casi todo era la línea de acceso de uvicorn de cada pedido: el 76%, pedidos que salieron bien, y el 24%, 503 del bot apagado (`/api/bot/positions` y `/api/bot/orders/open`, sobre todo), que la página pide cada pocos segundos.
+  - **Servidor** (`server/quiet_log.py`, con dos líneas en `main.py`):
+    - los pedidos que salen bien (código menor que 400) no se anotan;
+    - de un error se anota el primero, y los iguales (mismo método, ruta sin la consulta y código) a lo sumo una vez cada 10 min, con una línea `[SUITE] N pedidos iguales sin anotar desde las HH:MM: GET /api/bot/positions 503`;
+    - un pedido que tarda 5 s o más se anota como `[SUITE] pedido lento: GET … 200 en 7.2 s`;
+    - los avisos, los errores del servidor y los arranques siguen como antes;
+    - `SUITE_ACCESS_LOG=1` vuelve a anotar todos los pedidos, para diagnosticar.
+  - **App de escritorio** (`rotateLog` en `desktop/main.cjs`): al lanzar el servidor, un registro de más de 20 MB pasa a `servidor_desktop.log.1` (reemplaza al anterior) y se empieza otro. La primera vez, el registro de antes queda entero en el `.1`; se borra solo en la rotación siguiente.
+  - **Medido:** con el registro del 23/11, lo que queda son los arranques, avisos y errores (0.9 MB en 11 días) más una línea por error repetido cada 10 min: unos 0.1 a 0.2 MB por día con el bot apagado todo el día.
+  - **Probado:** `tests/log_checks.py` (22), también con el registro que arma uvicorn al arrancar; la rotación con un script aparte que toma `rotateLog` de `main.cjs` (sin registro, del tamaño del tope, más grande y reemplazando el `.1`); y una copia aislada del servidor en 13300: 5 pedidos que salieron bien y ninguna línea, 6 al bot apagado y una, 3 a una ruta que no existe y una, y los historiales de SOL al abrir la página como lentos (de 6 a 10 s). No se probó dentro de Electron.
 
 Probado el 12/11 con un servidor de prueba en 13200 (`SUITE_DATA_DIR` y `SUITE_ORDERFLOW_DATA` en carpetas temporales, `SUITE_BOT_URL=http://127.0.0.1:9`) y perfil de Electron aparte:
 - lanzó el servidor, la ventana pidió `/`, los archivos de la página, velas y footprints;

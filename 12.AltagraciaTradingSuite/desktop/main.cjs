@@ -54,6 +54,7 @@ const BASE_ORIGIN = new URL(BASE_URL).origin;
 const PYTHON = process.env.SUITE_PYTHON || CFG.python || 'C:\\Python314\\python.exe';
 const DATA_DIR = process.env.SUITE_DATA_DIR || CFG.data_dir || path.join(SUITE_DIR, 'data');
 const SERVER_LOG = path.join(DATA_DIR, 'servidor_desktop.log');
+const SERVER_LOG_MAX = 20 * 1024 * 1024;   // al lanzar el servidor, un registro mas grande pasa a .1 (23/11)
 const DESKTOP_LOG = path.join(DATA_DIR, 'desktop.log');
 
 // Lo que pasa en la app de escritorio queda en data/desktop.log (y en la consola)
@@ -290,12 +291,25 @@ async function ensureDist() {
 }
 
 // ---------- servidor ----------
+// El registro del servidor no crece sin limite: si al lanzarlo pasa de SERVER_LOG_MAX, se guarda como .1 (reemplaza al
+// anterior) y se empieza otro. Desde el 23/11 el servidor ya no anota los pedidos que salen bien (server/quiet_log.py)
+function rotateLog(file, max) {
+  try {
+    if (fs.statSync(file).size > max) {
+      fs.renameSync(file, `${file}.1`);
+      return true;
+    }
+  } catch { /* sin registro todavia, o el .1 abierto en otro programa: se sigue con el mismo */ }
+  return false;
+}
+
 function launchServer() {
   const script = path.join(SUITE_DIR, 'server', 'main.py');
   if (path.isAbsolute(PYTHON) && !fs.existsSync(PYTHON)) {
     throw new Error(`No existe el Python ${PYTHON}. Ponlo en "python" de config/suite.json o en SUITE_PYTHON.`);
   }
   try { fs.mkdirSync(DATA_DIR, { recursive: true }); } catch { /* el servidor la crea */ }
+  if (rotateLog(SERVER_LOG, SERVER_LOG_MAX)) dlog(`registro del servidor de mas de ${SERVER_LOG_MAX / 1048576} MB guardado como servidor_desktop.log.1`);
   const log = fs.createWriteStream(SERVER_LOG, { flags: 'a' });
   log.write(`\n===== ${new Date().toISOString()} servidor lanzado por la app de escritorio (puerto ${PORT}) =====\n`);
   const child = spawn(PYTHON, ['-B', script], {
