@@ -88,6 +88,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── ChartView.jsx  Formato de la pestaña principal de App 1: barra de dibujo, encabezado, un MiniChart por marco, indicadores y sus ⚙️
         ├── TradingPanel.jsx   Panel de trading en vivo: caja TP/SL, tamaño fijo o por riesgo, orden al bot
         ├── tabs.js        Pestañas 1 a 5: ajustes propios, y dibujos y monedas compartidos (BroadcastChannel)
+        ├── tabChoice.js   En qué pestaña se abre una moneda del scanner (sin tocar la página, para probarlo con node)
         ├── TabsMenu.jsx   Menú "Pestañas": abre de la 2 a la 5 con el gráfico, la Watchlist, el journal o el bot
         ├── BotView.jsx    Estado, pausa, avisos críticos, posiciones, órdenes y alertas del bot
         ├── BotConfig.jsx  Configuración del bot como en App 10
@@ -103,7 +104,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing; desde el 22/11, también las del scanner
         ├── ScannerPanel.jsx   Panel del scanner en la Watchlist: estado del mercado, listas con su porqué, detalle de cada moneda y ajustes
         └── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
-    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5) y tapelines.test.mjs (6), con node
+    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5), tapelines.test.mjs (6) y tabchoice.test.mjs (6), con node
 ```
 
 ## Puertos
@@ -1205,10 +1206,26 @@ Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el us
   - botón "Scanner" en la barra, junto a "Panel del Swing": los dos paneles van en el mismo lugar, uno a la vez. Cuando la cuadrícula muestra el scanner, el botón dice la lista ("Scanner · En juego");
   - la cuadrícula elige sus monedas: "Mis monedas" (de fábrica, como antes), "Las del scanner" o "Las dos", con la lista y cuántas (6 a 20; 12 de fábrica). Las que ya se ven conservan su lugar y una nueva entra al final. Solo con "Mis monedas" se arrastra para ordenar;
   - en la cabecera de cada celda, el primer motivo, el costo en R (verde hasta 0.10, rojo desde 0.20; * = estimado) y "!" con los avisos;
-  - el panel: estado del scanner (encender o apagar), la cuadrícula, el estado del mercado, las cuatro listas con su regla, una tabla (moneda, porqué y R) y, con un clic, el detalle: medidas, costo, libro, si está en la suite y en el bot, y "Abrir en el gráfico", "Fijar en la cuadrícula" y "Agregar a la suite" (con confirmación; avisa que empieza a grabar). Debajo, las últimas entradas y salidas y "Ajustes del scanner";
+  - el panel: estado del scanner (encender o apagar), la cuadrícula, el estado del mercado, las cuatro listas con su regla, una tabla (moneda, porqué y R) y, con un clic, el detalle: medidas, costo, libro, si está en la suite y en el bot, y "Abrir en otra pestaña" (hasta el 23/11, "Abrir en el gráfico"), "Fijar en la cuadrícula" y "Agregar a la suite" (con confirmación; avisa que empieza a grabar). Debajo, las últimas entradas y salidas y "Ajustes del scanner";
   - una moneda fijada se ve siempre; fijarla con "Mis monedas" pasa la cuadrícula a "Las dos";
   - las monedas del scanner muestran los indicadores livianos de siempre (salen de las velas). Sin grabar, no tienen footprints ni libro;
-  - el gráfico principal abre una moneda que no es de la suite: su selector la agrega como "· sin grabar" (`ChartView.jsx`).
+  - el gráfico abre una moneda que no es de la suite: su selector la agrega como "· sin grabar" (`ChartView.jsx`).
+- **En otra pestaña (23/11):** pedido del usuario tras ver la primera tanda: abrir una moneda del scanner en el gráfico principal cambiaba el análisis que estaba haciendo ahí.
+  - Qué abre otra pestaña: un clic en el nombre de una moneda del scanner en la cuadrícula (todas con "Las del scanner"; con "Las dos", las que no son de la suite) y "Abrir en otra pestaña" del panel. La moneda llega en el marco de la cuadrícula;
+  - cuál: la que ya abrió el scanner, si sigue con el gráfico, o la primera libre de la 2 a la 5 (`scannerTabNumber` de `tabChoice.js`, `openScannerTab` de `tabs.js`). Nunca la pestaña del clic ni un gráfico abierto a mano. En Electron es su ventana, que se trae al frente;
+  - la pestaña queda marcada como del scanner en su ventana (`?origen=scanner` y `sessionStorage`): lo sigue siendo al recargarla, deja de serlo si se abre desde el menú "Pestañas", y su título dice "Pestaña N · scanner". Su latido lo anota (`role`);
+  - su gráfico arranca ya con esa moneda y ese marco (`START_FOCUS` de `SuiteApp.jsx`, `URL_CHART_TIMEFRAME` con 1D, 1W y 1M) y los guarda como suyos, sin armar antes los de la última vez;
+  - con las pestañas 2 a 5 abiertas, la barra de la Watchlist lo avisa y nada cambia;
+  - las monedas de la suite siguen abriéndose en el gráfico principal, igual que las señales del Swing, de los sabios y de DX.
+  - **Probado** (23/11, copia aislada en 13300 con Bybit real, sin grabar ni bot, en el navegador integrado):
+    - el clic en BLESS abrió "Pestaña 2 · scanner" con BLESSUSDT en 15m ("· sin grabar"), con el papel en su ventana y en su latido, y la pestaña 1 siguió con BTC;
+    - con esa pestaña viva y la 3 con un gráfico abierto a mano, MMT fue a la 2;
+    - con la 2 abierta de nuevo desde el menú, perdió el papel y ELSA fue a la 4;
+    - con las cuatro abiertas, nada se abrió y la barra lo dijo 6 s;
+    - con "Las dos", las 21 de la suite fueron al gráfico principal (SOL) y las del scanner a otra pestaña;
+    - "Abrir en otra pestaña" del panel llevó PIEVERSE a la 5.
+
+    Ese navegador abre las ventanas nuevas en la misma pestaña, así que el reuso se comprobó con la dirección pedida. No se probó en Electron: usa la misma ventana por pestaña que el botón "Mapa" (`openTabWindow` de `desktop/main.cjs`). Una pestaña cerrada cuenta como abierta hasta 90 s si no avisó al cerrarse, como con el mapa.
 - **Limitaciones:**
   - la suite no acepta monedas de una sola letra (H, A, B…; `symbols.py` pide 2 a 20): el scanner las mira y el panel lo dice en lugar de ofrecer "Agregar a la suite";
   - mira solo con la suite abierta: el registro tiene huecos con el PC apagado;
@@ -1280,7 +1297,7 @@ C:\Python314\python.exe -B tests\scanner_checks.py
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
 
-Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5). Las líneas de la cinta: `node tests/tapelines.test.mjs` (6).
+Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5). Las líneas de la cinta: `node tests/tapelines.test.mjs` (6). La pestaña de las monedas del scanner: `node tests/tabchoice.test.mjs` (6).
 
 `journal_checks.py` pone `SUITE_ORDERFLOW_DATA` en una carpeta temporal y reemplaza el pedido de OI a Bybit por uno falso: la lectura de la regla y las medidas nunca leen el almacén real ni salen a la red.
 

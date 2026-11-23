@@ -226,8 +226,10 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
   const saved = useMemo(loadSettings, []);
   const chartRefs = useRef({});
   const [symbols, setSymbols] = useState([saved.symbol || 'BTCUSDT']);
-  const [symbol, setSymbol] = useState(saved.symbol || 'BTCUSDT');
-  const [activeTimeframe, setActiveTimeframe] = useState(TIMEFRAMES.includes(saved.timeframe) ? saved.timeframe : '15m');
+  // Una pestaña abierta por el scanner (23/11) arranca ya con su moneda y su marco, sin armar antes los de la última vez
+  const [symbol, setSymbol] = useState(focusSymbol?.symbol || saved.symbol || 'BTCUSDT');
+  const [activeTimeframe, setActiveTimeframe] = useState(TIMEFRAMES.includes(focusSymbol?.tf) ? focusSymbol.tf
+    : TIMEFRAMES.includes(saved.timeframe) ? saved.timeframe : '15m');
   // Los gráficos de 1D, 1W y 1M se arman al abrirlos por primera vez y después quedan armados, como los demás
   const [openedTfs, setOpenedTfs] = useState(() => new Set([activeTimeframe]));
   useEffect(() => {

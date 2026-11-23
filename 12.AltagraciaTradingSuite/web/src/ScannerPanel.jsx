@@ -149,7 +149,10 @@ function CoinDetail({ symbol, data, error, config, inBot, inSuite, pinned, onTog
         </tbody>
       </table>
       <div className="wl-row wl-actions">
-        <button type="button" className="suite-btn" onClick={() => onOpenChart(symbol, gridTf)}>Abrir en el gráfico</button>
+        <button type="button" className="suite-btn" onClick={() => onOpenChart(symbol, gridTf)}
+                title="En otra pestaña (la que ya abrió el scanner o la primera libre de la 2 a la 5): el gráfico principal no cambia">
+          Abrir en otra pestaña
+        </button>
         <button type="button" className="suite-btn" onClick={() => onTogglePin(symbol)}>{pinned ? 'Soltar de la cuadrícula' : 'Fijar en la cuadrícula'}</button>
         {!inSuite && SUITE_SYMBOL.test(symbol) && (
           <button type="button" className="suite-btn" disabled={adding} onClick={() => onAdd(symbol)}

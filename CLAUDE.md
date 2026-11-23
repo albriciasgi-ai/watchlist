@@ -55,6 +55,25 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 23 Noviembre 2026: Las Monedas del Scanner se Abren en Otra Pestaña
+
+**Pedido:** el scanner sacó su primera tanda en la suite del usuario. Un clic en una de sus monedas la abría en el gráfico principal y cambiaba el análisis que estaba haciendo: mejor en una pestaña nueva.
+
+**Cambios:**
+1. **Otra pestaña:** un clic en una moneda del scanner en la Watchlist, o "Abrir en otra pestaña" de su panel, la abre en otra pestaña, en el marco de la cuadrícula. En Electron es su propia ventana.
+   - Usa la que ya abrió el scanner, si sigue con el gráfico, o la primera libre de la 2 a la 5.
+   - Nunca usa un gráfico abierto a mano. Esa pestaña se llama "Pestaña N · scanner".
+2. **Lo que no cambia:** las monedas de la suite siguen abriéndose en el gráfico principal, también con la cuadrícula en "Las dos".
+3. **Pruebas:** `web/tests/tabchoice.test.mjs` (6). Las demás de la página pasan y la página se arma.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- **Probado en una copia aislada** con Bybit real: abrir, reusar la pestaña del scanner, no tocar un gráfico abierto a mano, sin pestañas libres, "Las dos" y el botón del panel. No se probó en Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Scanner (22/11)", "En otra pestaña (23/11)"
+
+---
+
 ### Altagracia Trading Suite - 22 Noviembre 2026: Scanner de Monedas para la Watchlist (plan y paso 1)
 
 **Pedido:** un scanner que busque en Bybit las mejores monedas para operar según las condiciones del mercado y las muestre en la Watchlist de la suite, con el Pump Screener de WunderTrading como referencia. Primero, averiguar qué variables mirar y pensar a fondo qué hace falta. Con el plan aprobado, el paso 1. Decidido con el usuario:
