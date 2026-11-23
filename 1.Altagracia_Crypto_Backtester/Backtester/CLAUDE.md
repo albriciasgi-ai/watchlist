@@ -647,6 +647,9 @@ node tests/rulefacets.test.mjs
 node tests/montecarlo.test.mjs
 node tests/coach.test.mjs
 cd ../backend
+.venv\Scripts\python.exe -m pytest tests/test_search_funnel.py tests/test_market_filter.py tests/test_rule_frequency.py
+cd ../frontend
+cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
 
@@ -2770,9 +2773,45 @@ Pedido del usuario, del análisis de LuxAlgo Quant: su "bucle de backtest" prueb
 
 Pestaña "Búsqueda": casilla "Embudo: tres tramos y una puerta con cupo" (marcada de fábrica), primer corte, hueco, cupo de la puerta y cupo para la fase 2. El informe dice el umbral de suerte por tramo y con lo de antes, cuántas miraron la puerta y con qué margen. Cada finalista trae sus dos tramos, la puerta y la tabla por régimen. En "Mejores en el tramo de búsqueda", una regla que no fue finalista dice "sin mirar".
 
+### Filtro de mercado, grupo de monedas y la regla del VPA por tramos (23/11, después)
+
+Pedido del usuario: usar el embudo para buscar variaciones de la ruptura con volumen del VPA (QB, 4h, a mercado, stop 1.5 ATR con máximo 8, 3R), la regla que había pasado las tres fases en las monedas nuevas.
+
+- **La regla base, por los tramos del embudo** (fase 1, motor 6, solo lectura, sin guardar corridas):
+
+| Grupo | Tramo | Trades | R por trade | Sobre el azar | Sobre el azar de su trimestre y lado |
+|---|---|---|---|---|---|
+| De siempre (7) | 1 | 194 | +0.10 | +0.09 | −0.03 |
+| De siempre (7) | 2 | 241 | +0.08 | +0.10 | +0.01 |
+| De siempre (7) | Puerta | 332 | +0.19 | +0.14 | +0.05 |
+| Nuevas (43) | 1 | 542 | −0.01 | 0.00 | −0.02 |
+| Nuevas (43) | 2 | 1,868 | +0.05 | +0.06 | −0.02 |
+| Nuevas (43) | Puerta | 2,155 | −0.03 | +0.04 | −0.04 |
+
+  - Contra el azar simple gana algo; contra el azar de su trimestre y lado (B-07 del motor 6) queda en cero. Ningún margen deja de tocar el cero. Su nota en el embudo es −0.27 en las de siempre y −0.15 en las nuevas: no llegaría a la puerta.
+  - "Pasó las tres fases" valía con el criterio de antes del motor 6.
+  - Por régimen, lo único que se repite en los cuatro casos es que pierde en subida con volatilidad alta: −0.32 y −0.18 en las de siempre (búsqueda y puerta), −0.44 y −0.06 en las nuevas.
+- **Filtro de mercado en el probador** (`market` = `{allow: [...]}` en la regla, `rule_tester.market_mask`):
+  - las seis combinaciones de tendencia (subida, bajada, rango) y volatilidad (alta, baja) de `trade_regime.py`, con lo que se sabía al cerrar la vela de la señal. Es del mercado, no del lado del trade;
+  - solo entra a la regla si deja fuera alguna: sin él, o con las seis, la regla conserva su identidad;
+  - una señal en una vela no permitida, o sin historia para medirla, va a `skipped` como "filtro de mercado";
+  - los controles al azar del probador (`_allowed`) y los de la búsqueda entran solo en las velas permitidas;
+  - en el trade elegido tiene su fila bajo las velas, con la tendencia y la volatilidad de la señal;
+  - en la ventana: "Mercado: tendencia y volatilidad de 4 horas", en Filtros → Tendencia, con seis casillas; en «Vas a correr», su ficha.
+- **En la búsqueda:** el gen `market` (apagado de fábrica en cada genoma): sin subida con volatilidad alta, solo en rango, solo en tendencia, solo con volatilidad baja o solo con alta. Casilla "mercado" entre las piezas. Una búsqueda guardada antes no lo trae.
+- **Con qué monedas elige** (`group`): las 7 de siempre, las nuevas o todas. Con las nuevas, las que solo informan al final son las de siempre (`baseCoins`). "A favor en N monedas" llega hasta 50. La regla del VPA tarda 10 s en las 7 de siempre y unos 45 s en las 43 nuevas.
+- **Corregido:** una moneda con menos de 50 velas en un tramo (o menos de 50 que el filtro deje) no tiene control al azar ahí. Sus trades dejaban al tramo entero sin las tres ventajas, y la nota caía al cálculo viejo de dos controles: pasó en el primer tramo de las monedas nuevas. Ahora esa moneda no entra en ese tramo.
+- **La regla del VPA sin subida con volatilidad alta** (la hipótesis que salió de mirar el régimen):
+  - en las de siempre mejora el primer tramo y la puerta (+0.23 sobre su control más exigente en los dos) pero no el segundo (−0.02): nota −0.36, tampoco llega a la puerta;
+  - en las nuevas no cambia nada: +0.02, −0.02 y 0.00.
+
+  No se sostiene. Salió de datos ya vistos y no se repite en las monedas que no la sugirieron.
+- **Pruebas:** `tests/test_market_filter.py` (6) y una regla de prueba más completa en `rulefacets.test.mjs` (15).
+- **No se vio en pantalla:** la página compila y las pruebas de la página pasan.
+
 ### Lo que no está hecho
 
-- **Reglas especializadas por régimen** (idea del usuario, aceptada): buscar dentro de un régimen, con el tramo definido por régimen y no por fecha. Pide un filtro nuevo en la regla del probador.
+- **El tramo definido por régimen** (la otra mitad de las reglas especializadas): hoy el filtro de mercado deja buscar reglas que operan solo en un régimen, pero los tramos siguen siendo por fecha.
 - **La fase 2 con una sola mirada** para 3 a 5 finalistas y umbral ajustado por ese número: hoy la fase 2 se corre regla por regla desde la pestaña "Regla", y el tablero pide el margen.
 - La cuenta de lo gastado no incluye las reglas corridas a mano en la fase 1 (esas las cuenta el Historial) ni los informes de frecuencia.
 

@@ -11,7 +11,7 @@
  * Lógica pura: se prueba en Node.
  */
 import { elementLabels } from './elementLabels.js';
-import { BW_ALLIGATOR_TEXT, BW_GATOR_TEXT, BW_MFI_TEXT, BW_MOMENTUM_TEXT, DAILY_TF, TF_LABEL, VP_CODES, chainTargetText, chainText, tpTrailText, vpaExitText } from './ruleTester.js';
+import { BW_ALLIGATOR_TEXT, BW_GATOR_TEXT, BW_MFI_TEXT, BW_MOMENTUM_TEXT, DAILY_TF, TF_LABEL, VP_CODES, chainTargetText, chainText, marketText, tpTrailText, vpaExitText } from './ruleTester.js';
 
 /** Secciones del formulario, en orden */
 export const SECTIONS = [
@@ -48,6 +48,7 @@ export const FACETS = {
   vwap: ['filtros', 'VWAP', 'sin filtro'],
   ema: ['filtros', 'EMA', 'sin filtro'],
   regimen: ['filtros', 'Régimen', 'cualquiera'],
+  mercado: ['filtros', 'Mercado (tendencia y volatilidad)', 'cualquiera'],
   cvd: ['filtros', 'CVD', 'sin filtro'],
   oi: ['filtros', 'Interés abierto', 'sin filtro'],
   multitud: ['filtros', 'Multitud', 'sin filtro'],
@@ -219,6 +220,7 @@ export function ruleFacets(rule, labels = {}) {
     const mode = { inside: 'solo dentro de un rango', outside: 'solo fuera de los rangos', breakout: `${reg.after} velas tras romper un rango` }[reg.mode];
     add('regimen', `${mode}${reg.major !== false ? `, rango mayor (termina tras ${reg.majorOut} cierres fuera)` : ', cajas chicas'}${Number(reg.tf) === DAILY_TF ? ', medido en 1D' : ''}`);
   }
+  if (rule.market?.allow?.length) add('mercado', marketText(rule.market.allow));
   const flow = rule.flow || {};
   if (flow.cvd) add('cvd', `CVD de ${flow.cvd} velas a favor`);
   if (flow.oi) {
@@ -358,7 +360,7 @@ export function loadedSummary(rule, labels = {}) {
 
 /** Cómo se apaga cada pieza en el formulario (las fichas de «Vas a correr» con su ×). null: no se apaga así */
 export const OFF_PATCH = {
-  vwap: { vwapMode: 'off' }, ema: { emaMode: 'off' }, regimen: { regimeMode: 'any' }, cvd: { cvdOn: false }, oi: { oiMode: 'off' },
+  vwap: { vwapMode: 'off' }, ema: { emaMode: 'off' }, regimen: { regimeMode: 'any' }, mercado: { marketOn: false }, cvd: { cvdOn: false }, oi: { oiMode: 'off' },
   multitud: { crowdMode: 'off' }, oiSostenido: { steadyOn: false }, onchain: { chainMetric: 'off' }, alligator: { bwAlligator: 'off' }, zonaWilliams: { bwZone: false },
   ao: { bwAo: 'off' }, ac: { bwAc: 'off' }, gator: { bwGator: 'off' }, mfi: { bwMfi: 'off' }, vpaMedidor: { vpaMode: 'off' },
   premium: { smcPd: false }, sesgo: { smcBias: false }, extremo: { swing: false }, momentum: { momentum: false },

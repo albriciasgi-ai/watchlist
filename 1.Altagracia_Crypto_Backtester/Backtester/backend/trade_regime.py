@@ -25,6 +25,22 @@ VOL_LOOKBACK = 180
 TRENDS = {1: "subida", -1: "bajada", 0: "rango"}
 VOLS = {1: "alta", 0: "baja"}
 UNKNOWN = "sin dato"
+# Las seis combinaciones del filtro de mercado del probador, como "tendencia-volatilidad"
+COMBOS = tuple(f"{trend}-{vol}" for trend in ("subida", "bajada", "rango") for vol in ("alta", "baja"))
+
+
+def combo(label):
+    """La combinación de una etiqueta (tendencia, volatilidad), o None si le falta algún dato."""
+    trend, vol = label
+    return None if UNKNOWN in (trend, vol) else f"{trend}-{vol}"
+
+
+def allow_text(allow):
+    """En palabras, lo que deja pasar un filtro de mercado: por lo que deja si deja poco, por lo que quita si quita poco."""
+    allow = [c for c in COMBOS if c in set(allow)]
+    out = [c for c in COMBOS if c not in set(allow)]
+    said = lambda items: ", ".join(c.replace("-", " con volatilidad ") for c in items)
+    return f"solo en {said(allow)}" if len(allow) <= len(out) else f"sin {said(out)}"
 
 
 def _blocks(bars, tf):

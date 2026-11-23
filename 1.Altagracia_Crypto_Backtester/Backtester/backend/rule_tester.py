@@ -46,6 +46,7 @@ import response_volume
 import candle_patterns
 import smc
 import structure
+import trade_regime
 import vp_sessions
 import vpa
 import williams
@@ -583,6 +584,11 @@ def clean_rule(raw):
                            "majorOut": int(_num(reg.get("majorOut"), 6, 1, 50)), "after": int(_num(reg.get("after"), 6, 1, 200))}
         if int(_num(reg.get("tf"), 0, 0, DAILY)) == DAILY and tf < DAILY:
             extra["regime"]["tf"] = DAILY  # Medido en velas diarias; solo entra si se pide
+    # Filtro de mercado (23/11): la tendencia y la volatilidad de 4 horas al cerrar la vela de la señal (trade_regime.py),
+    # por combinación. Solo entra a la regla si deja fuera alguna: sin él, o con las seis, la regla conserva su identidad
+    allow = sorted({c for c in ((raw.get("market") or {}).get("allow") or []) if c in trade_regime.COMBOS})
+    if allow and len(allow) < len(trade_regime.COMBOS):
+        extra["market"] = {"allow": allow}
     leaves_channel = (extra.get("gc") or {}).get("exit") in ("band", "mid")
     if target_r is None and trail == "none" and horizon is None and "targetAt" not in extra and not leaves_channel and not vexit:
         horizon = DEFAULT_HORIZON  # Sin objetivo hace falta otra salida
@@ -2341,6 +2347,8 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     if rule.get("hours"):
         # El horario, para los controles al azar (H1, motor 6): la hora en que se conoce la señal, el cierre de su vela
         ctx["hoursOK"] = np.array([_in_hours(rule["hours"], t + tf_ms) for t in ctx["T"]], dtype=bool)
+    if rule.get("market"):
+        ctx["marketOK"] = market_mask(rule["market"], bars, tf)
     if rule.get("smcf") or rule.get("targetAt") == "weak":
         _smc_range(rule, ctx)
     extra = _extra_events(symbol, rule, span, ctx, control, vp_shift)
@@ -2447,6 +2455,9 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
                 continue
         if rule.get("regime") and not ctx["regimeOK"][k]:
             skip("filtro de régimen", k, side)
+            continue
+        if rule.get("market") and not ctx["marketOK"][k]:
+            skip("filtro de mercado", k, side)
             continue
         if rule.get("bwf"):
             sides = tuple(sd for sd in sides if williams.filter_ok(rule["bwf"], _bw_series(ctx), k, sd))
@@ -2913,15 +2924,36 @@ def regime_mask(reg, bars, session=False):
     return ok
 
 
+_market_cache = {}
+
+
+def market_labels(bars, tf):
+    """La tendencia y la volatilidad de 4 horas de cada vela (trade_regime.labels), en caché por las velas."""
+    key = (_bars_key(bars), tf)
+    found = _market_cache.get(key)
+    if found is None:
+        found = trade_regime.labels(bars, tf)
+        _market_cache[key] = found
+        while len(_market_cache) > 120:
+            _market_cache.pop(next(iter(_market_cache)))
+    return found
+
+
+def market_mask(market, bars, tf):
+    """Por vela: si el filtro de mercado deja entrar con lo que se sabía al cerrarla. Sin dato (el comienzo) no pasa."""
+    allow = set(market["allow"])
+    return np.array([trade_regime.combo(label) in allow for label in market_labels(bars, tf)], dtype=bool)
+
+
 def _allowed(ctx, n):
-    """Con filtro de régimen, las velas en que pueden entrar los controles al azar: las mismas que la regla."""
-    ok, hours = ctx.get("regimeOK"), ctx.get("hoursOK")
-    if ok is None and hours is None:
+    """Con filtro de régimen, de horario o de mercado, las velas en que pueden entrar los controles al azar: las mismas
+    que la regla."""
+    masks = [np.asarray(ctx[name], dtype=bool) for name in ("regimeOK", "hoursOK", "marketOK") if ctx.get(name) is not None]
+    if not masks:
         return None
-    if ok is None:
-        ok = hours
-    elif hours is not None:
-        ok = np.asarray(ok, dtype=bool) & hours
+    ok = masks[0]
+    for mask in masks[1:]:
+        ok = ok & mask
     first = max(30, ctx.get("lead", 0))
     return np.flatnonzero(ok[first:n - 2]) + first
 
@@ -3038,6 +3070,8 @@ def _control_context(symbol, rule, span):
         ctx["vpaExit"] = _vpa_exit_bars(rule, ctx)
     if rule.get("regime"):
         ctx["regimeOK"] = regime_mask(rule["regime"], span["bars"], is_stock(symbol))
+    if rule.get("market"):
+        ctx["marketOK"] = market_mask(rule["market"], span["bars"], rule["tf"])
     return ctx
 
 
@@ -3484,6 +3518,14 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
         boxes = [b for b in _regime_boxes(reg, bars, is_stock(symbol)) if b["end"] >= t0 and b["start"] <= t1]
         out["regime"] = {"label": label, "boxes": boxes}
         out["rows"].append(row("regime", label, lambda i: bool(ok[i]), "en la señal: " + ("permitido" if ok[k] else "no permitido")))
+
+    if rule.get("market"):
+        market_ok = ctx.get("marketOK")
+        if market_ok is None:
+            market_ok = market_mask(rule["market"], bars, rule["tf"])
+        seen = market_labels(bars, rule["tf"])[k]
+        out["rows"].append(row("market", "Mercado: " + trade_regime.allow_text(rule["market"]["allow"]), lambda i: bool(market_ok[i]),
+                               f"en la señal: {seen[0]}, volatilidad {seen[1]}"))
 
     # Los filtros de Williams y SMC, uno por fila (21/11: no tenían la suya). En gris las velas sin el dato del filtro
     if rule.get("bwf"):
