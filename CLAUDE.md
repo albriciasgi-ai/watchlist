@@ -55,6 +55,31 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 23 Noviembre 2026: El Registro del Servidor Deja de Crecer 20 MB por Día
+
+**Pedido:** al medir cuánto guarda el scanner por día, salió que lo que más crecía en la carpeta de datos de la suite era el registro del servidor: `data/servidor_desktop.log`, con 221 MB en 11 días, dentro de OneDrive. El usuario pidió arreglarlo.
+
+**Causa:** la app de escritorio le añade todo lo que escribe el servidor y nunca lo recorta, y uvicorn anota cada pedido. El 76% eran pedidos que salieron bien y el 24%, errores 503 del bot apagado, que la página pide cada pocos segundos.
+
+**Cambios:**
+1. **Servidor** (`server/quiet_log.py`, dos líneas en `main.py`):
+   - los pedidos que salen bien no se anotan;
+   - un mismo error se anota a lo sumo una vez cada 10 min, con una línea que dice cuántos no se anotaron;
+   - un pedido de 5 s o más se anota como lento;
+   - `SUITE_ACCESS_LOG=1` vuelve a anotarlo todo.
+2. **App de escritorio** (`desktop/main.cjs`): al lanzar el servidor, un registro de más de 20 MB pasa a `servidor_desktop.log.1` y empieza otro.
+3. **Pruebas:** `server/tests/log_checks.py` (22). Pasan las demás del servidor.
+
+**IMPORTANTE:**
+- Llega a la suite del usuario al unir esta rama a main y poner al día su carpeta. La suite se reinicia sola al abrirla, también la app de escritorio.
+- La primera vez, el registro de 221 MB queda entero en `servidor_desktop.log.1`. Se puede borrar a mano; si no, se reemplaza en la rotación siguiente.
+- Con lo medido, el registro crecería unos 0.1 a 0.2 MB por día.
+- **Probado en una copia aislada** del servidor: sin líneas de los pedidos que salieron bien, una sola de los errores repetidos y los pedidos lentos al abrir la página. La rotación, con un script aparte. No se probó dentro de Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Escritorio (Electron)", "Registros"
+
+---
+
 ### Altagracia Trading Suite - 23 Noviembre 2026: El Scanner Mide a Todas las que Llegan y Retoma sus Listas al Reiniciar
 
 **Pedido:** el usuario preguntó qué seguía en el plan del scanner. El registro de su suite de esa mañana mostró dos fallos del paso 1, y pidió corregirlos.
