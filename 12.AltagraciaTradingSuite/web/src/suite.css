@@ -167,6 +167,25 @@
 .wl-panel-title { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 4px; }
 .wl-panel-title h3 { margin: 0; }
 
+/* Scanner (22/11): el porqué de cada moneda, su panel y su detalle */
+.wl-chip { display: inline-block; font-size: 10px; line-height: 15px; padding: 0 5px; margin: 1px 3px 1px 0; border-radius: 8px; border: 1px solid var(--t-line, #ccc); white-space: nowrap; }
+.wl-chip.warn { border-color: #f9a825; color: #b06a00; }
+.wl-head .wl-chip { flex-shrink: 0; margin: 0; }
+.wl-chips { white-space: normal !important; }
+.wl-scan td { vertical-align: top; }
+.wl-selected td { background: var(--t-control, #f5f5f5); }
+.wl-tabs { display: flex; flex-wrap: wrap; gap: 4px; margin-bottom: 4px; }
+.wl-tabs .suite-btn { padding: 2px 6px; }
+.wl-detail { margin-top: 8px; padding-top: 6px; border-top: 1px solid var(--t-line, #ddd); }
+.wl-kv td { white-space: normal !important; vertical-align: top; padding: 3px 4px; }
+.wl-kv-label { opacity: 0.75; width: 82px; }
+.wl-actions { flex-wrap: wrap; }
+.wl-flag { font-size: 11px; margin: 3px 0; }
+.wl-config summary { cursor: pointer; font-weight: 600; font-size: 13px; margin-bottom: 6px; }
+.wl-field { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin: 4px 0; }
+.wl-input { width: 80px; font-size: 12px; padding: 2px 6px; border: 1px solid var(--t-line, #ccc); border-radius: 3px; background: var(--t-page, #fff); color: var(--t-text, #222); }
+.wl-empty { padding: 16px 10px; font-size: 12px; opacity: 0.75; }
+
 /* Menú "Pestañas": de la 2 a la 5 con gráfico, Watchlist, journal o bot */
 .tabs-menu-anchor { position: relative; display: inline-flex; }
 .tabs-menu { width: 400px; left: auto; right: 0; }

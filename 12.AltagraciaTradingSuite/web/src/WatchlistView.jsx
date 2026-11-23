@@ -6,6 +6,7 @@ import { linesFor } from './botBook.js';
 import { TAB, onAnyDrawings, onSymbolsChanged, symbolsChanged } from './tabs.js';
 import TabsMenu from './TabsMenu.jsx';
 import { INTERVAL_CODE, SWING, attachSwing, feedSwing, frameName, onSwingChanged, swingOf } from './swingServer.js';
+import ScannerPanel, { GRID_COUNTS, GRID_LISTS, LIST_SHORT, costClass } from './ScannerPanel.jsx';
 
 /**
  * Watchlist (paso 5, parte C, 13/11/2026): las monedas de la suite en una cuadrícula, cada una con el gráfico de App 1
@@ -23,6 +24,9 @@ import { INTERVAL_CODE, SWING, attachSwing, feedSwing, frameName, onSwingChanged
  * - Los gráficos se arman de a uno, porque Bybit cuenta los pedidos por segundo.
  * - Panel del Swing del servidor: si detecta, su marco, las monedas que vigila y las últimas señales. No envía alertas.
  *   Debajo, los tres sabios de Williams y la estructura SMC del servidor (20/11), igual: tampoco envían nada.
+ * - Scanner (22/11, docs/PLAN_SCANNER.md): la cuadrícula puede mostrar las monedas de una lista del scanner del servidor
+ *   (en lugar de las de la suite o junto a ellas), con el porqué en la cabecera de cada celda. Esas monedas no se graban:
+ *   solo velas de Bybit, hasta «Agregar a la suite». Su panel (ScannerPanel.jsx) va en el lugar del panel del Swing.
  */
 
 // 1D, 1W y 1M (16/11): la semana empieza el lunes y el mes el día 1; el mes no tiene Swing
@@ -80,8 +84,31 @@ function priceText(p) {
 
 const colombiaTime = (ms) => new Date(ms).toLocaleTimeString('es-CO', { timeZone: 'America/Bogota', hour: '2-digit', minute: '2-digit' });
 
+/** El porqué del scanner en la cabecera de una celda: su primer motivo, el costo en R y si tiene avisos */
+function ScanHead({ row }) {
+  const first = (row.chips || []).find(c => !/ R\*?$/.test(c.text));
+  const flags = row.flags || [];
+  return (
+    <>
+      {first && <span className="wl-chip" title={first.title}>{first.text}</span>}
+      {row.cost_r_1h != null && (
+        <span className={`wl-chip ${costClass(row.cost_r_1h)}`} title="Costo de ida y vuelta en R de un stop de 1 ATR de 1 h (*: estimado con el spread)">
+          {row.cost_r_1h.toFixed(2)}{row.cost_estimated ? '*' : ''} R
+        </span>
+      )}
+      {flags.length > 0 && <span className="wl-chip warn" title={flags.map(f => f.text).join('\n')}>!</span>}
+    </>
+  );
+}
+
+const scanTitle = (row) => [
+  'Del scanner. Un clic la abre en el gráfico principal.',
+  ...(row?.chips || []).map(c => `${c.text}: ${c.title}`),
+  ...(row?.flags || []).map(f => `Aviso: ${f.text}`),
+].join('\n');
+
 /** Nombre, precio y cambio de 24 h de una moneda, con los precios del WebSocket que ya usa su gráfico (uno por segundo) */
-function CellHead({ symbol, tf, note, onOpen, onDragStart, onDragEnd }) {
+function CellHead({ symbol, tf, note, scanRow = null, draggable = true, onOpen, onDragStart, onDragEnd }) {
   const [tick, setTick] = useState({ price: null, pct: null });
   useEffect(() => {
     const merged = {};
@@ -108,11 +135,14 @@ function CellHead({ symbol, tf, note, onOpen, onDragStart, onDragEnd }) {
   }, [symbol, tf]);
   const pct = tick.pct;
   return (
-    <div className="wl-head" draggable onClick={onOpen} onDragStart={onDragStart} onDragEnd={onDragEnd} title="Un clic la abre en el gráfico principal; arrástrala para cambiar el orden">
+    <div className="wl-head" draggable={draggable} onClick={onOpen} onDragStart={draggable ? onDragStart : undefined}
+         onDragEnd={draggable ? onDragEnd : undefined}
+         title={scanRow ? scanTitle(scanRow) : draggable ? 'Un clic la abre en el gráfico principal; arrástrala para cambiar el orden' : 'Un clic la abre en el gráfico principal'}>
       <span className="wl-sym">{symbol.replace(/USDT$/, '')}</span>
       <span>{priceText(tick.price)}</span>
       {Number.isFinite(pct) && <span className={pct >= 0 ? 'pos' : 'neg'}>{pct >= 0 ? '+' : ''}{pct.toFixed(2)}%</span>}
       <span className="suite-spacer" />
+      {scanRow && <ScanHead row={scanRow} />}
       {note && <span className="wl-note" title={note.title}>{note.text}</span>}
     </div>
   );
@@ -461,7 +491,19 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
     const own = Object.fromEntries(Object.entries(saved.indicators || {}).filter(([name]) => LIGHT_NAMES.has(name)));
     return { ...DEFAULT_ON, ...own };
   });
-  const [showPanel, setShowPanel] = useState(saved.showPanel !== false);
+  // El panel de la derecha: el del Swing (como hasta el 22/11), el del scanner o ninguno. Lo guardado antes solo decía si
+  // el del Swing se veía
+  const [panel, setPanel] = useState(() => ('panel' in saved
+    ? (['swing', 'scanner'].includes(saved.panel) ? saved.panel : null)
+    : (saved.showPanel !== false ? 'swing' : null)));
+  const showPanel = panel === 'swing';
+  // Scanner (22/11): de dónde salen las monedas de la cuadrícula, qué lista, cuántas y las fijadas
+  const [source, setSource] = useState(['mias', 'scanner', 'ambas'].includes(saved.source) ? saved.source : 'mias');
+  const [scanList, setScanList] = useState(GRID_LISTS.some(([k]) => k === saved.scanList) ? saved.scanList : 'enjuego');
+  const [scanCount, setScanCount] = useState(GRID_COUNTS.includes(saved.scanCount) ? saved.scanCount : 12);
+  const [pins, setPins] = useState(Array.isArray(saved.pins) ? saved.pins.filter(s => typeof s === 'string' && /^[A-Z0-9]{1,24}USDT$/.test(s)) : []);
+  const [panelList, setPanelList] = useState('enjuego');
+  const [scan, setScan] = useState({ status: null, lists: {}, error: null });
   const [showMenu, setShowMenu] = useState(false);
   const [adding, setAdding] = useState(false);
   const [newSymbol, setNewSymbol] = useState('');
@@ -520,13 +562,66 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
   const orderedRef = useRef(ordered);
   orderedRef.current = ordered;
 
+  // Scanner: estado y listas cada 30 s mientras se usan (la de la cuadrícula y la que se ve en su panel)
+  const scanOn = active && (panel === 'scanner' || source !== 'mias');
+  const readScan = useCallback(async () => {
+    const names = [...new Set([...(source !== 'mias' ? [scanList] : []), ...(panel === 'scanner' ? [panelList] : [])])];
+    try {
+      const [status, ...lists] = await Promise.all([
+        getJson('/api/scanner/status'), ...names.map(n => getJson(`/api/scanner/list?lista=${n}&limit=50`))]);
+      setScan(s => ({ status, error: null, lists: { ...s.lists, ...Object.fromEntries(names.map((n, i) => [n, lists[i]])) } }));
+    } catch (e) {
+      setScan(s => ({ ...s, error: e.message }));
+    }
+  }, [source, scanList, panel, panelList]);
+  useEffect(() => {
+    if (!scanOn) return undefined;
+    readScan();
+    const timer = setInterval(readScan, 30000);
+    return () => clearInterval(timer);
+  }, [scanOn, readScan]);
+  // Las primeras de la lista. Las que ya se ven conservan su lugar: una moneda nueva entra al final, así la cuadrícula
+  // no se reordena en cada vuelta del scanner
+  const scanRows = scan.lists[scanList]?.rows;
+  const scanTopKey = (scanRows || []).slice(0, scanCount).map(r => r.symbol).join(',');
+  const stableRef = useRef([]);
+  const scanShown = useMemo(() => {
+    const top = scanTopKey ? scanTopKey.split(',') : [];
+    const kept = stableRef.current.filter(s => top.includes(s));
+    const next = [...kept, ...top.filter(s => !kept.includes(s))];
+    stableRef.current = next;
+    return next;
+  }, [scanTopKey]);
+  const gridSymbols = useMemo(() => {
+    if (source === 'mias') return ordered;
+    const extra = [...pins, ...scanShown].filter((s, i, all) => all.indexOf(s) === i);
+    return source === 'scanner' ? extra : [...ordered, ...extra.filter(s => !ordered.includes(s))];
+  }, [source, ordered, pins, scanShown]);
+  const gridRef = useRef(gridSymbols);
+  gridRef.current = gridSymbols;
+  // El porqué de cada moneda: de la lista de la cuadrícula, o de otra lista leída
+  const scanRowOf = useMemo(() => {
+    const out = {};
+    Object.entries(scan.lists).forEach(([name, data]) => {
+      if (name !== scanList) (data?.rows || []).forEach(r => { if (!out[r.symbol]) out[r.symbol] = r; });
+    });
+    (scanRows || []).forEach(r => { out[r.symbol] = r; });
+    return out;
+  }, [scan.lists, scanList, scanRows]);
+  const togglePin = (sym) => {
+    setPins(p => (p.includes(sym) ? p.filter(s => s !== sym) : [...p, sym]));
+    if (!pins.includes(sym) && source === 'mias') setSource('ambas');   // una fijada se ve con las de la suite
+  };
+
   useEffect(() => {
     try {
-      localStorage.setItem(SETTINGS_KEY, JSON.stringify({ tf, daysByTf, columns, order: ordered, indicators, showPanel }));
+      localStorage.setItem(SETTINGS_KEY, JSON.stringify({
+        tf, daysByTf, columns, order: ordered, indicators, showPanel, panel, source, scanList, scanCount, pins,
+      }));
     } catch {
       // Sin almacenamiento la vista dura hasta cerrar la página
     }
-  }, [tf, daysByTf, columns, ordered, indicators, showPanel]);
+  }, [tf, daysByTf, columns, ordered, indicators, showPanel, panel, source, scanList, scanCount, pins]);
 
   // Los gráficos se arman de a uno, en el orden de la cuadrícula. Un cambio de marco o de días los arma de nuevo
   useEffect(() => {
@@ -534,11 +629,11 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
     feedsRef.current = {};
   }, [tf, days]);
   useEffect(() => {
-    const next = ordered.find(s => !mountedSet.has(s));
+    const next = gridSymbols.find(s => !mountedSet.has(s));
     if (!next) return undefined;
     const timer = setTimeout(() => setMountedSet(prev => new Set(prev).add(next)), mountedSet.size === 0 ? 0 : MOUNT_GAP_MS);
     return () => clearTimeout(timer);
-  }, [ordered, mountedSet]);
+  }, [gridSymbols, mountedSet]);
 
   // Qué celdas se ven: las que no, se dibujan cada 30 s. Con el módulo oculto ninguna se ve
   useEffect(() => {
@@ -606,7 +701,7 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
       if (busy) return;
       busy = true;
       try {
-        const list = orderedRef.current.filter(sym => chartRefs.current[sym]);
+        const list = gridRef.current.filter(sym => chartRefs.current[sym]);
         list.forEach(sym => {
           const st = feedsRef.current[sym] || (feedsRef.current[sym] = {});
           attachSwing(st, swingOf(chartRefs.current[sym].getIndicatorManager?.()), SWING_VISUAL);
@@ -792,20 +887,33 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
           <button type="button" className="suite-btn" onClick={() => setAdding(true)} title="Agregar una moneda de Bybit a la suite">+ Moneda</button>
         )}
         <div className="suite-spacer" />
-        <button type="button" className={`suite-btn ${showPanel ? 'active' : ''}`} onClick={() => setShowPanel(v => !v)} title="Mostrar u ocultar el panel del Swing">Panel del Swing</button>
+        <button type="button" className={`suite-btn ${panel === 'scanner' ? 'active' : ''}`} onClick={() => setPanel(p => (p === 'scanner' ? null : 'scanner'))}
+                title={source === 'mias' ? 'Mostrar u ocultar el panel del scanner' : `La cuadrícula muestra «${LIST_SHORT[scanList]}» del scanner${source === 'ambas' ? ' junto a tus monedas' : ''}. Mostrar u ocultar su panel`}>
+          {source === 'mias' ? 'Scanner' : `Scanner · ${LIST_SHORT[scanList]}`}
+        </button>
+        <button type="button" className={`suite-btn ${showPanel ? 'active' : ''}`} onClick={() => setPanel(p => (p === 'swing' ? null : 'swing'))} title="Mostrar u ocultar el panel del Swing">Panel del Swing</button>
         <TabsMenu onModule={onModule} />
         <button type="button" className="suite-btn" onClick={onOpenTheme}>Estilo</button>
       </div>
       <div className="suite-main">
         <div className="wl-view">
           <div className="wl-grid-wrap" ref={wrapRef}>
+            {gridSymbols.length === 0 && (
+              <div className="wl-empty">
+                {source === 'mias' ? 'Todavía sin monedas.'
+                  : scan.error ? `Sin respuesta del scanner: ${scan.error}`
+                    : !scan.lists[scanList] ? 'Esperando la lista del scanner…'
+                      : `Ninguna moneda en «${LIST_SHORT[scanList]}» por ahora. Abre el panel del scanner para ver su regla y el estado del mercado.`}
+              </div>
+            )}
             <div className="wl-grid" style={{ gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` }}>
-              {ordered.map(sym => {
+              {gridSymbols.map(sym => {
                 const isWatched = watched.has(sym);
                 const note = isWatched ? {
                   text: liveTf === tf ? 'Swing en vivo' : `Swing ${liveTf}`,
                   title: liveTf === tf ? 'El Swing del servidor vigila esta moneda en este marco' : `El Swing del servidor vigila esta moneda en ${liveTf}`,
                 } : null;
+                const canDrag = source === 'mias';
                 return (
                   <div
                     key={sym}
@@ -813,14 +921,16 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
                     ref={cellRef(sym)}
                     className={`wl-cell ${dragOver === sym ? 'drag-over' : ''} ${dragging === sym ? 'dragging' : ''}`}
                     style={{ height: CELL_HEIGHT[columns] }}
-                    onDragOver={(e) => { if (dragging && dragging !== sym) { e.preventDefault(); if (dragOver !== sym) setDragOver(sym); } }}
+                    onDragOver={(e) => { if (canDrag && dragging && dragging !== sym) { e.preventDefault(); if (dragOver !== sym) setDragOver(sym); } }}
                     onDragLeave={() => setDragOver(d => (d === sym ? null : d))}
-                    onDrop={(e) => { e.preventDefault(); moveTo(dragging, sym); setDragOver(null); setDragging(null); }}
+                    onDrop={(e) => { if (!canDrag) return; e.preventDefault(); moveTo(dragging, sym); setDragOver(null); setDragging(null); }}
                   >
                     <CellHead
                       symbol={sym}
                       tf={tf}
                       note={note}
+                      scanRow={source !== 'mias' || panel === 'scanner' ? scanRowOf[sym] || null : null}
+                      draggable={canDrag}
                       onOpen={() => onOpenChart(sym, tf)}
                       onDragStart={(e) => { setDragging(sym); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', sym); }}
                       onDragEnd={() => { setDragging(null); setDragOver(null); }}
@@ -847,11 +957,33 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
             </div>
           </div>
           {showPanel && (
-            <SwingPanel swing={swing} symbols={ordered} gridTf={tf} onChange={changeSwing} onOpenChart={onOpenChart} onHide={() => setShowPanel(false)}
+            <SwingPanel swing={swing} symbols={ordered} gridTf={tf} onChange={changeSwing} onOpenChart={onOpenChart} onHide={() => setPanel(null)}
               extra={<>
                 <WiseSmcSections wsmc={wsmc} onChange={changeWsmc} onOpenChart={onOpenChart} />
                 <DxSections dx={dxState} onChange={changeDx} onOpenChart={onOpenChart} />
               </>} />
+          )}
+          {panel === 'scanner' && (
+            <ScannerPanel
+              active={active}
+              scan={scan}
+              panelList={panelList}
+              onPanelList={setPanelList}
+              source={source}
+              onSource={setSource}
+              gridList={scanList}
+              onGridList={setScanList}
+              count={scanCount}
+              onCount={setScanCount}
+              pins={pins}
+              onTogglePin={togglePin}
+              suiteSymbols={symbols}
+              onSymbolsAdded={(list) => { setSymbols(list); symbolsChanged(list); }}
+              onOpenChart={onOpenChart}
+              gridTf={tf}
+              onRefresh={readScan}
+              onHide={() => setPanel(null)}
+            />
           )}
         </div>
       </div>
