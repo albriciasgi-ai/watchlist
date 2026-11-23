@@ -80,7 +80,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── mobile_devices.py  Celulares emparejados y pedidos firmados (ver "Puerta móvil")
 │   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
 │   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (48) y scanner_checks.py (100), sin conexión
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (48) y scanner_checks.py (120), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -1171,7 +1171,7 @@ Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el us
   - cada 30 s, un pedido: el ticker de todos los perpetuos USDT (831 el 22/11), con precio, turnover, OI, funding y mejor compra y venta;
   - candidatas: las de los grupos elegidos con 5 M USD o más en 24 h (hasta 150), más BTC y las de la suite;
   - de cada candidata, velas de 15 min de 31 días (3 pedidos la primera vez, después uno cada 15 min) y el OI de 15 min. Las velas se guardan en arreglos de números (`BarStore`) y se arman de a una moneda al calcular;
-  - el libro (50 niveles; 500 si no alcanza) de 40 candidatas cada 5 min: primero las de las listas, después las que cumplen la regla de una lista, después las de más volumen relativo. El detalle de una moneda trae el suyo al día;
+  - el libro (50 niveles; 500 si no alcanza) cada 5 min de todas las monedas de las listas y de todas las que cumplen la regla de una lista (hasta 200), y si queda lugar hasta 40, de las de más volumen relativo. Las que acaban de cumplir una regla en la vuelta de 15 min se miden en esa misma vuelta. Un libro de menos de 1 min no se vuelve a pedir, y el detalle de una moneda trae el suyo al día (hasta el 23/11, 40 libros para todo: ver "Tras el primer día");
   - cada 6 h, `instruments-info` (grupo con `symbolType`, etiqueta ST, alta, tick e intervalo del funding) y los anuncios de cierre (`/v5/announcements/index`, `type=delistings`);
   - todo pedido pasa por `candles.bybit_turn()`. Arranca 30 s después del servidor, para no sumarse a la carga inicial.
 - **Medidas** (solo velas cerradas):
@@ -1193,13 +1193,13 @@ Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el us
   - en Rápidos queda 30 min desde el último aviso;
   - cada entrada y salida queda en `data/scanner/events/AAAA-MM-DD.jsonl`, con su porqué.
 - **Estado del mercado:** BTC (24 h, 7 días, promedio de 20 días, eficiencia, ATR diario contra su año), amplitud, dispersión (rango intercuartil de los retornos de 24 h), correlación con BTC de 7 y 30 días, parte mejor que BTC, funding y cambio del OI ponderados por OI, volumen relativo mediano, sesión y fin de semana. La lectura (en bloque: correlación ≥ 0.70 y dispersión ≤ 3 puntos; cada una por su lado: correlación < 0.50 o dispersión ≥ 6) es una hipótesis del plan.
-- **Registro para juzgarlo:** cada 15 min, en `data/scanner/log/AAAA-MM-DD.jsonl.gz` (un miembro gzip por vuelta, `Scanner.read_log` lo lee y salta un final cortado), la configuración, el mercado, las listas y 34 medidas de cada candidata.
-- **Datos** en `data/scanner`: `config.json` (con temporal y reemplazo; uno dañado no se pisa y el scanner queda apagado), `log/`, `events/`, `liquidity.json` y `scanner.lock` (un solo proceso por carpeta). `SUITE_SCANNER=0` lo apaga; sin esa variable vale `SUITE_SWING`, que las pruebas ponen en 0.
+- **Registro para juzgarlo:** cada 15 min, en `data/scanner/log/AAAA-MM-DD.jsonl.gz` (un miembro gzip por vuelta, `Scanner.read_log` lo lee y salta un final cortado), la configuración, el mercado, las listas y 34 medidas de cada candidata. Ocupa cerca de 1 MB por día (medido el 23/11; el plan decía 0.5).
+- **Datos** en `data/scanner`: `config.json` (con temporal y reemplazo; uno dañado no se pisa y el scanner queda apagado), `log/`, `events/`, `liquidity.json`, `state.json` (las listas y los libros recientes, para los reinicios: ver "Tras el primer día") y `scanner.lock` (un solo proceso por carpeta). `SUITE_SCANNER=0` lo apaga; sin esa variable vale `SUITE_SWING`, que las pruebas ponen en 0.
 - **Rutas:**
 
 | Ruta | Qué hace |
 |---|---|
-| `GET /api/scanner/status` | Si mira, universo por grupo, candidatas y cargadas, última vuelta (`cycle`, con `compute_seconds`), libros (`books`), cuántas hay en cada lista y los errores. `sends: false`. `/api/suite/status` trae `scanner` |
+| `GET /api/scanner/status` | Si mira, universo por grupo, candidatas y cargadas, última vuelta (`cycle`, con `compute_seconds`), libros (`books`: la vuelta de 5 min; `books_extra`: los medidos en la vuelta de 15 min), lo retomado al arrancar (`restored`), cuántas hay en cada lista y los errores. `sends: false`. `/api/suite/status` trae `scanner` |
 | `GET /api/scanner/list?lista=enjuego\|tendencia\|rapidos\|mias&limit=` | Las filas de una lista con sus medidas, `chips` (el porqué), `flags` (los avisos) y `member` (desde cuándo, dirección y si está "saliendo"), su regla en palabras, el estado del mercado y la configuración |
 | `GET /api/scanner/coin/{símbolo}` | Todas las medidas de una moneda, en qué listas está y si es candidata. Si su libro tiene más de 5 min, lo pide antes |
 | `GET /api/scanner/market` | El estado del mercado |
@@ -1230,10 +1230,33 @@ Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el us
     - "Abrir en otra pestaña" del panel llevó PIEVERSE a la 5.
 
     Ese navegador abre las ventanas nuevas en la misma pestaña, así que el reuso se comprobó con la dirección pedida. No se probó en Electron: usa la misma ventana por pestaña que el botón "Mapa" (`openTabWindow` de `desktop/main.cjs`). Una pestaña cerrada cuenta como abierta hasta 90 s si no avisó al cerrarse, como con el mapa.
+- **Tras el primer día (23/11):** el usuario preguntó qué seguía en el plan. Antes de contestarle se leyó el registro de su suite de esa mañana (16 vueltas desde las 08:19), que mostró dos fallos, y pidió corregirlos.
+  - **"En juego" se tapaba en las horas de más movimiento:**
+    - para entrar hace falta el libro medido, y se medían 40 libros cada 5 min, primero los de las listas. Con las listas en más de 40 monedas (En juego, Tendencia y Rápidos juntas), ninguna moneda nueva se medía;
+    - entre las 09:30 y las 10:15 cumplían la regla de 52 a 74 monedas, y la lista se quedó en unas 37;
+    - a las 09:45 quedaron fuera ACE (volumen de 24 h ×147), ELSA (×34), ENSO (×28), BREV (×16) e IDOL (×12), mientras la duodécima de la lista tenía ×1.2.
+
+    Ahora, cada 5 min, se miden los libros de todas las de las listas y de todas las que cumplen una regla (`refresh_books`, hasta 200); si queda lugar hasta 40, los de más volumen relativo. Las que acaban de cumplir una regla se miden en la misma vuelta de 15 min (`books_extra`), así que entran en ella y el registro las trae. Un libro de menos de 1 min no se vuelve a pedir.
+  - **Las de 10 a 20 bps de spread en el ticker no se medían** (hallado en la copia aislada): el estimado pide la mitad del límite y descartaba sin medir monedas cuyo libro sí alcanza. Esa vez MMT (volumen ×32), H y MON entraron solo porque sobraba lugar en la vuelta de los libros. Ahora cuentan para medirse (`_could_enter`); para entrar sigue haciendo falta el libro medido y suficiente.
+  - **Un reinicio vaciaba las listas y repetía entradas:**
+    - vivían en memoria: los dos reinicios de esa mañana (10:24 y 10:30) las dejaron vacías un minuto o dos;
+    - anotaron unas 40 entradas de monedas que ya estaban, de las 145 del día;
+    - las que no volvieron se quedaron sin su salida. Para juzgar el scanner con el registro, esas entradas no son del mercado.
+
+    Ahora las listas (con su hora de entrada y la última en que cumplieron su regla), su orden y los libros de menos de 15 min se guardan en `data/scanner/state.json`: al entrar o salir una moneda, cada 5 min y al cerrar. Se retoman al tomar el candado, antes de la primera vuelta. Una lista se retoma si el scanner dejó de mirar menos que su espera (una hora En juego y Tendencia, 30 min Rápidos). Si fue más, no se sabe qué pasó: sus monedas salen a la hora en que se las vio por última vez, con `gap` en el evento ("· corte" en el panel), y las que cumplan entran de nuevo.
+    - Solo guarda el proceso del candado, después de retomar lo anterior: otro proceso no pisa el estado.
+    - Sin medidas todavía (recién arrancado), lo retomado conserva su orden y no aparece "(sale)".
+    - Una candidata cuyas velas no llegaron (tras un reinicio no hay velas en memoria) ya no sale en el acto: sigue la hora de espera.
+  - **Lo que anduvo:** la lista Rápidos se vio en vivo (hasta 8 monedas a la vez), y el registro ocupa cerca de 1 MB por día, el doble de lo calculado en el plan.
+  - **Probado** (23/11, copia aislada en 13300 con Bybit real y datos temporales, sin grabar ni bot):
+    - la primera vuelta cargó 92 candidatas en 42 s (389 pedidos, sin errores). Midió en la misma vuelta los libros de las 21 que cumplían una regla (2.3 s), y su registro trae En juego con las 13 que cumplían con libro suficiente: ninguna quedó fuera;
+    - reiniciada a los 2.6 min, retomó las 16 de En juego con su hora de entrada y los 40 libros antes de la primera vuelta. La vuelta siguiente no anotó ninguna entrada de una moneda que ya estaba: entraron SKY y BMT a En juego y DGAI a Tendencia, y salió H;
+    - con un estado guardado 3 h antes, las listas empezaron vacías y el panel mostró las cuatro salidas con "· corte" y su explicación al pasar el mouse;
+    - con el código anterior y los datos falsos de las pruebas, los mismos casos fallan: la primera vuelta deja fuera a la que cumple, con las listas llenas se pide un libro en vez de tres, y tras el reinicio las listas arrancan vacías y se anotan 4 entradas repetidas.
+  - **Visto y sin cambiar:** una moneda con el libro justo en el límite (H, SKY y BMT, con unos 20 bps de spread y deslizamiento de ida y vuelta) entra y sale según el libro de cada vuelta de 5 min, porque la que ya no se puede operar sale en el acto.
 - **Limitaciones:**
   - la suite no acepta monedas de una sola letra (H, A, B…; `symbols.py` pide 2 a 20): el scanner las mira y el panel lo dice en lugar de ofrecer "Agregar a la suite";
-  - mira solo con la suite abierta: el registro tiene huecos con el PC apagado;
-  - con más de 40 candidatas que cumplen una regla, las demás esperan su libro para entrar.
+  - mira solo con la suite abierta: el registro tiene huecos con el PC apagado. Tras un corte de más de una hora, las listas empiezan de nuevo (las salidas de ese corte llevan `gap`).
 - **Probado** (22/11, copia aislada en 13300 con datos temporales, sin grabar ni bot, Bybit real; la Watchlist a 1366×768, en Nítido y Oscuro):
   - 831 perpetuos (406 cripto, 110 innovación, 245 acciones, 62 ETF, 4 materias primas y 4 forex) y 77 a 78 candidatas;
   - la primera vuelta tardó de 40 a 74 s (unos 310 pedidos, ningún rechazo de Bybit), las medidas 1.3 s y los libros de 40 monedas de 4 a 17 s;
@@ -1241,13 +1264,13 @@ Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el us
   - En juego, de 16 a 17 monedas, con PIEVERSE (volumen de 24 h ×69, 261 M USD, costo 0.02 R) arriba; el oro tokenizado (XAUT, PAXG) entró con 0.26 R. Tendencia, entre 0 y 1: el mercado estaba entrecortado (eficiencias de 7 días de 0.02 a 0.15). Lectura: "mixto" (correlación 0.66, dispersión 3.9 puntos);
   - la cuadrícula con "Las del scanner" y "Las dos" (32 celdas), una fijada, ajustes guardados y uno inválido rechazado, "Agregar a la suite" (en la copia) y XVG abierta en el gráfico principal como "XVGUSDT · sin grabar".
 
-  No se vio la lista Rápidos en vivo (no hubo un movimiento así), ni en Electron, ni "Agregar a la suite" grabando de verdad.
+  No se vio la lista Rápidos en vivo (no hubo un movimiento así), ni en Electron, ni "Agregar a la suite" grabando de verdad. Rápidos se vio el 23/11 en el registro de la suite del usuario: hasta 8 monedas a la vez y 14 entradas en la mañana.
 - **Hallado al probar y corregido:**
   - toda moneda salía "(sale)" entre dos revisiones: se medía contra la hora del pedido (`evaluated_at`);
   - las monedas de una letra quedaban fuera del universo (13);
   - los libros finos entraban con el costo estimado y salían al medirse;
   - una moneda en tendencia sin volumen alto podía quedar sin libro y no entrar nunca.
-- **Pruebas:** `tests/scanner_checks.py` (100), sin conexión, con un Bybit falso: lectura de instrumentos, tickers, velas y anuncios; volumen relativo por tipo de día; ATR, eficiencia, correlación y beta; costo con un libro conocido y en R; candidatas, listas, entrar y salir, la lista rápida y el orden de los libros; registro con un final cortado, eventos, liquidez, candado, configuración y rutas.
+- **Pruebas:** `tests/scanner_checks.py` (120), sin conexión, con un Bybit falso: lectura de instrumentos, tickers, velas y anuncios; volumen relativo por tipo de día; ATR, eficiencia, correlación y beta; costo con un libro conocido y en R; candidatas, listas, entrar y salir, la lista rápida y el orden de los libros (también con las listas llenas, 23/11); registro con un final cortado, eventos, liquidez, candado, el estado al reiniciar (23/11), configuración y rutas.
 - **Falta** (pasos 2 a 4 del plan): posicionamiento (proporción de cuentas, liquidaciones, Hyperliquid de todas las monedas), las listas Compresión y Posicionamiento extremo, "candidata a quitar" más visible, el estudio en App 1 ("¿aporta elegir por volumen relativo?", con el universo sin sesgo de supervivencia) y, si lo confirma, los detectores y la central de alertas sobre las monedas del scanner.
 
 ## Escritorio (Electron)
