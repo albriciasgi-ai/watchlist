@@ -11,7 +11,8 @@
  * - Esfuerzo contra resultado: q = rango relativo ÷ volumen relativo. Mucho volumen y poco rango, esfuerzo sin
  *   resultado (absorción, contra el color de la vela); mucho rango y poco volumen, resultado sin esfuerzo (trampa).
  * - El lugar: el tramo (zigzag de `legAtr` ATR) y cuánto lleva. Un martillo arriba de un tramo alcista es un
- *   "hanging man": debilidad que pide confirmación.
+ *   "hanging man": debilidad que pide confirmación; una estrella abajo de un tramo bajista, un martillo invertido:
+ *   fuerza que pide confirmación (desde el 22/11, H22 del protocolo de pruebas).
  * - Paciencia: cada vela suma evidencia a un medidor que se desvanece (`decay` por vela). Positivo es fuerza
  *   (alcista); negativo, debilidad (bajista). Ninguna vela decide sola.
  *
@@ -158,7 +159,7 @@ export class VpaReader {
     this.tfMs = Number(tf) * 60000;
     this.t = []; this.o = []; this.h = []; this.l = []; this.c = []; this.v = [];
     const keys = ['atr', 'rv', 'rr', 'q', 'absorb', 'trap', 'valid', 'upper', 'lower', 'body', 'closeLoc', 'star', 'hammer', 'doji',
-      'ext', 'maturity', 'fade', 'contrib', 'meter', 'leg', 'legStart', 'legExtreme', 'dir', 'hang'];
+      'ext', 'maturity', 'fade', 'contrib', 'meter', 'leg', 'legStart', 'legExtreme', 'dir', 'hang', 'invh'];
     this.s = Object.fromEntries(keys.map(k => [k, []]));
     this.events = [];
     this._volSlots = new Map();
@@ -246,7 +247,7 @@ export class VpaReader {
     }
     s.upper.push(upper); s.lower.push(lower); s.body.push(body); s.closeLoc.push(closeLoc);
     s.star.push(star); s.hammer.push(hammer); s.doji.push(doji);
-    let contrib = 0, q = NaN, absorb = NaN, trap = NaN, valid = NaN, fade = NaN, hang = 0;
+    let contrib = 0, q = NaN, absorb = NaN, trap = NaN, valid = NaN, fade = NaN, hang = 0, invh = 0;
     const { volLow: vl, volHigh: vh, spreadWide: sw } = cfg;
     if (finite(x) && finite(y) && x > 0) {
       q = y / x;
@@ -257,7 +258,14 @@ export class VpaReader {
       contrib += against * absorb * W_ABSORB + against * trap * W_TRAP + d * valid * W_VALID;
       const weight = 0.25 + 0.35 * up(x, 0.8, 1.2) + 0.4 * up(x, 1.5, 2.5);
       if (r > 0) {
-        contrib -= star * weight * W_SHAPE * (0.5 + 0.5 * (leg === 1 ? mat : 1.0));
+        // Estrella abajo de un tramo bajista: martillo invertido, fuerza que pide confirmación (H22, 22/11/2026)
+        const nearBottom = leg === -1 && a > 0 && (l[i] - legExt) / a <= 0.5;
+        if (nearBottom) {
+          invh = star;
+          contrib += star * weight * W_HANG * mat;
+        } else {
+          contrib -= star * weight * W_SHAPE * (0.5 + 0.5 * (leg === 1 ? mat : 1.0));
+        }
         const nearTop = leg === 1 && a > 0 && (legExt - h[i]) / a <= 0.5;
         if (nearTop) {
           hang = hammer;
@@ -277,7 +285,7 @@ export class VpaReader {
         }
       }
     }
-    s.q.push(q); s.absorb.push(absorb); s.trap.push(trap); s.valid.push(valid); s.fade.push(fade); s.hang.push(hang);
+    s.q.push(q); s.absorb.push(absorb); s.trap.push(trap); s.valid.push(valid); s.fade.push(fade); s.hang.push(hang); s.invh.push(invh);
     this._meter = this._meter * cfg.decay + contrib;
     s.contrib.push(contrib); s.meter.push(this._meter);
     const found = this._detect(i);
@@ -428,7 +436,8 @@ export function describeVpa(reader, i) {
   if (s.absorb[i] > 0.05) lines.push(`Esfuerzo sin resultado ${grade(s.absorb[i])}: ${s.dir[i] > 0 ? 'la compra no avanza (debilidad)' : s.dir[i] < 0 ? 'la venta no avanza (fuerza)' : 'nadie avanza'}`);
   if (s.trap[i] > 0.05) lines.push(`Resultado sin esfuerzo ${grade(s.trap[i])}: movimiento sin volumen, posible trampa`);
   if (s.valid[i] > 0.05) lines.push(`Validado ${grade(s.valid[i])}: el volumen acompaña el rango`);
-  if (s.star[i] > 0.05) lines.push(`Estrella ${grade(s.star[i])}: debilidad`);
+  if (s.invh[i] > 0.05) lines.push(`Martillo invertido ${grade(s.invh[i])}: estrella abajo del tramo, fuerza por confirmar`);
+  else if (s.star[i] > 0.05) lines.push(`Estrella ${grade(s.star[i])}: debilidad`);
   if (s.hang[i] > 0.05) lines.push(`Hanging man ${grade(s.hang[i])}: martillo arriba del tramo, debilidad por confirmar`);
   else if (s.hammer[i] > 0.05) lines.push(`Martillo ${grade(s.hammer[i])}: fuerza`);
   if (s.doji[i] > 0.05) lines.push(`Doji de patas largas ${grade(s.doji[i])}${x < 1 ? ' con poco volumen: trampa, no giro' : ': indecisión'}`);

@@ -139,7 +139,8 @@ def zones_at(symbol, t, price, sources=None, cache=None):
     if stop <= first:
         return [], info["id"]
     part = slice(first, stop)
-    width = max(nice_step(price * BIN_PCT / 100), info.get("cell_width") or 0)
+    # El ancho de celda con lo conocido hasta t, no el de todo el archivo (F-16)
+    width = max(nice_step(price * BIN_PCT / 100), liq_store.known_width(data, int(stop)))
     key = (info["id"], int(first), int(stop), width)
     zones = cache.get(key) if cache is not None else None
     if zones is None:
@@ -162,6 +163,11 @@ def zone_sweeps(symbol, bars, reclaim_bars=3, sources=None):
     armed, cache, out = {}, {}, []
     for i, bar in enumerate(bars):
         zones, source = zones_at(symbol, bar["t"], bar["o"], sources, cache)
+        # Protocolo de pruebas, H23 (22/11/2026): una zona que deja de mostrarse se desarma. Antes seguía armada sin
+        # límite (hasta 836 días en BTC) y salía un barrido aunque la vela ni tocara la zona
+        shown = {(z["low"], z["high"]) for z in zones or []}
+        for key in [key for key in armed if (key[0], key[1]) not in shown]:
+            del armed[key]
         if not zones:
             continue
         if len(armed) > 5000:

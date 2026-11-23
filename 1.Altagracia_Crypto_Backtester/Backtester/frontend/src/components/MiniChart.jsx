@@ -35,6 +35,7 @@ import { drawPositionLines, hitPositionTarget, positionPrices } from './position
 import { applyKline, mergeHistory, withForming } from './liveCandles.js';
 import { createRedrawPacer } from './redrawPacer.js';
 import { loadWilliamsSettings, mergeWilliamsConfig } from './indicators/williams.js';
+import { loadVpaSettings } from './indicators/vpa.js';
 import { loadSmcSettings, mergeSmcConfig } from './indicators/smcStructure.js';
 
 // Al acercarse, una vela ancha deja leer su footprint
@@ -221,7 +222,8 @@ const MiniChart = forwardRef(({
   captureChosenStyle = null, // En las imágenes de las órdenes: el mismo de chosenStyle, o 'lines' (solo sus líneas y aros: App 1, cuyo visor pone los números)
   chosenItems = null, // Lo elegido que se muestra en lugar de la lista del panel (suite, 13/11: lo de un trade en su análisis post-trade). Mientras está, un clic no abre el menú de niveles. App 1 no lo pasa
   drawingsSource = null, // Otra capa de dibujos en lugar de los de la moneda (suite, 13/11: el análisis post-trade de un trade): { key, load(), save(shapes) }. Sin ella, /api/drawings/{símbolo} como siempre
-  indicatorOverrides = null, // Ajustes de cálculo que reemplazan por un rato los guardados (probador, 21/11: los de la regla del trade elegido): { williams, smc }, configuraciones completas. Al quitarlos vuelven los guardados. Nadie más lo pasa
+  indicatorOverrides = null, // Ajustes de cálculo que reemplazan por un rato los guardados (probador, 21/11: los de la regla del trade elegido): { williams, smc, vpa }, configuraciones completas. Al quitarlos vuelven los guardados. Nadie más lo pasa
+  hideLastPrice = false, // Sin la línea ni la etiqueta del último precio (probador, 22/11, O-17: su hora es el final de la fase y se leía como un nivel del trade). Nadie más lo pasa
   onOpenVpSettings,
   onOpenRangeDetectionSettings,
   onOpenRejectionPatternSettings,
@@ -2178,11 +2180,19 @@ const MiniChart = forwardRef(({
         return x > rightEdge && x <= rightEdge + barWidth ? rightEdge : x;
       };
 
-      tradeLines.forEach(({ entryTime, exitTime, tradeNumber }) => {
+      // Con `edge` (probador, 22/11, O-01): en el borde de la vela y no en su centro, que tapaba su mecha. Una hora justa en
+      // el comienzo de una vela va en su borde izquierdo; una de dentro de la vela, en su borde derecho
+      const candleMs = getIntervalMilliseconds(interval);
+      const edgeX = (time) => {
+        const inside = time % candleMs;
+        const x = tradeX(time - inside);
+        return inside === 0 ? x - barWidth / 2 : x + barWidth / 2;
+      };
+      tradeLines.forEach(({ entryTime, exitTime, tradeNumber, edge }) => {
         try {
           // Convertir timestamps a coordenadas X
-          const entryX = tradeX(entryTime);
-          const exitX = exitTime ? tradeX(exitTime) : null;
+          const entryX = edge ? edgeX(entryTime) : tradeX(entryTime);
+          const exitX = exitTime ? (edge ? edgeX(exitTime) : tradeX(exitTime)) : null;
 
           // Solo dibujar si al menos una línea está visible
           if ((entryX >= marginLeft && entryX <= width - marginRight) ||
@@ -2245,7 +2255,7 @@ const MiniChart = forwardRef(({
     }
 
     // Nítido: último precio en el eje, del color de la vela, con una línea punteada
-    if (isNew) {
+    if (isNew && !hideLastPrice) {
       const lastCandle = displayCandles[displayCandles.length - 1];
       const lastY = Math.round(marginTop + priceChartHeight - (lastCandle.close - minPrice) * yScale + verticalOffset);
       if (lastY >= marginTop && lastY <= marginTop + priceChartHeight) {
@@ -3611,13 +3621,19 @@ const MiniChart = forwardRef(({
     if (!manager) return;
     const hub = manager.getWilliamsHub?.();
     const smcIndicator = manager.getSMCIndicator?.();
+    const vpaIndicator = manager.getVPAIndicator?.();
     if (overrides) {
       if (overrides.williams) hub?.setConfig(overrides.williams);
       if (overrides.smc) smcIndicator?.updateConfig(overrides.smc);
+      // Con la regla del trade elegido, la estructura mira más atrás: los breakers y los iguales más viejos que usó (O-22)
+      if (smcIndicator && overrides.smc) smcIndicator.warm = 6000;
+      if (overrides.vpa) vpaIndicator?.updateConfig(overrides.vpa); // El Lector VPA con los de la regla (O-23)
       manager.configOverridden = true;
     } else if (manager.configOverridden) {
       hub?.setConfig(mergeWilliamsConfig(loadWilliamsSettings(symbol)));
       smcIndicator?.updateConfig(mergeSmcConfig(loadSmcSettings(symbol)));
+      if (smcIndicator) smcIndicator.warm = null;
+      vpaIndicator?.updateConfig(loadVpaSettings(symbol));
       manager.configOverridden = false;
     }
   };
@@ -3670,6 +3686,9 @@ const MiniChart = forwardRef(({
       if (indicatorStates) {
         await indicatorManagerRef.current.updateIndicatorStates(indicatorStates, backtestingMode, allCandlesRef.current);
       }
+      // Otra vez los de la regla del trade elegido, si vienen: al arrancar, el administrador nuevo carga los guardados
+      // (F-10 del protocolo de pruebas, 22/11/2026: al pasar al marco de la regla, los sabios salían con los guardados)
+      if (overridesRef.current) applyIndicatorOverrides(indicatorManagerRef.current, overridesRef.current);
 
       if (vpConfig) {
         indicatorManagerRef.current.applyConfig("Volume Profile", vpConfig);
@@ -3833,6 +3852,7 @@ const MiniChart = forwardRef(({
     // 🎯 CRÍTICO: Llamar al nuevo método updateIndicatorStates() en lugar de recrear
     indicatorManagerRef.current.updateIndicatorStates(indicatorStates, backtestingMode, allCandlesRef.current)
       .then(() => {
+        if (overridesRef.current) applyIndicatorOverrides(indicatorManagerRef.current, overridesRef.current); // F-10
         // Redibujar después de actualizar
         if (candlesRef.current && candlesRef.current.length > 0) {
           console.log(`[MiniChart ${symbol} ${interval}] Redibujando por cambio en indicatorStates - ${candlesRef.current.length} velas`);

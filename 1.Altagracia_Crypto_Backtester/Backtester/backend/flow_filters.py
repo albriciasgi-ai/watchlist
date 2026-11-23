@@ -7,7 +7,8 @@ Filtros de flujo del probador, sin futuro, sobre las velas de la regla:
 - OI: el Open Interest conocido al cierre de cada vela (el del instante de su cierre, o el último anterior).
   · `rise` / `fall`: el OI subió o bajó más de `pct` % en las últimas `bars` velas.
   · `conf` / `noconf`: confluencia OI-volumen como el indicador de App 1: el volumen con signo y el cambio del OI, en
-    z-score de 20 velas, van los dos a favor del trade (`conf`), o no van los dos en contra (`noconf`).
+    z-score de las 20 velas que terminan en la de la señal, van los dos a favor del trade (`conf`: en un largo los dos
+    suben, en un corto los dos bajan, como el panel), o no van los dos en contra (`noconf`). Desde el 22/11 (F-09).
   Fuente: `OrderFlowData/oi/{moneda}_5min.csv` (BTC) o `{moneda}_4h.json` (las demás, 4 horas). Con la serie de 4 horas
   el filtro solo vale en 4h y 1D: en marcos menores el OI no cambia dentro de la vela y no se puede medir.
   Una vela sin OI no pasa el filtro.
@@ -120,14 +121,28 @@ def oi_ok(mode, oi, signed, k, side, bars_back=6, pct=2.0, zcache=None):
     vz, oz = zcache
     if not (np.isfinite(vz[k]) and np.isfinite(oz[k])):
         return False
-    both_for = vz[k] * side > 0 and oz[k] > 0
-    both_against = vz[k] * side < 0 and oz[k] < 0
+    # Como el panel "OI-Volume Confluence": alcista con el volumen y el OI subiendo, bajista con los dos bajando.
+    # Protocolo de pruebas, F-09 (22/11/2026): en los cortos el filtro pedía el OI subiendo y el panel lo muestra bajando
+    both_for = vz[k] * side > 0 and oz[k] * side > 0
+    both_against = vz[k] * side < 0 and oz[k] * side < 0
     return both_for if mode == "conf" else not both_against
 
 
+def _zscore_with(x, n=Z_BARS):
+    """z de cada valor contra las n últimas con él incluido (desviación de la población), como el panel de la
+    confluencia (`calculateZScore`). NaN si alguna de las n falta o no hay n."""
+    out = np.full(len(x), np.nan)
+    for i in range(n - 1, len(x)):
+        w = x[i - n + 1:i + 1]
+        if np.isfinite(w).all():
+            sd = w.std()
+            out[i] = (x[i] - w.mean()) / sd if sd > 0 else 0.0
+    return out
+
+
 def z_pair(oi, signed):
-    """z-score del volumen con signo y del cambio del OI, para la confluencia."""
-    return _zscore(signed), _zscore(np.diff(oi, prepend=np.nan))
+    """z-score del volumen con signo y del cambio del OI, para la confluencia: con la vela incluida, como el panel (F-09)."""
+    return _zscore_with(signed), _zscore_with(np.diff(oi, prepend=np.nan))
 
 
 def oi_steady(symbol, bars, tf, days=14):
@@ -173,13 +188,20 @@ def funding_3d(symbol, bars, tf):
     return out
 
 
+FUNDING_EPS = 1e-12  # Ruido de coma flotante en el funding de 3 días (F-08)
+
+
 def crowd(funding, side):
-    """contra, neutro o con la multitud para un trade de ese lado; None sin funding."""
+    """contra, neutro o con la multitud para un trade de ese lado; None sin funding.
+    Protocolo de pruebas, F-08 (22/11/2026): la tasa base (0.01% por 8 h) es neutra. funding_3d resta dos sumas
+    acumuladas y deja la tasa base en 0.00010000000000000026 o 0.00009999999999999998, así que una vela neutra caía de un
+    lado o del otro según el redondeo; ahora se compara con tolerancia."""
     if funding is None or not funding == funding:
         return None
+    above, below = funding > NEUTRAL_FUNDING + FUNDING_EPS, funding < -FUNDING_EPS
     if side < 0:
-        return "contra" if funding > NEUTRAL_FUNDING else ("con" if funding < 0 else "neutro")
-    return "contra" if funding < 0 else ("con" if funding > NEUTRAL_FUNDING else "neutro")
+        return "contra" if above else ("con" if below else "neutro")
+    return "contra" if below else ("con" if above else "neutro")
 
 
 def crowd_ok(mode, funding, side):

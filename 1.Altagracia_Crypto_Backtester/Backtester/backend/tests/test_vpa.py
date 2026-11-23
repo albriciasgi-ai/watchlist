@@ -68,6 +68,23 @@ def test_las_lecturas_de_una_vela_por_grados():
     assert events and events[-1]["dir"] == -1
 
 
+def test_el_medidor_es_simetrico_entre_subidas_y_bajadas():
+    """H22 del protocolo de pruebas (22/11/2026): con los precios reflejados, cada vela aporta lo mismo con el signo
+    contrario. Antes, la estrella abajo de un tramo bajista (martillo invertido) restaba, y su espejo, el martillo arriba
+    de un tramo alcista (hanging man), también: no eran espejos."""
+    bars = walk(1500, seed=9)
+    top = max(b["h"] for b in bars) + min(b["l"] for b in bars)
+    mirror = [{**b, "o": top - b["o"], "h": top - b["l"], "l": top - b["h"], "c": top - b["c"]} for b in bars]
+    s, m = vpa.compute(*cols(bars), 240), vpa.compute(*cols(mirror), 240)
+    # El zigzag arranca suponiendo un tramo alcista: solo se comparan las velas con el mismo tramo reflejado
+    same = [i for i in range(len(bars)) if s["leg"][i] == -m["leg"][i] and s["legStart"][i] == m["legStart"][i]]
+    assert len(same) > 1200
+    for i in same:
+        assert m["contrib"][i] == pytest.approx(-s["contrib"][i], abs=1e-9), i
+        assert m["invh"][i] == pytest.approx(s["hang"][i], abs=1e-12) and m["hang"][i] == pytest.approx(s["invh"][i], abs=1e-12)
+    assert sum(s["invh"][i] > 0.05 for i in same) >= 3 and sum(s["hang"][i] > 0.05 for i in same) >= 3
+
+
 def test_una_regla_de_antes_conserva_su_identidad_y_lo_nuevo_solo_entra_si_se_pide():
     plain = rt.clean_rule({"tf": 240, "recipe": {"slots": [{"codes": ["FV"]}]}, "exit": {"targetR": 2}})
     assert "vpa" not in plain and "vpaf" not in plain
@@ -99,7 +116,8 @@ def test_el_filtro_del_medidor_y_los_controles_al_azar(monkeypatch):
     bars = walk(2500, seed=11)
     base = dict(stop={"type": "atr", "atr": 1.5, "maxAtr": 20}, exit={"targetR": 2})
     plain = rt.run("TEST", rule_of(("QB",), **base), {"bars": bars, "events": []}, PHASE)
-    piece = {"mode": "favor", "thr": 0.5}
+    # "Que no esté en contra": con "a favor" pasaba 1 de 45 señales de estas velas, y desde H22 (22/11) ninguna
+    piece = {"mode": "notAgainst", "thr": 0.5}
     result = rt.run("TEST", rule_of(("QB",), vpaf=piece, **base), {"bars": bars, "events": []}, PHASE)
     assert 0 < result["summary"]["n"] < plain["summary"]["n"], "el filtro quita trades"
     assert result["skipped"].get("filtro VPA", 0) > 0
@@ -168,7 +186,9 @@ def test_la_salida_vpa_sale_al_primer_aviso_en_contra_y_solo_entra_si_se_pide():
     warns = rt._vpa_exit_bars(result["rule"], ctx)
     index = {b["t"]: i for i, b in enumerate(bars)}
     vpa_out = [t for t in result["trades"] if t["reason"].startswith("VPA: ")]
-    assert len(vpa_out) > 10 and {t["reason"] for t in vpa_out} <= {"VPA: " + v for v in rt.VPA_EXITS.values()}
+    # Con dos avisos en la misma vela van los dos en el motivo (O-11, 22/11/2026)
+    parts = {part for t in vpa_out for part in t["reason"][5:].split(" y ")}
+    assert len(vpa_out) > 10 and parts <= set(rt.VPA_EXITS.values())
     for t in result["trades"]:
         k, e, x = index[t["signal"]], index[t["entry_t"]], index[t["exit_t"]]
         first = min((j for j in warns[t["dir"]] if j >= e and j > k), default=None)

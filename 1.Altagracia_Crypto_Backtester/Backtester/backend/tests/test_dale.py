@@ -185,7 +185,8 @@ def test_una_regla_sin_dale_no_cambia_y_la_corrida_suma_las_zonas_desplazadas():
         add(bars, c + 0.1, c - 0.2, c)
     rule = rt.clean_rule({"name": "DS", "tf": 30, "recipe": {"slots": [{"codes": ["DS"]}]},
                           "entry": {"type": "limit", "at": "near", "expiry": 200}, "stop": {"type": "zone", "buffer": 0, "maxAtr": 20},
-                          "exit": {"targetR": 2}, "oneAtATime": True, "cooldown": 0, "volFilter": 0})
+                          "exit": {"targetR": 2}, "oneAtATime": True, "cooldown": 0, "volFilter": 0,
+                          "maxFeeR": 0})  # Stop de pocos ticks: sin el tope de la comisión del motor 6 (H18)
     phase = {"phase": 1, "from": "2024-01-01", "to": "2024-01-25"}
     res = rt.run("TEST", rule, {"bars": bars, "events": [zone]}, phase, None, base=True)
     assert res["success"] and res["controlKind"] == "dale" and "control" in res
@@ -217,7 +218,8 @@ def test_la_corrida_de_dx_suma_las_anclas_al_azar():
     bars, zones = dx_case()
     rule = rt.clean_rule({"name": "DX", "tf": 30, "recipe": {"slots": [{"codes": ["DX"]}]},
                           "entry": {"type": "limit", "at": "near", "expiry": 200}, "stop": {"type": "zone", "buffer": 0, "maxAtr": 20},
-                          "exit": {"targetR": 2}, "oneAtATime": True, "cooldown": 0, "volFilter": 0})
+                          "exit": {"targetR": 2}, "oneAtATime": True, "cooldown": 0, "volFilter": 0,
+                          "maxFeeR": 0})  # Stop de pocos ticks: sin el tope de la comisión del motor 6 (H18)
     assert "DX" in rule["recipe"]["slots"][0]["codes"] and rule["dale"]["shiftMax"] == 3.0
     assert "DX" not in rt.CANDLE_CODES  # Sale del almacén, como DS
     res = rt.run("TEST", rule, {"bars": bars, "events": zones}, {"phase": 1, "from": "2024-01-01", "to": "2024-01-30"}, None, base=True)
@@ -231,7 +233,8 @@ def test_run_desde_una_hora_y_con_las_posiciones_abiertas_para_el_registro_en_vi
     bars, zones = dx_case()
     rule = rt.clean_rule({"name": "DX", "tf": 30, "recipe": {"slots": [{"codes": ["DX"]}]},
                           "entry": {"type": "limit", "at": "near", "expiry": 200}, "stop": {"type": "zone", "buffer": 0, "maxAtr": 20},
-                          "exit": {"targetR": 2}, "oneAtATime": True, "cooldown": 0, "volFilter": 0})
+                          "exit": {"targetR": 2}, "oneAtATime": True, "cooldown": 0, "volFilter": 0,
+                          "maxFeeR": 0})  # Stop de pocos ticks: sin el tope de la comisión del motor 6 (H18)
     phase = {"phase": 1, "from": "2024-01-01", "to": "2024-01-30"}
     span = {"bars": bars, "events": zones}
     full = rt.run("TEST", rule, span, phase, None, base=False)

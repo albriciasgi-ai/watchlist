@@ -25,8 +25,11 @@ const DEFAULT_CONFIG = {
   tfs: [240], codes: ['CC', 'VH', 'HM', 'EN', 'DJ', 'RF', 'RB', 'GC', 'BX', 'BE', 'CP', 'FV', 'SP', 'IM', 'WD', 'WA', 'WF', 'BS', 'OB', 'BK', 'EQ'],
   population: 60, generations: 25, maxElements: 2,
   minTrades: 150, minCoins: 4, split: '2023-01-01', lines: true, invert: true, mutation: 0.1,
-  flow: true, regime: true, trailing: true, straddle: true, stopEntry: true, williams: true, vpa: true, chain: true, checkNew: true, checkStocks: true, fitness: 'promedio'
+  flow: true, regime: true, trailing: true, straddle: true, stopEntry: true, williams: true, vpa: true, chain: true, checkNew: true, checkStocks: true, fitness: 'promedio',
+  holdMargin: false
 };
+// Las tres ventajas del tablero, en el orden en que se muestran (desde el 23/11 la búsqueda elige con ellas)
+const THREE = [['edge', 'azar'], ['legEdge', 'tramo'], ['quarterEdge', 'su trimestre']];
 
 const api = async (path, body) => {
   const response = await fetch(`${API_BASE_URL}${path}`, body === undefined ? undefined : {
@@ -212,11 +215,16 @@ export default function RuleSearchTab({ onLoadRule }) {
             <Check checked={config.chain !== false} onChange={(chain) => patch({ chain })} title="Flujos on-chain diarios de Coin Metrics: flujo neto de BTC o ETH a los exchanges, o emisión de USDT y USDC, en 7 o 30 días, a favor del trade o que no vaya en contra">flujos on-chain</Check>
           </div>
           <div className="rt-row">
-            <span title="Promedio: la ventaja media sobre los controles, menos su error. Constancia: la mediana de la ventaja de cada trimestre del tramo de búsqueda (cada trade contra el azar de su trimestre); no la mueven uno o dos trimestres excepcionales, y premia las reglas que ganan un poco casi siempre">Elegir por</span>
+            <span title="Promedio: la ventaja sobre el control que más le exige, de los tres del tablero (el azar con el mismo stop y salida, seguir el tramo al azar y el azar del trimestre y el lado de cada trade), menos su margen agrupado por semanas. Constancia: la mediana de la ventaja de cada trimestre del tramo de búsqueda (cada trade contra el azar de su trimestre); no la mueven uno o dos trimestres excepcionales, y premia las reglas que ganan un poco casi siempre">Elegir por</span>
             <select value={config.fitness || 'promedio'} onChange={(e) => patch({ fitness: e.target.value })}>
               <option value="promedio">promedio de la ventaja</option>
               <option value="constancia">constancia por trimestre</option>
             </select>
+          </div>
+          <div className="rt-row">
+            <Check checked={!!config.holdMargin} onChange={(holdMargin) => patch({ holdMargin })}
+              title="Una finalista es candidata si en la validación les gana a los tres controles del tablero y sus vecinas aguantan. Marcado, además tiene que ganarles con margen y con R positivo, como «pasa» en el tablero. En la validación hay pocos trades: con el margen casi ninguna queda, y se descartan reglas que podrían mejorarse. El margen lo pide después el tablero, en la fase 2">
+              En la validación, pedir también el margen</Check>
           </div>
           <div className="rt-row">
             <Check checked={config.checkNew !== false} onChange={(checkNew) => patch({ checkNew })}
@@ -259,7 +267,9 @@ export default function RuleSearchTab({ onLoadRule }) {
           <h4>Búsqueda {data.id} · {STATE[data.state] || data.state}</h4>
           <div className="rt-note">
             {cfg.tfs.map(tf => TF_LABEL[tf]).join(', ')} · {elementLabels(cfg.codes, ', ')} · hasta {cfg.maxElements} elementos · población {cfg.population} ·
-            {' '}{cfg.generations} generaciones · validación desde {cfg.split} · semilla {cfg.seed} · empezada {date(data.startedAt)}
+            {' '}{cfg.generations} generaciones · validación desde {cfg.split}
+            {cfg.controls === 'tres' ? ` · con los tres controles · candidatas ${cfg.holdMargin ? 'con' : 'sin'} margen en la validación` : ''}
+            {' '}· semilla {cfg.seed} · empezada {date(data.startedAt)}
           </div>
           {running && job && (
             <>
@@ -308,10 +318,20 @@ export default function RuleSearchTab({ onLoadRule }) {
               <div><b>{i + 1}.</b> {describeRule(f.rule)}</div>
               <div className={f.candidate ? 'rt-warn' : 'rt-note'} style={{ margin: '4px 0' }}><b>{f.verdict}</b></div>
               <table className="rt-table">
-                <thead><tr><th></th><th>Trades</th><th>R medio</th><th>Sobre controles</th><th>Monedas a favor</th></tr></thead>
+                <thead><tr><th></th><th>Trades</th><th>R medio</th>
+                  <th title={f.train.three && cfg.controls === 'tres' ? 'Sobre el control que más le exige, de los tres del tablero, con su margen' : 'Sobre el mejor de los dos controles de cada moneda'}>Sobre controles</th>
+                  <th>Monedas a favor</th></tr></thead>
                 <tbody>
                   <tr><td>Búsqueda</td><td>{f.train.n}</td><td><R value={f.train.avgR} /></td><td><R value={f.train.edge} /> ±{f.train.se ? (1.96 * f.train.se).toFixed(2) : '—'}</td><td>{f.train.coinsUp} de {f.train.coinsWith}</td></tr>
                   <tr><td>Validación</td><td>{f.hold.n}</td><td><R value={f.hold.avgR} /></td><td><R value={f.hold.edge} /> ±{f.hold.se ? (1.96 * f.hold.se).toFixed(2) : '—'}</td><td>{f.hold.coinsUp} de {f.hold.coinsWith}</td></tr>
+                  {['train', 'hold'].filter(seg => f[seg]?.three).map(seg => (
+                    <tr key={`t${seg}`} title="Contra cada control del tablero, con el margen agrupado por semanas: el azar con el mismo stop y salida, seguir el tramo al azar y el azar del trimestre y el lado de cada trade">
+                      <td>{seg === 'train' ? 'Búsqueda' : 'Validación'}, cada control</td>
+                      <td colSpan={4} style={{ whiteSpace: 'normal', textAlign: 'left' }}>{THREE.filter(([k]) => f[seg].three[k]).map(([k, label], j) => (
+                        <span key={k}>{j ? ' · ' : ''}{label} <R value={f[seg].three[k].r} /> ({fmtR(f[seg].three[k].low, 2)} a {fmtR(f[seg].three[k].high, 2)})</span>
+                      ))}</td>
+                    </tr>
+                  ))}
                   {['train', 'hold'].filter(seg => f[seg]?.consistency?.total).map(seg => (
                     <tr key={`c${seg}`} title="Trimestres sobre el azar de su trimestre, y la mediana de la ventaja por trimestre">
                       <td>{seg === 'train' ? 'Búsqueda' : 'Validación'}, constancia</td><td colSpan={2}>{f[seg].consistency.positive} de {f[seg].consistency.total} trimestres</td>

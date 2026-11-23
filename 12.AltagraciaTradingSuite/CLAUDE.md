@@ -1110,6 +1110,9 @@ Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de c
 Paso 4 del plan de las estrategias de Byko y Dale (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, "DX en vivo"). DX, los apilados desplazados, es la única regla de esos PDF que pasó las fases 2 y 3 del probador, por poco y sensible a la ejecución. Se registra en vivo antes de creerla, y cómo se juzga quedó fijado en el plan antes de registrar nada. Nunca envía nada: ni al bot ni a otro lado.
 
 - **La regla:** la de las fases 2 y 3, sin cambios (`dx_watch.RULE_RAW`, la de `OrderFlowData/research/dale/2026-11-22/dx.py`).
+  - Desde el motor 6 del probador de App 1 (23/11), con `maxFeeR: 0`: sin el tope de la comisión, que deja fuera las
+    señales cuya comisión pasa de 0.3 R. DX se juzgó sin él, y sus stops son cortos (en BTC, comisión media de 0.20 a
+    0.24 R en las fases 2 y 3).
   - Monedas: las 7 con almacén (BTC, ETH, SOL, ARB, GALA, SUI y XRP), en 30 minutos.
   - No se configura: solo se enciende o se apaga.
 - **Cómo registra** (`server/dx_watch.py`):

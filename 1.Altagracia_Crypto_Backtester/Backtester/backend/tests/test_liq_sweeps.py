@@ -139,3 +139,35 @@ def test_subir_a_traves_de_una_zona_es_bajista_y_recuperar_espera_el_cierre():
     src = source([(T0 - DAY, 102.05, 5e6)])
     liq = [e for e in ls.events("X", bars, TF, 5, "reclaim", 3, sources=src, what="zone") if e["code"] == "LIQ"][0]
     assert liq["dir"] == -1 and liq["t"] == bars[40]["t"] and liq["known"] == bars[42]["t"] and liq["hi"] == 102.6
+
+
+def test_el_ancho_de_las_franjas_no_mira_celdas_futuras():
+    """Protocolo de pruebas, F-16 (22/11/2026): el ancho de celda de la fuente salía de todo el archivo, así que una
+    celda ancha conocida después cambiaba las franjas de antes. Ahora solo cuentan las celdas ya conocidas."""
+    import liq_store
+    base = source([(T0 - DAY, 98.0, 5e6), (T0 - 2 * DAY, 99.5, 4e6), (T0 - 3 * DAY, 120.0, 1e5)])
+    data, info = base[0]
+    late_cell = {"known": T0 + 10 * DAY, "start": T0 + 9 * DAY, "end": T0 + 10 * DAY, "low": 80.0, "high": 110.0,
+                 "long": 1e3, "short": 0.0}
+    late = {key: np.append(values, late_cell[key]) for key, values in data.items()}
+    # La fuente con la celda de 30 de ancho que llega 10 días después, y el ancho de todo el archivo que usaba el motor
+    with_late = [(late, {**info, "cell_width": 30.0})]
+    assert liq_store.known_width(late, len(late["known"])) == 30.0
+    assert liq_store.known_width(late, len(late["known"]) - 1) == 0.0
+    before, _ = ls.zones_at("X", T0, 100.0, sources=base)
+    now, _ = ls.zones_at("X", T0, 100.0, sources=with_late)
+    assert before and now == before, "una celda que todavía no se conoce no cambia las zonas"
+    # Pasados los 10 días la celda ancha ya cuenta: franjas de 30
+    later, _ = ls.zones_at("X", T0 + 11 * DAY, 100.0, sources=with_late)
+    assert later and all(z["high"] - z["low"] >= 30.0 for z in later)
+
+
+def test_una_zona_que_deja_de_mostrarse_se_desarma():
+    """Protocolo de pruebas, H23 (22/11/2026): el barrido de la zona quedaba armado sin límite de tiempo; ahora se
+    desarma cuando la zona deja de mostrarse. Aquí la zona sale de los 30 días a las 2 horas y el precio la cruza a las 10."""
+    bars = flat()
+    bars[40]["l"] = 97.5
+    src = source([(T0 - 30 * DAY + 2 * 3600000, 97.95, 5e6)])
+    assert ls.zones_at("X", bars[0]["t"], 100.0, sources=src)[0], "al empezar la zona se muestra y queda armada"
+    found = [e for e in ls.events("X", bars, TF, 5, "pierce", 3, sources=src, what="zone") if e["code"] == "LIQ"]
+    assert found == []

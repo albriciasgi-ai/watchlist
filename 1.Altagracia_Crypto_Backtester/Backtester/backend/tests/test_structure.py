@@ -36,6 +36,15 @@ def test_lo_conocido_no_cambia_con_velas_posteriores_y_al_reves_es_alcista():
     assert [e["dir"] for e in st.events(mirror, TF, swing=2, legs=2)] == [1]
 
 
+def test_una_vela_de_estructura_sin_una_del_medio_no_dispara():
+    """F-17 del protocolo de pruebas (22/11/2026): solo se miraba que estuviera su última vela de origen."""
+    bars = path([p for p in UP + [102] * 10 for _ in range(4)])  # Cada precio, una vela de 1 hora de cuatro de 15m
+    whole = st.events(bars, TF, 60, swing=2, legs=2)
+    assert [e["info"]["breakT"] for e in whole] == [21 * 3600000]
+    holed = bars[:21 * 4 + 1] + bars[21 * 4 + 2:]  # Falta la segunda vela de 15m de la hora que rompe
+    assert all(e["info"]["breakT"] != 21 * 3600000 for e in st.events(holed, TF, 60, swing=2, legs=2))
+
+
 def test_estructura_en_velas_mayores_desde_otra_hora():
     bars = path([100 + (k % 7) for k in range(96 * 3)])
     big = st.aggregate(bars, 240, 90)

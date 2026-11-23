@@ -451,11 +451,14 @@ def _jump(f, p):
 
 
 def _price_va(f):
-    return f["lo"] * f["step"] + f["val"] * f["step"], f["lo"] * f["step"] + (f["vah"] + 1) * f["step"]
+    # Sin el ruido de coma flotante: 1.3754000000000002 en vez de 1.3754 dejaba salir una VA bajista con la vela
+    # siguiente tocando el VAL (F-14 del protocolo de pruebas, 22/11/2026)
+    return (round(f["lo"] * f["step"] + f["val"] * f["step"], 10),
+            round(f["lo"] * f["step"] + (f["vah"] + 1) * f["step"], 10))
 
 
 def _poc_price(f):
-    return (f["lo"] + f["poc"]) * f["step"], (f["lo"] + f["poc"] + 1) * f["step"]
+    return round((f["lo"] + f["poc"]) * f["step"], 10), round((f["lo"] + f["poc"] + 1) * f["step"], 10)
 
 
 def _gap(f, p):

@@ -20,15 +20,17 @@ STRUCT_TFS = (15, 30, 60, 240, 1440)
 
 
 def aggregate(bars, minutes, offset_minutes=0):
-    """Velas de `minutes` que empiezan a `offset_minutes` de las 00:00 UTC, uniendo las de la regla. Con `last`: su última vela de origen."""
+    """Velas de `minutes` que empiezan a `offset_minutes` de las 00:00 UTC, uniendo las de la regla. Con `last`: su última
+    vela de origen; con `count`: cuántas tiene."""
     step, offset, out = minutes * 60000, offset_minutes * 60000, []
     for i, b in enumerate(bars):
         start = (b["t"] - offset) // step * step + offset
         if out and out[-1]["t"] == start:
             bar = out[-1]
             bar["h"], bar["l"], bar["c"], bar["last"] = max(bar["h"], b["h"]), min(bar["l"], b["l"]), b["c"], i
+            bar["count"] += 1
         else:
-            out.append({"t": start, "o": b["o"], "h": b["h"], "l": b["l"], "c": b["c"], "last": i})
+            out.append({"t": start, "o": b["o"], "h": b["h"], "l": b["l"], "c": b["c"], "last": i, "count": 1})
     return out
 
 
@@ -53,9 +55,10 @@ def events(bars, tf, struct_minutes=None, offset_minutes=0, swing=3, legs=2):
                 lows.append((j, L[j]))
         if len(highs) < legs or len(lows) < legs:
             continue
-        # La vela de estructura debe estar completa: su última vela de origen cierra con ella
+        # La vela de estructura debe estar completa: su última vela de origen cierra con ella y no le falta ninguna del medio
+        # (F-17 del protocolo de pruebas, 22/11/2026: antes solo se miraba la última)
         last = bars[bar["last"]]
-        if last["t"] + tf_ms != bar["t"] + struct_ms:
+        if last["t"] + tf_ms != bar["t"] + struct_ms or bar["count"] < struct_ms // tf_ms:
             continue
         hs, ls = [p for _, p in highs[-legs:]], [p for _, p in lows[-legs:]]
         up = all(a < b for a, b in zip(hs, hs[1:])) and all(a < b for a, b in zip(ls, ls[1:]))

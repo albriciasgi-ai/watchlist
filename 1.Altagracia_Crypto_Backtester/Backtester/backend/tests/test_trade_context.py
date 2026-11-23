@@ -27,8 +27,10 @@ def ev(code, bar, d=1, lo=None, hi=None):
 
 
 def rule(**kw):
+    # Sin el tope de la comisión (H18, motor 6): en estas velas el riesgo es 0.2% del precio y la comisión vale 0.57 R
     base = {"name": "R", "tf": TF, "recipe": {"slots": [{"codes": ["EX"]}], "mode": "strict", "window": 1},
-            "stop": {"type": "atr", "atr": 1.0, "minAtr": 0, "maxAtr": 100}, "exit": {"targetR": None, "horizon": 10}}
+            "stop": {"type": "atr", "atr": 1.0, "minAtr": 0, "maxAtr": 100}, "exit": {"targetR": None, "horizon": 10},
+            "maxFeeR": 0}
     base.update(kw)
     return rt.clean_rule(base)
 

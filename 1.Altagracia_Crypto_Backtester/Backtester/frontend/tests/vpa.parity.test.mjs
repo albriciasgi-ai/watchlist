@@ -62,7 +62,7 @@ print(json.dumps(clean({"s": s, "ev": ev})))
 `;
 
 const KEYS = ['atr', 'rv', 'rr', 'q', 'absorb', 'trap', 'valid', 'upper', 'lower', 'body', 'closeLoc', 'star', 'hammer', 'doji',
-  'ext', 'maturity', 'fade', 'contrib', 'meter', 'leg', 'legStart', 'legExtreme', 'dir', 'hang'];
+  'ext', 'maturity', 'fade', 'contrib', 'meter', 'leg', 'legStart', 'legExtreme', 'dir', 'hang', 'invh'];
 const nn = (x) => (typeof x === 'number' && Number.isNaN(x) ? null : x);
 
 function runPython(bars, tf, cfg) {

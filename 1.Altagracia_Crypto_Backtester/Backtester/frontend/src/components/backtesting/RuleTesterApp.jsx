@@ -18,10 +18,11 @@ import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
   contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText, usesVpa, VPA_EXITS,
-  chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, listText, DALE_CODES, VPA_FILTER_TFS, vpaFilterTf
+  chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, ruleVpaConfig, listText, DALE_CODES, VPA_FILTER_TFS, vpaFilterTf
 } from './ruleTester.js';
 import { loadWilliamsSettings, mergeWilliamsConfig } from '../indicators/williams.js';
 import { loadSmcSettings, mergeSmcConfig } from '../indicators/smcStructure.js';
+import { defaultVpaParams, loadVpaSettings } from '../indicators/vpa.js';
 import { elementLabel, elementLabels } from './elementLabels.js';
 import {
   FACETS, OFF_PATCH, SECTIONS, exitScale, facetPhrase, loadedSummary, ruleDifferences, ruleFacets, sectionCounts, sectionSummary, signalFunnel
@@ -741,7 +742,8 @@ const RuleTesterApp = () => {
     const williams = ruleIndicatorNames.some(name => WILLIAMS_SMC.has(name) && name !== 'Estructura SMC')
       ? ruleWilliamsConfig(result.rule, mergeWilliamsConfig(loadWilliamsSettings(symbol))) : null;
     const smc = ruleIndicatorNames.includes('Estructura SMC') ? ruleSmcConfig(result.rule, mergeSmcConfig(loadSmcSettings(symbol))) : null;
-    return williams || smc ? { williams, smc } : null;
+    const vpa = ruleIndicatorNames.includes('Lector VPA') ? ruleVpaConfig(result.rule, loadVpaSettings(symbol), defaultVpaParams()) : null;
+    return williams || smc || vpa ? { williams, smc, vpa } : null;
   }, [ruleIndicatorsOn, ruleIndicatorNames, result, symbol]);
   useEffect(() => {
     if (tab === 'regimen' && regimeBands) {
@@ -763,9 +765,11 @@ const RuleTesterApp = () => {
       bandsRef.current = [];
       linesRef.current = orderViews.filter(item => item.order.id === pickedOrder && item.view.line).map(item => item.view.line);
     } else {
-      boxesRef.current = chartOpen && result ? tradeBoxes(trades, result.rule.tf) : [];
       const trade = trades.find(t => t.n === selected);
-      linesRef.current = chartOpen && trade ? [{ entryTime: trade.entry_t, exitTime: trade.exit_t, tradeNumber: trade.n }] : [];
+      // Con un trade elegido, solo su caja: las de los vecinos se tomaban por propias (O-29)
+      boxesRef.current = chartOpen && result ? tradeBoxes(trade ? [trade] : trades, result.rule.tf) : [];
+      // En el borde de la vela, no en su centro: tapaba la mecha que tocó el stop o el objetivo (O-01)
+      linesRef.current = chartOpen && trade ? [{ entryTime: trade.entry_t, exitTime: trade.exit_t, tradeNumber: trade.n, edge: true }] : [];
       // Lo que la regla vio en el trade elegido: zonas de liquidaciones de ese momento y dónde estaba cada elemento.
       // Debajo, lo que usó alrededor: sus líneas, sus elementos, sus filtros vela a vela y sus señales
       const context = showContext && trade && tradeContext?.runId === result?.id && tradeContext?.n === trade.n ? tradeContext : null;
@@ -776,7 +780,7 @@ const RuleTesterApp = () => {
         .filter(b => !(b.kind === 'level' && drawn.size && (drawn.has(b.label) || / desv\.$/.test(b.label)))) : [];
       // Encima de todo, la vela de la señal resaltada y el cuadro con cada condición en ese momento
       const check = context ? signalChecklist(context, trade, result.rule.recipe, names) : null;
-      const card = check ? checklistBand(check, context, `Señal ${stamp(check.time)} · ${trade.dir > 0 ? 'largo' : 'corto'} · ${check.all ? 'todo se cumplía' : 'no todo se cumplía'}`) : null;
+      const card = check ? checklistBand(check, context, `Señal ${stamp(check.time)} · ${trade.dir > 0 ? 'largo' : 'corto'} · ${check.all ? 'todo se cumplía' : 'no todo se cumplía'}`, trade) : null;
       bandsRef.current = chartOpen && trade ? [...used, ...own, ...(card ? [card] : [])] : [];
     }
     chartRef.current?.redraw?.();
@@ -787,8 +791,11 @@ const RuleTesterApp = () => {
     setDetail(null);
     setOrdersView(false);
     if (phase === 1 || revealed[phase]) {
-      // Con lo que usó la regla a la vista, el gráfico pasa al marco de la regla: sus indicadores se calculan con esas velas
-      const ruleTf = showContext && ruleIndicators(result.rule).length ? chartTfOf(result.rule.tf) : null;
+      // Con lo que usó la regla a la vista, el gráfico pasa al marco de la regla: sus indicadores se calculan con esas velas.
+      // También si el gráfico está en un marco mayor que el de la regla: el trade quedaba en una o dos velas (O-16)
+      const target = chartTfOf(result.rule.tf);
+      const coarser = !!target && CHART_TIMEFRAMES.indexOf(chartTf) > CHART_TIMEFRAMES.indexOf(target);
+      const ruleTf = (showContext && ruleIndicators(result.rule).length) || coarser ? target : null;
       const switching = !!ruleTf && ruleTf !== chartTf;
       if (switching) setChartTf(ruleTf);
       focusLater(trade.entry_t, trade.entry, switching ? 200 : 40);
@@ -1693,6 +1700,7 @@ const RuleTesterApp = () => {
             <Check checked={rule.hoursWeekdays} onChange={(hoursWeekdays) => patch({ hoursWeekdays })}>lunes a viernes</Check>
           </div>
           {(minuteOfDay(rule.hoursFrom) === null || minuteOfDay(rule.hoursTo) === null) && <div className="rt-note">Escribe las horas como 17:30. Mientras no sean válidas, el horario no se aplica.</div>}
+          <div className="rt-note">Las dos horas cuentan, y el día es el UTC de la hora en que se conoce la señal: en Colombia son 5 horas menos (una señal de un domingo a las 7 p. m. se conoce el lunes en UTC). Los trades se muestran en hora de Colombia.</div>
           <div className="rt-note">Sesión de Nueva York: de 13:30 a 20:00 UTC en verano y de 14:30 a 21:00 en invierno. Con velas de 4 horas contadas desde las 13:30, las que cierran dentro de la sesión se conocen a las 17:30 y a las 21:30.</div>
         </Opt>
         <Opt id="medidas" label="Medidas del Observador" on={rule.filters.length > 0} onToggle={toggleMeasures} title="Hasta 3 medidas del Observador, leídas a favor del trade al cierre de la vela de la señal">
@@ -1764,6 +1772,9 @@ const RuleTesterApp = () => {
             <span>vence en</span><Num value={rule.entryExpiry} min={1} max={200} onChange={(entryExpiry) => patch({ entryExpiry })} /><span>velas</span>
           </div>
         )}
+        {rule.entryType === 'limit' && rule.invert && (
+          <div className="rt-note">Con la regla invertida la zona del elemento queda del lado contrario al trade: la limit entra a mercado, con la comisión taker, sea cual sea el borde.</div>
+        )}
       </Section>
 
       <Section id="stop" title="Stop" summary={summaries.stop} open={openSections.stop} onToggle={toggleSection}>
@@ -1780,6 +1791,14 @@ const RuleTesterApp = () => {
         <div className="rt-row">
           {rule.stopType !== 'atr' && <><span>Margen</span><Num value={rule.stopBuffer} min={0} max={5} step={0.05} onChange={(stopBuffer) => patch({ stopBuffer })} /><span>ATR</span></>}
           <span title="Una señal con el stop más lejos no se opera">Máximo</span><Num value={rule.stopMaxAtr} min={0.2} max={100} step={0.5} onChange={(stopMaxAtr) => patch({ stopMaxAtr })} /><span>ATR</span>
+        </div>
+        <div className="rt-row">
+          <span title="Una señal cuyo riesgo es tan chico que la comisión de ida y vuelta vale más que esto no se opera">Tope de la comisión</span>
+          <Num value={rule.maxFeeR} min={0} max={5} step={0.05} onChange={(maxFeeR) => patch({ maxFeeR })} /><span>R (0, sin tope)</span>
+        </div>
+        <div className="rt-note">
+          Una señal con el stop más lejos que el máximo no se opera: el stop no se recorta. Tampoco una con la comisión de ida y vuelta sobre su tope.
+          El ATR del stop, del objetivo y del trailing es el rango medio de las 14 velas; los umbrales de los elementos (FVG, Impulso, cajas, Williams, SMC y VPA) usan el ATR de Wilder.
         </div>
       </Section>
 
@@ -1943,6 +1962,13 @@ const RuleTesterApp = () => {
         <Opt id="unaAlaVez" label="Una posición a la vez" on={rule.oneAtATime} onToggle={(oneAtATime) => patch({ oneAtATime })} title="Encendido: lo que operarías. Apagado: todas las señales, para medir el elemento">
           <div className="rt-row"><span title="Velas de espera después de cerrar un trade antes de tomar otra señal. 0 = sin espera">esperar</span><Num value={rule.cooldown} min={0} max={500} onChange={(cooldown) => patch({ cooldown })} /><span>velas tras cerrar</span></div>
         </Opt>
+        <div className="rt-row" id="rt-opt-costos">
+          <span title="Lo que se pierde en cada llenado a mercado: la entrada a mercado o con orden stop, y toda salida menos el objetivo fijo. 0: no se cuenta. Se descuenta también del azar">Deslizamiento</span>
+          <Num value={rule.slippage} min={0} max={1} step={0.01} onChange={(slippage) => patch({ slippage })} /><span>% por lado</span>
+          <label title="Lo cobrado o pagado en cada liquidación de funding con la posición abierta: el largo paga la tasa positiva. Se descuenta también del azar">
+            <input type="checkbox" checked={!!rule.funding} onChange={(e) => patch({ funding: e.target.checked })} /> Contar el funding
+          </label>
+        </div>
       </Section>
 
       <Section id="deteccion" title="Detección de los elementos" summary={summaries.deteccion} open={openSections.deteccion} onToggle={toggleSection}>
@@ -2048,6 +2074,14 @@ const RuleTesterApp = () => {
                   Si la regla sigue el movimiento, esta es la comparación que importa: dice cuánto pone la señal y cuánto el mercado.
                 </div>
               )}
+              {result.quarterEdge && (
+                <div className="rt-note" style={{ marginTop: 4 }}>
+                  Contra el azar de su trimestre y lado: <R value={result.quarterEdge.r} digits={3} /> R por trade (entre {fmtR(result.quarterEdge.low, 3)} y {fmtR(result.quarterEdge.high, 3)}).{' '}
+                  {result.quarterEdge.clear ? 'El margen no incluye el cero.' : 'No se distingue de ese azar.'}{' '}
+                  Cada trade contra las entradas al azar de su mismo trimestre y su mismo lado: la regla suele operar cuando el azar también gana, y el azar de toda la fase no lo sabe.
+                  Para pasar hay que ganarles a los tres. Los márgenes cuentan juntos los trades que salen la misma semana, que se mueven juntos.
+                </div>
+              )}
             </div>
           )}
           {s.reach && (
@@ -2130,8 +2164,8 @@ const RuleTesterApp = () => {
         <div className="rt-group">
           <b>Trade {selectedTrade.n}</b> · {selectedTrade.dir > 0 ? 'Largo' : 'Corto'} · <R value={selectedTrade.r} /> R · {selectedTrade.reason}
           <div className="rt-note">
-            Señal {stamp(selectedTrade.signal)} · entrada {stamp(selectedTrade.entry_t)} ({selectedTrade.order === 'limit' ? 'limit' : 'mercado'}) · salida {stamp(selectedTrade.exit_t)}<br />
-            Entrada {selectedTrade.entry} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
+            Señal {stamp(selectedTrade.signal)} · entrada {stamp(selectedTrade.entry_t)} ({{ limit: 'limit', stop: 'orden stop' }[selectedTrade.order] || 'mercado'}) · salida {stamp(selectedTrade.exit_t)}<br />
+            Entrada {Number(Number(selectedTrade.entry).toFixed(6))} · stop {Number(selectedTrade.stop.toFixed(6))} ({selectedTrade.stop_atr} ATR){selectedTrade.target != null && ` · objetivo ${Number(selectedTrade.target.toFixed(6))}`} · salida {Number(selectedTrade.exit.toFixed(6))}<br />
             Elementos de la regla: {elementLabels(selectedTrade.votes, ', ')} · presentes: {elementLabels(selectedTrade.present, ', ') || '—'} · en contra: {elementLabels(selectedTrade.against, ', ') || '—'}
             {'chain_on' in selectedTrade && <><br />Objetivo: {selectedTrade.chain_on ? `el de los flujos on-chain a favor (${result?.rule?.exit?.chainTarget?.r ?? '?'} R)` : `el de siempre (${result?.rule?.exit?.targetR ?? '?'} R): los flujos on-chain no iban a favor`}</>}
             {'tp_on' in selectedTrade && <><br />Trailing del objetivo: {selectedTrade.tp_on != null ? `se activó el ${stamp(selectedTrade.tp_on)}; desde ahí el objetivo siguió al mejor precio` : 'el precio no llegó a su arranque'}</>}
@@ -2345,6 +2379,14 @@ const RuleTesterApp = () => {
                   Si la regla sigue el movimiento, esta es la comparación que importa: dice cuánto pone la señal y cuánto el mercado.
                 </div>
               )}
+              {allReport.quarterEdge && (
+                <div className="rt-note" style={{ marginTop: 4 }}>
+                  Contra el azar de su trimestre y lado: <R value={allReport.quarterEdge.r} digits={3} /> R por trade (entre {fmtR(allReport.quarterEdge.low, 3)} y {fmtR(allReport.quarterEdge.high, 3)}).{' '}
+                  {allReport.quarterEdge.clear ? 'El margen no incluye el cero.' : 'No se distingue de ese azar.'}{' '}
+                  Cada trade contra las entradas al azar de su mismo trimestre y su mismo lado: la regla suele operar cuando el azar también gana, y el azar de toda la fase no lo sabe.
+                  Para pasar hay que ganarles a los tres. Los márgenes cuentan juntos los trades que salen la misma semana, que se mueven juntos.
+                </div>
+              )}
               {allReport.control && (
                 <div className="rt-note" style={{ marginTop: 4 }}>
                   {{ byko: 'Sin la firma de Byko', dale: 'Zonas desplazadas', daleAnchor: 'Ancladas en velas al azar' }[allReport.control.kind] || 'Barridos sin liquidaciones'}: {allReport.control.n} trades, <R value={allReport.control.avgR} digits={3} /> R por trade.{' '}
@@ -2368,10 +2410,18 @@ const RuleTesterApp = () => {
           )}
         </>
       )}
+      {allReport.costs && (allReport.costs.slip || allReport.costs.withFunding != null) && (
+        <div className="rt-note" style={{ marginTop: 4 }}>
+          Lo que no se cuenta{allReport.costs.slippage || allReport.costs.funding ? ' además de lo que la regla ya cuenta' : ''}:
+          {allReport.costs.slip ? <> con deslizamiento de 0.02% por lado, <R value={allReport.costs.slip['0.02']} digits={3} /> R por trade; con 0.05%, <R value={allReport.costs.slip['0.05']} digits={3} /> R.</> : null}
+          {allReport.costs.withFunding != null ? <> Con el funding, <R value={allReport.costs.withFunding} digits={3} /> R.</> : null}
+          {' '}Se encienden en «Operación», en la sección Salida.
+        </div>
+      )}
       <div className="rt-group">
         <h4>Por moneda</h4>
         <table className="rt-table">
-          <thead><tr><th>Moneda</th><th>Trades</th><th>Acierto</th><th>R medio</th><th>R total</th><th title="R medio de la regla menos el de las entradas al azar">Vs. azar</th><th title="R medio de la regla menos el de seguir el tramo al azar">Vs. tramo</th></tr></thead>
+          <thead><tr><th>Moneda</th><th>Trades</th><th>Acierto</th><th>R medio</th><th>R total</th><th title="R medio de la regla menos el de las entradas al azar">Vs. azar</th><th title="R medio de la regla menos el de seguir el tramo al azar">Vs. tramo</th><th title="Cada trade contra el azar de su trimestre y su lado">Vs. trimestre</th></tr></thead>
           <tbody>
             {allReport.symbols.map(row => (
               <tr key={row.symbol} title={`${row.from} a ${row.to} · azar ${fmtR(row.baseR, 3)} R${row.legR != null ? ` · seguir el tramo al azar ${fmtR(row.legR, 3)} R` : ''}${row.edge ? ` · contra el azar, entre ${fmtR(row.edge.low, 3)} y ${fmtR(row.edge.high, 3)}` : ''}`}>
@@ -2380,6 +2430,7 @@ const RuleTesterApp = () => {
                   : <a className="rt-btn" style={{ textDecoration: 'none' }} href={`?${TESTER_PARAM}=1&symbol=${row.symbol}${row.run ? `&run=${row.run}` : ''}`} title="Abrir esta moneda con esta corrida y sus trades en el gráfico">{row.symbol.replace('USDT', '')}</a>}</td>
                 <td>{row.n}</td><td>{fmtPct(row.winRate)}</td><td><R value={row.avgR} digits={3} /></td><td><R value={row.totalR} /></td>
                 <td><R value={row.edge?.r} digits={3} /></td><td><R value={row.legEdge?.r} digits={3} /></td>
+                <td title={row.quarterEdge ? `de ${fmtR(row.quarterEdge.low, 3)} a ${fmtR(row.quarterEdge.high, 3)}` : ''}><R value={row.quarterEdge?.r} digits={3} /></td>
               </tr>
             ))}
           </tbody>
@@ -2773,6 +2824,7 @@ const RuleTesterApp = () => {
                 isActive={true}
                 indicatorStates={chartIndicators}
                 indicatorOverrides={indicatorOverrides}
+                hideLastPrice
                 backtestingMode={true}
                 backtestingData={market}
                 currentTime={chartTime}

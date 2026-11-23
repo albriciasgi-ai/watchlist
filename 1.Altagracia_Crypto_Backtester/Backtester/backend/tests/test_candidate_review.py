@@ -100,6 +100,20 @@ def test_un_trade_propio_usa_su_lado_su_stop_y_su_objetivo(world):
     assert row["dir"] == -1 and row["stop"] == pytest.approx(entry + 3) and ("r" in row) == (mine["exit_t"] <= answer["candidate"]["time"])
 
 
+def test_la_caja_propia_no_pasa_por_el_tope_de_la_comision(world):
+    # Etapa 7 del protocolo (22/11/2026): el tope de la comisión (H18, motor 6) es un filtro de las señales de la regla.
+    # Una caja propia con un stop corto se simula como se pidió, con su comisión, en vez de rechazarse
+    s = cr.start("X", RAW, 60, seed=2)
+    sid, c = s["session"]["id"], s["candidate"]
+    entry = c["entry"]
+    answer = cr.decide(sid, 0, "short", stop=entry + 0.05, target=entry - 0.1)
+    assert answer["success"], answer.get("message")
+    mine = cr.sessions()[sid]["decisions"][0]["trade"]
+    assert mine["stop"] == pytest.approx(entry + 0.05)
+    gross = (mine["entry"] - mine["exit"]) / 0.05
+    assert mine["r"] < gross - 1, "la comisión de ida y vuelta pasa de 1 R con ese stop, y se cobra"
+
+
 def test_el_informe_separa_lo_tomado_de_lo_dejado_y_no_adelanta_resultados(world):
     s = cr.start("X", RAW, 60, seed=1)
     sid = s["session"]["id"]

@@ -55,11 +55,13 @@ DAY = 86_400_000
 MONTH = 30 * DAY
 # Las 7 monedas con almacen de trades de la hipotesis (las del plan)
 SYMBOLS = ("BTCUSDT", "ETHUSDT", "SOLUSDT", "ARBUSDT", "GALAUSDT", "SUIUSDT", "XRPUSDT")
-# La regla de las fases 2 y 3, la de OrderFlowData/research/dale/2026-11-22/dx.py, sin cambiar nada
+# La regla de las fases 2 y 3, la de OrderFlowData/research/dale/2026-11-22/dx.py, sin cambiar nada. Desde el motor 6
+# del probador (23/11) va sin el tope de la comisión (maxFeeR 0): se juzgó sin él, y con el de fábrica (0.3 R) dejaría
+# de registrar las señales de stop más corto, buena parte en BTC (comisión media de 0.20 a 0.24 R en sus fases 2 y 3)
 RULE_RAW = {"name": "Dale: apilados desplazados con regreso 30m", "tf": TF,
             "recipe": {"slots": [{"codes": ["DX"]}], "mode": "strict", "window": 1},
             "entry": {"type": "limit", "at": "near", "expiry": 200}, "stop": {"type": "zone", "buffer": 0, "maxAtr": 20},
-            "exit": {"targetR": 2}, "oneAtATime": True, "cooldown": 0, "volFilter": 0}
+            "exit": {"targetR": 2}, "oneAtATime": True, "cooldown": 0, "volFilter": 0, "maxFeeR": 0}
 RULE = rt.clean_rule(RULE_RAW)
 WARM_DAYS = 20             # velas antes del arranque: el ATR diario de 14 dias y zonas que nacen hasta 200 velas antes
 CHECK_DELAY_MS = 75_000    # tras el cierre: el almacen en vivo se arma cada minuto

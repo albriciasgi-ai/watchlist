@@ -83,7 +83,8 @@ class SMCIndicator extends IndicatorBase {
     if (lastClosed < 3) return null;
     const firstVisible = Math.min(lastClosed, candleLowerBound(candles, visibleCandles[0].timestamp));
     const lastVisible = Math.min(lastClosed, candleLowerBound(candles, visibleCandles[visibleCandles.length - 1].timestamp));
-    const start = Math.max(0, Math.floor((firstVisible - WARM) / BLOCK) * BLOCK);
+    // this.warm: más velas antes, con la regla del trade elegido en el probador (O-22); si no, WARM
+    const start = Math.max(0, Math.floor((firstVisible - (this.warm || WARM)) / BLOCK) * BLOCK);
     const end = Math.min(lastClosed, (Math.floor(lastVisible / BLOCK) + 2) * BLOCK - 1);
     const key = `${this.version}|${candles[start].timestamp}|${candles[end].timestamp}|${end - start}|${candles[end].close}`;
     if (key !== this.key) {
