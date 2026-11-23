@@ -209,7 +209,8 @@ export function ruleFacets(rule, labels = {}) {
   if (has('VA') && Number(rule.vaGap) > 0) add('vaGap', `hueco ≥ ${n(rule.vaGap)} ATR`);
 
   for (const line of rule.lines || []) {
-    const text = `${line.type === 'vwap' ? 'VWAP' : 'EMA'} ${line.period} ${line.mode === 'touch' ? 'tocando' : 'a favor'}${line.slope ? ' con pendiente' : ''}${line.maxDev ? `, abre a ≤ ${n(line.maxDev)} desv.` : ''}`;
+    const frame = { 60: ' de 1 hora', 240: ' de 4 horas', 1440: ' de 1 día' }[line.tf] || '';
+    const text = `${line.type === 'vwap' ? 'VWAP' : 'EMA'} ${line.period}${frame} ${line.mode === 'touch' ? 'tocando' : 'a favor'}${line.slope ? ' con pendiente' : ''}${line.maxDev ? `, abre a ≤ ${n(line.maxDev)} desv.` : ''}`;
     add(line.type === 'vwap' ? 'vwap' : 'ema', text);
   }
   if (rule.regime?.mode) {

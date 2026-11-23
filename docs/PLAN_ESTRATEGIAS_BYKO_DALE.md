@@ -316,3 +316,133 @@ Solo con lo que pase la fase 2:
 - **Para una versión refinada**, otra hipótesis que se explora en la fase 1 y se juzga con su propio registro:
   - una orden por zona;
   - la tendencia a favor. Es la idea del usuario: una zona de agresión no garantiza un movimiento después.
+
+### Versión refinada de DX: el ripple entre marcos (estudio de la fase 1)
+
+**Fijado el 22/11/2026, antes de correrlo.** El usuario pidió usar para la tendencia de DX el ripple de la sesión del VPA: el medidor del lector VPA leído en un marco mayor (`OrderFlowData/research/vpa/RIPPLE_QB.md`). En la ruptura con volumen salió al revés del libro: con el marco mayor fuerte a favor, la ruptura llega tarde. DX no persigue: espera un retroceso de 1 a 3 ATR con una limit, así que el efecto puede ir en cualquier sentido. Por eso primero se mide. Es un estudio y no elige todavía la regla.
+
+- **La regla:** DX sin cambios, en la fase 1 de las 7 monedas con almacén, con una posición a la vez.
+- **El medidor:** el del lector VPA de fábrica, en velas de 4 horas y de 1 día con toda su historia, en su última vela cerrada y del lado del trade. Los estados son los del estudio de QB: fuerte a favor (≥ 1), a favor (≥ 0.3), neutro, en contra (≤ −0.3) y fuerte en contra (≤ −1).
+- **A, al armarse la orden:** el R por trade de cada estado, en 4 horas y en 1 día.
+- **B, mientras la limit espera:** entre los trades que no estaban en contra al armarse, si el medidor se puso en contra (≤ −0.3) en alguna vela del marco mayor cerrada antes de llenarse la limit. Son los trades que una cancelación habría quitado. Aparte se informa ≤ −1.
+- **Los cortes que deciden** (no se miran otros), cada uno en 4 horas y en 1 día:
+  - A1, sin el marco mayor en contra (quita ≤ −0.3);
+  - A2, sin el marco mayor fuerte a favor (quita ≥ 1), lo que salió en QB;
+  - A3, solo con el marco mayor a favor (deja ≥ 0.3);
+  - B1, sin que se ponga en contra mientras espera.
+- **Vale la pena seguir** si un corte cumple tres cosas:
+  1. lo que se queda gana más que lo que se quita, con el margen al 95% de la diferencia sobre cero, en las 7 juntas;
+  2. va del mismo lado en al menos 5 de las 7 monedas;
+  3. lo que se queda conserva al menos un tercio de los trades.
+- **Se informa, sin exigirlo:** el R antes de comisiones, cada moneda, y las de siempre y XRP aparte.
+- **Si vale:** se fija la versión refinada con ese corte, una orden por zona y su control (la misma regla sin el ripple), y se corre en la fase 1 por el probador. A ya está en el probador: es el filtro del medidor «leído en». B pide programar la cancelación de la limit.
+- **Si no:** el ripple no se lleva a DX, y se decide si vale la pena C: la señal en el marco mayor y la entrada DX en 30 minutos.
+- **Ojo:**
+  - son 8 cortes, y con el margen al 95% uno podría salir por azar: por eso se piden también las monedas;
+  - el estudio cuenta los trades que dio DX. Con una posición a la vez, una orden quitada deja entrar a otra, así que en la regla el efecto puede ser menor. Si vale, el probador tiene la última palabra en la fase 1.
+
+**Resultado (22/11): no vale la pena seguir con el ripple** (`OrderFlowData/research/dale/2026-11-22/RIPPLE_DX.md`).
+- DX en la fase 1: 15,986 trades, +0.099 R por trade (+0.226 antes de comisiones).
+- **Ningún corte pasa.** El que más se acerca, A3 en 4 horas (solo con el marco mayor a favor), deja el 26% de los trades y le gana a lo que quita por +0.043 R, con un margen que toca el cero (−0.009 a +0.096).
+- **No hay una dirección.** Con el medidor neutro, DX rinde menos que con él a favor o en contra: en 4 horas, +0.07 contra +0.11 a +0.14; en 1 día, +0.08 contra +0.11 a +0.25. Lo que separa parece ser que el marco mayor se esté moviendo, no hacia dónde.
+- **B va al revés.** Los trades cuya limit se llenó después de que el marco mayor se pusiera en contra ganan lo mismo (4 horas: +0.107 contra +0.113) o más (1 día: +0.198 contra +0.103). Cancelar la orden los habría quitado.
+- **Otra curiosidad:** las limit que se llenan antes de que cierre una vela de 4 horas rinden menos (+0.056 R, 3,847 trades) que las que esperan más (+0.11).
+- Las dos curiosidades salieron de mirar la fase 1: solo valen como hipótesis nuevas, fijadas antes de correrlas.
+- **Corrida corregida.** La primera tomó también AAVE, que pasó a tener almacén después de fijar el estudio. Además, le faltaba el medidor de 4 horas de BTC, ETH y SOL antes del 24/10/2021, porque ahí empieza el caché de App 1. Se repitió con las 7 monedas y las velas de 4 horas completadas desde el almacén de trades, como las de 1 día. Las dos dan lo mismo: ningún corte pasa (`RIPPLE_DX_primera.md`).
+- **C** (la señal en el marco mayor y la entrada DX en 30 minutos) se apoya en la misma idea. Como A y B no muestran que el marco mayor le aporte a DX, no se hace por ahora.
+
+### Stop y objetivo más lejos (exploración de la fase 1, 22/11)
+
+Pregunta del usuario: si el stop y el objetivo se alejan 2 a 4 veces, ¿los costos dejan de importar? Las mismas zonas y la misma limit, con el borde lejano (el stop) k veces más lejos de la entrada y el objetivo en 2R. Solo la fase 1, sin gastar nada (`OrderFlowData/research/dale/2026-11-22/ancho_dx.py`, `ancho_x2.json` a `ancho_x4.json`).
+
+| Stop y objetivo | Trades | R por trade | Antes de comisiones | Comisión | Stop en % del precio | Sobre las anclas al azar |
+|---|---|---|---|---|---|---|
+| ×1 (DX) | 15,986 | +0.099 ±0.023 | +0.226 | 0.127 | ~0.6% | +0.046, con margen |
+| ×2 | 9,188 | +0.073 ±0.030 | +0.139 | 0.066 | 1.27% | +0.019, sin margen |
+| ×3 | 5,642 | +0.055 ±0.038 | +0.100 | 0.044 | 1.88% | +0.009, sin margen |
+| ×4 | 3,729 | +0.067 ±0.046 | +0.101 | 0.034 | 2.49% | +0.016, sin margen |
+
+- **La comisión baja como se esperaba, pero lo que gana cada trade baja más:** de +0.23 a +0.10 R antes de comisiones. El R neto pasa de +0.10 a +0.06 o +0.07.
+- **En total se gana mucho menos.** Con una posición a la vez, cada trade dura más (la mediana pasa de 1 hora a 4 y 13 horas) y entran menos. Con el mismo riesgo en dinero por trade, la fase 1 suma unos 1,580 R con ×1 y 250 con ×4.
+- **Lo que aportaban los apilados desaparece:** sobre las mismas zonas ancladas en velas al azar, la ventaja deja de tener margen. La ventaja de DX está en el movimiento corto justo después del regreso a la zona.
+- BTC, la moneda a la que más le pesa la comisión, no mejora: +0.077 R con ×1 y con ×2, y +0.041 con ×4.
+- **Conclusión:** ensanchar no arregla los costos de DX: se queda la versión de siempre.
+
+### Versión refinada de DX: una orden por zona y la tendencia por el precio (fase 1)
+
+**Fijado el 22/11/2026, antes de correrlo.** Son las dos ideas que quedaban para la versión refinada. Solo la fase 1, que es para elegir.
+
+**1. Una orden por zona (DX1).**
+- Hoy, si dos zonas DX se arman en la misma vela y del mismo lado, el probador las une en una orden: entra en el borde cercano de una y pone el stop en el borde lejano de la otra, lejos de lo que pide Dale.
+- En DX1, de las zonas que se arman en la misma vela y del mismo lado se opera solo la más cercana al precio, que es la del primer regreso, con su propio stop. Las demás no se operan.
+- **Se adopta** si, en las 7 juntas, su R por trade no baja respecto a DX y no baja en más de 2 de las 7 monedas. Es un arreglo de la mecánica que la acerca a la regla de Dale, así que no se le pide margen.
+
+**2. La tendencia por el precio.** Se mide al armarse la orden, en la última vela cerrada del marco mayor, con toda su historia:
+- T1: el cierre de 4 horas sobre su EMA 200 en los largos, o bajo ella en los cortos;
+- T2: el cierre de 1 día sobre su EMA 50, o bajo ella;
+- T3: la EMA 50 de 4 horas subiendo en las últimas 6 velas en los largos, o bajando en los cortos.
+
+Cada una es un corte que deja solo los trades con la tendencia a favor. Se mide sobre DX y sobre DX1, y pasa con las tres condiciones del estudio del ripple:
+1. lo que se queda le gana a lo que se quita, con el margen al 95% de la diferencia sobre cero;
+2. va del mismo lado en al menos 5 de las 7 monedas;
+3. conserva al menos un tercio de los trades.
+
+**Si algo pasa:** se fija la versión refinada con eso y se corre por el probador en la fase 1, con sus controles. Las fases 2 y 3 ya se usaron con DX: el juicio sería con su propio registro en vivo, o, si el usuario lo decide, con las fases 2 y 3 solo para ver si el cambio le suma a DX.
+
+**Si nada pasa:** DX queda como está y sigue su registro en vivo.
+
+**Resultado (22/11)** (`OrderFlowData/research/dale/2026-11-22/REFINADA_DX.md`):
+
+**1. DX1 no se adopta.**
+
+| Regla | Trades | R por trade | Antes de comisiones | R total | Sobre las anclas al azar |
+|---|---|---|---|---|---|
+| DX | 15,986 | +0.099 ±0.023 | +0.226 | +1,588 | +0.046, con margen |
+| DX1 | 23,950 | +0.084 ±0.019 | +0.218 | +2,005 | +0.040, con margen |
+
+- Su R por trade baja en 6 de las 7 monedas (todas menos ARB). La diferencia es de −0.016 R, con un margen que toca el cero (−0.045 a +0.014).
+- **Lo que se vio:** solo el 4.6% de los grupos de zonas (6,170 de 134,739) trae dos o más. Aun así, DX1 tiene un 50% más de trades. Las órdenes unidas, con su stop lejano, duran mucho y ocupan la posición: al separarlas entran muchas señales que DX dejaba pasar, y esas rinden menos. Por eso sube el R total.
+- El registro en vivo sigue con las zonas unidas, como las fases 2 y 3.
+
+**2. La tendencia por el precio pasa, en los 3 cortes y en las dos bases:**
+
+| Base | Tendencia | Se quedan | Con la tendencia a favor | En contra | Diferencia (95%) | Monedas |
+|---|---|---|---|---|---|---|
+| DX | T1, 4 horas contra su EMA 200 | 49% | +0.143 | +0.055 | +0.088 (+0.042 a +0.134) | 7 de 7 |
+| DX | T2, 1 día contra su EMA 50 | 49% | +0.129 | +0.065 | +0.065 (+0.018 a +0.111) | 6 de 7 |
+| DX | T3, la EMA 50 de 4 horas en 6 velas | 48% | +0.141 | +0.061 | +0.079 (+0.033 a +0.125) | 6 de 7 |
+| DX1 | T1 | 49% | +0.120 | +0.049 | +0.072 (+0.034 a +0.109) | 6 de 7 |
+| DX1 | T2 | 49% | +0.108 | +0.058 | +0.050 (+0.012 a +0.088) | 6 de 7 |
+| DX1 | T3 | 48% | +0.121 | +0.049 | +0.072 (+0.035 a +0.110) | 7 de 7 |
+
+- Con la tendencia del precio a favor, DX casi gana el triple que en contra. Es la idea del usuario: el medidor VPA no lo mostraba (estudio del ripple, arriba), y el precio sí.
+- **La elegida es T1 sobre DX:** es la de margen más alto (+0.042), y va del mismo lado en las 7 monedas.
+- **Lo que sigue según lo fijado:** correr DX con T1 por el probador en la fase 1, con sus controles, porque con una posición a la vez una señal quitada deja entrar a otra. Para eso el probador necesita leer la EMA en velas de 4 horas, como el medidor VPA «leído en». Después, cómo se juzga: con su propio registro en vivo, o con las fases 2 y 3 solo para ver si T1 le suma a DX, si el usuario lo decide.
+
+### DX con T1 por el probador (fase 1)
+
+**Fijado el 22/11/2026, antes de correrlo.** El probador ya lee la EMA en un marco mayor: «EMA leída en» (`lines[].tf`), con la EMA y el cierre de la última vela mayor ya cerrada.
+
+- **La regla, DXT:** DX sin cambios, más el filtro «EMA 200 de 4 horas a favor»: el cierre de la última vela de 4 horas cerrada, del lado del trade respecto de su EMA 200. Fase 1, las 7 monedas con almacén, una posición a la vez.
+- **Se queda como la versión refinada** si cumple tres cosas:
+  1. su R por trade le gana al de DX con margen: la diferencia al 95% queda sobre cero;
+  2. le gana con margen a las mismas zonas ancladas en velas al azar, que llevan el mismo filtro;
+  3. es positiva en al menos 5 de las 7 monedas.
+- **Se informa, sin exigirlo:**
+  - el azar y el tramo, que no llevan el filtro de la EMA porque el probador no lo copia en esos controles (la H1 del protocolo de pruebas);
+  - el R total, cada moneda, cada año y cada lado.
+- **Diferencia con el estudio:** el probador arma las velas de 4 horas con las de la fase. La EMA 200 necesita 200 de ellas, así que el primer mes de la fase de cada moneda no tiene filtro y no opera.
+
+**Resultado (22/11): DXT no se queda** (`OrderFlowData/research/dale/2026-11-22/DXT.md`).
+
+| Regla | Trades | R por trade | R total | Sobre las anclas al azar | Monedas + |
+|---|---|---|---|---|---|
+| DX | 15,986 | +0.099 ±0.023 | +1,583 | +0.046 (+0.015 a +0.077) | 7 de 7 |
+| DXT | 9,974 | +0.117 ±0.029 | +1,170 | +0.034 (−0.006 a +0.074) | 7 de 7 |
+
+- **DXT − DX: +0.018 R por trade (−0.019 a +0.055), sin margen.** Contra las anclas al azar tampoco tiene margen. Solo cumple la de las monedas.
+- **Por qué el estudio prometía más:** ahí los trades con la tendencia a favor daban +0.143 R. Pero con una posición a la vez, cada señal que el filtro quita deja entrar a otra, y esas rinden menos. Es lo que el plan advertía.
+- **La tendencia ayuda a la mecánica, no a los apilados.** Con el filtro, las zonas ancladas en velas al azar suben más que DX: de +0.053 a +0.083 R, contra +0.099 a +0.117 de DX.
+- **Un límite del criterio:** las dos corridas comparten muchos trades, así que el margen de la diferencia sale más ancho que el real. Con este criterio, fijado antes, no alcanza.
+- **Conclusión de la versión refinada:** el ripple, las salidas más lejanas, una orden por zona y la tendencia por el precio no le ganan a DX con margen. DX queda como está y sigue su registro en vivo.
+- **Lo que queda en el probador:** la EMA leída en un marco mayor, para otras reglas.

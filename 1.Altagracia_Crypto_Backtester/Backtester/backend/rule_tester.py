@@ -557,6 +557,12 @@ def clean_rule(raw):
             # trade. Solo entra a la regla si se pide: así una regla ya corrida conserva su identidad
             if item["type"] == "vwap" and item.get("maxDev") not in (None, "", False):
                 lines[-1]["maxDev"] = _num(item.get("maxDev"), 1.0, 0.1, 10.0)
+            # tf (22/11, solo EMA): la EMA y el cierre se leen en un marco mayor, en su última vela cerrada. Es la
+            # tendencia por el precio de la versión refinada de DX. Solo entra si se pide: la regla conserva su identidad
+            if item["type"] == "ema" and item.get("tf") not in (None, "", 0, "0"):
+                hi = int(_num(item.get("tf"), 0, 0, 1440))
+                if hi in VPAF_TFS and hi > tf and hi % tf == 0:
+                    lines[-1]["tf"] = hi
     if lines:
         extra["lines"] = lines
     hours = raw.get("hours") or {}
@@ -1455,19 +1461,86 @@ def _vwap_dev(ctx, period):
     return cache[key]
 
 
+def _higher(ctx, tf):
+    """Las velas de la regla unidas en bloques UTC de un marco mayor, como el medidor VPA «leído en» (_vpaf_view). Por
+    vela de la regla, la última vela mayor ya cerrada: la suya si es la última de un bloque completo, si no la anterior
+    (−1 = ninguna todavía)."""
+    cache = ctx.setdefault("higher", {})
+    if tf not in cache:
+        T, H, L, C = ctx["T"], ctx["H"], ctx["L"], ctx["C"]
+        step, need = tf * 60000, max(1, tf // int(ctx["tf"]))
+        bt, bh, bl, bc, count, last, own = [], [], [], [], [], [], []
+        for k in range(len(T)):
+            start = T[k] // step * step
+            if bt and bt[-1] == start:
+                bh[-1], bl[-1], bc[-1] = max(bh[-1], H[k]), min(bl[-1], L[k]), C[k]
+                count[-1] += 1
+                last[-1] = k
+            else:
+                bt.append(start), bh.append(H[k]), bl.append(L[k]), bc.append(C[k]), count.append(1), last.append(k)
+            own.append(len(bt) - 1)
+        index = [j if last[j] == k and count[j] >= need else j - 1 for k, j in enumerate(own)]
+        cache[tf] = {"T": bt, "H": bh, "L": bl, "C": bc, "index": index}
+    return cache[tf]
+
+
+def _line_hi(ctx, kind, period, tf):
+    """La EMA del cierre de las velas del marco mayor, por vela mayor. NaN sin velas suficientes."""
+    cache = ctx.setdefault("lines", {})
+    key = (kind, period, tf)
+    if key not in cache:
+        close = np.array(_higher(ctx, tf)["C"], dtype=float)
+        out = np.full(len(close), np.nan)
+        k, value = 2 / (period + 1), close[0] if len(close) else 0.0
+        for i in range(len(close)):
+            value = close[i] * k + value * (1 - k)
+            if i >= period - 1:
+                out[i] = value
+        cache[key] = out
+    return cache[key]
+
+
+def _line_at(ctx, item, k):
+    """Lo que el filtro de línea lee en la vela k: el nivel, el cierre, el mínimo, el máximo y el nivel de LINE_SLOPE_BARS
+    velas antes. Con tf, la EMA y la vela son las del marco mayor, en su última vela cerrada."""
+    tf = item.get("tf")
+    if not tf:
+        line = _line(ctx, item["type"], item["period"])
+        before = line[k - LINE_SLOPE_BARS] if k >= LINE_SLOPE_BARS else float("nan")
+        return line[k], ctx["C"][k], ctx["L"][k], ctx["H"][k], before
+    view = _higher(ctx, tf)
+    j = view["index"][k]
+    if j < 0:
+        return float("nan"), None, None, None, float("nan")
+    line = _line_hi(ctx, item["type"], item["period"], tf)
+    before = line[j - LINE_SLOPE_BARS] if j >= LINE_SLOPE_BARS else float("nan")
+    return line[j], view["C"][j], view["L"][j], view["H"][j], before
+
+
+def _line_view(ctx, item):
+    """La línea por vela de la regla, para el gráfico y el registro de cada trade. Con tf, la del marco mayor en su
+    última vela cerrada (escalones)."""
+    if not item.get("tf"):
+        return _line(ctx, item["type"], item["period"])
+    cache = ctx.setdefault("lines", {})
+    key = ("view", item["type"], item["period"], item["tf"])
+    if key not in cache:
+        line = _line_hi(ctx, item["type"], item["period"], item["tf"])
+        cache[key] = np.array([line[j] if j >= 0 else np.nan for j in _higher(ctx, item["tf"])["index"]])
+    return cache[key]
+
+
 def _lines_ok(lines, ctx, k, side):
     """Si la vela k, que da a conocer la señal, cumple los filtros de línea a favor del trade."""
     for item in lines:
-        line = _line(ctx, item["type"], item["period"])
-        level = line[k]
+        level, close, low, high, before = _line_at(ctx, item, k)
         if not level == level:  # NaN: todavía no hay línea
             return False
-        if (ctx["C"][k] - level) * side <= 0:
+        if (close - level) * side <= 0:
             return False
-        if item["mode"] == "touch" and ((ctx["L"][k] if side > 0 else ctx["H"][k]) - level) * side > 0:
+        if item["mode"] == "touch" and ((low if side > 0 else high) - level) * side > 0:
             return False
         if item["slope"]:
-            before = line[k - LINE_SLOPE_BARS] if k >= LINE_SLOPE_BARS else float("nan")
             if not (level - before) * side > 0:
                 return False
         if item.get("maxDev"):
@@ -2211,7 +2284,8 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         if band is not None:
             trade["gc"] = band  # Línea central y bandas del canal en la vela de la señal
         if rule.get("lines"):
-            trade["lines"] = [{"type": item["type"], "period": item["period"], "value": round(float(_line(ctx, item["type"], item["period"])[k]), 8),
+            trade["lines"] = [{"type": item["type"], "period": item["period"], "value": round(float(_line_view(ctx, item)[k]), 8),
+                               **({"tf": item["tf"]} if item.get("tf") else {}),
                                # El tope de la apertura: el VWAP más `maxDev` desviaciones, del lado del trade
                                **({"limit": round(float(_line(ctx, "vwap", item["period"])[k] + side * item["maxDev"] * _vwap_dev(ctx, item["period"])[k]), 8),
                                    "maxDev": item["maxDev"]} if item.get("maxDev") else {})}
@@ -2800,6 +2874,8 @@ def _regime_boxes(reg, bars, session=False):
 def _line_text(item):
     """Lo que pide un filtro de línea, en palabras"""
     name = f"{'VWAP' if item['type'] == 'vwap' else 'EMA'} {item['period']}"
+    if item.get("tf"):
+        name += {60: " de 1h", 240: " de 4h", 1440: " de 1 día"}.get(item["tf"], f" de {item['tf']} min")
     text = f"{name} {'tocando' if item['mode'] == 'touch' else 'a favor'}"
     if item.get("slope"):
         text += f", con pendiente en {LINE_SLOPE_BARS} velas"
@@ -2895,7 +2971,7 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
            "rows": [], "signals": []}
 
     for item in rule.get("lines") or []:
-        values = _line(ctx, item["type"], item["period"])
+        values = _line_view(ctx, item)
         name, text = _line_text(item)
         entry = {"label": name, "type": item["type"], "points": series(values)}
         if item.get("maxDev"):
@@ -2905,7 +2981,7 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
         out["lines"].append(entry)
         out["rows"].append(row(f"line{len(out['lines'])}", text,
                                lambda i, item=item, values=values: None if not values[i] == values[i] else _lines_ok([item], ctx, i, side),
-                               f"{name} en {_num_text(values[k])}, cierre en {_num_text(ctx['C'][k])}"))
+                               f"{name} en {_num_text(values[k])}, cierre en {_num_text(_line_at(ctx, item, k)[1] if item.get('tf') else ctx['C'][k])}"))
 
     if rule.get("gc"):
         gc = rule["gc"]
