@@ -7,7 +7,7 @@
  * volúmenes en la escala oculta, como en pantalla. `query` lleva las horas reales solo para pedir datos al
  * backend de App 1 (que corta en `known_until`): no se le muestran al usuario.
  */
-import { isBlind, maskDate, maskPrice, maskVolume, pricesHidden } from './blindClock.js';
+import { isBlind, maskDate, maskPrice, maskVolume, pricesHidden, unmaskPrice } from './blindClock.js';
 import { knownLevels, chosenLabel } from '../indicators/analysisLevels.js';
 import { latestFreeBox } from './orderPlan.js';
 import { API_BASE_URL } from '../../config.js';
@@ -197,6 +197,100 @@ export async function coachElements(state, n = 25) {
   return { listo: true, aviso: data.warming ? 'Sin 30 días de historia: solo los elementos literales' : undefined, marcas: events };
 }
 
+// ==================== LO QUE DIBUJA EL ENTRENADOR (23/11/2026) ====================
+// Pedido del usuario tras el análisis de LuxAlgo Quant: que Claude pueda señalar en el gráfico lo que explica, solo en
+// /entrenar y después de la predicción del usuario. Es una capa aparte: no son dibujos del usuario, no se guardan en
+// la sesión, no salen en las imágenes de los trades y no entran al análisis de ninguna orden. Se van al recargar.
+// Claude habla en lo que ve el usuario: precios en la escala a la vista (el índice, con fecha oculta) y velas contadas
+// hacia atrás desde la última cerrada (0 = la última), nunca fechas. Así no puede señalar nada después de la hora
+// simulada ni revelar la época.
+const MAX_NOTES = 20;
+const MAX_NOTE_TEXT = 80;
+const NOTE_KINDS = { linea: 'line', zona: 'zone', marca: 'mark' };
+let notes = { symbol: null, items: [] };
+const noteListeners = new Set();
+
+/** Lo dibujado por el entrenador para esa moneda: [{ kind, price | low+high, time, text }] en precios y horas reales */
+export const coachNotes = (symbol) => (notes.symbol === symbol ? notes.items : []);
+
+/** Avisa cada vez que cambia lo dibujado. Devuelve cómo dejar de escuchar */
+export function onCoachNotes(listener) {
+  noteListeners.add(listener);
+  return () => noteListeners.delete(listener);
+}
+
+function setNotes(symbol, items) {
+  notes = { symbol, items };
+  noteListeners.forEach(listener => listener());
+}
+
+/**
+ * Pasa lo que pide el entrenador a precios y horas reales. `candles`: las velas cerradas a la vista, en orden.
+ * Cada figura: { tipo: 'linea', precio, texto } · { tipo: 'zona', desde, hasta, texto } · { tipo: 'marca', precio?, texto },
+ * todas con `velasAtras` opcional (0 = la última vela cerrada a la vista; la línea y la zona nacen ahí y siguen a la
+ * derecha; sin él nacen en la primera vela a la vista). Devuelve { items, rechazadas: [motivo] }.
+ */
+export function normalizeNotes(list, candles) {
+  const items = [];
+  const rejected = [];
+  if (!candles?.length) return { items, rechazadas: ['No hay velas cerradas a la vista'] };
+  const real = (value) => {
+    const n = Number(value);
+    return value !== null && value !== undefined && value !== '' && Number.isFinite(n) && n > 0 ? unmaskPrice(n) : null;
+  };
+  const floor = Math.min(...candles.map(c => c.low));
+  const top = Math.max(...candles.map(c => c.high));
+  const span = top - floor || top * 0.01;
+  const near = (price) => price > floor - 3 * span && price < top + 3 * span;
+  (Array.isArray(list) ? list : [list]).forEach((raw, i) => {
+    const label = 'figura ' + (i + 1);
+    if (items.length >= MAX_NOTES) return rejected.push(label + ': hay un máximo de ' + MAX_NOTES);
+    const kind = NOTE_KINDS[raw?.tipo];
+    if (!kind) return rejected.push(label + ': tipo desconocido (linea, zona o marca)');
+    const back = raw.velasAtras === undefined || raw.velasAtras === null ? null : Math.floor(Number(raw.velasAtras));
+    if (back !== null && !(back >= 0 && back < candles.length)) return rejected.push(label + ': velasAtras fuera de las ' + candles.length + ' velas a la vista');
+    const candle = back === null ? null : candles[candles.length - 1 - back];
+    const text = String(raw.texto ?? '').replace(/\s+/g, ' ').trim().slice(0, MAX_NOTE_TEXT);
+    if (kind === 'zone') {
+      const a = real(raw.desde);
+      const b = real(raw.hasta);
+      if (a === null || b === null || !near(a) || !near(b)) return rejected.push(label + ': desde y hasta deben ser precios cercanos a lo que se ve');
+      return items.push({ kind, low: Math.min(a, b), high: Math.max(a, b), time: (candle || candles[0]).timestamp, text });
+    }
+    if (kind === 'line') {
+      const price = real(raw.precio);
+      if (price === null || !near(price)) return rejected.push(label + ': precio lejos de lo que se ve');
+      return items.push({ kind, price, time: (candle || candles[0]).timestamp, text });
+    }
+    if (!candle) return rejected.push(label + ': una marca pide velasAtras');
+    const given = raw.precio !== undefined && raw.precio !== null;
+    const price = given ? real(raw.precio) : null;
+    if (given && (price === null || !near(price))) return rejected.push(label + ': precio lejos de lo que se ve');
+    // Sin precio, la marca va sobre el máximo de su vela, para no taparla
+    return items.push({ kind, price: price ?? candle.high, above: !given, time: candle.timestamp, text });
+  });
+  return { items, rechazadas: rejected };
+}
+
+/** Dibuja (reemplaza lo anterior, o suma con `sumar`) y dice cuántas quedaron y cuáles no entraron */
+export function coachDraw(app, list, { sumar = false } = {}) {
+  const { symbol, currentTime, chart } = app || {};
+  if (!symbol || !Number.isFinite(currentTime)) return { listo: false, aviso: 'App 1 todavía no tiene una simulación iniciada.' };
+  const candles = (chart?.getVisibleCandles?.() || []).filter(c => c.timestamp <= currentTime);
+  const { items, rechazadas } = normalizeNotes(list, candles);
+  const kept = (sumar ? [...coachNotes(symbol), ...items] : items).slice(-MAX_NOTES);
+  setNotes(symbol, kept);
+  chart?.redraw?.();
+  return { listo: true, dibujadas: kept.length, rechazadas };
+}
+
+/** Borra todo lo dibujado por el entrenador */
+export function coachClear(app) {
+  setNotes(app?.symbol ?? null, []);
+  app?.chart?.redraw?.();
+  return { listo: true, dibujadas: 0 };
+}
+
 /**
  * Instala `window.__app1Coach` con lectura y las conversiones a lo que ve el usuario. Devuelve cómo quitarlo.
  * `read` es una función que devuelve lo que pide buildCoachState en ese momento.
@@ -204,7 +298,7 @@ export async function coachElements(state, n = 25) {
 export function installCoach(read, target = typeof window !== 'undefined' ? window : null) {
   if (!target) return () => {};
   const api = Object.freeze({
-    version: 1,
+    version: 2,
     state: () => buildCoachState(read()),
     // Lo que da el backend (precios, volúmenes y horas reales) en lo que ve el usuario
     price: (value) => priceOut(Number(value)),
@@ -213,7 +307,11 @@ export function installCoach(read, target = typeof window !== 'undefined' ? wind
     // Atajos de solo lectura al backend, con todo en lo que ve el usuario
     footprints: (n) => coachFootprints(buildCoachState(read()), n),
     elements: (n) => coachElements(buildCoachState(read()), n),
-    get: (path, params) => getJson(path, params)
+    get: (path, params) => getJson(path, params),
+    // Lo único que no es lectura: figuras del entrenador en una capa aparte, que no toca nada del usuario. Solo después
+    // de que el usuario dio su predicción (lo exige el skill /entrenar)
+    draw: (list, options) => coachDraw(read(), list, options),
+    clearDrawings: () => coachClear(read())
   });
   target.__app1Coach = api;
   return () => {

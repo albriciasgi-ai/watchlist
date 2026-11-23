@@ -5,6 +5,7 @@ import ProfitLossHistogram from '@app1/components/backtesting/dashboard/ProfitLo
 import WinRateGauge from '@app1/components/backtesting/dashboard/WinRateGauge.jsx';
 import AvgProfitLossGauge from '@app1/components/backtesting/dashboard/AvgProfitLossGauge.jsx';
 import DrawdownGrowthCards from '@app1/components/backtesting/dashboard/DrawdownGrowthCards.jsx';
+import MonteCarloCard from '@app1/components/backtesting/dashboard/MonteCarloCard.jsx';
 import TradesDataGrid from '@app1/components/backtesting/dashboard/TradesDataGrid.jsx';
 import ExportExcelButton from '@app1/components/backtesting/dashboard/ExportExcelButton.jsx';
 import { THEME, isNewTheme } from '@app1/components/uiTheme.js';
@@ -50,6 +51,11 @@ const rText = (v) => `${v >= 0 ? '+' : ''}${v.toFixed(2)} R`;
 const dollars = (v) => `$${v.toFixed(2)}`;
 const rUnits = (v) => `${v.toFixed(2)} R`;
 const asIs = (q) => q ?? '–';
+// Monte Carlo: los mismos trades leídos en dólares o en R (un trade sin SL no tiene R y no entra en ese modo)
+const MONTE_CARLO_MODES = [
+  ['absolute', '$', 'P&L neto de cada trade, en dólares', (t) => t.pnl, (v) => `${v < 0 ? '−' : ''}$${Math.abs(v).toFixed(2)}`],
+  ['r', 'R', 'R de cada trade; los que no tienen SL inicial no entran', (t) => t.r, (v) => `${v.toFixed(2)} R`],
+];
 
 const SETTINGS_KEY = `suite_journal_dashboard_${TAB}`;
 function loadSettings() {
@@ -204,6 +210,10 @@ export default function JournalDashboard({ trades, days }) {
 
           <div id="drawdown-growth-cards">
             <DrawdownGrowthCards metrics={metrics} mainText={dollars} subText={rUnits} />
+          </div>
+
+          <div id="monte-carlo-card" style={{ marginBottom: 20 }}>
+            <MonteCarloCard trades={selected} themed modes={MONTE_CARLO_MODES} />
           </div>
 
           <TradesDataGrid

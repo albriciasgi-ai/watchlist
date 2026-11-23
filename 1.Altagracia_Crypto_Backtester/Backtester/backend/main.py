@@ -21,6 +21,7 @@ import observer
 import measures
 import patterns
 import rule_tester
+import rule_frequency
 import rule_search
 import regime_detectors
 import box_elements
@@ -4104,6 +4105,15 @@ async def tester_sensitivity(request: Request, symbol: str):
     """Solo fase 1: la regla con valores vecinos de objetivo, ventana y margen del stop."""
     body = await request.json()
     return _json_response(await run_in_threadpool(rule_tester.sensitivity, sanitize_filename(symbol), body.get("rule") or {}))
+
+
+@app.post("/api/tester/frequency/{symbol}")
+@limiter.limit("30/minute")
+async def tester_frequency(request: Request, symbol: str):
+    """Solo fase 1: cuántas veces pasa algo en las velas que siguen a la señal de una regla, sin entrada ni salida."""
+    body = await request.json()
+    return _json_response(await run_in_threadpool(rule_frequency.report, sanitize_filename(symbol), body.get("rule") or {},
+                                                  body.get("question") or {}))
 
 
 @app.get("/api/orderflow/coverage/{symbol}")

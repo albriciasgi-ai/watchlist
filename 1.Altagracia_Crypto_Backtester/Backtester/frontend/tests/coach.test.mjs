@@ -103,4 +103,86 @@ test('installCoach pone y quita window.__app1Coach', () => {
   assert.equal(target.__app1Coach, undefined);
 });
 
+// Lo que dibuja el entrenador (23/11): una capa aparte, en lo que ve el usuario y sin futuro
+const { normalizeNotes, coachNotes, coachDraw, coachClear, onCoachNotes } = await import('../src/components/backtesting/coachState.js');
+const closed = candles.filter(c => c.timestamp <= now); // 35 velas: la última es la 34
+
+test('figuras: línea, zona y marca en velas contadas hacia atrás', () => {
+  const { items, rechazadas } = normalizeNotes([
+    { tipo: 'linea', precio: 80020, texto: '  POC   de la sesión ' },
+    { tipo: 'zona', desde: 80040, hasta: 80010, velasAtras: 5, texto: 'apilados' },
+    { tipo: 'marca', velasAtras: 0, texto: 'absorción' },
+    { tipo: 'marca', velasAtras: 3, precio: 80000 }
+  ], closed);
+  assert.deepEqual(rechazadas, []);
+  assert.deepEqual(items[0], { kind: 'line', price: 80020, time: closed[0].timestamp, text: 'POC de la sesión' });
+  assert.deepEqual(items[1], { kind: 'zone', low: 80010, high: 80040, time: closed[29].timestamp, text: 'apilados' });
+  assert.deepEqual(items[2], { kind: 'mark', price: closed[34].high, above: true, time: closed[34].timestamp, text: 'absorción' });
+  assert.equal(items[3].above, false);
+  assert.ok(items.every(item => item.time <= now), 'nada después de la hora a la vista');
+});
+
+test('figuras: se rechaza lo desconocido, lo lejano, lo que no está a la vista y lo que pasa del máximo', () => {
+  const { items, rechazadas } = normalizeNotes([
+    { tipo: 'flecha', precio: 80000 },
+    { tipo: 'linea', precio: 250000 },
+    { tipo: 'linea', precio: 'abc' },
+    { tipo: 'zona', desde: 80000 },
+    { tipo: 'marca', texto: 'sin vela' },
+    { tipo: 'marca', velasAtras: 35 },
+    { tipo: 'marca', velasAtras: -1 },
+    { tipo: 'linea', precio: 80000, texto: 'x'.repeat(200) }
+  ], closed);
+  assert.equal(items.length, 1);
+  assert.equal(items[0].text.length, 80);
+  assert.equal(rechazadas.length, 7);
+  assert.equal(normalizeNotes([{ tipo: 'linea', precio: 80000 }], []).items.length, 0);
+  const many = normalizeNotes(Array.from({ length: 25 }, () => ({ tipo: 'linea', precio: 80000 })), closed);
+  assert.equal(many.items.length, 20);
+  assert.equal(many.rechazadas.length, 5);
+});
+
+test('dibujar reemplaza o suma, avisa al gráfico y solo cuenta velas ya ocurridas', () => {
+  let redraws = 0;
+  let heard = 0;
+  const stop = onCoachNotes(() => { heard += 1; });
+  const drawApp = { ...app, chart: { ...chart, redraw: () => { redraws += 1; } } };
+  const first = coachDraw(drawApp, [{ tipo: 'linea', precio: 80020, texto: 'uno' }, { tipo: 'marca', velasAtras: 36 }]);
+  assert.deepEqual({ listo: first.listo, dibujadas: first.dibujadas, rechazadas: first.rechazadas.length }, { listo: true, dibujadas: 1, rechazadas: 1 });
+  assert.equal(coachNotes('BTCUSDT').length, 1);
+  assert.equal(coachNotes('ETHUSDT').length, 0, 'son de la moneda en que se dibujaron');
+  // velasAtras 0 es la última vela ya ocurrida (la 34), aunque el gráfico tenga velas posteriores
+  coachDraw(drawApp, { tipo: 'marca', velasAtras: 0, texto: 'dos' }, { sumar: true });
+  assert.equal(coachNotes('BTCUSDT').length, 2);
+  assert.equal(coachNotes('BTCUSDT')[1].time, candles[34].timestamp);
+  coachDraw(drawApp, [{ tipo: 'linea', precio: 80030 }]);
+  assert.equal(coachNotes('BTCUSDT').length, 1, 'sin `sumar`, reemplaza');
+  assert.equal(coachClear(drawApp).dibujadas, 0);
+  assert.equal(coachNotes('BTCUSDT').length, 0);
+  assert.equal(redraws, 4);
+  assert.equal(heard, 4);
+  stop();
+  assert.equal(coachDraw({}, []).listo, false);
+});
+
+test('con fecha oculta se dibuja con el precio que ve el usuario (el índice)', () => {
+  blind.setBlindAnchor(T0);
+  blind.setBlindScale({ ref: 80000, base: 100, volRef: 100 });
+  const { items, rechazadas } = normalizeNotes([{ tipo: 'linea', precio: 100.05 }, { tipo: 'linea', precio: 80040 }], closed);
+  assert.equal(items.length, 1);
+  assert.ok(Math.abs(items[0].price - 80040) < 1e-6);
+  assert.equal(rechazadas.length, 1, 'un precio real, con fecha oculta, queda lejísimos del índice');
+  blind.setBlindAnchor(null);
+  blind.setBlindScale(null);
+});
+
+test('window.__app1Coach trae draw y clearDrawings', () => {
+  const target = {};
+  const remove = installCoach(() => app, target);
+  assert.equal(target.__app1Coach.version, 2);
+  assert.equal(target.__app1Coach.draw([{ tipo: 'linea', precio: 80010, texto: 'nivel' }]).dibujadas, 1);
+  assert.equal(target.__app1Coach.clearDrawings().dibujadas, 0);
+  remove();
+});
+
 log(`${passed} pruebas pasaron`);
