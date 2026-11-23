@@ -3,7 +3,7 @@ import MiniChart from '@app1/components/MiniChart';
 import wsManager from '@app1/components/WebSocketManager';
 import { getJson, postJson } from './api.js';
 import { linesFor } from './botBook.js';
-import { TAB, onAnyDrawings, onSymbolsChanged, symbolsChanged } from './tabs.js';
+import { TAB, onAnyDrawings, onSymbolsChanged, openScannerTab, symbolsChanged } from './tabs.js';
 import TabsMenu from './TabsMenu.jsx';
 import { INTERVAL_CODE, SWING, attachSwing, feedSwing, frameName, onSwingChanged, swingOf } from './swingServer.js';
 import ScannerPanel, { GRID_COUNTS, GRID_LISTS, LIST_SHORT, costClass } from './ScannerPanel.jsx';
@@ -27,6 +27,8 @@ import ScannerPanel, { GRID_COUNTS, GRID_LISTS, LIST_SHORT, costClass } from './
  * - Scanner (22/11, docs/PLAN_SCANNER.md): la cuadrícula puede mostrar las monedas de una lista del scanner del servidor
  *   (en lugar de las de la suite o junto a ellas), con el porqué en la cabecera de cada celda. Esas monedas no se graban:
  *   solo velas de Bybit, hasta «Agregar a la suite». Su panel (ScannerPanel.jsx) va en el lugar del panel del Swing.
+ *   Un clic en una moneda del scanner la abre en otra pestaña (23/11), para no cambiar el análisis del gráfico
+ *   principal: la que ya abrió el scanner o la primera libre de la 2 a la 5 (tabChoice.js).
  */
 
 // 1D, 1W y 1M (16/11): la semana empieza el lunes y el mes el día 1; el mes no tiene Swing
@@ -101,14 +103,14 @@ function ScanHead({ row }) {
   );
 }
 
-const scanTitle = (row) => [
-  'Del scanner. Un clic la abre en el gráfico principal.',
+const scanTitle = (row, where) => [
+  `Del scanner. ${where}.`,
   ...(row?.chips || []).map(c => `${c.text}: ${c.title}`),
   ...(row?.flags || []).map(f => `Aviso: ${f.text}`),
 ].join('\n');
 
 /** Nombre, precio y cambio de 24 h de una moneda, con los precios del WebSocket que ya usa su gráfico (uno por segundo) */
-function CellHead({ symbol, tf, note, scanRow = null, draggable = true, onOpen, onDragStart, onDragEnd }) {
+function CellHead({ symbol, tf, note, scanRow = null, draggable = true, inTab = false, onOpen, onDragStart, onDragEnd }) {
   const [tick, setTick] = useState({ price: null, pct: null });
   useEffect(() => {
     const merged = {};
@@ -134,10 +136,11 @@ function CellHead({ symbol, tf, note, scanRow = null, draggable = true, onOpen, 
     };
   }, [symbol, tf]);
   const pct = tick.pct;
+  const where = inTab ? 'Un clic la abre en otra pestaña' : 'Un clic la abre en el gráfico principal';
   return (
     <div className="wl-head" draggable={draggable} onClick={onOpen} onDragStart={draggable ? onDragStart : undefined}
          onDragEnd={draggable ? onDragEnd : undefined}
-         title={scanRow ? scanTitle(scanRow) : draggable ? 'Un clic la abre en el gráfico principal; arrástrala para cambiar el orden' : 'Un clic la abre en el gráfico principal'}>
+         title={scanRow ? scanTitle(scanRow, where) : draggable ? `${where}; arrástrala para cambiar el orden` : where}>
       <span className="wl-sym">{symbol.replace(/USDT$/, '')}</span>
       <span>{priceText(tick.price)}</span>
       {Number.isFinite(pct) && <span className={pct >= 0 ? 'pos' : 'neg'}>{pct >= 0 ? '+' : ''}{pct.toFixed(2)}%</span>}
@@ -612,6 +615,18 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
     setPins(p => (p.includes(sym) ? p.filter(s => s !== sym) : [...p, sym]));
     if (!pins.includes(sym) && source === 'mias') setSource('ambas');   // una fijada se ve con las de la suite
   };
+  // Una moneda del scanner (23/11) se abre en otra pestaña: el análisis del gráfico principal no se toca. Con la
+  // cuadrícula en "Las dos", las de la suite siguen abriéndose en el gráfico principal
+  const fromScanner = (sym) => source === 'scanner' || (source === 'ambas' && !symbols.includes(sym));
+  const [scanNote, setScanNote] = useState('');
+  const openScanCoin = (sym, frame) => {
+    setScanNote(openScannerTab(sym, frame) ? '' : 'Las pestañas 2 a 5 están abiertas: cierra una para abrir la moneda del scanner');
+  };
+  useEffect(() => {
+    if (!scanNote) return undefined;
+    const timer = setTimeout(() => setScanNote(''), 6000);
+    return () => clearTimeout(timer);
+  }, [scanNote]);
 
   useEffect(() => {
     try {
@@ -891,6 +906,7 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
                 title={source === 'mias' ? 'Mostrar u ocultar el panel del scanner' : `La cuadrícula muestra «${LIST_SHORT[scanList]}» del scanner${source === 'ambas' ? ' junto a tus monedas' : ''}. Mostrar u ocultar su panel`}>
           {source === 'mias' ? 'Scanner' : `Scanner · ${LIST_SHORT[scanList]}`}
         </button>
+        {scanNote && <span className="suite-add-error">{scanNote}</span>}
         <button type="button" className={`suite-btn ${showPanel ? 'active' : ''}`} onClick={() => setPanel(p => (p === 'swing' ? null : 'swing'))} title="Mostrar u ocultar el panel del Swing">Panel del Swing</button>
         <TabsMenu onModule={onModule} />
         <button type="button" className="suite-btn" onClick={onOpenTheme}>Estilo</button>
@@ -931,7 +947,8 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
                       note={note}
                       scanRow={source !== 'mias' || panel === 'scanner' ? scanRowOf[sym] || null : null}
                       draggable={canDrag}
-                      onOpen={() => onOpenChart(sym, tf)}
+                      inTab={fromScanner(sym)}
+                      onOpen={() => (fromScanner(sym) ? openScanCoin(sym, tf) : onOpenChart(sym, tf))}
                       onDragStart={(e) => { setDragging(sym); e.dataTransfer.effectAllowed = 'move'; e.dataTransfer.setData('text/plain', sym); }}
                       onDragEnd={() => { setDragging(null); setDragOver(null); }}
                     />
@@ -979,7 +996,7 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
               onTogglePin={togglePin}
               suiteSymbols={symbols}
               onSymbolsAdded={(list) => { setSymbols(list); symbolsChanged(list); }}
-              onOpenChart={onOpenChart}
+              onOpenChart={openScanCoin}
               gridTf={tf}
               onRefresh={readScan}
               onHide={() => setPanel(null)}

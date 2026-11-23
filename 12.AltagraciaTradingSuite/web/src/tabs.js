@@ -4,6 +4,7 @@
 // y viajan al instante a las demás por BroadcastChannel, igual que las monedas agregadas.
 // Solo la pestaña 1 toma las imágenes del journal y da los avisos de Windows.
 import { installOwnSettings } from '@app1/components/backtesting/secondaryStorage.js';
+import { scannerTabNumber } from './tabChoice.js';
 
 export const MAX_TABS = 5;
 export const MODULES = ['chart', 'watchlist', 'journal', 'bot', 'mapa'];
@@ -21,15 +22,37 @@ export const TAB = (() => {
   return n >= 2 && n <= MAX_TABS ? n : 1;
 })();
 
-// En la barra de tareas (y en las pestañas del navegador) cada ventana dice cuál es
-if (TAB > 1 && typeof document !== 'undefined') document.title = `Pestaña ${TAB} · ${document.title}`;
-
 /** El módulo con que se abrió esta pestaña desde el menú (?modulo=...), o null */
 export const MODULE_PARAM = MODULES.includes(params.get('modulo')) ? params.get('modulo') : null;
 
-/** La moneda y el marco con que se abrió (13/11, el mapa los trae del gráfico principal), o null */
-export const URL_SYMBOL = /^[A-Z0-9]{2,20}$/.test(params.get('moneda') || '') ? params.get('moneda') : null;
+/**
+ * La moneda y el marco con que se abrió (13/11, el mapa los trae del gráfico principal; 23/11, el scanner), o null.
+ * Las del scanner llegan hasta 24 letras antes de USDT
+ */
+export const URL_SYMBOL = /^[A-Z0-9]{2,28}$/.test(params.get('moneda') || '') ? params.get('moneda') : null;
 export const URL_TIMEFRAME = ['1m', '5m', '15m', '1h', '4h'].includes(params.get('marco')) ? params.get('marco') : null;
+/** El marco para el gráfico (23/11): también 1D, 1W y 1M, que el mapa no tiene */
+export const URL_CHART_TIMEFRAME = ['1m', '5m', '15m', '1h', '4h', '1D', '1W', '1M'].includes(params.get('marco')) ? params.get('marco') : null;
+
+// La pestaña que abre el scanner (23/11) lo anota en su ventana: lo sigue siendo al recargarla, y deja de serlo si se abre
+// desde el menú "Pestañas". Así el scanner reusa su pestaña y nunca reemplaza un gráfico abierto a mano
+const ROLE_KEY = 'suite_tab_role';
+export const TAB_ROLE = (() => {
+  if (TAB === 1) return null;
+  const fromUrl = params.get('origen') === 'scanner' ? 'scanner' : null;
+  try {
+    if (MODULE_PARAM) {
+      if (fromUrl) sessionStorage.setItem(ROLE_KEY, fromUrl);
+      else sessionStorage.removeItem(ROLE_KEY);
+    }
+    return sessionStorage.getItem(ROLE_KEY) === 'scanner' ? 'scanner' : null;
+  } catch {
+    return fromUrl;
+  }
+})();
+
+// En la barra de tareas (y en las pestañas del navegador) cada ventana dice cuál es
+if (TAB > 1 && typeof document !== 'undefined') document.title = `Pestaña ${TAB}${TAB_ROLE === 'scanner' ? ' · scanner' : ''} · ${document.title}`;
 
 /** Dirección de la pestaña n, abierta en `module` (extra: moneda y marco) */
 export function tabUrl(n, module = null, extra = null) {
@@ -56,7 +79,9 @@ const ALIVE_MS = 90000;
 
 export function startTabHeartbeat(getModule) {
   const beat = () => {
-    try { localStorage.setItem(`${ALIVE_PREFIX}${TAB}`, JSON.stringify({ at: Date.now(), module: getModule() })); } catch { /* sin almacenamiento */ }
+    try {
+      localStorage.setItem(`${ALIVE_PREFIX}${TAB}`, JSON.stringify({ at: Date.now(), module: getModule(), ...(TAB_ROLE ? { role: TAB_ROLE } : {}) }));
+    } catch { /* sin almacenamiento */ }
   };
   const bye = () => {
     try { localStorage.removeItem(`${ALIVE_PREFIX}${TAB}`); } catch { /* sin almacenamiento */ }
@@ -75,7 +100,7 @@ export function openTabsNow(now = Date.now(), storage = typeof localStorage !== 
     let note = null;
     try { note = JSON.parse(storage?.getItem(`${ALIVE_PREFIX}${n}`) || 'null'); } catch { note = null; }
     const alive = !!note && Number.isFinite(note.at) && now - note.at < ALIVE_MS;
-    return { n, alive, module: alive ? note.module : null };
+    return { n, alive, module: alive ? note.module : null, role: alive ? note.role || null : null };
   });
 }
 
@@ -90,6 +115,17 @@ export function openMapTab(symbol, timeframe) {
   const n = mapTabNumber();
   if (!n) return null;
   openTab(n, 'mapa', { moneda: symbol, marco: timeframe });
+  return n;
+}
+
+/**
+ * Una moneda del scanner (23/11) en otra pestaña, con el gráfico en ese marco: la que ya abrió el scanner o la primera
+ * libre (tabChoice.js). El gráfico de esta pestaña no cambia. Devuelve el número de pestaña, o null si no hay libre
+ */
+export function openScannerTab(symbol, timeframe) {
+  const n = scannerTabNumber(openTabsNow(), TAB);
+  if (!n) return null;
+  openTab(n, 'chart', { moneda: symbol, marco: timeframe, origen: 'scanner' });
   return n;
 }
 

@@ -8,7 +8,7 @@ import BotConfig from './BotConfig.jsx';
 import JournalView from './JournalView.jsx';
 import TabsMenu from './TabsMenu.jsx';
 import LiquidityMapView from './LiquidityMapView.jsx';
-import { MODULE_PARAM, TAB, startTabHeartbeat, tabUrl } from './tabs.js';
+import { MODULE_PARAM, TAB, URL_CHART_TIMEFRAME, URL_SYMBOL, startTabHeartbeat, tabUrl } from './tabs.js';
 import { useBotNotifications } from './botNotifications.js';
 
 const MODULE_KEY = `suite_module_${TAB}`;
@@ -32,6 +32,9 @@ const START = (() => {
   try { window.history.replaceState(null, '', tabUrl(TAB)); } catch { /* sin historial */ }
   return start;
 })();
+// Una moneda del scanner abierta en esta pestaña (23/11) llega con su moneda y su marco en la dirección: el gráfico arranca
+// con ellas, como con un clic en la Watchlist, y las guarda como suyas
+const START_FOCUS = MODULE_PARAM === 'chart' && URL_SYMBOL ? { symbol: URL_SYMBOL, tf: URL_CHART_TIMEFRAME, at: Date.now() } : null;
 
 export default function SuiteApp() {
   useUiTheme();
@@ -41,7 +44,7 @@ export default function SuiteApp() {
   const [showTheme, setShowTheme] = useState(false);
   const [focusTrade, setFocusTrade] = useState(null); // "Ver en el gráfico" desde el journal
   const [journalFocus, setJournalFocus] = useState(null); // "Volver al journal" desde el gráfico: el trade que se miraba
-  const [focusSymbol, setFocusSymbol] = useState(null); // una moneda de la Watchlist
+  const [focusSymbol, setFocusSymbol] = useState(START_FOCUS); // una moneda de la Watchlist o del scanner
   // La Watchlist se arma la primera vez que se abre y después queda armada: sus gráficos no se pausan
   const [watchlistOn, setWatchlistOn] = useState(START.module === 'watchlist');
   // El mapa de liquidez (13/11), igual: se arma la primera vez y queda armado
