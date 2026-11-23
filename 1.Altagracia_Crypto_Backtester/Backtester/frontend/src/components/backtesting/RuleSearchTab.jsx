@@ -28,8 +28,11 @@ const DEFAULT_CONFIG = {
   flow: true, regime: true, trailing: true, straddle: true, stopEntry: true, williams: true, vpa: true, chain: true, checkNew: true, checkStocks: true, fitness: 'promedio',
   holdMargin: false,
   // Embudo (23/11): la fase 1 en tres tramos con hueco; la búsqueda trabaja en dos y el tercero es la puerta, con cupo
-  funnel: true, split1: '2022-01-01', gapDays: 30, gateQuota: 10, phase2Quota: 5
+  funnel: true, split1: '2022-01-01', gapDays: 30, gateQuota: 10, phase2Quota: 5,
+  // Con qué monedas elige, y el filtro de mercado como pieza
+  group: 'base', market: true
 };
+const GROUPS = [['base', 'las 7 de siempre'], ['new', 'las nuevas'], ['all', 'todas (las de siempre y las nuevas)']];
 const day = (iso) => (iso ? iso.split('-').reverse().join('/') : '—');
 const REGIME_TITLES = [['trend', 'Tendencia de 4 horas'], ['vol', 'Volatilidad']];
 // Las tres ventajas del tablero, en el orden en que se muestran (desde el 23/11 la búsqueda elige con ellas)
@@ -211,6 +214,7 @@ export default function RuleSearchTab({ onLoadRule }) {
             <span>Puede usar</span>
             <Check checked={config.flow !== false} onChange={(flow) => patch({ flow })} title="Filtros de CVD de N velas a favor y de OI">filtros de CVD y OI</Check>
             <Check checked={config.regime !== false} onChange={(regime) => patch({ regime })} title="Solo dentro, solo fuera o solo tras romper un rango">régimen</Check>
+            <Check checked={config.market !== false} onChange={(market) => patch({ market })} title="El filtro de mercado de la pestaña Regla: sin subida con volatilidad alta, solo en rango, solo en tendencia, solo con volatilidad baja o solo con volatilidad alta, medido en velas de 4 horas">mercado</Check>
             <Check checked={config.trailing !== false} onChange={(trailing) => patch({ trailing })} title="Trailing a 3 o 4 ATR o al 5% del mejor precio, con arranque y stop a la entrada">trailing</Check>
             <Check checked={config.straddle !== false} onChange={(straddle) => patch({ straddle })} title="Dos órdenes stop, una arriba y otra abajo: entra la primera">dos órdenes stop</Check>
             <Check checked={config.stopEntry !== false} onChange={(stopEntry) => patch({ stopEntry })} title="Una orden stop a favor en el borde de la zona del elemento, como los sabios de Williams, y la salida bajo el mínimo de las últimas 3 o 5 velas (con el trailing)">orden stop a favor</Check>
@@ -237,8 +241,17 @@ export default function RuleSearchTab({ onLoadRule }) {
             <Check checked={config.checkStocks !== false} onChange={(checkStocks) => patch({ checkStocks })}
               title="Y en las acciones de Alpaca (otro mercado, desde 2016), en su fase 1 con los mismos dos tramos. Solo informa">y en las acciones</Check>
           </div>
+          <div className="rt-row">
+            <span title="Las monedas con que la búsqueda califica cada regla. Con las nuevas hay muchos más trades y los márgenes son más angostos, pero cada regla tarda unas 6 veces más. Al terminar, las finalistas se corren además en el otro grupo, que no eligió nada">Elegir con</span>
+            <select value={config.group || 'base'} onChange={(e) => patch({ group: e.target.value })}>
+              {GROUPS.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+            </select>
+          </div>
           <div className="rt-note">
-            La búsqueda elige siempre con las 7 monedas de siempre. Con más piezas hay más reglas posibles y más suerte: el umbral de suerte del informe lo tiene en cuenta.
+            {(config.group || 'base') === 'base'
+              ? 'La búsqueda elige con las 7 monedas de siempre.'
+              : 'Con las monedas nuevas cada regla tarda unas 6 veces más (15 a 25 s en 4h): conviene menos población o menos generaciones.'}
+            {' '}Con más piezas hay más reglas posibles y más suerte: el umbral de suerte del informe lo tiene en cuenta.
           </div>
           <div className="rt-row">
             <span>Población</span><Num value={config.population} min={10} max={300} onChange={(population) => patch({ population })} />
@@ -247,7 +260,7 @@ export default function RuleSearchTab({ onLoadRule }) {
           </div>
           <div className="rt-row">
             <span>Mínimo</span><Num value={config.minTrades} min={20} max={5000} onChange={(minTrades) => patch({ minTrades })} /><span>trades y a favor en</span>
-            <Num value={config.minCoins} min={1} max={10} onChange={(minCoins) => patch({ minCoins })} /><span>monedas</span>
+            <Num value={config.minCoins} min={1} max={50} onChange={(minCoins) => patch({ minCoins })} /><span>monedas</span>
           </div>
           <div className="rt-row">
             <Check checked={config.funnel !== false} onChange={(funnel) => patch({ funnel })}
@@ -292,7 +305,7 @@ export default function RuleSearchTab({ onLoadRule }) {
           <h4>Búsqueda {data.id} · {STATE[data.state] || data.state}</h4>
           <div className="rt-note">
             {cfg.tfs.map(tf => TF_LABEL[tf]).join(', ')} · {elementLabels(cfg.codes, ', ')} · hasta {cfg.maxElements} elementos · población {cfg.population} ·
-            {' '}{cfg.generations} generaciones ·{' '}
+            {' '}{cfg.generations} generaciones · {cfg.group === 'new' ? 'elige con las monedas nuevas · ' : cfg.group === 'all' ? 'elige con todas las monedas · ' : ''}
             {cfg.funnel
               ? `embudo: tramos hasta el ${day(cfg.split1)} y del ${day(cfg.split1)} al ${day(cfg.split)}, puerta desde el ${day(cfg.split)}, hueco de ${cfg.gapDays} días, cupo ${cfg.gateQuota} y ${cfg.phase2Quota}`
               : `validación desde ${cfg.split}`}
@@ -394,6 +407,12 @@ export default function RuleSearchTab({ onLoadRule }) {
                     <tr key={`a${seg}`} title="Las acciones, otro mercado que la búsqueda nunca vio, en el mismo tramo de su fase 1">
                       <td>Acciones, {seg === 'train' ? 'búsqueda' : f.parts ? 'puerta' : 'validación'}</td><td>{f.stocks[seg].n}</td><td><R value={f.stocks[seg].avgR} /></td>
                       <td><R value={f.stocks[seg].edge} /> ±{f.stocks[seg].se ? (1.96 * f.stocks[seg].se).toFixed(2) : '—'}</td><td>{f.stocks[seg].coinsUp} de {f.stocks[seg].coinsWith}</td>
+                    </tr>
+                  ))}
+                  {f.baseCoins && ['train', 'hold'].map(seg => (
+                    <tr key={`b${seg}`} title="Las 7 monedas de siempre, que en esta búsqueda no eligieron nada, en el mismo tramo de su fase 1">
+                      <td>De siempre, {seg === 'train' ? 'búsqueda' : 'puerta'}</td><td>{f.baseCoins[seg].n}</td><td><R value={f.baseCoins[seg].avgR} /></td>
+                      <td><R value={f.baseCoins[seg].edge} /> ±{f.baseCoins[seg].se ? (1.96 * f.baseCoins[seg].se).toFixed(2) : '—'}</td><td>{f.baseCoins[seg].coinsUp} de {f.baseCoins[seg].coinsWith}</td>
                     </tr>
                   ))}
                   {f.newCoins && ['train', 'hold'].map(seg => (

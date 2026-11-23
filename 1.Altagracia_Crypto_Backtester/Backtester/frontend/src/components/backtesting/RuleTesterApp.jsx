@@ -20,6 +20,7 @@ import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
   contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText, usesVpa, VPA_EXITS,
+  MARKET_TRENDS, MARKET_VOLS, MARKET_COMBOS, marketAllowOf, marketText,
   chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, ruleVpaConfig, listText, DALE_CODES, VPA_FILTER_TFS, vpaFilterTf
 } from './ruleTester.js';
 import { loadWilliamsSettings, mergeWilliamsConfig } from '../indicators/williams.js';
@@ -1541,6 +1542,25 @@ const RuleTesterApp = () => {
               <option value={0}>el marco de la regla</option>
               {VPA_FILTER_TFS.filter(([m]) => m > Number(rule.tf) && m % Number(rule.tf) === 0).map(([m, name]) => <option key={m} value={m}>{name} (marco mayor)</option>)}
             </select>
+          </div>
+        </Opt>
+        <Opt id="mercado" label="Mercado: tendencia y volatilidad de 4 horas" on={!!rule.marketOn} onToggle={(marketOn) => patch({ marketOn })} title="En qué condiciones del mercado puede entrar la regla, con velas de 4 horas ya cerradas al cerrar la vela de la señal. Tendencia: el cierre sobre la EMA 50 y la EMA subiendo más de 0.3 ATR en 10 velas es subida; el espejo, bajada; si no, rango. Volatilidad: el ATR sobre el precio contra su mediana de 30 días. Es del mercado, no del lado del trade. Las entradas al azar de los controles quedan en las mismas condiciones">
+          {MARKET_TRENDS.map(([trend, label]) => (
+            <div className="rt-row" key={trend}>
+              <span style={{ minWidth: 52 }}>{label}</span>
+              {MARKET_VOLS.map(([vol, text]) => {
+                const key = `${trend}-${vol}`;
+                const allow = rule.marketAllow || MARKET_COMBOS;
+                return (
+                  <Check key={key} checked={allow.includes(key)} onChange={(on) => patch({ marketAllow: on ? [...allow, key] : allow.filter(c => c !== key) })}>
+                    {text}
+                  </Check>
+                );
+              })}
+            </div>
+          ))}
+          <div className="rt-note">
+            {marketAllowOf(rule) ? `Entra ${marketText(marketAllowOf(rule))}.` : 'Con las seis marcadas, o ninguna, no filtra nada.'} Al comienzo de la fase, sin historia para medirlo, no entra.
           </div>
         </Opt>
         <Opt id="regimen" label="Régimen: rango o fuera de él" on={rule.regimeMode !== 'any'} onToggle={toggleMode('regimeMode', 'any', 'outside')} title="Régimen de la vela de la señal, con el detector de la pestaña Régimen (eficiencia con caja afinada), sin futuro. Las entradas al azar de los controles quedan en el mismo régimen">

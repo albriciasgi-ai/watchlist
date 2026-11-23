@@ -108,6 +108,16 @@ GENES = {
     # Desde el 21/11: los flujos on-chain diarios de Coin Metrics (apagado de fábrica): medida y días, modo y umbral del z
     "chain": (None, ("net", 7), ("net", 30), ("stable", 7), ("stable", 30)), "chainMode": ("favor", "nocontra"),
     "chainZ": (0.5, 0.0, 1.0),
+    # Desde el 23/11: el filtro de mercado (tendencia y volatilidad de 4 horas, trade_regime.py), apagado de fábrica
+    "market": (None, "noUpHigh", "range", "trend", "calm", "wild"),
+}
+# Lo que deja pasar cada opción del gen de mercado
+MARKETS = {
+    "noUpHigh": [c for c in trade_regime.COMBOS if c != "subida-alta"],
+    "range": [c for c in trade_regime.COMBOS if c.startswith("rango")],
+    "trend": [c for c in trade_regime.COMBOS if not c.startswith("rango")],
+    "calm": [c for c in trade_regime.COMBOS if c.endswith("baja")],
+    "wild": [c for c in trade_regime.COMBOS if c.endswith("alta")],
 }
 
 _lock = threading.Lock()
@@ -162,7 +172,7 @@ def clean_config(raw):
         "mutation": rt._num(raw.get("mutation"), 0.1, 0.01, 0.5),
         "maxElements": int(rt._num(raw.get("maxElements"), 2, 1, 3)),
         "minTrades": int(rt._num(raw.get("minTrades"), 150, 20, 5000)),
-        "minCoins": int(rt._num(raw.get("minCoins"), 4, 1, 10)),
+        "minCoins": int(rt._num(raw.get("minCoins"), 4, 1, 50)),
         "lines": raw.get("lines") is not False, "invert": raw.get("invert") is not False,
         # Piezas que la búsqueda puede usar además de los elementos (todas de fábrica)
         "flow": raw.get("flow") is not False, "regime": raw.get("regime") is not False,
@@ -187,6 +197,10 @@ def clean_config(raw):
         "gapDays": int(rt._num(raw.get("gapDays"), 30, 0, 60)),
         "gateQuota": int(rt._num(raw.get("gateQuota"), 10, 5, 20)),
         "phase2Quota": int(rt._num(raw.get("phase2Quota"), 5, 3, 5)),
+        # Con qué monedas elige: "base" (las 7 de siempre), "new" (las nuevas) o "all". Al terminar, las finalistas se
+        # corren además en el otro grupo, que no eligió nada. Y el filtro de mercado, como pieza
+        "group": raw.get("group") if raw.get("group") in ("new", "all") else "base",
+        "market": raw.get("market") is not False,
         "seed": seed,
     }
 
@@ -205,6 +219,8 @@ def _options(cfg):
         opts["cvd"], opts["oi"], opts["crowd"], opts["steady"] = (None,), (None,), (None,), (False,)
     if not cfg.get("regime", True):
         opts["regime"] = (None,)
+    if not cfg.get("market"):
+        opts["market"] = (None,)  # Una búsqueda guardada antes no lo trae: sigue sin él
     if not cfg.get("trailing", True):
         opts["trail"] = TRAILS[:2]
     # Sin las dos órdenes stop o sin la orden stop a favor, esas entradas salen de la lista; las demás conservan su lugar
@@ -227,7 +243,7 @@ def random_genome(cfg, rng):
     genome = {name: rng.randrange(len(values)) for name, values in opts.items()}
     # Reglas simples primero: el segundo y el tercer elemento, y el filtro de línea, empiezan apagados más seguido
     for name in ("e2", "e3", "line", "cvd", "oi", "regime", "crowd", "steady", "bwf", "bwZone", "smcPd", "smcBias", "targetWeak",
-                 "bwAo", "bwAc", "bwGator", "bwMfi", "vpaf", "chain"):
+                 "bwAo", "bwAc", "bwGator", "bwMfi", "vpaf", "chain", "market"):
         if len(opts[name]) > 1 and rng.random() < 0.6:
             genome[name] = 0
     return genome
@@ -299,6 +315,8 @@ def decode(genome, cfg):
     }
     if pick["regime"]:
         raw["regime"] = {"mode": pick["regime"], "major": pick["regimeMajor"], "majorOut": 6, "after": 6}
+    if pick.get("market"):
+        raw["market"] = {"allow": MARKETS[pick["market"]]}
     struct = [s for s in structure.STRUCT_TFS if s >= tf and s % tf == 0]
     raw["cc"] = {"tf": struct[min(len(struct) - 1, pick["ccStruct"])] if struct else tf, "swing": pick["ccSwing"], "legs": pick["ccLegs"]}
     if pick["line"]:
@@ -314,7 +332,7 @@ def rule_key(rule):
 def complexity(rule):
     flow, bwf, smcf = rule.get("flow") or {}, rule.get("bwf") or {}, rule.get("smcf") or {}
     return (len(rule["recipe"]["slots"]) + len(rule.get("lines") or []) + len(rule.get("filters") or [])
-            + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(flow.get("crowd")) + bool(flow.get("steady")) + bool(flow.get("chain")) + bool(rule.get("regime"))
+            + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(flow.get("crowd")) + bool(flow.get("steady")) + bool(flow.get("chain")) + bool(rule.get("regime")) + bool(rule.get("market"))
             + bool(bwf.get("alligator")) + bool(bwf.get("zone")) + bool(smcf.get("pd")) + bool(smcf.get("bias"))
             + bool(bwf.get("ao")) + bool(bwf.get("ac")) + bool(bwf.get("gator")) + bool(bwf.get("mfi")) + bool(rule.get("vpaf")))
 
@@ -388,6 +406,8 @@ class Evaluator:
         core = {"stop": base_rule["stop"], "exit": {**base_rule["exit"], "opposite": False}, "gc": rule.get("gc"),
                 "invert": rule["invert"] if rule.get("gc") else False, "entry": base_rule["entry"],
                 "regime": rule.get("regime"), "flow": rule.get("flow"), "lines": rule.get("lines")}
+        if rule.get("market"):
+            core["market"] = rule["market"]  # Solo si la regla lo trae: los controles de las demás conservan su clave
         for name in ("bwf", "smcf", "vpaf"):
             if rule.get(name):
                 core[name] = rule[name]
@@ -412,8 +432,11 @@ class Evaluator:
             # Con filtro de régimen el azar entra solo en las velas que el filtro deja; con filtro de flujo, solo del lado
             # que el filtro deja entrar. Si no, la ventaja mezclaría el filtro con la señal
             allowed = None
-            if rule.get("regime"):
-                mask = rt.regime_mask(rule["regime"], item["span"]["bars"], rt.is_stock(symbol))
+            if rule.get("regime") or rule.get("market"):
+                bars_ = item["span"]["bars"]
+                mask = rt.regime_mask(rule["regime"], bars_, rt.is_stock(symbol)) if rule.get("regime") else np.ones(len(bars_), dtype=bool)
+                if rule.get("market"):
+                    mask = np.asarray(mask, dtype=bool) & rt.market_mask(rule["market"], bars_, tf)
                 allowed = [k for k in range(lo, hi - 2) if mask[k]]
                 if len(allowed) < 50:
                     return None
@@ -494,6 +517,11 @@ class Evaluator:
                 # Con el embudo, lo de los tramos a y b se junta además en "train" (los dos tramos de búsqueda)
                 into = (segment, "train") if self.funnel and segment in PARTS else (segment,)
                 controls = [self._control(symbol, rule["tf"], item, rule, picked, segment, kind) for kind in ("random", "leg")]
+                if self.funnel and controls[0] is None:
+                    # La moneda tiene muy pocas velas en ese tramo para armar su control al azar (menos de 50, o menos de
+                    # 50 que el filtro deje): no entra en ese tramo. Sin esto, sus trades dejaban a todo el tramo sin las
+                    # tres ventajas y la nota caía al cálculo viejo de dos controles
+                    continue
                 values = [c["avgR"] for c in controls if c and c["avgR"] is not None]
                 ctrl = max(values) if values else 0.0
                 rs = [t["r"] for t in picked]
@@ -699,7 +727,7 @@ def _distance(a, b):
     codes = lambda r: {c for s in r["recipe"]["slots"] for c in s["codes"]}
     if codes(ra) != codes(rb) or ra["tf"] != rb["tf"] or ra["invert"] != rb["invert"]:
         return 99
-    return sum(1 for k in ("stop", "exit", "entry", "lines", "rv", "pat", "cc", "gc", "liq", "bx", "be", "cp", "fv", "sp", "im", "flow", "regime")
+    return sum(1 for k in ("stop", "exit", "entry", "lines", "rv", "pat", "cc", "gc", "liq", "bx", "be", "cp", "fv", "sp", "im", "flow", "regime", "market")
                if ra.get(k) != rb.get(k)) \
         + (ra["recipe"]["window"] != rb["recipe"]["window"]) + (ra["recipe"]["min"] != rb["recipe"]["min"])
 
@@ -759,7 +787,8 @@ def _before(cfg, skip):
 
 
 def _other_markets(cfg, out, job):
-    if cfg.get("checkNew", True) and rt.new_symbols():
+    group = cfg.get("group", "base")
+    if cfg.get("checkNew", True) and group == "base" and rt.new_symbols():
         # Las finalistas en las monedas nuevas, en toda su fase 1: datos que la búsqueda nunca vio. Solo informa
         fresh = Evaluator(cfg, lambda text: job.update(stage=f"Monedas nuevas: {text}"), group="new")
         for number, item in enumerate(out, 1):
@@ -767,6 +796,14 @@ def _other_markets(cfg, out, job):
             result = fresh.evaluate(item["rule"])
             item["newCoins"] = {"train": result["train"], "hold": result["hold"], "coins": result["coins"],
                                 "all": _pooled(result)}
+    if cfg.get("checkNew", True) and group == "new":
+        # Buscando con las monedas nuevas, las que no eligieron nada son las de siempre
+        usual = Evaluator(cfg, lambda text: job.update(stage=f"Monedas de siempre: {text}"), group="base")
+        for number, item in enumerate(out, 1):
+            job.update(stage=f"Monedas de siempre: finalista {number} de {len(out)}")
+            result = usual.evaluate(item["rule"])
+            item["baseCoins"] = {"train": result["train"], "hold": result["hold"], "coins": result["coins"],
+                                 "all": _pooled(result)}
     if cfg.get("checkStocks", True) and rt.stock_symbols():
         stocks = Evaluator(cfg, lambda text: job.update(stage=f"Acciones: {text}"), group="stocks")
         for number, item in enumerate(out, 1):
@@ -922,7 +959,7 @@ def _pooled(result):
 def _work(state, job):
     cfg = state["config"]
     rng = random.Random(f"{cfg['seed']}-{state['generation']}")
-    evaluator = Evaluator(cfg, lambda text: job.update(stage=text))
+    evaluator = Evaluator(cfg, lambda text: job.update(stage=text), group=cfg.get("group", "base"))
     try:
         population = state.get("population") or []
         if not population:

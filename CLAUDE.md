@@ -55,6 +55,27 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 23 Noviembre 2026: Filtro de Mercado, Búsqueda con las Monedas Nuevas y la Regla del VPA por Tramos
+
+**Pedido:** usar el embudo para buscar variaciones de la ruptura con volumen del VPA, la regla que había pasado las tres fases. Tras ver su resultado por tramos, el usuario pidió las dos cosas que faltaban: buscar con las monedas nuevas y un filtro de régimen para la regla.
+
+**Cambios:**
+1. **Filtro de mercado** en la regla del backtesting global (Filtros → Tendencia): seis casillas con la tendencia (subida, bajada, rango) y la volatilidad (alta, baja) de 4 horas al cerrar la vela de la señal. Los controles al azar entran solo donde él deja. Sin filtrar nada, la regla conserva su identidad.
+2. **Búsqueda:** el filtro de mercado como pieza (casilla "mercado") y "Elegir con": las 7 monedas de siempre, las nuevas o todas.
+3. **Corregido:** una moneda con muy pocas velas en un tramo dejaba al tramo entero sin las tres ventajas. Ahora esa moneda no entra en ese tramo.
+4. **Pruebas:** `test_market_filter.py` (6). Las demás del probador y de la búsqueda siguen pasando.
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar la página. Si algo nuevo no aparece, mirar si quedó un backend viejo vivo en el 9000.
+- **La regla del VPA no pasa con el criterio del motor 6.** En la fase 1 gana algo contra el azar simple, pero contra el azar de su trimestre y lado queda en cero, en las de siempre y en las nuevas. Su nota en el embudo es negativa: no llegaría a la puerta.
+- **Quitarle la subida con volatilidad alta no la arregla:** mejora dos de tres tramos en las de siempre y nada en las nuevas.
+- Buscar con las monedas nuevas tarda unas 5 veces más por regla (10 s contra 45 s en esta regla).
+- Probado con datos reales, solo leyendo. La ventana compila, pero no se vio en pantalla.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "EMBUDO DE LA BÚSQUEDA (23/11/2026)", "Filtro de mercado, grupo de monedas y la regla del VPA por tramos"
+
+---
+
 ### Altagracia Trading Suite - 23 Noviembre 2026: El Scanner Mide a Todas las que Llegan y Retoma sus Listas al Reiniciar
 
 **Pedido:** el usuario preguntó qué seguía en el plan del scanner. El registro de su suite de esa mañana mostró dos fallos del paso 1, y pidió corregirlos.
