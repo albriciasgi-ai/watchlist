@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Embudo de la Búsqueda
+
+La búsqueda genética parte la fase 1 en tres tramos con hueco: trabaja en dos y califica por el peor; el tercero es una puerta que solo miran las mejores, con cupo, y cuyo margen sube con cada mirada, también las de búsquedas anteriores. A la fase 2 quedan pocas. Las finalistas traen su resultado por régimen (tendencia y volatilidad de 4 horas). Las búsquedas guardadas siguen con sus dos tramos. Detalle en `Backtester/CLAUDE.md`, "EMBUDO DE LA BÚSQUEDA (23/11/2026)".
+
 ### Noviembre 2026: Monte Carlo de Trades, Frecuencia de la Señal y Figuras del Entrenador
 
 Del análisis de LuxAlgo Quant, lo que el usuario quiso: Monte Carlo de los trades en el dashboard, en el journal de la suite y en el probador (por semanas de salida); "Frecuencia de la señal" en el probador, una pregunta sin entrada ni salida, solo en la fase 1 y contra una vela cualquiera, y figuras que Claude dibuja en una capa aparte al entrenar. El embudo de búsqueda por tramos queda por hacer. Detalle en `Backtester/CLAUDE.md`, "MONTE CARLO, FRECUENCIA DE LA SEÑAL Y FIGURAS DEL ENTRENADOR (23/11/2026)".

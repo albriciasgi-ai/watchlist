@@ -82,6 +82,28 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### App 1 - 23 Noviembre 2026: Embudo de la Búsqueda
+
+**Pedido:** del análisis de LuxAlgo Quant, que lo que se gasta probando reglas quede en la fase 1 y las fases 2 y 3 lleguen limpias. Diseño acordado el 23/11.
+
+**Cambios** (búsqueda genética del backtesting global, `rule_search.py`):
+1. **Tres tramos de la fase 1**, con un hueco de 30 días tras cada corte (2022-01-01 y 2023-01-01). La búsqueda trabaja en los dos primeros y califica cada regla por el peor.
+2. **La puerta** es el tercer tramo: mientras se busca no se calcula para nadie. Al terminar la miran solo las mejores que ganaron en sus dos tramos, con un cupo de 10.
+3. **El margen sube con las miradas:** 1.64 errores con una, 2.58 con 10. Cuentan también las de búsquedas anteriores con el mismo corte. A la fase 2 quedan a lo sumo 5.
+4. **Lo ya gastado:** el umbral de suerte sale por tramo y con todas las reglas de las búsquedas guardadas.
+5. **Régimen de cada trade** (`trade_regime.py`): tendencia y volatilidad de 4 horas al entrar, en una tabla por finalista. Solo describe.
+6. **Pruebas:** `test_search_funnel.py` (9). Las demás de la búsqueda siguen pasando.
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar la página.
+- Una búsqueda guardada sigue con sus dos tramos, también al retomarla. "Embudo" se puede desmarcar.
+- **No está hecho:** buscar reglas especializadas dentro de un régimen, ni la fase 2 con una sola mirada para varias finalistas.
+- Probado con una búsqueda corta sobre las 7 monedas reales en 4h (141 reglas, 47 minutos, en una carpeta temporal). No se vio la pestaña en pantalla ni se corrió una búsqueda larga.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "EMBUDO DE LA BÚSQUEDA (23/11/2026)"
+
+---
+
 ### App 1 + Altagracia Trading Suite + Entrenamiento - 23 Noviembre 2026: Monte Carlo de Trades, Frecuencia de la Señal y Figuras del Entrenador
 
 **Pedido:** del análisis de LuxAlgo Quant, construir lo que el usuario eligió: el Monte Carlo de trades, los informes de frecuencia dentro del probador y que Claude pueda señalar en el gráfico en `/entrenar`.
