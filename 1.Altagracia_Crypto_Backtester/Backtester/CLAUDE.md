@@ -2774,7 +2774,12 @@ OrderFlowData/observer/tester/sweep/   {id}.json (cada barrido) y sweeps.jsonl (
 - **La nota** de cada prueba es el t del peor de sus dos tramos; si van en sentidos contrarios, cero. Una nota negativa y pareja dice que el elemento sirve al revés (de giro). Con menos de `minSignals` señales (50) en algún tramo, se muestra pero no se juzga.
 - **Umbral** (`gate`): sin ventaja, los dos tramos pasan de z a la vez con probabilidad (1 − Φ(z))² por sentido; se reparte el 5% entre las pruebas y sus dos sentidos. Con 49 pruebas son 2.0 errores en cada tramo; con 900, 2.6.
 - **El reparto, primero:** cuántas pruebas pasan de ±2 errores con los dos tramos juntos, contra el 4.6% que da el azar, y su histograma. Si se parecen, no hay nada, aunque la primera de la lista se vea bien.
-- **Parejas** (segundo paso): se marcan hasta 12 elementos y se barren sus parejas: las dos señales del mismo lado dentro de 3 velas, en la vela de la que llega después.
+- **Parejas** (segundo paso): las dos señales del mismo lado dentro de 3 velas, en la vela de la que llega después. Tres formas de elegirlas, sobre la tabla de un barrido de elementos (`pair_list`):
+  - **a mano:** se marcan elementos y se barren todas sus parejas entre sí;
+  - **dentro de una familia:** un clic en la familia marca sus elementos juzgados, y el mismo botón barre sus parejas;
+  - **entre dos familias** (`pairsB`): cada elemento de una con cada uno de la otra, sin las parejas internas.
+- **Familias** (`FAMILIES`, pedido del usuario tras el primer barrido): Volumen y VPA, Delta del footprint, Desequilibrios y agresión, Valor y POC, Estructura y SMC, Williams, Patrones de vela, Cajas, impulso y canal, e Interés abierto. Cada elemento está en una sola (lo vigila una prueba). La pestaña las recibe con `/api/sweep/list` y muestra solo los elementos que ese barrido juzgó.
+- **Tope:** 150 parejas por barrido (`MAX_PAIRS`) y 30 elementos por lista; `start()` no arranca con más y la pestaña dice cuántas van. Antes eran 12 elementos marcados.
 - **Monedas:** las 7 de siempre, las nuevas o todas. Los elementos de order flow solo existen en las monedas con almacén y hasta 4 horas.
 - Cada barrido queda anotado, y la pestaña dice cuántas pruebas suman entre todos.
 
@@ -2798,7 +2803,7 @@ OrderFlowData/observer/tester/sweep/   {id}.json (cada barrido) y sweeps.jsonl (
 
 ### Pruebas
 
-`tests/test_signal_sweep.py` (10): excursiones y quién llega primero, el control por trimestre, una señal con ventaja contra una al azar y una invertida, un mercado que solo sube, cada señal en su tramo y la puerta sin mirar, pocas señales y tramos opuestos, el umbral, las parejas, las señales iguales a las del probador, y la corrida guardada. La pestaña se vio en una página de prueba con un barrido real de 4 horas (reparto, tabla, detalle y parejas); no dentro del backtesting global.
+`tests/test_signal_sweep.py` (11): las familias y las parejas dentro de una o entre dos, excursiones y quién llega primero, el control por trimestre, una señal con ventaja contra una al azar y una invertida, un mercado que solo sube, cada señal en su tramo y la puerta sin mirar, pocas señales y tramos opuestos, el umbral, las parejas, las señales iguales a las del probador, y la corrida guardada. La pestaña se vio en una página de prueba con un barrido real de 4 horas (reparto, tabla, detalle y parejas). El usuario la corrió después dentro del backtesting global en 4 horas, con el mismo resultado. Las familias no se vieron en pantalla: la pestaña compila.
 
 ## EMBUDO DE LA BÚSQUEDA (23/11/2026)
 

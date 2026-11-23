@@ -42,6 +42,22 @@ MIN_SIGNALS = 50       # Por tramo: con menos, el elemento no se juzga
 PAIR_WINDOW = 3        # Velas en que tienen que coincidir los dos elementos de una pareja
 DAY_MS = 86400000
 SKIP_CODES = ("LIQ",)  # El barrido de liquidaciones recalcula las zonas en cada vela: va aparte
+MAX_PAIR_CODES = 30    # Elementos por lista de parejas
+MAX_PAIRS = 150        # Parejas por barrido: con más, el umbral sube y el azar llena la lista
+
+# Familias (23/11/2026, pedido del usuario): elementos que miden lo mismo, para marcarlos juntos y barrer sus parejas
+# dentro de una familia o entre dos. Cada elemento está en una sola
+FAMILIES = (
+    ("volume", "Volumen y VPA", ("VH", "RF", "RB", "QA", "QB", "QF", "QR", "QT", "QS", "QC", "QE")),
+    ("delta", "Delta del footprint", ("DT", "DD", "PD", "DB", "DV", "XD", "SM", "VD", "AD")),
+    ("imbalance", "Desequilibrios y agresión", ("IV", "ST", "VI", "IR", "RD", "SW", "VL", "SQ", "BR", "GR", "TP", "ZP", "EX", "RS", "RL", "RX")),
+    ("value", "Valor y POC", ("VA", "OG", "AP", "SL", "PW", "OP", "DA", "DC")),
+    ("structure", "Estructura y SMC", ("CC", "BS", "OB", "BK", "EQ", "FV", "SP")),
+    ("williams", "Williams", ("WD", "WA", "WF")),
+    ("candles", "Patrones de vela", ("HM", "EN", "DJ")),
+    ("range", "Cajas, impulso y canal", ("BX", "BE", "CP", "IM", "GC", "FB", "BA")),
+    ("oi", "Interés abierto", ("TA", "PO")),
+)
 
 _lock = threading.Lock()
 _jobs = {}
@@ -64,9 +80,15 @@ def clean_config(raw):
     except ValueError:
         split1, split = "2022-01-01", "2023-01-01"
     codes = [c for c in (raw.get("codes") or []) if isinstance(c, str)]
-    pairs = [c for c in (raw.get("pairs") or []) if isinstance(c, str)][:12]
+
+    def listed(key):
+        return list(dict.fromkeys(c for c in (raw.get(key) or []) if isinstance(c, str)))[:MAX_PAIR_CODES]
+
+    pairs = listed("pairs")
+    # pairsB: la otra lista de un cruce entre dos familias. Sin la primera no dice nada
+    pairs_b = listed("pairsB") if pairs else []
     return {"tf": tf, "group": group, "split1": split1, "split": split, "gapDays": int(rt._num(raw.get("gapDays"), 30, 0, 60)),
-            "flow": raw.get("flow") is not False, "codes": codes, "pairs": pairs,
+            "flow": raw.get("flow") is not False, "codes": codes, "pairs": pairs, "pairsB": pairs_b,
             "minSignals": int(rt._num(raw.get("minSignals"), MIN_SIGNALS, 20, 2000))}
 
 
@@ -180,6 +202,22 @@ def element_signals(symbol, tf, span, ctx, codes):
                 found.add((k, int(e["dir"])))
         # Una vela con la señal hacia los dos lados no dice una dirección (la compresión): no entra
         out[code] = {(k, side) for k, side in found if (k, -side) not in found}
+    return out
+
+
+def pair_list(cfg):
+    """Las parejas que pide el barrido. Con una lista, todas las de sus elementos entre sí (los marcados, o una
+    familia). Con dos, cada elemento de la primera con cada uno de la segunda (entre dos familias), sin las internas."""
+    first, second = cfg.get("pairs") or [], cfg.get("pairsB") or []
+    if second:
+        raw = [(a, b) for a in first for b in second if a != b]
+    else:
+        raw = [(a, b) for i, a in enumerate(first) for b in first[i + 1:]]
+    seen, out = set(), []
+    for a, b in raw:
+        if frozenset((a, b)) not in seen:
+            seen.add(frozenset((a, b)))
+            out.append((a, b))
     return out
 
 
@@ -350,7 +388,9 @@ def run(cfg, progress=None):
         codes = available_codes(symbol, tf, cfg["flow"])
         if cfg["codes"]:
             codes = [c for c in codes if c in cfg["codes"]]
-        codes = [c for c in codes if not cfg["pairs"] or c in cfg["pairs"]]
+        wanted = pair_list(cfg)
+        in_pairs = {c for pair in wanted for c in pair}
+        codes = [c for c in codes if not cfg["pairs"] or c in in_pairs]
         base_rule = rt.clean_rule({"tf": tf, "recipe": {"slots": [{"codes": [codes[0]]}]}}) if codes else None
         if base_rule is None:
             skipped.append(symbol)
@@ -363,11 +403,7 @@ def run(cfg, progress=None):
         ctx["bars"], ctx["lead"] = span["bars"], span["lead"]
         single = element_signals(symbol, tf, span, ctx, codes)
         if cfg["pairs"]:
-            signals = {}
-            for i, a in enumerate(cfg["pairs"]):
-                for b in cfg["pairs"][i + 1:]:
-                    if a in single and b in single:
-                        signals[f"{a}+{b}"] = pair_signals(single[a], single[b])
+            signals = {f"{a}+{b}": pair_signals(single[a], single[b]) for a, b in wanted if a in single and b in single}
         else:
             signals = single
         collector.add_coin(symbol, ctx, signals)
@@ -391,7 +427,8 @@ def _save(result):
     partial.replace(path)
     with open(sweep_dir() / "sweeps.jsonl", "a", encoding="utf-8") as fh:
         fh.write(json.dumps({"id": result["id"], "at": result["at"], "tf": result["config"]["tf"], "group": result["config"]["group"],
-                             "pairs": bool(result["config"]["pairs"]), "tests": result["tests"], "clear": result["clear"]}) + "\n")
+                             "pairs": bool(result["config"]["pairs"]), "cross": bool(result["config"].get("pairsB")),
+                             "tests": result["tests"], "clear": result["clear"]}) + "\n")
 
 
 def history():
@@ -404,7 +441,8 @@ def history():
                 rows.append(json.loads(line))
             except ValueError:
                 continue
-    return {"sweeps": rows[::-1], "tests": sum(r.get("tests") or 0 for r in rows)}
+    return {"sweeps": rows[::-1], "tests": sum(r.get("tests") or 0 for r in rows), "maxPairs": MAX_PAIRS,
+            "families": [{"id": key, "name": name, "codes": list(codes)} for key, name, codes in FAMILIES]}
 
 
 def load(sweep_id):
@@ -417,6 +455,11 @@ def load(sweep_id):
 
 def start(raw_config=None):
     cfg = clean_config(raw_config)
+    count = len(pair_list(cfg))
+    if cfg["pairs"] and not count:
+        return {"success": False, "message": "No hay parejas que barrer: hacen falta al menos dos elementos distintos."}
+    if count > MAX_PAIRS:
+        return {"success": False, "message": f"Son {count} parejas y el tope es {MAX_PAIRS} por barrido: con más, el azar llena la lista. Quita elementos o cruza familias más chicas."}
     with _lock:
         busy = next((j for j in _jobs.values() if j["state"] == "running"), None)
     if busy is not None:

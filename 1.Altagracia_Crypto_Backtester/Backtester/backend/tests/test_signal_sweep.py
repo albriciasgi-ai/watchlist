@@ -145,7 +145,7 @@ def test_el_umbral_sube_con_las_pruebas_y_la_configuracion_se_acota():
     assert sw.gate(900) > sw.gate(49) > sw.gate(10)
     cfg = sw.clean_config({"tf": 7, "group": "otra", "minSignals": 1, "split1": "2022-12-01", "pairs": ["A"] * 40})
     assert cfg["tf"] == 240 and cfg["group"] == "base" and cfg["minSignals"] == 20
-    assert (cfg["split1"], cfg["split"]) == ("2022-01-01", "2023-01-01") and len(cfg["pairs"]) == 12
+    assert (cfg["split1"], cfg["split"]) == ("2022-01-01", "2023-01-01") and cfg["pairs"] == ["A"] and cfg["pairsB"] == []
     assert [sw.clean_config({"tf": tf})["tf"] for tf in sw.SWEEP_TFS] == [5, 15, 60, 240, 1440]
 
 
@@ -156,6 +156,25 @@ def test_parejas_las_dos_señales_del_mismo_lado_en_la_ventana():
     assert sw.pair_signals(a, b) == {(11, 1), (50, 1)}
     assert sw.pair_signals(a, a) == a
     assert sw.pair_signals(a, set()) == set()
+
+
+def test_familias_cada_elemento_en_una_y_parejas_dentro_o_entre_dos():
+    codes = [c for _, _, family in sw.FAMILIES for c in family]
+    assert len(codes) == len(set(codes)) and "LIQ" not in codes
+    # Todo elemento que se puede barrer tiene familia
+    assert set(rt.CANDLE_CODES) - set(sw.SKIP_CODES) <= set(codes) and set(sw.oe.CATALOG) <= set(codes)
+    # Una lista: todas entre sí. Dos listas: solo las cruzadas, sin repetir ni emparejar un elemento consigo mismo
+    inside = sw.pair_list(sw.clean_config({"pairs": ["HM", "EN", "DJ", "HM"]}))
+    assert inside == [("HM", "EN"), ("HM", "DJ"), ("EN", "DJ")]
+    cross = sw.pair_list(sw.clean_config({"pairs": ["HM", "EN"], "pairsB": ["VH", "RF", "HM"]}))
+    assert cross == [("HM", "VH"), ("HM", "RF"), ("EN", "VH"), ("EN", "RF"), ("EN", "HM")]
+    assert sw.clean_config({"pairsB": ["VH"]})["pairsB"] == []
+    # El tope de parejas: no arranca
+    big = [c for _, _, family in sw.FAMILIES[:3] for c in family][:sw.MAX_PAIR_CODES]
+    answer = sw.start({"pairs": big})
+    assert answer["success"] is False and str(sw.MAX_PAIRS) in answer["message"]
+    assert sw.start({"pairs": ["HM"]})["success"] is False
+    assert [f["id"] for f in sw.history()["families"]] == [key for key, _, _ in sw.FAMILIES]
 
 
 def test_las_señales_de_un_elemento_son_las_de_su_regla_en_el_probador(monkeypatch):
@@ -190,6 +209,9 @@ def test_el_barrido_corre_guarda_y_cuenta_las_pruebas(monkeypatch, tmp_path):
     # Las parejas de los elegidos
     pairs = sw.run({**cfg, "pairs": ["RF", "HM", "EN"]})
     assert {r["key"] for r in pairs["rows"]} <= {"RF+HM", "RF+EN", "HM+EN"} and pairs["rows"]
+    # Entre dos familias: solo las cruzadas
+    cross = sw.run({**cfg, "pairs": ["RF"], "pairsB": ["HM", "EN"]})
+    assert {r["key"] for r in cross["rows"]} <= {"RF+HM", "RF+EN"} and cross["rows"]
     # Por la ruta: queda guardado y anotado
     answer = sw.start({"tf": TF, "codes": ["RF", "HM"], "split1": "2021-04-01", "split": "2021-10-01", "minSignals": 20})
     import time
