@@ -228,6 +228,18 @@ test('el medidor VPA leído en un marco mayor: ida y vuelta, en palabras y solo 
   assert.deepEqual(toBackendRule({ ...form, vpaTf: 0 }).vpaf, { mode: 'favor', thr: 0.5 }, 'sin pedirlo, la regla no cambia');
 });
 
+test('la EMA leída en un marco mayor (la tendencia de DX): ida y vuelta, en palabras y solo con un marco mayor', () => {
+  const form = { ...defaultRule(), tf: 30, elements: ['DX'], emaMode: 'side', emaPeriod: 200, emaTf: 240 };
+  const rule = toBackendRule(form);
+  assert.deepEqual(rule.lines, [{ type: 'ema', period: 200, mode: 'side', slope: false, tf: 240 }]);
+  assert.equal(fromBackendRule(rule).emaTf, 240);
+  assert.match(describeRule(rule), /a favor de EMA 200 de 4 horas/);
+  assert.match(ruleFacets(rule).map(f => f.text).join(' · '), /EMA 200 de 4 horas a favor/);
+  assert.deepEqual(toBackendRule({ ...form, emaTf: 0 }).lines, [{ type: 'ema', period: 200, mode: 'side', slope: false }], 'sin pedirlo, la regla no cambia');
+  assert.deepEqual(toBackendRule({ ...form, tf: 240, emaTf: 240 }).lines[0].tf, undefined, 'el marco de la regla no se envía');
+  assert.ok(ruleDifferences(toBackendRule(form), toBackendRule({ ...form, emaTf: 0 })).length > 0, 'cambiar el marco de la EMA es otra regla');
+});
+
 let failed = 0;
 for (const [name, run] of tests) {
   try {

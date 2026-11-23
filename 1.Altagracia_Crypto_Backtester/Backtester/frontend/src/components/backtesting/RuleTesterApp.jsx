@@ -1526,6 +1526,13 @@ const RuleTesterApp = () => {
             </select>
             <Check checked={rule.emaSlope} onChange={(emaSlope) => patch({ emaSlope })} title="La línea sube para un largo o baja para un corto, en las últimas 5 velas">pendiente a favor</Check>
           </div>
+          <div className="rt-row" title="La tendencia del marco mayor: la EMA y el cierre de sus velas, en la última ya cerrada al saberse la señal">
+            <span>leída en</span>
+            <select value={vpaFilterTf(rule.tf, rule.emaTf)} onChange={(e) => patch({ emaTf: Number(e.target.value) })}>
+              <option value={0}>el marco de la regla</option>
+              {VPA_FILTER_TFS.filter(([m]) => m > Number(rule.tf) && m % Number(rule.tf) === 0).map(([m, name]) => <option key={m} value={m}>{name} (marco mayor)</option>)}
+            </select>
+          </div>
         </Opt>
         <Opt id="regimen" label="Régimen: rango o fuera de él" on={rule.regimeMode !== 'any'} onToggle={toggleMode('regimeMode', 'any', 'outside')} title="Régimen de la vela de la señal, con el detector de la pestaña Régimen (eficiencia con caja afinada), sin futuro. Las entradas al azar de los controles quedan en el mismo régimen">
           <div className="rt-row">
