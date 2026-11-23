@@ -2743,6 +2743,53 @@ OrderFlowData/alpaca/flow/<SIM>/<AAAA>/<SIM>_<día>.npz   delta dentro del minut
 - días casi vacíos;
 - `START`.
 
+## EMBUDO DE LA BÚSQUEDA (23/11/2026)
+
+Pedido del usuario, del análisis de LuxAlgo Quant: su "bucle de backtest" prueba reglas hasta que una pasa y vuelve a usar los mismos datos reservados en cada intento. El usuario quiso lo contrario: que lo que se gasta probando quede en la fase 1 y las fases 2 y 3 lleguen limpias. Acordado el 23/11, sobre la búsqueda genética ("BÚSQUEDA GENÉTICA DE REGLAS").
+
+### Qué cambia
+
+- **Tres tramos de la fase 1**, seguidos en el tiempo (`Evaluator.bounds`): el primero hasta `split1` (2022-01-01), el segundo de ahí a `split` (2023-01-01) y el tercero desde `split` hasta el final de la fase 1.
+  - **Hueco** de `gapDays` días (30) tras cada corte: lo que miran hacia atrás las medidas. Un trade es de un tramo si entra desde su inicio y sale antes de su fin: los que cruzan un corte o caen en el hueco no son de ninguno.
+  - Los controles al azar de cada tramo entran solo en las velas de ese tramo.
+- **Aptitud por el peor tramo** (`fitness`): la búsqueda trabaja en los dos primeros y la nota de cada regla es la menor de las dos. Cada tramo pide la mitad de los trades mínimos. Una regla que gana en un tramo y no en el otro queda con la nota del malo. `train` sigue siendo los dos tramos juntos, y `parts` trae cada uno.
+- **La puerta** es el tercer tramo. Mientras se busca no se calcula para ninguna regla (`evaluate(..., gate=False)`: queda `hold.pending`). Antes, la validación se calculaba para todas, aunque no eligiera nada.
+  - Al terminar la miran solo las `gateQuota` mejores por aptitud (10; de 5 a 20), distintas entre sí, y solo si su aptitud pasa de cero: la que no ganó en sus dos tramos no gasta una mirada. Si ninguna ganó, nadie mira la puerta y el informe lo dice.
+  - **Pasa la puerta** la que ahí les gana a los tres controles del tablero, con al menos 30 trades y con vecinas que aguantan.
+  - **Con margen** (`strong`): les gana por más de `z` errores, donde `z` reparte el 5% entre todas las miradas a la puerta (`_gate_z`): 1.64 con una, 2.58 con 10, 2.81 con 20. Con "pedir también el margen" (`holdMargin`), sin él no pasa.
+  - **A la fase 2** quedan como candidatas a lo sumo `phase2Quota` (5; de 3 a 5): las que más le sacan a su control más exigente. Las demás quedan "fuera del cupo".
+- **Lo ya gastado cuenta** (`_before`): las miradas a la puerta de búsquedas anteriores con el mismo corte suben `z` (el viaje de vuelta, buscar otra vez tras fallar, también gasta). Y el umbral de suerte se da además con todas las reglas probadas en las búsquedas guardadas (`luckAllR`), y por tramo (`luckParts`).
+- **Régimen de cada trade** (`trade_regime.py`), solo en las finalistas: no filtra ni elige, describe en qué condiciones cayó cada trade.
+  - Con velas de 4 horas ya cerradas al entrar (las de la regla unidas en bloques de 4 horas; en 1D, las diarias).
+  - Tendencia: "subida" si el cierre está sobre la EMA 50 y la EMA subió más de 0.3 ATR en 10 velas; "bajada", el espejo; si no, "rango". Medido en BTC, ETH, SOL y TRX de 4 horas: sin mínimo, solo el 14% de las velas es rango; con 0.3 ATR, cerca de un tercio de cada una; con 1 ATR, el 78%.
+  - Volatilidad: "alta" si el ATR 14 sobre el precio pasa de su mediana de las 180 velas anteriores.
+  - El informe da, por régimen, trades, R medio y ventaja sobre el control de su moneda, en la búsqueda y en la puerta.
+- **Búsquedas guardadas:** una búsqueda anterior no trae `funnel` en su configuración y sigue con sus dos tramos, también al retomarla. "Embudo" se puede desmarcar en el formulario.
+
+### Ventana
+
+Pestaña "Búsqueda": casilla "Embudo: tres tramos y una puerta con cupo" (marcada de fábrica), primer corte, hueco, cupo de la puerta y cupo para la fase 2. El informe dice el umbral de suerte por tramo y con lo de antes, cuántas miraron la puerta y con qué margen. Cada finalista trae sus dos tramos, la puerta y la tabla por régimen. En "Mejores en el tramo de búsqueda", una regla que no fue finalista dice "sin mirar".
+
+### Lo que no está hecho
+
+- **Reglas especializadas por régimen** (idea del usuario, aceptada): buscar dentro de un régimen, con el tramo definido por régimen y no por fecha. Pide un filtro nuevo en la regla del probador.
+- **La fase 2 con una sola mirada** para 3 a 5 finalistas y umbral ajustado por ese número: hoy la fase 2 se corre regla por regla desde la pestaña "Regla", y el tablero pide el margen.
+- La cuenta de lo gastado no incluye las reglas corridas a mano en la fase 1 (esas las cuenta el Historial) ni los informes de frecuencia.
+
+### Probado
+
+Una búsqueda corta con las 7 monedas reales en 4 horas (FVG nuevo, Impulso, Ruptura de caja y flecha; 14 reglas por 3 generaciones, cupo de 5), con el registro de búsquedas en una carpeta temporal:
+- 141 reglas probadas; 136 nunca miraron la puerta y 5 sí;
+- umbral de suerte de 0.24 R en el primer tramo y 0.19 R en el segundo; con 5 miradas la puerta pidió 2.33 errores;
+- ninguna de las 5 había ganado en sus dos tramos (la mejor aptitud fue −0.11), y aun así una pasó la puerta sin margen. Por eso desde entonces solo llega a la puerta la que tiene aptitud sobre cero: con esa regla, esta búsqueda no habría gastado ninguna mirada;
+- tardó 47 minutos, casi todo en las vecinas de las finalistas (dos de ellas, 10 y 21 minutos). Eso ya era así; con un cupo de 10 el cierre puede tardar el doble que con las 5 finalistas de antes.
+
+La pestaña compila, pero no se vio en pantalla. No se corrió una búsqueda larga ni se comparó con una búsqueda guardada de dos tramos.
+
+### Pruebas
+
+`tests/test_search_funnel.py` (9): configuración, cada trade en un solo tramo, que la búsqueda no mire la puerta y que lo posterior no cambie sus tramos, la aptitud del peor tramo, el margen según las miradas, el cupo de la puerta y de la fase 2, lo gastado en búsquedas anteriores y el régimen sin futuro. `tests/test_rule_search.py` (9) sigue probando los dos tramos.
+
 ## MONTE CARLO, FRECUENCIA DE LA SEÑAL Y FIGURAS DEL ENTRENADOR (23/11/2026)
 
 Pedido del usuario tras el análisis de LuxAlgo Quant (17/11): de lo que ofrece esa app, quiso el Monte Carlo de trades, los informes de frecuencia dentro del probador y que Claude pueda señalar en el gráfico en `/entrenar`. Descartó el bucle de búsqueda tal cual, los avisos que despiertan a la IA (la central de confluencia de la suite va sin IA), Pine Script desde una frase y las prop firms. El embudo de búsqueda por tramos, también acordado, **no está hecho**.
