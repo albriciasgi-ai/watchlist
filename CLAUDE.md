@@ -55,6 +55,48 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 22 Noviembre 2026: Scanner de Monedas para la Watchlist (plan y paso 1)
+
+**Pedido:** un scanner que busque en Bybit las mejores monedas para operar según las condiciones del mercado y las muestre en la Watchlist de la suite, con el Pump Screener de WunderTrading como referencia. Primero, averiguar qué variables mirar y pensar a fondo qué hace falta. Con el plan aprobado, el paso 1. Decidido con el usuario:
+- órdenes de 1,000 USDT de fábrica;
+- cripto e innovación, sin las ST;
+- las monedas del scanner no se graban hasta agregarlas a la suite;
+- LPT, TRB y KAS se quedan.
+
+**Cambios:**
+1. **Plan** `docs/PLAN_SCANNER.md`:
+   - la evidencia: screeners, "Stocks in Play" (elegir por volumen relativo), momentum, reversión en poco volumen, OI, funding y costo;
+   - lo medido en Bybit (scripts y foto en `OrderFlowData/research/scanner/2026-11-22/`);
+   - el diseño, cómo probar si sirve y cuatro pasos.
+2. **Scanner en el servidor** (`server/scanner.py`):
+   - mira los 831 perpetuos USDT con un pedido cada 30 s y elige candidatas por liquidez (unas 77);
+   - mide, para cada una, el costo de operar en R, el volumen relativo contra días del mismo tipo, el movimiento propio contra BTC, la volatilidad, el OI y el funding;
+   - arma las listas En juego, Tendencia con fuerza, Rápidos y Mis monedas, con el estado del mercado;
+   - anota cada vuelta para juzgarlo después. Nunca envía nada.
+3. **En la Watchlist:**
+   - botón "Scanner" con su panel;
+   - la cuadrícula puede mostrar las monedas de una lista (o las dos), con el porqué en cada celda;
+   - fijar una moneda, "Agregar a la suite" y abrirla en el gráfico principal ("· sin grabar").
+4. **Pruebas:** `scanner_checks.py` (100). Pasan también las demás del servidor y de la página.
+
+**IMPORTANTE:**
+- **La suite se reinicia sola al abrirla y arma la página nueva.** El scanner arranca 30 s después y su primera vuelta tarda de 40 a 74 s.
+- **Probado en una copia aislada** con Bybit real (sin grabar ni bot), a 1366×768 en Nítido y Oscuro:
+  - 77 candidatas, unos 310 pedidos por vuelta, sin rechazos;
+  - el proceso sube unos 35 MB;
+  - En juego, con 16 o 17 monedas, la encabezó PIEVERSE (volumen ×69, costo 0.02 R).
+
+  No se vio la lista Rápidos en vivo ni en Electron.
+- **Lo que vale la pena saber:**
+  - la comisión taker de ida y vuelta es 0.14 ATR de 1 h en BTC: las más baratas en R son las líquidas que se mueven;
+  - 8 de las 20 monedas de fábrica mueven menos de 10 M USD por día;
+  - la suite no acepta monedas de una letra (H, A, B…): el scanner las mira.
+- **Falta** (pasos 2 a 4): posicionamiento y listas Compresión y Posicionamiento extremo; el estudio en App 1 de si elegir por volumen relativo mejora las reglas, con el universo sin sesgo de supervivencia (Bybit da las 321 cerradas con sus velas); y, si lo confirma, los detectores y la central de alertas.
+
+**Ver:** `docs/PLAN_SCANNER.md` y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Scanner (22/11)"
+
+---
+
 ### App 1 - 22 Noviembre 2026: La EMA Leída en un Marco Mayor y DX con T1 por el Probador
 
 **Pedido:** que el probador lea la EMA en velas de 4 horas y correr DX con T1 (el cierre de 4 horas a favor de su EMA 200) en la fase 1, con sus controles.

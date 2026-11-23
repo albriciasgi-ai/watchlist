@@ -28,6 +28,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 - **Lector VPA (21/11):** el indicador de App 1 en el gráfico y en la Watchlist (lista de livianos), con su modal. Ver `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md`, "LECTOR VPA". El servidor no lo detecta.
 - **Puerta móvil (21/11):** fase 1 de la app Android: celulares emparejados, vigilante de eventos y avisos push, apagada de fábrica. Ver "Puerta móvil".
 - **DX en vivo (22/11):** el servidor registra la hipótesis de los apilados desplazados con la regla y el código del probador de App 1, y mide la ejecución con la cinta, sin enviar nada. Ver "DX en vivo".
+- **Scanner (22/11):** mira todos los perpetuos USDT de Bybit y arma listas para la Watchlist (En juego, Tendencia con fuerza, Rápidos y Mis monedas), con el costo de operar en R y el estado del mercado. Solo mira: no envía nada ni graba esas monedas. Ver "Scanner".
 - **Falta:**
   - la app Android (fases 2 a 4 de "Puerta móvil");
   - las alertas del Swing quedan para la central de alertas de confluencia;
@@ -72,13 +73,14 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── wise_smc_watch.py  Sabios de Williams y estructura SMC del servidor (williams.py y smc.py de App 1): anota en data/wsmc; nunca envía
 │   ├── wise_smc_measures.py   Medidas de Williams y SMC de cada trade del journal (grupo "Williams y SMC")
 │   ├── dx_watch.py        DX en vivo: la regla del probador de App 1 sobre el almacén en vivo; anota en data/dx y nunca envía
+│   ├── scanner.py         Scanner de monedas (22/11): todos los perpetuos USDT de Bybit, listas y estado del mercado; anota en data/scanner y nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
 │   ├── alpaca_data.py     Acciones de EE. UU. desde Alpaca: trades con lado del agresor, footprints, velas y OI de opciones (ver "Alpaca")
 │   ├── mobile_devices.py  Celulares emparejados y pedidos firmados (ver "Puerta móvil")
 │   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
 │   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16) y dx_checks.py (48), sin conexión
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (48) y scanner_checks.py (100), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -98,7 +100,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── botNotifications.js   Avisos de Windows del bot (solo la pestaña 1)
         ├── openDecision.js    Lo elegido para un trade que se abre (su decisión en el journal), para la imagen de apertura
         ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
-        ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing
+        ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing; desde el 22/11, también las del scanner
+        ├── ScannerPanel.jsx   Panel del scanner en la Watchlist: estado del mercado, listas con su porqué, detalle de cada moneda y ajustes
         └── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
     └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5) y tapelines.test.mjs (6), con node
 ```
@@ -1154,6 +1157,78 @@ Paso 4 del plan de las estrategias de Byko y Dale (`docs/PLAN_ESTRATEGIAS_BYKO_D
   - con la suite cerrada no registra; al abrirla, pone al día lo que grabó la nube;
   - el deslizamiento no mira la profundidad del libro: una orden grande deslizaría más.
 
+## Scanner (22/11)
+
+Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el usuario el 22/11: buscar en Bybit las mejores monedas para operar según las condiciones del mercado y verlas en la Watchlist. Decidido con él: órdenes de 1,000 USDT de fábrica (opera con menos de 1,000; en la Demo prueba con cualquier monto); cripto y zona de innovación, sin las ST; las monedas del scanner no se graban hasta "Agregar a la suite"; LPT, TRB y KAS se quedan en la suite.
+
+- **Solo mira:** lee datos públicos de Bybit. Nunca envía nada al bot, no agrega monedas a la suite y no graba su libro ni su cinta.
+- **Cómo calcula** (`server/scanner.py`):
+  - cada 30 s, un pedido: el ticker de todos los perpetuos USDT (831 el 22/11), con precio, turnover, OI, funding y mejor compra y venta;
+  - candidatas: las de los grupos elegidos con 5 M USD o más en 24 h (hasta 150), más BTC y las de la suite;
+  - de cada candidata, velas de 15 min de 31 días (3 pedidos la primera vez, después uno cada 15 min) y el OI de 15 min. Las velas se guardan en arreglos de números (`BarStore`) y se arman de a una moneda al calcular;
+  - el libro (50 niveles; 500 si no alcanza) de 40 candidatas cada 5 min: primero las de las listas, después las que cumplen la regla de una lista, después las de más volumen relativo. El detalle de una moneda trae el suyo al día;
+  - cada 6 h, `instruments-info` (grupo con `symbolType`, etiqueta ST, alta, tick e intervalo del funding) y los anuncios de cierre (`/v5/announcements/index`, `type=delistings`);
+  - todo pedido pasa por `candles.bybit_turn()`. Arranca 30 s después del servidor, para no sumarse a la carga inicial.
+- **Medidas** (solo velas cerradas):
+  - volumen relativo de 1 h, 4 h y 24 h contra la misma ventana a la misma hora de los 30 días anteriores, de días del mismo tipo (entre semana o fin de semana; con menos de 4, todos los días);
+  - retornos y movimiento propio (retorno − beta × retorno de BTC; beta y correlación de 30 días con retornos de 1 h);
+  - ATR de 1 h, 4 h y diario, su expansión, eficiencia de 7 días, lugar en el rango de 30 días y ruptura del máximo o mínimo de 20 días;
+  - OI de 1 h, 4 h y 24 h con el cuadrante precio-OI, y funding llevado a 8 h y por día;
+  - costo de ida y vuelta (comisión taker 0.055% por lado, spread y deslizamiento para el tamaño) y en R de un stop de 1 ATR de 1 h y de 1.5 ATR de 4 h; con entrada limit, la comisión maker. Sin libro, estimado con el spread mediano de la última hora (`cost_estimated`);
+  - banderas: innovación, ST, menos de 30 días, acción o ETF (con su bolsa cerrada), anuncio de cierre, funding extremo, libro fino o que no alcanza, pocas velas y una semana bajo el piso (solo las de la suite, `liquidity.json`).
+- **Listas:**
+  - **En juego:** libro suficiente (ida y vuelta de 20 bps o menos para el tamaño) y volumen relativo de 24 h de 1.5 o más, o de 1 h de 3 o más. Ordena por el de 24 h;
+  - **Tendencia con fuerza:** libro suficiente, rompe el máximo o el mínimo de 20 días, eficiencia de 7 días en el tercio alto (al menos 0.15) y movimiento propio de 7 días a favor;
+  - **Rápidos:** precio 1% y OI +4% en 5 min, o precio 10% y OI +1% en 15 min, con 1 M USD por día o más (los ejemplos del Pump Screener de WunderTrading), en todo el universo de los grupos elegidos;
+  - **Mis monedas:** las de la suite, de más a menos turnover.
+- **Entrar y salir:**
+  - para entrar a En juego o Tendencia hace falta el libro medido; con el estimado entraban libros finos que salían al medirse;
+  - una moneda que deja de cumplir su regla sigue `hold_min` (60 min), marcada "(sale)" y al final de la lista;
+  - si ya no se puede operar (libro fino, grupo que no se mira, ST), sale en el acto;
+  - en Rápidos queda 30 min desde el último aviso;
+  - cada entrada y salida queda en `data/scanner/events/AAAA-MM-DD.jsonl`, con su porqué.
+- **Estado del mercado:** BTC (24 h, 7 días, promedio de 20 días, eficiencia, ATR diario contra su año), amplitud, dispersión (rango intercuartil de los retornos de 24 h), correlación con BTC de 7 y 30 días, parte mejor que BTC, funding y cambio del OI ponderados por OI, volumen relativo mediano, sesión y fin de semana. La lectura (en bloque: correlación ≥ 0.70 y dispersión ≤ 3 puntos; cada una por su lado: correlación < 0.50 o dispersión ≥ 6) es una hipótesis del plan.
+- **Registro para juzgarlo:** cada 15 min, en `data/scanner/log/AAAA-MM-DD.jsonl.gz` (un miembro gzip por vuelta, `Scanner.read_log` lo lee y salta un final cortado), la configuración, el mercado, las listas y 34 medidas de cada candidata.
+- **Datos** en `data/scanner`: `config.json` (con temporal y reemplazo; uno dañado no se pisa y el scanner queda apagado), `log/`, `events/`, `liquidity.json` y `scanner.lock` (un solo proceso por carpeta). `SUITE_SCANNER=0` lo apaga; sin esa variable vale `SUITE_SWING`, que las pruebas ponen en 0.
+- **Rutas:**
+
+| Ruta | Qué hace |
+|---|---|
+| `GET /api/scanner/status` | Si mira, universo por grupo, candidatas y cargadas, última vuelta (`cycle`, con `compute_seconds`), libros (`books`), cuántas hay en cada lista y los errores. `sends: false`. `/api/suite/status` trae `scanner` |
+| `GET /api/scanner/list?lista=enjuego\|tendencia\|rapidos\|mias&limit=` | Las filas de una lista con sus medidas, `chips` (el porqué), `flags` (los avisos) y `member` (desde cuándo, dirección y si está "saliendo"), su regla en palabras, el estado del mercado y la configuración |
+| `GET /api/scanner/coin/{símbolo}` | Todas las medidas de una moneda, en qué listas está y si es candidata. Si su libro tiene más de 5 min, lo pide antes |
+| `GET /api/scanner/market` | El estado del mercado |
+| `GET /api/scanner/events?limit=&day=&lista=` | Entradas y salidas, las más nuevas primero |
+| `GET/POST /api/scanner/config` | `enabled`, `size_usdt`, `floor_usd`, `max_candidates`, `groups`, `allow_st`, `taker_pct`, `maker_pct`, `stop_atr1h`, `stop_atr4h`, `book_max_bps`, `rvol24_min`, `rvol1h_min`, `hold_min` y `fast`. Un valor inválido o un campo desconocido: 400 y nada cambia. No mueve dinero: sin palabra de confirmación |
+
+- **En la Watchlist** (`WatchlistView.jsx`, `ScannerPanel.jsx`):
+  - botón "Scanner" en la barra, junto a "Panel del Swing": los dos paneles van en el mismo lugar, uno a la vez. Cuando la cuadrícula muestra el scanner, el botón dice la lista ("Scanner · En juego");
+  - la cuadrícula elige sus monedas: "Mis monedas" (de fábrica, como antes), "Las del scanner" o "Las dos", con la lista y cuántas (6 a 20; 12 de fábrica). Las que ya se ven conservan su lugar y una nueva entra al final. Solo con "Mis monedas" se arrastra para ordenar;
+  - en la cabecera de cada celda, el primer motivo, el costo en R (verde hasta 0.10, rojo desde 0.20; * = estimado) y "!" con los avisos;
+  - el panel: estado del scanner (encender o apagar), la cuadrícula, el estado del mercado, las cuatro listas con su regla, una tabla (moneda, porqué y R) y, con un clic, el detalle: medidas, costo, libro, si está en la suite y en el bot, y "Abrir en el gráfico", "Fijar en la cuadrícula" y "Agregar a la suite" (con confirmación; avisa que empieza a grabar). Debajo, las últimas entradas y salidas y "Ajustes del scanner";
+  - una moneda fijada se ve siempre; fijarla con "Mis monedas" pasa la cuadrícula a "Las dos";
+  - las monedas del scanner muestran los indicadores livianos de siempre (salen de las velas). Sin grabar, no tienen footprints ni libro;
+  - el gráfico principal abre una moneda que no es de la suite: su selector la agrega como "· sin grabar" (`ChartView.jsx`).
+- **Limitaciones:**
+  - la suite no acepta monedas de una sola letra (H, A, B…; `symbols.py` pide 2 a 20): el scanner las mira y el panel lo dice en lugar de ofrecer "Agregar a la suite";
+  - mira solo con la suite abierta: el registro tiene huecos con el PC apagado;
+  - con más de 40 candidatas que cumplen una regla, las demás esperan su libro para entrar.
+- **Probado** (22/11, copia aislada en 13300 con datos temporales, sin grabar ni bot, Bybit real; la Watchlist a 1366×768, en Nítido y Oscuro):
+  - 831 perpetuos (406 cripto, 110 innovación, 245 acciones, 62 ETF, 4 materias primas y 4 forex) y 77 a 78 candidatas;
+  - la primera vuelta tardó de 40 a 74 s (unos 310 pedidos, ningún rechazo de Bybit), las medidas 1.3 s y los libros de 40 monedas de 4 a 17 s;
+  - memoria del proceso: de 96 a 131 MB de trabajo tras la primera vuelta. Con las velas como diccionarios eran 256 MB;
+  - En juego, de 16 a 17 monedas, con PIEVERSE (volumen de 24 h ×69, 261 M USD, costo 0.02 R) arriba; el oro tokenizado (XAUT, PAXG) entró con 0.26 R. Tendencia, entre 0 y 1: el mercado estaba entrecortado (eficiencias de 7 días de 0.02 a 0.15). Lectura: "mixto" (correlación 0.66, dispersión 3.9 puntos);
+  - la cuadrícula con "Las del scanner" y "Las dos" (32 celdas), una fijada, ajustes guardados y uno inválido rechazado, "Agregar a la suite" (en la copia) y XVG abierta en el gráfico principal como "XVGUSDT · sin grabar".
+
+  No se vio la lista Rápidos en vivo (no hubo un movimiento así), ni en Electron, ni "Agregar a la suite" grabando de verdad.
+- **Hallado al probar y corregido:**
+  - toda moneda salía "(sale)" entre dos revisiones: se medía contra la hora del pedido (`evaluated_at`);
+  - las monedas de una letra quedaban fuera del universo (13);
+  - los libros finos entraban con el costo estimado y salían al medirse;
+  - una moneda en tendencia sin volumen alto podía quedar sin libro y no entrar nunca.
+- **Pruebas:** `tests/scanner_checks.py` (100), sin conexión, con un Bybit falso: lectura de instrumentos, tickers, velas y anuncios; volumen relativo por tipo de día; ATR, eficiencia, correlación y beta; costo con un libro conocido y en R; candidatas, listas, entrar y salir, la lista rápida y el orden de los libros; registro con un final cortado, eventos, liquidez, candado, configuración y rutas.
+- **Falta** (pasos 2 a 4 del plan): posicionamiento (proporción de cuentas, liquidaciones, Hyperliquid de todas las monedas), las listas Compresión y Posicionamiento extremo, "candidata a quitar" más visible, el estudio en App 1 ("¿aporta elegir por volumen relativo?", con el universo sin sesgo de supervivencia) y, si lo confirma, los detectores y la central de alertas sobre las monedas del scanner.
+
 ## Escritorio (Electron)
 
 Pedido del usuario (12/11): que la app no se congele por inactividad (el navegador frena las pestañas en segundo plano) y no pierda datos ni alertas. La página es la misma que sirve el servidor; Electron solo la muestra sin ese freno.
@@ -1200,6 +1275,7 @@ C:\Python314\python.exe -B tests\book_levels_checks.py
 C:\Python314\python.exe -B tests\book_defense_checks.py
 C:\Python314\python.exe -B tests\book_events_checks.py
 C:\Python314\python.exe -B tests\wise_smc_checks.py
+C:\Python314\python.exe -B tests\scanner_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.

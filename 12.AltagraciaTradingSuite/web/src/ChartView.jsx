@@ -1146,6 +1146,8 @@ export default function ChartView({ active = true, onOpenBot, onOpenTheme, onOpe
           <span className="app-title">📊</span>
           <select className="suite-select symbol-select" value={symbol} onChange={(e) => setSymbol(e.target.value)} aria-label="Moneda">
             {symbols.map(s => <option key={s} value={s}>{s}</option>)}
+            {/* Una moneda abierta desde el scanner de la Watchlist (22/11) que no es de la suite: sin grabar su libro ni su cinta */}
+            {symbol && symbols.length > 0 && !symbols.includes(symbol) && <option value={symbol}>{symbol} · sin grabar</option>}
           </select>
           {adding ? (
             <span className="suite-add">
