@@ -87,7 +87,7 @@ def _info(source, data):
         "ranges": _ranges(data),
         "days": int(len(np.unique(data["start"] // DAY_MS))),
         "count": int(len(data["known"])),
-        "cell_width": float(np.max(data["high"] - data["low"])),
+        # Sin "cell_width" de todo el archivo (F-16): window() lo da con lo conocido hasta su corte (known_width)
     }
 
 
@@ -104,6 +104,9 @@ def _sources(symbol):
         if not cached or cached[0] != stamp:
             try:
                 data = _parse(path, source["kind"])
+                if data is not None:
+                    # La celda más ancha conocida hasta cada celda (van ordenadas por known): ver known_width
+                    data["wmax"] = np.maximum.accumulate(data["high"] - data["low"])
                 cached = (stamp, data, _info(source, data) if data is not None else None)
             except (OSError, ValueError, KeyError):
                 # El archivo se esta escribiendo: sigue la lectura anterior
@@ -112,6 +115,19 @@ def _sources(symbol):
         if cached[1] is not None:
             found.append((cached[1], cached[2]))
     return found
+
+
+def known_width(data, stop):
+    """El ancho de la celda más ancha entre las primeras `stop` de la fuente (las ya conocidas: `data` va ordenada por
+    known). Las franjas de las zonas no pueden ser más finas que eso. Protocolo de pruebas, F-16 (22/11/2026): antes
+    salía de todo el archivo (`cell_width` de `_info`), así que una celda ancha de 2025 cambiaba las franjas de 2021 y
+    cada descarga nueva podía mover las zonas pasadas."""
+    if stop <= 0:
+        return 0.0
+    wmax = data.get("wmax")
+    if wmax is not None:
+        return float(wmax[stop - 1])
+    return float(np.max(data["high"][:stop] - data["low"][:stop]))
 
 
 def coverage(symbol):
@@ -143,7 +159,9 @@ def window(symbol, start_ms, end_ms, known_until=None):
         cells = [[k, s, e, lo, hi, round(lg, 2), round(sh, 2), src] for k, s, e, lo, hi, lg, sh, src in zip(*columns)]
     return {
         "cells": cells,
-        "sources": [info for _, info in sources],
+        # El ancho de celda de cada fuente, con lo conocido hasta el corte (F-16)
+        "sources": [{**info, "cell_width": known_width(data, int(np.searchsorted(data["known"], cut, side="right")))}
+                    for data, info in sources],
         "start": start_ms,
         "known_until": cut,
         "truncated": truncated,

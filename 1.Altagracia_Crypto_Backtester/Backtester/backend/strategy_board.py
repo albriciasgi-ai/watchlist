@@ -9,7 +9,9 @@ monedas (las de siempre y las nuevas), para compararlas sin depender de la memor
   y el tramo al azar solo si lo tienen todas las monedas con trades. Lo que da es el mismo número que ese informe.
 - "Pasa" con el criterio acordado con el usuario el 19/11: la ventaja sobre los dos controles es positiva y su margen
   (1.96 errores) no toca el cero; y además la regla gana (R medio positivo): perder menos que el azar no es ganar.
-  Sin el control del tramo se juzga solo contra el azar y la celda lo dice.
+  Sin el control del tramo se juzga solo contra el azar y la celda lo dice. Desde el 22/11 (protocolo de pruebas):
+  también contra el azar del trimestre y el lado de cada trade (B-07), y el margen sale con los trades agrupados por la
+  semana de su salida (B-08), como el informe "Todas".
 - Para no abrir todas las corridas en cada consulta, el resumen de cada una se guarda en cache/run_stats_v1.json la
   primera vez: una corrida guardada no cambia.
 - El usuario anota en cada estrategia un estado (candidata, en prueba, descartada) y una nota (strategy_notes.json).
@@ -35,7 +37,7 @@ _preparing = {"running": False, "done": 0, "total": 0}
 
 
 def _stats_path():
-    return rt.tester_dir() / "cache" / "run_stats_v3.json"  # v3: con la constancia por trimestre
+    return rt.tester_dir() / "cache" / "run_stats_v4.json"  # v4: con las semanas y el azar del trimestre y lado
 
 
 def _notes_path():
@@ -73,7 +75,16 @@ def _run_stats(run_id):
         cell = years.setdefault(year, [0, 0.0])
         cell[0] += 1
         cell[1] += t["r"]
+    weeks = {}
+    for r, d, t in rt.trade_rows(result):
+        cell = weeks.setdefault(str(rt.week_of(t)), [0, 0.0, 0.0])
+        cell[0] += 1
+        cell[1] += r
+        cell[2] += d
+    ds = [d for _, d, _ in rt.trade_rows(result)]
     return {"n": len(rs), "sum": sum(rs), "sumsq": sum(r * r for r in rs), "wins": sum(1 for r in rs if r > 0), "years": years,
+            "weeks": {w: [k, round(r, 6), round(d, 6)] for w, (k, r, d) in weeks.items()},
+            "sumD": sum(ds), "sumsqD": sum(d * d for d in ds),
             "quarters": {q: [n, round(r, 4), round(e, 4)] for q, (n, r, e) in rt.quarter_rows(result).items()},
             "longN": len(side(1)), "longSum": sum(side(1)), "shortN": len(side(-1)), "shortSum": sum(side(-1)),
             "base": control(result.get("baseline")), "leg": control(result.get("legBaseline"))}
@@ -114,6 +125,16 @@ def _pool(items):
         m = sum(s[key_n] for _, s in items)
         out[label] = {"n": m, "avgR": round(sum(s[key_sum] for _, s in items) / m, 3) if m else None}
     traded = [s for _, s in items if s["n"]]
+    # El margen con los trades agrupados por la semana de su salida, también entre monedas (B-08)
+    weeks = {}
+    for _, st in items:
+        for w, (k, r, d) in (st.get("weeks") or {}).items():
+            cell = weeks.setdefault(w, [0, 0.0, 0.0])
+            cell[0] += k
+            cell[1] += r
+            cell[2] += d
+    se_weeks = rt.clustered_se({w: (k, r) for w, (k, r, _) in weeks.items()}, mean, n, se)
+    out["seWeeks"] = round(se_weeks, 4)
     for label, key in (("edge", "base"), ("legEdge", "leg")):
         weights = [(s["n"], s[key]) for s in traded if s[key]]
         if not weights or (key == "leg" and len(weights) < len(traded)):
@@ -121,10 +142,17 @@ def _pool(items):
         w = sum(k for k, _ in weights)
         ctrl = sum(k * b["avgR"] for k, b in weights) / w
         ctrl_se = math.sqrt(sum((k * b["seR"]) ** 2 for k, b in weights)) / w
-        edge, edge_se = mean - ctrl, math.sqrt(se ** 2 + ctrl_se ** 2)
+        edge, edge_se = mean - ctrl, math.sqrt(se_weeks ** 2 + ctrl_se ** 2)
         out[label] = {"r": round(edge, 3), "low": round(edge - 1.96 * edge_se, 3), "high": round(edge + 1.96 * edge_se, 3),
                       "control": round(ctrl, 3)}
-    checks = [out[k]["low"] > 0 for k in ("edge", "legEdge") if k in out]
+        if key == "base" and all("sumD" in s for s in traded):
+            # Contra el azar del trimestre y el lado de cada trade (B-07), con el error del azar de la fase
+            mean_d = sum(s["sumD"] for s in traded) / n
+            var_d = (sum(s["sumsqD"] for s in traded) - n * mean_d * mean_d) / (n - 1) if n > 1 else 0.0
+            se_d = rt.clustered_se({w: (k, d) for w, (k, _, d) in weeks.items()}, mean_d, n, math.sqrt(max(0.0, var_d) / n))
+            q_se = math.sqrt(se_d ** 2 + ctrl_se ** 2)
+            out["quarterEdge"] = {"r": round(mean_d, 3), "low": round(mean_d - 1.96 * q_se, 3), "high": round(mean_d + 1.96 * q_se, 3)}
+    checks = [out[k]["low"] > 0 for k in ("edge", "legEdge", "quarterEdge") if k in out]
     out["pass"] = bool(checks) and all(checks) and mean > 0
     out["legMissing"] = "legEdge" not in out
     return out
@@ -217,10 +245,12 @@ def analyze(item):
         edge = cell.get("edge")
         if edge is None:
             continue
-        leg = cell.get("legEdge")
-        text = (f"Fase {phase} en {GROUP_NAME[group]} ({cell['withTrades']} monedas): {cell['n']:,} trades, {_fmt(cell['avgR'])} R por trade; "
+        leg, quarter = cell.get("legEdge"), cell.get("quarterEdge")
+        coins = f"{cell['withTrades']} moneda" + ("" if cell["withTrades"] == 1 else "s")
+        text = (f"Fase {phase} en {GROUP_NAME[group]} ({coins}): {cell['n']:,} trades, {_fmt(cell['avgR'])} R por trade; "
                 f"sobre el azar {_fmt(edge['r'])} (de {_fmt(edge['low'])} a {_fmt(edge['high'])})"
                 + (f", sobre el tramo {_fmt(leg['r'])} (de {_fmt(leg['low'])} a {_fmt(leg['high'])})" if leg else ", sin el control del tramo")
+                + (f", sobre el azar de su trimestre y lado {_fmt(quarter['r'])} (de {_fmt(quarter['low'])} a {_fmt(quarter['high'])})" if quarter else "")
                 + (". Pasa." if cell["pass"] else ". No pasa."))
         points.append({"tone": "good" if cell["pass"] else ("bad" if fresh else "warn"), "text": text})
     explore = next((c for p, g, c, fresh in cells if not fresh), None)
@@ -302,7 +332,7 @@ def rank(strategies, top=5):
             continue  # Una regla corrida en una sola moneda no entra al orden: no dice si se repite
         failed = sum(1 for c in checks if not c["pass"])
         passed = sum(1 for c in checks if c["pass"])
-        lows = [min(c["edge"]["low"], (c.get("legEdge") or c["edge"])["low"]) for c in checks]
+        lows = [min(c["edge"]["low"], (c.get("legEdge") or c["edge"])["low"], (c.get("quarterEdge") or c["edge"])["low"]) for c in checks]
         floor = min(lows) if lows else (explore["edge"]["low"] if explore else -9)
         trades = sum(c["n"] for c in checks)
         scored.append(((0 if failed else 1, passed, floor), item, passed, failed, floor, trades))

@@ -75,7 +75,9 @@ def profile_levels(prices, volumes, rows=50, share=0.7):
     low, high = float(prices.min()), float(prices.max())
     if not high > low:
         return None
-    row = np.clip(((prices - low) / (high - low) * rows).astype(np.int64), 0, rows - 1)
+    # Sin el ruido de coma flotante: un precio justo en el borde de dos franjas caía en una u otra según el redondeo
+    # (24.999… o 25.0); con la cuenta exacta va a la de arriba (O-07 del protocolo de pruebas, 22/11/2026)
+    row = np.clip(np.floor(np.round((prices - low) / (high - low) * rows, 9)).astype(np.int64), 0, rows - 1)
     levels = np.bincount(row, weights=volumes, minlength=rows)
     if not levels.sum() > 0:
         return None

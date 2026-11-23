@@ -168,7 +168,7 @@ export default function StrategiesTab({ onLoadRule, onOpenReport }) {
                   </div>
                 ))}
                 <table className="rt-table" style={{ marginTop: 6 }}>
-                  <thead><tr><th>Fase</th><th>Trades</th><th>R</th><th>Vs. azar</th><th>Vs. tramo</th><th>Largos</th><th>Cortos</th><th>Monedas +</th><th title="Trimestres sobre el azar de su trimestre (de los que tienen 20 trades o más), y qué parte de la ventaja ponen los 4 mejores">Trimestres +</th></tr></thead>
+                  <thead><tr><th>Fase</th><th>Trades</th><th>R</th><th>Vs. azar</th><th>Vs. tramo</th><th title="Cada trade contra el azar de su trimestre y su lado">Vs. trimestre</th><th>Largos</th><th>Cortos</th><th>Monedas +</th><th title="Trimestres sobre el azar de su trimestre (de los que tienen 20 trades o más), y qué parte de la ventaja ponen los 4 mejores">Trimestres +</th></tr></thead>
                   <tbody>
                     {phases.flatMap(p => ['base', 'new', 'stocks'].filter(g => s.cells[p][g]?.n).map(g => {
                       const c = s.cells[p][g];
@@ -177,6 +177,7 @@ export default function StrategiesTab({ onLoadRule, onOpenReport }) {
                           <td>F{p} {GROUP[g]}</td><td>{c.n}</td><td><R value={c.avgR} /></td>
                           <td title={c.edge ? `de ${fmtR(c.edge.low)} a ${fmtR(c.edge.high)}` : ''}>{c.edge ? <R value={c.edge.r} /> : '—'}</td>
                           <td title={c.legEdge ? `de ${fmtR(c.legEdge.low)} a ${fmtR(c.legEdge.high)}` : 'sin el control del tramo'}>{c.legEdge ? <R value={c.legEdge.r} /> : '—'}</td>
+                          <td title={c.quarterEdge ? `de ${fmtR(c.quarterEdge.low)} a ${fmtR(c.quarterEdge.high)}` : ''}>{c.quarterEdge ? <R value={c.quarterEdge.r} /> : '—'}</td>
                           <td><R value={c.long?.avgR} /></td><td><R value={c.short?.avgR} /></td><td>{c.positive} de {c.withTrades}</td>
                           <td title={c.consistency?.top4Share != null ? `Los 4 mejores ponen ${Math.round(c.consistency.top4Share * 100)}% de la ventaja; mediana ${fmtR(c.consistency.median)} R` : ''}>
                             {c.consistency?.total ? `${c.consistency.positive} de ${c.consistency.total}` : '—'}</td>

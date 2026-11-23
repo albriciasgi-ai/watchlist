@@ -1975,7 +1975,9 @@ async def fetch_incremental_candles(symbol: str, interval: str, since_timestamp_
     try:
         interval_minutes = get_interval_minutes(interval)
         now_ms = int(time.time() * 1000)
-        start_ms = since_timestamp_ms + (interval_minutes * 60 * 1000)  # Siguiente vela después del último timestamp
+        # Protocolo de pruebas, F-03 (22/11/2026): se vuelve a pedir la última vela guardada, que pudo guardarse a medio
+        # formar, y abajo se descarta la vela en formación (antes quedaba guardada así para siempre)
+        start_ms = since_timestamp_ms
 
         if start_ms >= now_ms:
             return []  # Ya está actualizado
@@ -2018,6 +2020,8 @@ async def fetch_incremental_candles(symbol: str, interval: str, since_timestamp_
         candles = []
         for c in all_candles:
             ts_ms = int(c[0])
+            if ts_ms + interval_minutes * 60 * 1000 > now_ms:
+                continue  # La vela en formación no se guarda (F-03)
             candles.append({
                 "timestamp": ts_ms,
                 "open": float(c[1]),
@@ -2345,7 +2349,9 @@ async def get_backtesting_bulk_data(request: Request, symbol: str, force_refresh
                         if main_candles:
                             last_ts = max(c["timestamp"] for c in main_candles)
                             new_main = await fetch_incremental_candles(symbol, config["interval"], last_ts)
-                            if new_main:
+                            # La última guardada vuelve siempre (F-03): solo se guarda si alguna vela cambió o es nueva
+                            tail = {c["timestamp"]: c for c in main_candles[-(len(new_main) + 2):]} if new_main else {}
+                            if new_main and any(tail.get(c["timestamp"]) != c for c in new_main):
                                 tf_data["main"] = merge_candles(main_candles, new_main)
                                 print(f"  [{tf_name}] main: +{len(new_main)} velas (total: {len(tf_data['main'])})")
                                 updated = refreshed = True

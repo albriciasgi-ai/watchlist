@@ -101,25 +101,32 @@ def test_los_sabios_en_la_corrida_entran_con_su_orden_stop_y_el_azar_tambien():
 
 def test_el_tercer_sabio_espera_hasta_que_el_precio_pasa_su_fractal():
     bars = walk(1500, seed=21)
-    events = williams.events(bars, 240, None, ("WF",))
-    assert events
-    for e in events[:40]:
+    events = williams.events(bars, 240, None, ("WF",), orders=True)
+    assert events and any(e["info"]["broken"] for e in events) and not all(e["info"]["broken"] for e in events)
+    for e in events[:60]:
         k = next(i for i, b in enumerate(bars) if b["t"] == e["t"])
-        hit = k + e["info"]["expiry"]
+        last = k + e["info"]["expiry"]
         side = e["dir"]
-        assert (bars[hit]["h"] > e["hi"]) if side > 0 else (bars[hit]["l"] < e["lo"])
-        for j in range(k + 1, hit):
-            assert (bars[j]["h"] <= e["hi"]) if side > 0 else (bars[j]["l"] >= e["lo"])
+
+        def crossed(j):
+            return (bars[j]["h"] > e["hi"]) if side > 0 else (bars[j]["l"] < e["lo"])
+
+        assert not any(crossed(j) for j in range(k + 1, last))
+        # La que se rompe se llena en su última vela; la que no (llega otro fractal, se cancela o se acaban las velas), nunca
+        assert crossed(last) == e["info"]["broken"]
 
 
 def test_sin_orden_stop_la_ruptura_de_fractal_se_sabe_al_romperlo():
     # 21/11: con entrada a mercado, el evento iba en la vela en que se supo el fractal y la regla entraba antes de que
     # el precio lo rompiera, sabiendo que lo haría. Sin la orden stop, el evento va en la vela que lo rompe
     bars = walk(1500, seed=21)
-    waiting = williams.events(bars, 240, None, ("WF",))
+    waiting = williams.events(bars, 240, None, ("WF",), orders=True)
     broken = williams.events(bars, 240, None, ("WF",), at_hit=True)
-    assert len(waiting) == len(broken) > 0
-    for w, b in zip(sorted(waiting, key=lambda e: (e["info"]["fractal"], e["dir"])),
+    # Con la orden stop hay una por fractal, se rompa o no (F-06, 22/11/2026); las que se rompen son las de la ruptura
+    assert len(waiting) > len(broken) > 0
+    filled = [e for e in waiting if e["info"]["broken"]]
+    assert len(filled) == len(broken)
+    for w, b in zip(sorted(filled, key=lambda e: (e["info"]["fractal"], e["dir"])),
                     sorted(broken, key=lambda e: (e["info"]["fractal"], e["dir"]))):
         assert b["t"] == w["t"] + w["info"]["expiry"] * MS
         k = next(i for i, bar in enumerate(bars) if bar["t"] == b["t"])
@@ -129,11 +136,29 @@ def test_sin_orden_stop_la_ruptura_de_fractal_se_sabe_al_romperlo():
     market = rt._williams_events(rule_of(("WF",)), span)
     stop = rt._williams_events(rule_of(("WF",), entry={"type": "stop"}), span)
     assert all(e["info"].get("atHit") for e in market) and not any(e["info"].get("atHit") for e in stop)
-    # Una corrida guardada antes del arreglo con la ruptura de fractal a mercado no se reusa; con la orden stop, sí
+    # Una corrida guardada antes del arreglo con la ruptura de fractal a mercado no se reusa (motor 4). Desde el motor 6
+    # (22/11/2026) no se reusa ninguna anterior: con la orden stop y sin una posición a la vez, tampoco
     old = {"engine": 3, "rule": {"recipe": {"slots": [{"codes": ["WF"]}]}, "entry": {"type": "market"}}}
     assert rt._stale(old)
-    assert not rt._stale({**old, "rule": {**old["rule"], "entry": {"type": "stop"}}})
+    stop_rule = {**old["rule"], "entry": {"type": "stop"}}
+    assert rt._stale({**old, "rule": {**stop_rule, "oneAtATime": False}})
+    assert rt._stale({**old, "engine": 5, "rule": {**stop_rule, "oneAtATime": True}})
     assert not rt._stale({**old, "engine": rt.ENGINE})
+    assert not rt._stale({**old, "engine": rt.ENGINE, "rule": {**stop_rule, "oneAtATime": True}})
+    assert "broken" in stop[0]["info"], "el probador, con la orden stop, pide una orden por fractal (F-06)"
+
+
+def test_sin_orders_la_suite_lee_la_ruptura_como_antes():
+    # Etapa 7 del protocolo (22/11/2026): F-06 cambió events() y la suite (wise_smc_watch.detect) tomaba las órdenes que
+    # nunca se rompen como rupturas. Sin orders, solo los fractales que el precio pasa, con sus velas hasta la ruptura:
+    # la suite pasa cada uno a la vela que lo pasa y da lo mismo que at_hit
+    bars = walk(1500, seed=21)
+    plain = williams.events(bars, 240, None, ("WF",))
+    hits = williams.events(bars, 240, None, ("WF",), at_hit=True)
+    assert plain and not any("broken" in e["info"] for e in plain)
+    index = {b["t"]: i for i, b in enumerate(bars)}
+    as_suite = sorted((bars[index[e["t"]] + e["info"]["expiry"]]["t"], e["dir"], e["info"]["fractal"]) for e in plain)
+    assert as_suite == sorted((e["t"], e["dir"], e["info"]["fractal"]) for e in hits)
 
 
 def test_los_elementos_smc_y_sus_zonas():

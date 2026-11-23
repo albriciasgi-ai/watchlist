@@ -1001,7 +1001,7 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
   - Cada trade guarda `vp` (POC, VAH, VAL, sesión, dónde abrió y extremo) y el gráfico dibuja ese valor al elegirlo.
   - **Forma del perfil anterior (18/11, `profile_shape`):** B con dos distribuciones (segundo pico con 60% del POC, a 15% del rango o más y un valle que baja al 60% del pico menor, sobre el perfil suavizado a 3 franjas); si no, por las colas fuera del área de valor: P con la cola de abajo más larga en 20% del rango o más, b con la de arriba, y D con las dos parecidas. La primera versión miraba solo el tercio del rango donde caía el POC y marcaba como D perfiles con dos nodos o con una cola larga: el usuario lo vio en pantalla. Va en `vp.shape` de cada trade. El informe corta por forma, por forma y lado, y por apertura de la sesión (`vpShape`, `vpShapeSide`, `vpOpen`); `vp.shapes` en la regla deja solo esas formas. En BTC 15m fase 1, sesiones de 1 día: 36% B, 29% D, 19% P y 16% b. El caché de niveles pasó a `vp3_*.json`.
   - **VE, extremo del valor (18/11):** para operar el rango tras un perfil D: la sesión abre dentro del valor anterior y el precio llega a un borde; compra en el VAL y vende en el VAH. `vp.veEntry`: `touch` sale al cerrar la primera vela que toca cada borde; `resting` sale al cerrar la sesión anterior (si cerró dentro de su valor) y fuerza la entrada a limit en el borde, válida toda la sesión. La zona va del borde al mínimo o máximo de la sesión anterior. `targetAt: "mid"` pone el objetivo en el centro de ese rango.
-  - **Órdenes limit por orden de llenado:** con entrada limit y una posición a la vez, `run()` simula todas las señales y las toma por vela de llenado, no de señal (`defer`). Así conviven las dos órdenes de un rango y una señal posterior que se llena antes. Con entrada a mercado nada cambia.
+  - **Órdenes limit por orden de llenado:** con entrada limit y una posición a la vez, `run()` simula todas las señales y las toma por vela de llenado, no de señal (`defer`). Así conviven las dos órdenes de un rango y una señal posterior que se llena antes. Con entrada a mercado nada cambia. Dentro de la misma vela, por cuándo se llenó cada orden (desde el motor 5, ver "Orden de llenado dentro de la vela (21/11)").
   - VE en BTC 15m fase 1, sesiones de 1 día, orden esperando, stop detrás del extremo con máximo de 6 ATR: tras perfil D, al POC 270 trades, 59.6% y -0.09 R; al centro del rango 274 trades, 60.6% y -0.05 R (azar -0.13). Tras P, b y B, de -0.16 a -0.48 R. El perfil D separa, pero la regla no gana ni se distingue del azar. En sesiones de 8 h, -0.24 R tras D. Con la forma nueva, el indicio de VR tras P y b desapareció.
   - **Control con perfiles desplazados (18/11):** con un elemento del perfil, `run()` repite la regla 3 veces con `vp_sessions.shifted()` (los niveles de cada sesión movidos juntos, arriba o abajo, entre 30% y 100% de su rango; misma forma y distancias) y junta los trades en `result["vpControl"]`, con la diferencia y su margen. El informe lo muestra en "¿Aporta el perfil?". Suma unos segundos a cada corrida. Con VE y orden esperando el control tiene menos trades que la regla, porque pide que la sesión anterior cierre dentro del valor desplazado.
   - **Resultado en BTC 15m fase 1:** en ninguna de 18 combinaciones (VE, VR, VF y VX, sesiones de 1 día y de 8 h) el perfil real fue mejor que el desplazado con margen; en dos fue peor. VE tras perfil D: 59.6% y -0.09 R real contra 58.3% y -0.07 R desplazado. En la fase 2 el usuario comprobó VE: tras D 50.8% de acierto contra 36.0% tras las otras formas, pero -0.24 R contra -0.26, y peor que el azar (-0.16). Conclusión: los niveles del perfil por sesión no dan ventaja operable en BTC 15m con estas reglas.
@@ -1034,7 +1034,7 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
   - **Ventana con un solo elemento:** el campo solo se ve con dos o más elementos, y quedaba con el valor de una regla anterior (10 tras elegir LIQ). `toBackendRule()` envía 1 con un solo elemento.
 - **Como cuenta (18/11, pedido del usuario tras preguntar por Sharpe y Sortino):** `accountStats(trades, riskPct)` en `ruleTester.js`, lógica pura. El selector `ModeSwitch` ("Por trade" o "Como cuenta", con el riesgo por trade) está en "Resumen" y en "Todas"; la elección y el riesgo quedan en `tester_view_v1`.
   - Cada trade arriesga `riskPct` % del capital que hay al entrar, y su resultado (R por lo arriesgado, ya con comisiones) entra a la cuenta al salir. A la misma hora, primero las salidas. Varias posiciones pueden estar abiertas a la vez: `maxOpen` y `maxOpenRisk`.
-  - Retornos diarios en UTC, con los días sin cierres en cero. Sharpe = media ÷ desviación × √365; Sortino = media ÷ raíz de la media de los cuadrados de los días negativos × √365. Retorno anual compuesto, solo con 3 meses o más. Mayor caída sobre el capital en cada cierre. Meses positivos y peor mes.
+  - Retornos diarios en UTC, con los días sin cierres en cero. Sharpe = media ÷ desviación × √365; Sortino = media ÷ raíz de (la suma de los cuadrados de los días negativos ÷ todos los días) × √365, la definición usual (E-06: antes decía "la media de los cuadrados de los días negativos"). Retorno anual compuesto, solo con 3 meses o más. Mayor caída sobre el capital en cada cierre. Meses positivos y peor mes.
   - Límite: el resultado entra al cerrar el trade, así que no se ve lo que se mueve una posición abierta: la caída real dentro del día puede ser mayor, y Sharpe y Sortino quedan algo altos. No cuenta financiamiento ni deslizamiento.
   - `consolidated()` suma `trades` (ternas entrada, salida y R) para esta vista. Un informe conjunto armado antes no las trae: se vuelve a pulsar el botón, que no recalcula nada.
   - Flecha de 4 horas (RF a favor del tramo, 2 ATR, 2R) en las siete monedas, 1% por trade: fase 1, +169% en 3.67 años (+31% anual), caída de 19.7%, Sharpe 1.21, Sortino 2.35, 29 de 45 meses positivos, hasta 7 posiciones a la vez; fase 2, +150% en 1.48 años (+85% anual), caída de 15.7%, Sharpe 1.99, Sortino 3.87, 13 de 18 meses. Solo BTC, 1%: +8.4% anual y Sharpe 0.82 en la fase 1; +11.1% y 1.00 en la fase 2. El riesgo por trade casi no cambia Sharpe ni Sortino: escala el retorno y la caída a la vez.
@@ -1076,7 +1076,7 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
 - Stop y objetivo en la misma vela, o stop en la vela en que se llena la limit: se mira minuto a minuto con `footprint_store.minutes`. En el mismo minuto cuenta el stop. Sin minutos de esa vela, su recorrido supuesto: apertura, el extremo más cerca de la apertura, el otro extremo y cierre (`_minute_path`, desde el 20/11; antes contaba el stop).
 - Un hueco de datos de más de 6 horas cierra el trade en la última vela conocida.
 - `reach`: lo máximo a favor en R antes de tocar el stop inicial, en 300 velas, sin importar la salida elegida. El informe da qué parte llegó a 1, 2, 3 y 5 R.
-- **Azar:** 3,000 entradas en velas al azar con el mismo stop y la misma salida, a mercado y con la misma proporción de largos y cortos (el stop por zona pasa a vela), simuladas igual que la regla: con el minuto a minuto si la moneda lo tiene (desde el 20/11, ver "Azar con el minuto a minuto"). La ventaja es la diferencia de R medio, con margen de 1.96 errores estándar; `clear` solo si el margen no incluye el cero y hay 30 trades o más.
+- **Azar:** 3,000 entradas en velas al azar con el mismo stop y la misma salida, a mercado y con la misma proporción de largos y cortos (el stop por zona pasa a vela), simuladas igual que la regla: con el minuto a minuto si la moneda lo tiene (desde el 20/11, ver "Azar con el minuto a minuto"). Entra solo donde dejan los filtros de la regla (régimen, línea, horario y los que miran el lado: desde el motor 6, ver "Motor 6"). La ventaja es la diferencia de R medio, con margen de 1.96 errores estándar (desde el motor 6, con los trades agrupados por semana); `clear` solo si el margen no incluye el cero y hay 30 trades o más.
 
 ### Lo que guarda cada trade
 
@@ -1334,6 +1334,126 @@ La primera búsqueda genética de la noche del 20/11 dio 5 finalistas que ganaba
   Contar siempre el stop erraba hasta 0.8 R por trade con dos órdenes, y con la compresión inventaba una ventaja de +0.13 R. El recorrido supuesto queda a 0.03 R o menos de la ventaja real en las cuatro (el recorrido por el color de la vela da casi lo mismo). Donde hay minutos, mandan los minutos. Por la ventaja real, la finalista A2 queda por debajo de seguir el tramo al azar con sus mismas órdenes: no era ventaja.
 - Prueba: `test_sin_minutos_la_vela_dudosa_sigue_su_recorrido_supuesto_y_los_minutos_mandan` en `tests/test_trailing_straddle.py`: el recorrido en los dos sentidos, los minutos sobre el recorrido y los tres controles con los minutos de la regla.
 
+### Orden de llenado dentro de la vela (motor 5, 21/11)
+
+Hallado por el protocolo de pruebas (`pruebas_backtesting/`, defecto F-04) con la prueba del espejo; el usuario pidió corregirlo antes de seguir.
+
+- **El fallo:** con órdenes que esperan (limit, orden stop, dos órdenes) y una posición a la vez, las señales se toman por la vela del llenado. Si dos órdenes se llenaban en la misma vela, entraba la de la señal más vieja, aunque los minutos dijeran que la otra se llenó antes.
+  - Con limit favorecía a la regla: la orden más vieja suele estar más adentro, así que se llena después y a mejor precio. En la realidad se llena primero la más cercana y ocupa la posición.
+  - Los controles al azar entran a mercado y no lo tenían.
+- **Ahora** `_fill_time()` da cuándo se llena cada orden en su vela, y `run()` ordena por eso dentro de la vela del llenado:
+  - con minutos, el primer minuto que la llena (limit al cruzar, orden stop al tocar; en la apertura si la vela abrió más allá);
+  - sin minutos, el tramo del recorrido supuesto (`_minute_path`) en que el precio llega a ella y, dentro del tramo, su distancia desde el comienzo.
+  - Solo si empatan (el mismo minuto) va primero la señal más vieja.
+- **Medido** en BTC 4h, fase 1 (limit en el FVG): en todas las velas con dos llenados entraba la que se llenó después. El R medio pasa:
+
+| Limit | Antes | Ahora |
+|---|---|---|
+| Borde cercano | +0.241 | +0.200 |
+| Mitad | +0.018 | +0.008 |
+| Borde lejano | −0.124 | −0.150 |
+| Con trailing | +0.044 | +0.025 |
+
+  Con orden stop casi no cambia.
+- **Motor 5** (`ENGINE`): `_stale()` deja fuera las corridas anteriores con limit, orden stop o dos órdenes y una posición a la vez. Siguen en el disco, pero no se reusan ni se cuentan. En el registro del usuario son 68 corridas con limit (VA abandonada y las búsquedas 1 y 5), ninguna de las cuales pasó una fase; las de mercado no cambian.
+- **Desde el motor 6 (22/11, H15):** una orden que se llena en la vela en que salió el trade anterior entra si se llenó después de la salida (ver "Motor 6").
+- **Pruebas:** `tests/test_fill_order.py` (11: con minutos, sin minutos, mismo minuto, órdenes stop, sin una posición a la vez y las corridas que quedan fuera). Con el motor anterior, las de orden fallan.
+
+### Motor 6: lo que corrigió el protocolo de pruebas (22/11)
+
+El protocolo de pruebas del backtesting global (`pruebas_backtesting/`, informe final en `INFORME_FINAL.md`) terminó su
+revisión con 31,556 trades capturados uno por uno y un registro de defectos (`DEFECTOS.md`). El usuario aceptó todas las
+recomendaciones. Lo que cambia trades o el azar va junto en el **motor 6** (`ENGINE`): `_stale()` deja fuera todas las
+corridas anteriores (siguen en el disco), así se repiten una sola vez.
+
+**Datos y sin futuro:**
+- **F-16:** el barrido de liquidaciones medía el ancho de las franjas con celdas del futuro; ahora con lo conocido
+  (`liq_store.known_width`). H23: el barrido de zona se desarma cuando la zona deja de mostrarse.
+- **F-02 y F-03:** a las velas de las monedas nuevas les faltaba una cada 1,000 (y a veces una página entera) y guardaban
+  la vela en formación. `candles_update.py --repair [--since AAAA-MM-DD]` rellena los huecos; el caché de App 1 ya no
+  guarda la vela en formación.
+- **H20:** cada corrida guarda la huella de sus velas (`data_mark`), y una guardada no se reusa si sus datos cambiaron
+  (`same_data`).
+- **H2:** cada corrida arranca con las velas anteriores a la fase (las últimas 300 o 35 días; en 1D, todas): el ATR, los
+  swings, las líneas, los filtros y los elementos de velas empiezan con historia, pero ninguna señal ni entrada al azar
+  cae ahí (`_warm_bars`, `_warmed`, `ctx["lead"]`). Medido con el FVG en BTC, SUI y DOGE: los mismos trades.
+
+**El azar y "pasa":**
+- **F-07:** con un filtro que mira el lado, el azar sortea primero el lado (con la proporción de la regla) y después una
+  vela donde el filtro lo deja. **H1:** el azar entra también solo donde dejan la línea (VWAP, EMA) y el horario.
+- **F-08:** la tasa base del funding es neutra aunque la resta de sumas deje ruido. **F-09:** la confluencia OI-volumen
+  del filtro es la del panel (en un corto, volumen y OI bajando), con el z de la vela incluida.
+- **B-07:** una tercera ventaja, cada trade contra el azar de su trimestre y su lado (`quarter_control`, `edges`):
+  la regla suele operar donde y cuando el azar también gana. **B-08:** el margen de las ventajas agrupa los trades por la
+  semana de su salida, también entre monedas (`clustered_se`), nunca más angosto que el de trades independientes.
+  Medido en la regresión: en las 7 monedas de siempre es de 1.0 a 1.45 veces el de antes; en las 43 nuevas juntas, de
+  1.7 a 3.4 (las monedas que salen la misma semana se mueven juntas). Juntar muchas monedas da menos información de lo
+  que dicen sus trades: lo que achica el margen son más semanas, no más monedas.
+- **"Pasa"** en el tablero pide ganarles a los tres (azar, tramo y su trimestre y lado), con R medio positivo. El
+  informe "Todas", el Resumen y el tablero muestran las tres.
+
+**Trades:**
+- **H15:** con una posición a la vez, la señal de la vela en que salió el trade anterior ya puede entrar (se decide al
+  cerrar esa vela). Una orden que espera y se llena en esa vela entra si se llenó después del momento de la salida
+  (`_exit_moment`); en el mismo minuto, no. **F-01:** el enfriamiento no empieza activo al comienzo de la fase; su largo
+  no cambia (la primera señal que puede entrar es la de `cooldown + 1` velas después de la salida).
+- **H19:** a mercado y una a la vez, una vela con una señal larga y otra corta no da ninguna.
+- **H16:** el stop "extremo de la vela del elemento" de un FVG cubre sus tres velas.
+- **H18:** una señal cuya comisión de ida y vuelta pasa de 0.3 R no se toma ("Tope de la comisión" en la sección Stop;
+  0 lo apaga; el tope de fábrica no entra a la identidad de la regla). Es un filtro de las señales de la regla: la caja
+  propia de la Revisión de candidatos no pasa por él y se simula con su comisión y con los costos que pida la regla
+  (`candidate_review._own_trade`).
+- **H4:** lo máximo a favor y en contra de la vela del llenado de una limit u orden stop, solo desde el llenado.
+- **H22:** el medidor VPA es simétrico: la estrella abajo de un tramo bajista (martillo invertido) suma fuerza, como el
+  hanging man resta (también en `vpa.js`, igual al bit).
+- **F-06:** la orden stop del 3.er sabio existe desde que se conoce el fractal, se rompa o no (`williams.fractal_orders`),
+  y se llena al pasarlo. Los trades no cambian; la cuenta de señales y su marca en el gráfico ya no miran el futuro.
+  Solo el probador pide esas órdenes (`williams.events(..., orders=True)`): sin `orders`, `events()` da lo de siempre,
+  que es lo que lee la suite (`wise_smc_watch.detect`, que pasa cada fractal a la vela que lo rompe).
+- **F-13:** "Alligator dormido" no pasa sin Alligator. **F-14 y O-07:** los bordes del área de valor y de las franjas
+  del perfil por sesión, sin el ruido de coma flotante (caché de elementos `_e2` y de perfiles `vp4_`). **F-17:** el
+  cambio de carácter pide la vela de estructura entera. **O-10 y O-25:** los niveles calculados se redondean a 10
+  decimales (`_snap`) y el stop en ATR a 9: un toque exacto cuenta.
+
+**Opciones nuevas, apagadas de fábrica (B-05 y B-06):** "Deslizamiento" (% por lado, en los llenados a mercado) y
+"Contar el funding", en "Operación". Cada trade guarda lo que costarían (`slip`, `funding`), y "Todas" dice el R con 0.02%
+y 0.05% de deslizamiento y con el funding. Encendidas, se descuentan también del azar.
+
+**Lote menor:** el embudo en el orden del motor (O-27) y una señal por vela con dos órdenes (F-05); la identidad de la
+regla sin lo que no hace nada (O-18: margen de un stop en ATR, modo con un solo elemento, swing y confirmación apagados);
+el contador de variantes cuenta las de motores anteriores (F-12); ids que no se repiten y un solo trabajo por regla, fase
+y moneda (O-28); sin variantes del margen que no cambian nada en la sensibilidad (O-19); las acciones solo en 15m, 1h,
+4h y 1D (F-11); hasta 6 corridas del contexto del trade, por uso (O-30), y los pedidos de una corrida que se está
+repitiendo esperan esa repetición en vez de empezar otra (O-33); la salida VPA con todos sus avisos (O-11); la
+info del VPA con 10 cifras (O-12). En pantalla: la orden stop no dice "mercado" (O-04), la entrada sin ruido (O-02), el
+objetivo del centro de la caja (O-08), el on-chain desde el lado del trade (O-13), el CVD con dos decimales y la
+pendiente de la EMA (O-15), el valor de las medidas (O-26), el horario en UTC con sus bordes (O-31), la salida por un
+hueco (O-32), el marco de la regla al elegir un trade si el gráfico estaba en uno mayor (O-16), los indicadores de la
+regla al cambiar de marco (F-10) y el Lector VPA con los suyos (O-23), solo la caja del trade elegido (O-29), sus líneas
+en el borde de la vela (O-01), el cuadro de la señal lejos de la salida (O-14), la estructura SMC 6,000 velas atrás
+(O-22) y sin el último precio de la fase (O-17); avisos de la limit invertida (H14), de los topes del stop (H17) y de
+los dos ATR (H13).
+
+**Puntos precisados (los E del protocolo):**
+- El fallo fuera del valor (VF) en la primera vela de una sesión mira si la sesión abrió dentro del valor (E-02); una
+  llegada al borde de caja que no pasa los filtros gasta su tramo (E-08). Los dos quedan como están: lo decidió el
+  usuario el 23/11, tras medirlos (E-02 cambia 3 señales de 12,340; en E-08 ninguna lectura le da ventaja al borde).
+- Tras una coincidencia, la receta no da otra del mismo lado en las `ventana − 1` velas siguientes (E-03).
+- El zigzag del tramo arranca suponiendo un tramo alcista; una vela con un extremo nuevo no gira el tramo (E-07).
+- "Solo tras romper un rango" pide además que la vela esté fuera de un rango (E-09). En los desequilibrios apilados una
+  celda frente a un 0 cuenta como desequilibrio (E-10).
+- La constancia usa el azar de toda la corrida en un trimestre con menos de 10 entradas al azar de ese lado (E-11).
+- Una regla que corre sobre velas usa los minutos del almacén donde existan (E-12).
+- El breaker y el barrido de iguales no tienen límite de antigüedad (E-14). Con menos candidatos que la cuota, el
+  umbral relativo cuenta todo candidato (E-15). Los detalles del order flow literal, en `DEFECTOS.md` (E-16).
+- En ARB, el barrido real y la orden grande son el mismo elemento (O-20); a mercado, el order block da los mismos trades
+  que la ruptura de estructura (O-21); varios barridos en la misma vela dan una señal por vela y lado (O-24).
+
+**Pruebas:** `test_motor6.py` (17), `test_controles_b07_b08.py` (4), `test_lote_menor.py` (7), `test_data_mark.py` (5),
+`test_flujo_azar.py` (4), `test_candles_update.py` (4), y las que ya había, al día (`test_williams_smc.py` y
+`test_candidate_review.py` suman 1 cada una). En la página, `rulefacets.test.mjs` (13) y `vpa.parity.test.mjs` (8). Las
+del servidor y de la página de la suite pasan con este App 1 (la suite importa `williams.py` y `MiniChart`).
+
 ### Acciones de Alpaca en el probador (20/11)
 
 Pedido del usuario: probar reglas en acciones, con más historia, y cruzar mercados (elegir en uno y comprobar en el otro). Las velas las baja otra sesión ("Acciones de Alpaca en App 1", `alpaca_candles.py`, rama `claude/app1-acciones-alpaca-43f491`) a `OrderFlowData/alpaca/candles/{acción}.json.gz` (`ALPACA_CANDLES` cambia la carpeta): 99 acciones, velas de 15 minutos, 1 hora, 4 horas y 1 día desde 2016 (o desde que salieron a bolsa), solo de la sesión regular, ajustadas por splits. Aquí solo se leen.
@@ -1383,7 +1503,7 @@ Pedido del usuario: "no recuerdo cómo salieron las anteriores y dependo de Clau
 
 - **Pestaña "Estrategias"** del backtesting global (`StrategiesTab.jsx`) y `backend/strategy_board.py`, con `GET /api/tester/strategies` y `POST /api/tester/strategies/note`.
 - **Una estrategia** es una regla exacta sin contar su nombre (`rule_hash` con un símbolo fijo); la misma guardada con dos nombres es una, y lleva los dos. Cada celda fase × grupo (las de siempre, S; las nuevas, N) junta la última corrida de cada moneda igual que el informe "Todas": mismo R, mismo azar pesado por trades y el tramo solo si lo tienen todas las monedas con trades. Comprobado con la copia del registro: da los números de los informes (por ejemplo 1,566 trades, +0.247 y ventaja de +0.135 a +0.320).
-- **Pasa** (✓): ventaja sobre los dos controles con margen que no toca el cero, como se acordó, y además R medio positivo: perder menos que el azar no es ganar.
+- **Pasa** (✓): ventaja sobre los dos controles con margen que no toca el cero, como se acordó, y además R medio positivo: perder menos que el azar no es ganar. Desde el 22/11 (motor 6) también sobre el azar del trimestre y el lado de cada trade, con el margen agrupado por semanas (B-07 y B-08).
 - **Lectura** (`analyze`): cada fase con su veredicto; si la ventaja se achica al pasar a datos frescos; si la pone un lado (con la sugerencia de probar solo ese lado); si una moneda pone el 40% o más del R; cuántas monedas ganan; años que pierden; pocos trades. "Comprobación" es todo lo que no se usó para elegir la regla: las fases 2 y 3, y cualquier fase de las monedas nuevas. Veredicto: cayó en tal fase, pasa todas, pasa N y le falta la fase 3, solo explorada, o no pasa ni la exploración.
 - **"Las más sólidas"** (`rank`): solo reglas corridas en 2 monedas o más; primero las que no cayeron en ninguna comprobación, luego las que pasan más, y entre iguales la de peor margen inferior más alto, con el porqué en una línea.
 - **Estado y nota** del usuario por estrategia (`strategy_notes.json` junto al registro). Un clic en una fase abre su informe "Todas" (con el grupo de monedas), y "Cargar en la pestaña Regla" la deja lista.
@@ -1676,6 +1796,20 @@ OrderFlowData/observer/tester/search/{id}.json   (RULE_SEARCH_DIR cambia la carp
 - **Pruebas:** `tests/test_rule_search.py` (6): genomas válidos, genes inactivos, aptitud, que la validación no cambia el tramo de búsqueda (cortar las velas en la fecha deja lo mismo), una búsqueda completa con su archivo, y la ida y vuelta por la ventana.
 - **Probado** en la copia aislada (backend 9300, Vite 9301) con una búsqueda de 10 × 2 en 4h: 87 reglas, ninguna candidata; la pestaña, el avance, el resultado y "Cargar en la pestaña Regla". No se probó en 1h ni en 1D, ni una búsqueda larga.
 - **Búsquedas anteriores arriba (20/11, pedido del usuario):** la lista estaba al final del panel, bajo el informe de la búsqueda abierta, y no la encontraba. Ahora va al principio de la pestaña, antes de "Búsqueda nueva". "Ver" abre la búsqueda y lleva el panel a su informe (`scrollIntoView`), y la fila de la búsqueda abierta dice "Abierta". Una búsqueda copiada a `tester/search` aparece en la lista sin reiniciar nada: `history()` lee la carpeta en cada pedido. Probado con una copia del frontend en el 9002 y el backend del usuario.
+
+- **Los tres controles del tablero (23/11, tras el protocolo de pruebas):** una búsqueda nueva (`controls: "tres"`) elige y
+  juzga como el tablero.
+  - Cada tramo guarda `three`: las ventajas contra el azar, contra seguir el tramo y contra el azar del trimestre y el lado
+    de cada trade, con el margen agrupado por semanas y el error del control (`_three`, como `strategy_board._pool`).
+  - La ventaja con que elige y que se muestra es la del control que más le exige: la menor menos su error (`against`). La
+    de dos controles queda en `edgeTwo` y `seTwo`.
+  - Veredicto: "Candidata a la fase 2" si en la validación les gana a los tres y sus vecinas aguantan. Con la casilla "En
+    la validación, pedir también el margen" (`holdMargin`, apagada de fábrica), además con margen y con R positivo, como
+    "pasa" en el tablero.
+  - Medido con 18 finalistas guardadas, con el motor 6: pedir el margen en 2023 dejaba 0 candidatas de 14, porque hay de
+    85 a 423 trades; sin él, 7, como con el criterio de antes.
+  - Una búsqueda de antes (sin `controls`) sigue con el suyo, también al retomarla.
+  - Pruebas: `test_rule_search.py` suma 3 (9).
 
 ### Noche de búsquedas y fase 2 (20/11)
 

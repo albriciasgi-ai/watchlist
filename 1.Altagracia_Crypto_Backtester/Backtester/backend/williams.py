@@ -237,19 +237,68 @@ def wise_men(o, h, l, c, series, cfg=None):
     return out
 
 
-def events(bars, tf, cfg=None, codes=("WD", "WA", "WF"), at_hit=False):
+def fractal_orders(h, l, series, cfg=None):
+    """
+    El 3.er sabio como orden stop, desde la vela en que se supo cada fractal (F-06 del protocolo de pruebas, 22/11/2026):
+    espera hasta que el precio lo pasa, llega otro fractal del mismo lado o se acaban las velas. Si lo pasa del lado
+    equivocado de los dientes (con el filtro del Alligator), se cancela en esa vela. Antes solo existía la orden de los
+    fractales que el precio rompía después: los trades eran los mismos, pero la señal dependía del futuro.
+    [{dir, index (vela en que se supo), entry, fractal, expiry (velas que espera, desde la siguiente), hit (vela del llenado o None)}]
+    """
+    cfg = {**DEFAULTS, **(cfg or {})}
+    teeth, fractals_found, n = series["teeth"], series["fractals"], len(h)
+    pending, f, out = {1: None, -1: None}, 0, []
+
+    def close(p, last, hit):
+        out.append({"dir": p["dir"], "index": p["known"], "entry": p["price"], "fractal": p["index"],
+                    "expiry": max(0, last - p["known"]), "hit": hit})
+
+    for j in range(n):
+        for side in (1, -1):
+            p = pending[side]
+            if p is None or not (h[j] > p["price"] if side > 0 else l[j] < p["price"]):
+                continue
+            T = teeth[j]
+            valid = not cfg["alligatorFilter"] or (_finite(T) and (p["price"] > T if side > 0 else p["price"] < T))
+            close(p, j if valid else j - 1, j if valid else None)  # Del lado equivocado: se cancela antes de llenarse
+            pending[side] = None
+        while f < len(fractals_found) and fractals_found[f]["known"] == j:
+            old = pending[fractals_found[f]["dir"]]
+            if old is not None:
+                close(old, j, None)  # Llega otro: la de antes esperó hasta esta vela
+            pending[fractals_found[f]["dir"]] = fractals_found[f]
+            f += 1
+    for side in (1, -1):
+        if pending[side] is not None:
+            close(pending[side], n - 1, None)
+    out.sort(key=lambda o: (o["index"], -o["dir"]))
+    return out
+
+
+def events(bars, tf, cfg=None, codes=("WD", "WA", "WF"), at_hit=False, orders=False):
     """Eventos del probador: {code, dir, t, known, lo, hi, info} con la forma de los de of_elements.
     El 3.er sabio va en la vela en que se supo su fractal, para la orden stop que espera en él (info["expiry"]: las velas
     hasta que el precio lo pasa). Con at_hit va en la vela que lo pasa: para cualquier otra entrada, porque antes de esa
-    vela no se sabe si el precio lo pasará (21/11: con entrada a mercado, la regla entraba sabiendo que lo rompería)."""
+    vela no se sabe si el precio lo pasará (21/11: con entrada a mercado, la regla entraba sabiendo que lo rompería).
+    Con orders (el probador, con la orden stop; F-06, 22/11/2026): una orden por fractal desde que se supo, se rompa o
+    no (info["broken"]; info["expiry"]: las velas que espera). Sin orders, solo los fractales que el precio pasa, como
+    los lee la suite (wise_smc_watch.detect pasa cada uno a la vela que lo pasa con su expiry: así no mira el futuro)."""
     tf_ms = int(tf) * 60000
     o, h, l, c = [b["o"] for b in bars], [b["h"] for b in bars], [b["l"] for b in bars], [b["c"] for b in bars]
     series = compute(h, l, c, cfg)
     code_of = {1: "WD", 2: "WA", 3: "WF"}
     out = []
+    pending = orders and not at_hit
+    if "WF" in codes and pending:
+        # Con la orden stop: una por fractal, desde que se supo (F-06)
+        for order in fractal_orders(h, l, series, cfg):
+            t = bars[order["index"]]["t"]
+            info = {"wise": 3, "fractal": bars[order["fractal"]]["t"], "level": order["entry"], "expiry": order["expiry"],
+                    "broken": order["hit"] is not None}
+            out.append({"code": "WF", "dir": order["dir"], "t": t, "known": t + tf_ms, "lo": order["entry"], "hi": order["entry"], "info": info})
     for s in wise_men(o, h, l, c, series, cfg):
         code = code_of[s["wise"]]
-        if code not in codes:
+        if code not in codes or (code == "WF" and pending):
             continue
         i = s["hit"] if s["wise"] == 3 and at_hit else s["index"]
         t = bars[i]["t"]
@@ -281,8 +330,8 @@ def filter_ok(bw, series, k, side):
     mode = bw.get("alligator")
     if mode == "awake" and series["state"][k] != side:
         return False
-    if mode == "sleeping" and series["state"][k] != 0:
-        return False
+    if mode == "sleeping" and (series["state"][k] != 0 or not all(_finite(series[key][k]) for key in ("jaw", "teeth", "lips"))):
+        return False  # Sin las tres líneas todavía no hay Alligator: el estado 0 no es "dormido" (F-13, 22/11/2026)
     if mode == "side":
         teeth = series["teeth"][k]
         if not _finite(teeth) or (series["close"][k] - teeth) * side <= 0:

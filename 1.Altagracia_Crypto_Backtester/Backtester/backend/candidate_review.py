@@ -195,9 +195,13 @@ def _own_trade(session, candidate, side, stop, target, limit=None, wait=None):
                    "horizon": own["exit"].get("horizon") or rt.DEFAULT_HORIZON}
     own["exit"].pop("tpTrail", None)  # La caja propia sale en su objetivo, sin el trailing del objetivo de la regla
     own.pop("targetAt", None)
+    # El tope de la comisión (H18, motor 6) filtra las señales de la regla, no la caja de quien decide: con un stop corto
+    # la decisión se rechazaba sin decir por qué (etapa 7 del protocolo de pruebas, 22/11/2026). Se simula como se pidió,
+    # con su comisión y con los costos que pida la regla (deslizamiento y funding), como los trades de la regla
+    own["maxFeeR"] = 0
     wait = int(max(1, min(MAX_LIMIT_BARS, wait or LIMIT_BARS)))
     own["entry"] = {"type": "limit", "at": "near", "expiry": wait} if waits else {**own["entry"], "type": "market"}
-    trade = rt.simulate(own, ctx, k, side, zone=(limit, limit) if waits else None)
+    trade = rt._with_costs(own, ctx, rt.simulate(own, ctx, k, side, zone=(limit, limit) if waits else None))
     if trade and trade.get("skip") == "limit sin llenar":
         return None, None, times[min(len(times) - 1, k + wait)] + rule["tf"] * 60000
     if not trade or trade.get("skip") or trade.get("open"):

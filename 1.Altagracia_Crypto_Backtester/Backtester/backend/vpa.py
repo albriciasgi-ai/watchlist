@@ -11,7 +11,8 @@ relativa, por grados y según dónde cae la vela. Aquí eso va así:
 - Esfuerzo contra resultado (3.ª ley de Wyckoff): q = rango relativo ÷ volumen relativo. Mucho volumen con poco rango es
   esfuerzo sin resultado (absorción); mucho rango con poco volumen, resultado sin esfuerzo (trampa).
 - El lugar: el tramo (zigzag de `legAtr` ATR, como el Volumen de Respuesta) y cuánto lleva recorrido. Un martillo arriba
-  de un tramo alcista es un "hanging man" y avisa debilidad.
+  de un tramo alcista es un "hanging man" y avisa debilidad; una estrella abajo de un tramo bajista, un martillo
+  invertido, avisa fuerza (desde el 22/11, H22 del protocolo de pruebas: antes restaba como cualquier estrella).
 - Paciencia: ninguna vela decide. Cada vela suma evidencia a un medidor que se desvanece (`decay` por vela): sube con la
   fuerza (alcista) y baja con la debilidad (bajista).
 
@@ -175,7 +176,7 @@ def compute(t, o, h, l, c, v, tf, cfg=None):
             "ext", "maturity", "fade", "contrib", "meter")
     out = {k: [NAN] * n for k in keys}
     out.update({"atr": atr, "rv": rv, "rr": rr, "leg": leg, "legStart": leg_start, "legExtreme": leg_ext,
-                "dir": [0] * n, "hang": [0.0] * n})
+                "dir": [0] * n, "hang": [0.0] * n, "invh": [0.0] * n})
     meter = 0.0
     for i in range(n):
         d = 1 if c[i] > o[i] else (-1 if c[i] < o[i] else 0)
@@ -208,7 +209,12 @@ def compute(t, o, h, l, c, v, tf, cfg=None):
             weight = 0.25 + 0.35 * up(x, 0.8, 1.2) + 0.4 * up(x, 1.5, 2.5)  # Lo que pesa la forma según su volumen
             if r > 0:
                 star, hammer = out["star"][i], out["hammer"][i]
-                contrib -= star * weight * W_SHAPE * (0.5 + 0.5 * (mat if leg[i] == 1 else 1.0))
+                near_bottom = leg[i] == -1 and a > 0 and (l[i] - leg_ext[i]) / a <= 0.5
+                if near_bottom:  # Estrella abajo de un tramo bajista: martillo invertido, fuerza que pide confirmación (H22)
+                    out["invh"][i] = star
+                    contrib += star * weight * W_HANG * mat
+                else:
+                    contrib -= star * weight * W_SHAPE * (0.5 + 0.5 * (mat if leg[i] == 1 else 1.0))
                 near_top = leg[i] == 1 and a > 0 and (leg_ext[i] - h[i]) / a <= 0.5
                 if near_top:  # Martillo arriba de un tramo alcista: hanging man, debilidad que pide confirmación
                     out["hang"][i] = hammer
@@ -382,7 +388,8 @@ def events(bars, tf, cfg=None, codes=tuple(CODES)):
     for e in detect(t, o, h, l, c, v, tf, cfg):
         if e["code"] not in codes:
             continue
-        info = {key: (round(val, 4) if isinstance(val, float) and _finite(val) else val) for key, val in e["info"].items()}
+        # Con 10 cifras significativas: con 4 decimales una moneda barata perdía cifras del nivel (O-12)
+        info = {key: (float(f"{val:.10g}") if isinstance(val, float) and _finite(val) else val) for key, val in e["info"].items()}
         for key in ("breakout", "heavy"):
             if key in info:
                 info[key] = bars[info[key]]["t"]  # La vela, por su hora

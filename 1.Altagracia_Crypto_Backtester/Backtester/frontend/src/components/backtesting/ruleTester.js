@@ -31,7 +31,7 @@ export function defaultRule() {
     name: 'VA abandonada', tf: 15, codes: ['VA'], mode: 'all', min: 1, window: 1, side: 'both', invert: false,
     swing: false, swingBars: 5, momentum: false, confirm: false, confirmAtr: 0.25, confirmBars: 2,
     entryType: 'market', entryAt: 'near', entryExpiry: 8, straddleFrom: 'zone', straddleOffset: 0.2,
-    stopType: 'swing', stopBars: 5, stopAtr: 1.5, stopBuffer: 0.1, stopMaxAtr: 6,
+    stopType: 'swing', stopBars: 5, stopAtr: 1.5, stopBuffer: 0.1, stopMaxAtr: 6, maxFeeR: 0.3,
     useTarget: true, targetR: 2, trail: false, trailBars: 5,
     // Trailing desde el mejor precio (atr o pct; trail sigue siendo el de swings), con arranque y stop a la entrada
     trailMode: 'off', trailAtr: 4, trailPct: 5, trailStartOn: false, trailStart: 1, breakEvenOn: false, breakEven: 1.5,
@@ -42,6 +42,8 @@ export function defaultRule() {
     chainTargetOn: false, chainTargetR: 5, chainTargetMetric: 'stable', chainTargetAsset: 'auto', chainTargetDays: 30, chainTargetZ: 0.5,
     cpMaxHeightOn: false, cpMaxHeight: 5.5, imBars: 3, imAtr: 2, imRangeOn: false, imRange: 1.5, useHorizon: true, horizon: 200, opposite: false,
     oneAtATime: true, cooldown: 8, vaGap: 0, filters: [], volFilter: 2, target: 0.05,
+    // Deslizamiento (% por lado, en los llenados a mercado) y funding (B-05 y B-06): apagados de fábrica
+    slippage: 0, funding: false,
     // En secuencia: `first` son los elementos de contexto (el barrido) y el resto, el gatillo que llega después
     first: [], liqWhat: 'zone', liqVariant: 'pierce', liqSwingBars: 5, liqReclaimBars: 3,
     // Perfil por sesión (VR, VF, VX): periodo, minutos sostenido dentro o fuera del valor y velas para que un fallo cierre de vuelta
@@ -255,6 +257,8 @@ export function toBackendRule(rule) {
       type: rule.stopType || 'swing', bars: number(rule.stopBars, 5), atr: number(rule.stopAtr, 1.5),
       buffer: number(rule.stopBuffer, 0.1), maxAtr: number(rule.stopMaxAtr, 6)
     },
+    // Tope de la comisión de ida y vuelta en R (H18); el backend no lo guarda si es el de fábrica
+    maxFeeR: number(rule.maxFeeR, 0.3),
     exit: {
       targetR: rule.useTarget ? number(rule.targetR, 2) : null,
       // Objetivo en un nivel del perfil de la sesión anterior, en vez de un múltiplo del riesgo
@@ -287,7 +291,8 @@ export function toBackendRule(rule) {
     vaGap: (rule.codes || []).includes('VA') ? Math.max(0, number(rule.vaGap, 0)) : 0,
     filters: (rule.filters || []).filter(f => f.key && f.value !== '' && Number.isFinite(Number(f.value))).slice(0, MAX_FILTERS)
       .map(f => ({ key: f.key, op: f.op === '<=' ? '<=' : '>=', value: Number(f.value) })),
-    volFilter: number(rule.volFilter, 2), target: number(rule.target, 0.05)
+    volFilter: number(rule.volFilter, 2), target: number(rule.target, 0.05),
+    ...(number(rule.slippage, 0) > 0 ? { slippage: number(rule.slippage, 0) } : {}), ...(rule.funding ? { funding: true } : {})
   };
 }
 
@@ -332,7 +337,7 @@ export function fromBackendRule(saved) {
     cpMaxHeightOn: saved.cp?.maxHeight != null, cpMaxHeight: saved.cp?.maxHeight ?? 5.5,
     imBars: saved.im?.bars ?? 3, imAtr: saved.im?.atr ?? 2, imRangeOn: saved.im?.range != null, imRange: saved.im?.range ?? 1.5,
     stopType: saved.stop?.type || 'swing', stopBars: saved.stop?.bars ?? 5, stopAtr: saved.stop?.atr ?? 1.5,
-    stopBuffer: saved.stop?.buffer ?? 0.1, stopMaxAtr: saved.stop?.maxAtr ?? 6,
+    stopBuffer: saved.stop?.buffer ?? 0.1, stopMaxAtr: saved.stop?.maxAtr ?? 6, maxFeeR: saved.maxFeeR ?? 0.3,
     // El objetivo en un nivel va arriba en la regla limpia del backend y en exit en la que arma la ventana: vale de las dos
     useTarget: saved.exit?.targetR != null || !!(saved.targetAt ?? saved.exit?.targetAt), targetR: saved.exit?.targetR ?? 2,
     targetAt: saved.targetAt ?? saved.exit?.targetAt ?? 'r',
@@ -361,7 +366,7 @@ export function fromBackendRule(saved) {
     trail: saved.exit?.trail === 'swing', trailBars: saved.exit?.trailBars ?? 5,
     useHorizon: saved.exit?.horizon != null, horizon: saved.exit?.horizon ?? 200, opposite: !!saved.exit?.opposite,
     oneAtATime: saved.oneAtATime !== false, cooldown: saved.cooldown ?? 0, vaGap: saved.vaGap ?? 0, filters: saved.filters || [],
-    volFilter: saved.volFilter ?? 2, target: saved.target ?? 0.05
+    volFilter: saved.volFilter ?? 2, target: saved.target ?? 0.05, slippage: saved.slippage ?? 0, funding: !!saved.funding
   };
 }
 
@@ -568,7 +573,11 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
     // Por tiempo sale al cierre de la vela; por señal contraria o el canal, en la apertura de la siguiente: en el borde
     const byVpa = String(trade.reason || '').startsWith('VPA: ');
     const atEdge = byVpa || ['tiempo', 'señal contraria', 'sale del canal', 'hueco de datos'].includes(trade.reason);
-    const why = byVpa ? `por el VPA (${trade.reason.slice(5)})` : (EXIT_TEXT[trade.reason] || trade.reason);
+    let why = byVpa ? `por el VPA (${trade.reason.slice(5)})` : (EXIT_TEXT[trade.reason] || trade.reason);
+    // El precio abrió más allá del stop (un hueco, o la noche en una acción): sale en esa apertura, no en el stop
+    if (trade.reason === 'stop' && Number.isFinite(trade.exit) && Number.isFinite(trade.stop) && (trade.exit - trade.stop) * trade.dir < -1e-9) {
+      why = 'en la apertura, más allá del stop inicial (hueco)';
+    }
     bands.push({ kind: 'exit', time: trade.exit_t, price: trade.exit, good: trade.r > 0, atEdge, label: `Salida ${why} · ${fmtR(trade.r)} R` });
   }
   return bands;
@@ -670,10 +679,12 @@ export function signalChecklist(context, trade, recipe, names = {}) {
 }
 
 /** El cuadro de la señal para el gráfico: resalta su vela y lista cada condición */
-export function checklistBand(check, context, title) {
+export function checklistBand(check, context, title, trade = null) {
   if (!check) return null;
-  // below: en un largo el cuadro va abajo, porque el trade sube (con su objetivo arrastrado) por donde iría arriba
-  return { kind: 'checklist', tf: context.tf * 60000, rows: (context.rows || []).length, time: check.time, title, items: check.items, below: context.side > 0 };
+  // below: el cuadro va del lado contrario a la salida, para no tapar su cruz (O-14 del protocolo de pruebas, 22/11/2026).
+  // Sin el trade, en un largo abajo, porque el trade sube (con su objetivo arrastrado) por donde iría arriba
+  const below = trade && Number.isFinite(trade.exit) && Number.isFinite(trade.entry) ? trade.exit >= trade.entry : context.side > 0;
+  return { kind: 'checklist', tf: context.tf * 60000, rows: (context.rows || []).length, time: check.time, title, items: check.items, below };
 }
 
 // ==================== LOS INDICADORES DE LA REGLA EN EL TRADE ELEGIDO (21/11) ====================
@@ -684,7 +695,7 @@ export function checklistBand(check, context, title) {
 
 // En el orden de la lista de indicadores del gráfico (WISE_CODES y SMC_CODES, arriba)
 const RULE_INDICATOR_ORDER = ['CVD', 'Open Interest', 'OI-Volume Confluence', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios',
-  'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'];
+  'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI', 'Lector VPA'];
 const CHART_TF_MINUTES = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
 
 const ruleCodes = (rule) => new Set((rule?.recipe?.slots || []).flatMap(slot => slot.codes || []));
@@ -718,7 +729,17 @@ export function ruleIndicators(rule) {
   if (flow.cvd) names.add('CVD');
   if (['rise', 'fall'].includes(flow.oi) || flow.steady) names.add('Open Interest');
   if (['conf', 'noconf'].includes(flow.oi)) names.add('OI-Volume Confluence');
+  // El Lector VPA, con sus elementos, el filtro del medidor o la salida VPA (O-23 del protocolo de pruebas, 22/11/2026)
+  if (VPA_CODES.some(code => codes.has(code)) || rule.vpaf || rule.exit?.vpa) names.add('Lector VPA');
   return RULE_INDICATOR_ORDER.filter(name => names.has(name));
+}
+
+/**
+ * Los parámetros del Lector VPA con que calculó la regla (backend/vpa.py: los de fábrica más los de la regla) sobre los
+ * del gráfico: el gráfico conserva lo que muestra (O-23)
+ */
+export function ruleVpaConfig(rule, current, defaults) {
+  return { ...current, params: { ...defaults, ...(rule?.vpa || {}) } };
 }
 
 /**

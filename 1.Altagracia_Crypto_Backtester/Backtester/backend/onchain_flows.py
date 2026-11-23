@@ -209,10 +209,15 @@ def chain_ok(chain, z, side):
     return s >= chain["z"] if chain.get("mode", "favor") == "favor" else s > -chain["z"]
 
 
-def describe(chain, symbol=None):
+def describe(chain, symbol=None, side=None):
+    """En palabras. Con `side` -1, la condición de un corto (O-13 del protocolo de pruebas: decía la del largo en todos)."""
     asset = asset_for(chain.get("asset", "auto"), symbol) if chain["metric"] == "net" else None
     what = f"{NAMES[chain['metric']]}{f' de {asset.upper()}' if asset else ''} en {chain['days']} d"
-    how = f"a favor (z ≥ {chain['z']:g})" if chain.get("mode", "favor") == "favor" else f"no en contra (z > −{chain['z']:g})"
+    if side is not None and side < 0:
+        how = (f"a favor de un corto (z ≤ −{chain['z']:g})" if chain.get("mode", "favor") == "favor"
+               else f"no en contra de un corto (z < {chain['z']:g})")
+    else:
+        how = f"a favor (z ≥ {chain['z']:g})" if chain.get("mode", "favor") == "favor" else f"no en contra (z > −{chain['z']:g})"
     return f"Flujos on-chain: {what}, {how}"
 
 

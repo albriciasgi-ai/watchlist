@@ -92,7 +92,8 @@ test('cada × de «Vas a correr» apaga solo su pieza', () => {
     useHours: true, filters: [{ key: 'x', op: '>=', value: 1 }], tpTrailOn: true, targetR: 3, breakEvenOn: true, useHorizon: true, opposite: true,
     codes: [...user().codes, 'GC'], gcExit: 'band', bwAlligator: 'awake', bwZone: true, smcPd: true, smcBias: true,
     bwAo: 'color', bwAc: 'zero', bwGator: 'eating', bwMfi: 'squat', vpaMode: 'favor', vpaThr: 0.5,
-    vpaExitOn: true, vpaExit: ['absorb', 'meter'], vpaExitThr: 0.8, chainMetric: 'net', chainDays: 7
+    vpaExitOn: true, vpaExit: ['absorb', 'meter'], vpaExitThr: 0.8, chainMetric: 'net', chainDays: 7,
+    slippage: 0.02, funding: true
   };
   const before = keys(on);
   for (const [key, patch] of Object.entries(OFF_PATCH)) {
@@ -112,10 +113,22 @@ test('el embudo de la corrida del usuario: 14 señales, el OI quitó 7 y quedaro
     ['Señales de los elementos', 14, 14], ['filtro de CVD u OI', 7, 7], ['Trades cerrados', 7, 7]
   ]);
   const many = signalFunnel({ signals: 100, skipped: { 'filtro de VWAP o EMA': 10, 'fuera de horario': 30 }, busy: 20, open: 2, summary: { n: 35 } });
+  // En el orden del motor (O-27): la línea se mira antes que el horario
   assert.deepEqual(many.map(s => [s.label, s.left]), [
-    ['Señales de los elementos', 100], ['con una posición ya abierta', 80], ['fuera de horario', 50], ['filtro de VWAP o EMA', 40],
+    ['Señales de los elementos', 100], ['con una posición ya abierta', 80], ['filtro de VWAP o EMA', 70], ['fuera de horario', 40],
     ['abiertas al final de la fase', 38], ['sin vela siguiente u otros motivos', 35], ['Trades cerrados', 35]
   ]);
+  // A mercado, el enfriamiento va antes que los filtros (DOGE del paso 77: decía "filtro de contexto −188 → 1, enfriamiento −1 → 0")
+  const doge = signalFunnel({ signals: 189, skipped: { 'filtro de contexto': 188, 'enfriamiento': 1 }, busy: 0, open: 0, summary: { n: 0 },
+    rule: { entry: { type: 'market' } } });
+  assert.deepEqual(doge.map(s => [s.label, s.left]), [
+    ['Señales de los elementos', 189], ['enfriamiento', 188], ['filtro de contexto', 0], ['Trades cerrados', 0]
+  ]);
+  // Con órdenes que esperan, la posición abierta y el enfriamiento se miran al final, con la vela del llenado
+  const limit = signalFunnel({ signals: 50, skipped: { 'limit sin llenar': 20, 'enfriamiento': 5, 'filtro de régimen': 10 }, busy: 5, open: 0,
+    summary: { n: 10 }, rule: { entry: { type: 'limit' } } });
+  assert.deepEqual(limit.map(s => s.label), ['Señales de los elementos', 'filtro de régimen', 'limit sin llenar',
+    'con una posición ya abierta', 'enfriamiento', 'Trades cerrados']);
   assert.equal(signalFunnel(null), null);
 });
 

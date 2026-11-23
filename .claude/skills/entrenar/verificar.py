@@ -67,7 +67,8 @@ def vpa_reading(symbol, interval, t):
         print("  Lector VPA: sin volumen normal de su hora todavía (primeros días)")
         return
     names = (("absorb", "esfuerzo sin resultado"), ("trap", "resultado sin esfuerzo"), ("valid", "validada"), ("star", "estrella"),
-             ("hammer", "martillo"), ("hang", "hanging man"), ("doji", "doji"), ("fade", "esfuerzo que se agota"))
+             ("hammer", "martillo"), ("hang", "hanging man"), ("invh", "martillo invertido"), ("doji", "doji"),
+             ("fade", "esfuerzo que se agota"))  # invh: la estrella abajo de un tramo bajista (H22, 22/11/2026)
     grades = [f"{label} {100 * s[k][i]:.0f}%" for k, label in names if vpa._finite(s[k][i]) and s[k][i] >= 0.2]
     print(f"  Lector VPA: volumen {s['rv'][i]:.2f} y rango {s['rr'][i]:.2f} veces lo normal de su hora · "
           + (", ".join(grades) if grades else "sin lectura de 20% o más"))

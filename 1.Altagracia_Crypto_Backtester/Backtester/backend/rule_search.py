@@ -11,12 +11,18 @@ Búsqueda genética de reglas para el probador, solo en la fase 1.
 - Nada lee las fases 2 y 3. Las reglas probadas no se anotan en el registro del probador (runs.jsonl): la búsqueda
   lleva su propia cuenta, que el informe muestra junto con el umbral de suerte que da probar tantas.
 
-Aptitud, en el tramo de búsqueda y con las monedas juntas:
-  ventaja = R medio de la regla − el mejor de dos controles en esa misma moneda y tramo (entradas al azar con el
-  mismo stop y salida, y seguir el tramo al azar), pesado por los trades de cada moneda;
-  aptitud = ventaja − su error estándar − 0.02 R por cada pieza más allá de la primera − 0.05 R por cada moneda
-  que falte para `minCoins` monedas a favor. Con menos de `minTrades` trades queda por debajo de cualquier regla
-  que los tenga.
+Aptitud, en el tramo de búsqueda y con las monedas juntas (desde el 23/11, con los tres controles del tablero):
+  ventaja = la del control que más le exige a la regla, de los tres del tablero (strategy_board._pool): entradas al
+  azar con el mismo stop y salida, seguir el tramo al azar y el azar del trimestre y el lado de cada trade (B-07 del
+  protocolo de pruebas), cada una con el margen agrupado por la semana de la salida (B-08) y el error del control.
+  "Más le exige": la menor ventaja menos su error;
+  aptitud = esa ventaja − su error − 0.02 R por cada pieza más allá de la primera − 0.05 R por cada moneda que falte
+  para `minCoins` monedas a favor. Con menos de `minTrades` trades queda por debajo de cualquier regla que los tenga.
+  Una búsqueda de antes (sin "controls" en su configuración) sigue con la de entonces, también al retomarla: R medio
+  − el mejor de dos controles en cada moneda (el azar y seguir el tramo), con el error de trades independientes.
+Candidata a la fase 2: en la validación les gana a los tres controles y sus vecinas aguantan. Con `holdMargin`, además
+con margen y con R medio positivo, como "pasa" en el tablero. De fábrica no: en la validación hay pocos trades, y
+descartaría reglas que podrían mejorarse; el margen lo pide después el tablero en la fase 2.
 """
 import hashlib
 import json
@@ -151,6 +157,9 @@ def clean_config(raw):
         "checkStocks": raw.get("checkStocks") is not False,
         # Cómo se elige: "promedio" (ventaja media menos su error) o "constancia" (mediana de la ventaja de cada trimestre)
         "fitness": raw.get("fitness") if raw.get("fitness") in ("promedio", "constancia") else "promedio",
+        # Desde el 23/11 (protocolo de pruebas): los tres controles del tablero, con el margen por semanas, en la aptitud y
+        # en la validación. holdMargin: la candidata pide además el margen en la validación (de fábrica no)
+        "controls": "tres", "holdMargin": raw.get("holdMargin") is True,
         "seed": seed,
     }
 
@@ -340,7 +349,7 @@ class Evaluator:
         leg = float((rule.get("rv") or {}).get("leg", measures.LEG_ATR))
         core = {"stop": base_rule["stop"], "exit": {**base_rule["exit"], "opposite": False}, "gc": rule.get("gc"),
                 "invert": rule["invert"] if rule.get("gc") else False, "entry": base_rule["entry"],
-                "regime": rule.get("regime"), "flow": rule.get("flow")}
+                "regime": rule.get("regime"), "flow": rule.get("flow"), "lines": rule.get("lines")}
         for name in ("bwf", "smcf", "vpaf"):
             if rule.get(name):
                 core[name] = rule[name]
@@ -397,20 +406,27 @@ class Evaluator:
                 by_side[trade["dir"]].append(trade["r"])
                 by_quarter.setdefault((rt.quarter_of(trade["entry_t"]), trade["dir"]), []).append(trade["r"])
             found = {side: float(np.mean(rs)) if rs else None for side, rs in by_side.items()}
-            found["all"] = float(np.mean(by_side[1] + by_side[-1])) if by_side[1] or by_side[-1] else None
+            both = by_side[1] + by_side[-1]
+            found["all"] = float(np.mean(both)) if both else None
             found["q"] = {k: (float(np.mean(v)), len(v)) for k, v in by_quarter.items()}  # Azar de cada trimestre y lado
+            # El error de cada promedio: el margen de las tres ventajas suma el del control, como el tablero
+            found["se"] = {1: _se(by_side[1]), -1: _se(by_side[-1]), "all": _se(both)}
             self.controls[key] = found
+        se = found.get("se") or {}
         if kind == "leg":
-            return {"avgR": found["all"]}
+            return {"avgR": found["all"], "se": se.get("all")}
         if found[1] is None or found[-1] is None:
-            return {"avgR": found["all"], "q": found["q"]}
-        return {"avgR": longs * found[1] + (1 - longs) * found[-1], "q": found["q"]}
+            return {"avgR": found["all"], "se": se.get("all"), "q": found["q"]}
+        mix = math.sqrt((longs * (se.get(1) or 0.0)) ** 2 + ((1 - longs) * (se.get(-1) or 0.0)) ** 2)
+        return {"avgR": longs * found[1] + (1 - longs) * found[-1], "se": mix, "q": found["q"]}
 
     def evaluate(self, rule):
         """Resultado de la regla en el tramo de búsqueda y en la validación interna, con las monedas juntas."""
         segments = {"train": [], "hold": []}
         raw_r = {"train": [], "hold": []}
         quarters = {"train": {}, "hold": {}}  # Por trimestre: [trades, suma de R, suma de la ventaja contra el azar de ese trimestre]
+        rows3 = {"train": [], "hold": []}     # Para las tres ventajas: (R, azar de su trimestre y lado, salida)
+        coin_ctrls = {"train": [], "hold": []}  # Por moneda: sus trades y (promedio, error) de cada control
         coins = []
         codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
         for symbol in self.symbols():
@@ -441,6 +457,9 @@ class Evaluator:
                                 "edge": round(float(np.mean(rs)) - ctrl, 4)}
                 segments[segment].extend(r - ctrl for r in rs)
                 raw_r[segment].extend(rs)
+                rnd, leg = (c if c and c["avgR"] is not None else None for c in controls)
+                coin_ctrls[segment].append({"n": len(rs), "random": (rnd["avgR"], rnd.get("se") or 0.0) if rnd else None,
+                                            "leg": (leg["avgR"], leg.get("se") or 0.0) if leg else None})
                 by_q = (controls[0] or {}).get("q") or {}
                 for t in picked:
                     q = rt.quarter_of(t["entry_t"])
@@ -449,6 +468,8 @@ class Evaluator:
                     cell[0] += 1
                     cell[1] += t["r"]
                     cell[2] += t["r"] - (mean if n >= rt.QUARTER_MIN_RANDOM else ctrl)
+                    # El azar del trimestre y el lado; con pocas entradas, el de la moneda (como rt.quarter_control)
+                    rows3[segment].append((t["r"], mean if n >= rt.QUARTER_MIN_RANDOM else (rnd["avgR"] if rnd else None), t["exit_t"]))
             coins.append(row)
         out = {"coins": coins}
         for segment, residuals in segments.items():
@@ -461,7 +482,64 @@ class Evaluator:
                 "avgR": round(float(np.mean(raw_r[segment])), 4) if n else None,
                 "consistency": {k: v for k, v in rt.consistency(quarters[segment]).items() if k != "rows"},
             }
+            three = _three(rows3[segment], coin_ctrls[segment])
+            if three:
+                out[segment]["three"] = three
+                if self.cfg.get("controls") == "tres":
+                    # La ventaja con que elige y que se muestra: la del control que más le exige (la menor menos su error).
+                    # La de dos controles queda como edgeTwo, seTwo
+                    name = min(three, key=lambda k: three[k]["r"] - three[k]["se"])
+                    seg = out[segment]
+                    seg.update(edgeTwo=seg["edge"], seTwo=seg["se"], edge=three[name]["r"], se=three[name]["se"], against=name)
         return out
+
+
+def _se(values):
+    return float(np.std(values, ddof=1) / math.sqrt(len(values))) if len(values) > 1 else 0.0
+
+
+def _three(rows, coins):
+    """
+    Las tres ventajas del tablero (strategy_board._pool) para los trades de un tramo, con las monedas juntas: contra el
+    azar, contra seguir el tramo y contra el azar del trimestre y el lado de cada trade (B-07), con el margen agrupado
+    por la semana de la salida (B-08) más el error del control. rows: (R, azar de su trimestre y lado, salida).
+    coins: por moneda, sus trades y (promedio, error) de cada control. Un control que falta en una moneda con trades no
+    da su ventaja, como en el tablero.
+    """
+    n = len(rows)
+    if n < 2:
+        return None
+    values = [r for r, _, _ in rows]
+    mean = sum(values) / n
+    weeks = {}
+    for r, _, exit_t in rows:
+        cell = weeks.setdefault(rt.week_of(exit_t), [0, 0.0])
+        cell[0] += 1
+        cell[1] += r
+    se_r = rt.clustered_se(weeks, mean, n, _se(values))
+    traded = [c for c in coins if c["n"]]
+
+    def edge(value, se):
+        return {"r": round(value, 4), "low": round(value - 1.96 * se, 4), "high": round(value + 1.96 * se, 4), "se": round(se, 4)}
+
+    out = {}
+    for name, key in (("edge", "random"), ("legEdge", "leg")):
+        if not traded or any(c[key] is None for c in traded):
+            continue
+        ctrl = sum(c["n"] * c[key][0] for c in traded) / n
+        ctrl_se = math.sqrt(sum((c["n"] * c[key][1]) ** 2 for c in traded)) / n
+        out[name] = edge(mean - ctrl, math.sqrt(se_r ** 2 + ctrl_se ** 2))
+        if key == "random" and all(q is not None for _, q, _ in rows):
+            diffs = [r - q for r, q, _ in rows]
+            mean_d = sum(diffs) / n
+            groups = {}
+            for d, (_, _, exit_t) in zip(diffs, rows):
+                cell = groups.setdefault(rt.week_of(exit_t), [0, 0.0])
+                cell[0] += 1
+                cell[1] += d
+            se_d = rt.clustered_se(groups, mean_d, n, _se(diffs))
+            out["quarterEdge"] = edge(mean_d, math.sqrt(se_d ** 2 + ctrl_se ** 2))
+    return out or None
 
 
 def _exit_at(rule, span):
@@ -598,8 +676,19 @@ def _finish(state, evaluator, job):
         up = sum(1 for x in near if x["edge"] > 0)
         hold = record["hold"]
         stable = near and up / len(near) >= 0.6
+        three = hold.get("three") if cfg.get("controls") == "tres" else None
         if hold["n"] < MIN_HOLD_TRADES:
             verdict = f"Pocos trades en la validación ({hold['n']}): no se puede juzgar"
+        elif three:
+            # Les gana a los tres controles del tablero; con holdMargin, además con margen y con R positivo ("pasa")
+            if not all(e["r"] > 0 for e in three.values()):
+                verdict = "No les gana a los tres controles en la validación: descartar"
+            elif cfg.get("holdMargin") and not (all(e["low"] > 0 for e in three.values()) and (hold.get("avgR") or 0) > 0):
+                verdict = "Les gana a los tres controles en la validación, pero no con margen: descartar"
+            elif not stable:
+                verdict = "Se sostiene en la validación pero sus vecinas no: frágil"
+            else:
+                verdict = "Candidata a la fase 2"
         elif hold["edge"] is None or hold["edge"] <= 0:
             verdict = "No se sostiene en la validación: descartar"
         elif not stable:

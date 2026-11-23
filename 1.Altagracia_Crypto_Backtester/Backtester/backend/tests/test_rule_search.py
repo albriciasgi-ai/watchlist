@@ -147,3 +147,84 @@ def test_una_regla_de_la_busqueda_cargada_en_la_ventana_sigue_siendo_la_misma(tm
     assert len(back) == len(rules)
     for rule, again in zip(rules, back):
         assert rt.rule_hash("S", rule) == rt.rule_hash("S", rt.clean_rule(again))
+
+
+# ==================== Los tres controles del tablero y el margen en la validación (23/11) ====================
+
+WEEK = 7 * 86400000
+
+
+def test_las_tres_ventajas_son_las_del_tablero():
+    """Contra el azar, el tramo y el azar del trimestre y el lado, con el margen por semanas y el error del control."""
+    rows = [(1.0, 0.2, rt._ms("2022-01-03") + k * WEEK) for k in range(10)] + \
+           [(-0.5, -0.1, rt._ms("2022-01-03") + k * WEEK) for k in range(10)]
+    coins = [{"n": 12, "random": (0.1, 0.02), "leg": (0.2, 0.03)}, {"n": 8, "random": (-0.1, 0.02), "leg": (0.0, 0.03)}]
+    three = rs._three(rows, coins)
+    mean = 0.25
+    assert three["edge"]["r"] == round(mean - (12 * 0.1 + 8 * -0.1) / 20, 4)
+    assert three["legEdge"]["r"] == round(mean - (12 * 0.2 + 8 * 0.0) / 20, 4)
+    assert three["quarterEdge"]["r"] == round(sum(r - q for r, q, _ in rows) / 20, 4)
+    # El margen nunca es más angosto que el de trades independientes y suma el error del control
+    iid = rs._se([r for r, _, _ in rows])
+    assert three["edge"]["se"] >= iid and three["legEdge"]["se"] > three["edge"]["se"]
+    assert abs(three["edge"]["low"] - (three["edge"]["r"] - 1.96 * three["edge"]["se"])) < 3e-4  # Redondeadas a 4 cifras
+    # Trades de la misma semana que se mueven juntos: el margen se ensancha (B-08)
+    flat = [{"n": 30, "random": (0.0, 0.0), "leg": (0.0, 0.0)}]
+    same = [(1.0 if k % 2 == 0 else -1.0, 0.0, rt._ms("2022-01-03") + k * WEEK) for k in range(10) for _ in range(3)]
+    spread = [(r, q, rt._ms("2022-01-03") + j * WEEK) for j, (r, q, _) in enumerate(same)]
+    assert rs._three(same, flat)["edge"]["se"] > 1.5 * rs._three(spread, flat)["edge"]["se"]
+    # Sin el tramo en una moneda con trades no hay ventaja contra el tramo; sin el azar del trimestre, tampoco la suya
+    assert "legEdge" not in rs._three(rows, [{"n": 12, "random": (0.1, 0.02), "leg": None}, {"n": 8, "random": (-0.1, 0.02), "leg": (0.0, 0.03)}])
+    assert "quarterEdge" not in rs._three(rows[:-1] + [(1.0, None, rows[-1][2])], coins)
+    assert rs._three(rows[:1], coins) is None
+
+
+def test_la_busqueda_elige_con_el_control_que_mas_le_exige(monkeypatch):
+    fake_market(monkeypatch)
+    rule = rt.clean_rule({"tf": TF, "recipe": {"slots": [{"codes": ["RF"]}]}, "stop": {"type": "atr", "atr": 2},
+                          "exit": {"targetR": 2}, "rv": {"arrow": "any", "spike": 1.5}})
+    new = rs.Evaluator(config()).evaluate(rule)
+    old_cfg = {k: v for k, v in config().items() if k not in ("controls", "holdMargin")}  # Una búsqueda de antes del 23/11
+    old = rs.Evaluator(old_cfg).evaluate(rule)
+    for segment in ("train", "hold"):
+        seg, before = new[segment], old[segment]
+        three = seg["three"]
+        name = min(three, key=lambda k: three[k]["r"] - three[k]["se"])
+        assert seg["against"] == name and seg["edge"] == three[name]["r"] and seg["se"] == three[name]["se"]
+        # La de dos controles queda como estaba, y una búsqueda de antes sigue eligiendo con ella
+        assert seg["edgeTwo"] == before["edge"] and seg["seTwo"] == before["se"] and "against" not in before
+    cfg, t = config(), new["train"]
+    assert t["n"] >= cfg["minTrades"]
+    expected = t["edge"] - t["se"] - rs.COIN_R * max(0, min(cfg["minCoins"], t["coinsWith"]) - t["coinsUp"])
+    assert rs.fitness({"train": t, "complexity": 1}, cfg) == round(expected, 4)
+
+
+def _finished(monkeypatch, tmp_path, hold, **extra):
+    """El veredicto de una sola finalista con estas cifras de validación y vecinas que aguantan."""
+    monkeypatch.setattr(rs, "search_dir", lambda: tmp_path)
+    monkeypatch.setattr(rs, "_neighbors", lambda state, evaluator, record: [{"gene": "x", "edge": 0.1, "n": 50, "key": "v"}] * 3)
+    cfg = {**config(checkNew=False, checkStocks=False), **extra}
+    train = {"n": 200, "edge": 0.2, "se": 0.05, "coinsUp": 2, "coinsWith": 2, "avgR": 0.3}
+    record = {"key": "k", "origin": "search", "genome": {}, "rule": {}, "complexity": 1, "train": train, "hold": hold, "coins": [], "fitness": 0.1}
+    state = {"config": cfg, "evaluated": {"k": record}}
+    rs._finish(state, None, {})
+    return state["report"]["finalists"][0]
+
+
+def test_candidata_con_o_sin_el_margen_en_la_validacion(monkeypatch, tmp_path):
+    three = {"edge": {"r": 0.08, "low": -0.1, "high": 0.26, "se": 0.09}, "legEdge": {"r": 0.05, "low": -0.12, "high": 0.22, "se": 0.09},
+             "quarterEdge": {"r": 0.1, "low": -0.07, "high": 0.27, "se": 0.09}}
+    hold = {"n": 150, "edge": 0.05, "se": 0.09, "avgR": 0.1, "three": three}
+    # De fábrica: les gana a los tres controles, aunque no con margen
+    assert _finished(monkeypatch, tmp_path, hold)["verdict"] == "Candidata a la fase 2"
+    # Pidiendo el margen, como "pasa" en el tablero
+    found = _finished(monkeypatch, tmp_path, hold, holdMargin=True)
+    assert found["verdict"].startswith("Les gana a los tres controles en la validación, pero no con margen") and not found["candidate"]
+    clear = {k: {**v, "low": 0.01} for k, v in three.items()}
+    assert _finished(monkeypatch, tmp_path, {**hold, "three": clear}, holdMargin=True)["candidate"]
+    assert not _finished(monkeypatch, tmp_path, {**hold, "three": clear, "avgR": -0.02}, holdMargin=True)["candidate"]
+    # Uno de los tres por debajo de cero
+    below = {**three, "quarterEdge": {**three["quarterEdge"], "r": -0.01}}
+    assert _finished(monkeypatch, tmp_path, {**hold, "three": below})["verdict"].startswith("No les gana a los tres controles")
+    # Una búsqueda de antes del 23/11 juzga como entonces: la ventaja sobre el mejor de dos controles
+    assert _finished(monkeypatch, tmp_path, {**hold, "three": below}, controls=None)["verdict"] == "Candidata a la fase 2"

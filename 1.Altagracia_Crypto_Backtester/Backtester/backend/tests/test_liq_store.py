@@ -116,3 +116,15 @@ def test_archivo_nuevo_se_vuelve_a_leer(store, tmp_path):
 def test_ventana_demasiado_larga_se_acorta(store):
     result = store.window("BTCUSDT", 0, DAY0 + 3 * D)
     assert result["start"] == DAY0 + 3 * D - store.MAX_SPAN_MS
+
+
+def test_el_ancho_de_celda_de_cada_fuente_es_el_de_lo_conocido(store, tmp_path):
+    """Protocolo de pruebas, F-16 (22/11/2026): el indicador arma sus franjas con el ancho de celda que le da la ruta;
+    antes era el de todo el archivo, también con la hora simulada antes de que llegara la celda más ancha."""
+    write(tmp_path / "SOLUSDT_coinalyze.csv", ["start_ms", "end_ms", "price_low", "price_high", "long_usd", "short_usd", "interval"], [
+        [DAY0, DAY0 + 3600000, 150.0, 150.075, 1000, 0, "1hour"],
+        [DAY0 + 2 * D, DAY0 + 2 * D + 3600000, 150.0, 155.0, 2000, 0, "1hour"],
+    ])
+    early = store.window("SOLUSDT", DAY0 - D, DAY0 + 3 * D, known_until=DAY0 + D)["sources"][0]["cell_width"]
+    late = store.window("SOLUSDT", DAY0 - D, DAY0 + 3 * D, known_until=DAY0 + 3 * D)["sources"][0]["cell_width"]
+    assert early == pytest.approx(0.075) and late == 5.0

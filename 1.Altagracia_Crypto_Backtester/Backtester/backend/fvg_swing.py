@@ -57,8 +57,10 @@ def events(bars, tf, fv=None, sp=None, im=None):
             for side, lo, hi in ((1, h[i - 2], l[i]), (-1, h[i], l[i - 2])):
                 gap = hi - lo
                 if gap > 0 and gap >= fv["minAtr"] * atr[i]:
+                    # first: la primera de las tres velas del patrón, para el stop "extremo de la vela del elemento" (H16 del
+                    # protocolo de pruebas, 22/11/2026: antes era solo la tercera, la que da a conocer el hueco)
                     out.append({"code": "FV", "dir": side, "t": int(t[i]), "known": int(t[i] + step), "lo": float(lo), "hi": float(hi),
-                                "info": {"gapAtr": round(float(gap / atr[i]), 2)}})
+                                "first": int(t[i - 2]), "info": {"gapAtr": round(float(gap / atr[i]), 2)}})
     if im is not None:
         n, need = im["bars"], im["atr"]
         moved = np.full(len(c), 0.0)

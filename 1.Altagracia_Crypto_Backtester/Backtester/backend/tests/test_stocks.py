@@ -135,10 +135,12 @@ def test_las_corridas_de_acciones_que_toco_el_fallo_del_regimen_no_se_reusan(sto
     daily = {"regime": {"mode": "outside", "tf": 1440}}
     records = [
         {"id": "antes", "symbol": "AAA", "tf": 240, "phase": 1, "hash": "h", "rule": daily},               # con el fallo: no cuenta
-        {"id": "despues", "symbol": "AAA", "tf": 240, "phase": 1, "hash": "h", "rule": daily, "engine": 2},
-        {"id": "moneda", "symbol": "BTCUSDT", "tf": 240, "phase": 1, "hash": "h", "rule": daily},          # en las monedas estaba bien
-        {"id": "sin", "symbol": "AAA", "tf": 240, "phase": 1, "hash": "g", "rule": {}},
-        {"id": "diaria", "symbol": "AAA", "tf": 1440, "phase": 1, "hash": "k", "rule": daily},            # una regla de 1 día no pasaba por ahí
+        # Desde el motor 6 (22/11/2026) solo cuentan las de ese motor
+        {"id": "despues", "symbol": "AAA", "tf": 240, "phase": 1, "hash": "h", "rule": daily, "engine": rt.ENGINE},
+        {"id": "moneda", "symbol": "BTCUSDT", "tf": 240, "phase": 1, "hash": "h", "rule": daily, "engine": rt.ENGINE},
+        {"id": "sin", "symbol": "AAA", "tf": 240, "phase": 1, "hash": "g", "rule": {}, "engine": rt.ENGINE},
+        {"id": "diaria", "symbol": "AAA", "tf": 1440, "phase": 1, "hash": "k", "rule": daily, "engine": rt.ENGINE},
+        {"id": "vieja", "symbol": "BTCUSDT", "tf": 240, "phase": 1, "hash": "h", "rule": daily, "engine": 5},
     ]
     path.write_text("".join(json.dumps(r) + chr(10) for r in records), encoding="utf-8")
     assert [r["id"] for r in rt.history()] == ["despues", "moneda", "sin", "diaria"]

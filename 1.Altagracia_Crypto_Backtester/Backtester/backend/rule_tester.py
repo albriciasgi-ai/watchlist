@@ -57,12 +57,14 @@ WARM_DAYS = oe.WINDOW_DAYS + 1  # Los umbrales relativos necesitan 30 días prev
 CHUNK_DAYS = 60
 TAKER_FEE = 0.00055
 MAKER_FEE = 0.0002
+MAX_FEE_R = 0.3  # Tope de fábrica de la comisión de ida y vuelta, en R (H18)
 REACH_BARS = 300          # Velas en que se mide hasta dónde llegó el precio antes del stop inicial
 REACH_LEVELS = (1, 2, 3, 5)
 DEFAULT_HORIZON = 96
 MAX_HORIZON = 2000
 GAP_MS = 6 * 3600000      # Un hueco de datos mayor cierra el trade en la última vela conocida
 BASE_TRADES = 3000
+SIDED_TRIES = 200  # Velas que prueba el azar, para un lado ya elegido, hasta dar con una que el filtro deje (F-07)
 SMALL_SAMPLE = 30
 MAX_FILTERS = 3
 MAX_WINDOW = 10           # Un gatillo puede llegar hasta 10 velas después del barrido
@@ -176,6 +178,8 @@ def _candle_path(symbol):
 def has_candles(symbol, tf):
     """Si una moneda nueva tiene el archivo de velas de ese marco (sin abrirlo). Las demás, siempre."""
     path = _candle_path(symbol)
+    if path.parent == STOCK_DIR:
+        return int(tf) in (15, 60, 240, DAILY)  # Las acciones: 15m, 1h, 4h y 1D (F-11)
     if path.parent != EXTRA_DIR:
         return True
     name = EXTRA_KEYS.get(tf, (None,))[0]
@@ -564,7 +568,7 @@ def clean_rule(raw):
     leaves_channel = (extra.get("gc") or {}).get("exit") in ("band", "mid")
     if target_r is None and trail == "none" and horizon is None and "targetAt" not in extra and not leaves_channel and not vexit:
         horizon = DEFAULT_HORIZON  # Sin objetivo hace falta otra salida
-    return {
+    return _canonical({
         **extra,
         "name": name, "tf": tf, "recipe": recipe, "invert": bool(raw.get("invert")),
         "entry": entry_rule,
@@ -583,7 +587,85 @@ def clean_rule(raw):
         "filters": filters,
         "target": _num(raw.get("target"), oe.DEFAULT_TARGET, 0.005, 0.3),
         "volFilter": _num(raw.get("volFilter"), oe.DEFAULT_VOL_FILTER, 0.0, 10.0),
-    }
+        **_fee_cap(raw), **_costs(raw),
+    })
+
+
+def _canonical(rule):
+    """
+    Lo que en esa regla no hace nada, en su valor de fábrica: así la misma regla es una sola (O-18 del protocolo de
+    pruebas, 22/11/2026; antes "FVG 0.3 · 3R" y otra igual con otro margen de un stop en ATR eran dos estrategias con los
+    mismos trades). El margen del stop solo se usa fuera del stop en ATR o con el stop arrastrado al swing o a las velas;
+    las velas del swing, solo con el stop en el swing; el múltiplo de ATR, solo con el stop en ATR; con un solo elemento,
+    "todos" y "al menos 1" son lo mismo; y el filtro de swing y la confirmación de entrada apagados no tienen ajustes.
+    """
+    stop, recipe = dict(rule["stop"]), dict(rule["recipe"])
+    if stop["type"] == "atr" and rule["exit"]["trail"] not in ("swing", "bars"):
+        stop["buffer"] = 0.1
+    if stop["type"] != "swing":
+        stop["bars"] = 5
+    if stop["type"] != "atr":
+        stop["atr"] = 1.5
+    if len(recipe["slots"]) == 1 and recipe["mode"] in ("strict", "threshold"):
+        recipe["mode"], recipe["min"] = "strict", 1
+    if not recipe["swing"]["on"]:
+        recipe["swing"] = {"on": False, "bars": 5, "flex": 0, "onSwing": False}
+    if not recipe["entry"]["on"]:
+        recipe["entry"] = {"on": False, "atr": 0.25, "bars": 2}
+    return {**rule, "stop": stop, "recipe": recipe}
+
+
+def _costs(raw):
+    """Deslizamiento (% por lado, en los llenados a mercado) y funding (B-05 y B-06 del protocolo de pruebas, 22/11/2026).
+    Apagados de fábrica; solo entran a la regla si se piden, así una regla conserva su identidad."""
+    out = {}
+    slip = _num(raw.get("slippage"), 0.0, 0.0, 1.0)
+    if slip > 0:
+        out["slippage"] = slip
+    if raw.get("funding"):
+        out["funding"] = True
+    return out
+
+
+def trade_costs(ctx, trade):
+    """
+    Lo que costaría cada cosa que el motor no cobra, en R, para un trade cerrado (B-05 y B-06):
+    - slip: el deslizamiento de 0.01% por lado en los llenados a mercado: la entrada a mercado o con orden stop, y toda
+      salida menos el objetivo fijo, que es una orden limit (la limit de entrada tampoco desliza);
+    - funding: lo cobrado (+) o pagado (−) en cada liquidación de funding con la posición abierta: el largo paga la tasa
+      positiva y el corto la cobra. Las acciones no tienen funding.
+    """
+    if trade.get("open") or not trade.get("risk"):
+        return {"slip": 0.0, "funding": 0.0}
+    moved = (trade["entry"] if trade.get("order") in ("market", "stop") else 0.0) + (trade["exit"] if trade.get("reason") != "objetivo" else 0.0)
+    out = {"slip": round(moved * 0.0001 / trade["risk"], 6), "funding": 0.0}
+    series = ctx.get("_funding")
+    if series is None:
+        series = ctx["_funding"] = (None if is_stock(ctx.get("symbol", "")) else flow_filters.funding_series(ctx.get("symbol", ""))) or False
+    if series:
+        times, rates = series
+        a, b = np.searchsorted(times, trade["entry_t"], side="right"), np.searchsorted(times, trade["exit_t"], side="right")
+        out["funding"] = round(float(-trade["dir"] * rates[a:b].sum() * trade["entry"] / trade["risk"]), 6)
+    return out
+
+
+def _with_costs(rule, ctx, trade):
+    """Anota los costos del trade y, si la regla los pide, los descuenta de su R (también en el azar, para comparar parejo)."""
+    if trade is None or "skip" in trade or trade.get("open"):
+        return trade
+    costs = trade_costs(ctx, trade)
+    trade.update(costs)
+    taken = (rule.get("slippage") or 0.0) / 0.01 * costs["slip"] - (costs["funding"] if rule.get("funding") else 0.0)
+    if taken:
+        trade["r"] = round(trade["r"] - taken, 4)
+    return trade
+
+
+def _fee_cap(raw):
+    """Tope de la comisión de ida y vuelta, en R, para tomar la señal (H18 del protocolo de pruebas, motor 6). Vale
+    MAX_FEE_R en toda regla; solo entra a la regla si se pide otro (0 lo apaga), así una regla conserva su identidad."""
+    cap = _num(raw.get("maxFeeR"), MAX_FEE_R, 0.0, 5.0)
+    return {} if cap == MAX_FEE_R else {"maxFeeR": cap}
 
 
 TRAILS = ("none", "swing", "atr", "pct", "bars")
@@ -628,6 +710,15 @@ def _vpa_exit(exit_):
     return {"vpa": out}
 
 
+def _vpa_note(found, i, reason):
+    """Anota un aviso VPA en la vela i; con dos o más en la misma vela, todos (O-11 del protocolo de pruebas, 22/11/2026:
+    antes quedaba el primero de una lista fija, y con los precios reflejados el mismo trade salía con otro nombre)."""
+    if i not in found:
+        found[i] = reason
+    elif reason[5:] not in found[i]:
+        found[i] += " y " + reason[5:]
+
+
 def _vpa_exit_bars(rule, ctx):
     """Por lado del trade, las velas en que el VPA avisa en contra: {1: {vela: motivo}, -1: {...}}. Todo se sabe al cerrar
     la vela, y la salida es en la apertura de la siguiente.
@@ -647,21 +738,21 @@ def _vpa_exit_bars(rule, ctx):
         events = [e for e in vpa.detect(ctx["T"], ctx["O"], ctx["H"], ctx["L"], ctx["C"], ctx["V"], ctx["tf"], _vpa_cfg(rule), series)
                   if e["code"] in ("QC", "QS")]
     for e in events:
-        out[-e["dir"]].setdefault(e["index"], "VPA: " + VPA_EXITS["climax"])
+        _vpa_note(out[-e["dir"]], e["index"], "VPA: " + VPA_EXITS["climax"])
     for i in range(len(ctx["C"])):
         d, leg = series["dir"][i], series["leg"][i]
         if "absorb" in on and finite(series["absorb"][i]) and series["absorb"][i] >= fire:
             against = -d if d else -leg
             if against:
-                out[-against].setdefault(i, "VPA: " + VPA_EXITS["absorb"])
+                _vpa_note(out[-against], i, "VPA: " + VPA_EXITS["absorb"])
         if "push" in on and d and finite(series["valid"][i]) and series["valid"][i] >= fire:
-            out[-d].setdefault(i, "VPA: " + VPA_EXITS["push"])
+            _vpa_note(out[-d], i, "VPA: " + VPA_EXITS["push"])
         if "meter" in on and finite(series["meter"][i]) and finite(series["rv"][i]):
             for side in (1, -1):
                 if series["meter"][i] * side <= -ve["thr"]:
-                    out[side].setdefault(i, "VPA: " + VPA_EXITS["meter"])
+                    _vpa_note(out[side], i, "VPA: " + VPA_EXITS["meter"])
         if "fade" in on and leg and finite(series["fade"][i]) and series["fade"][i] >= fire:
-            out[leg].setdefault(i, "VPA: " + VPA_EXITS["fade"])
+            _vpa_note(out[leg], i, "VPA: " + VPA_EXITS["fade"])
     return out
 
 
@@ -710,8 +801,11 @@ def rule_hash(symbol, rule):
 
 # ==================== ELEMENTOS DEL TRAMO ====================
 
+SPAN_VERSION = 2  # 2 (22/11/2026): los bordes del área de valor y del POC sin el ruido de coma flotante (F-14)
+
+
 def _span_path(symbol, tf, phase, rule):
-    key = f"{symbol}_{tf}_f{phase['phase']}_{phase['from']}_{phase['to']}_t{rule['target']}_v{rule['volFilter']}"
+    key = f"{symbol}_{tf}_f{phase['phase']}_{phase['from']}_{phase['to']}_t{rule['target']}_v{rule['volFilter']}_e{SPAN_VERSION}"
     return tester_dir() / "cache" / (key.replace(".", "p") + ".npz")
 
 
@@ -776,6 +870,59 @@ def detect_span(symbol, tf, phase, rule, progress=None):
         while len(_spans) > 3:
             _spans.pop(next(iter(_spans)))
     return span
+
+
+LEAD_BARS = 300  # Velas anteriores a la fase con que arrancan la corrida y sus controles (H2, motor 6)
+LEAD_DAYS = 35   # Y al menos estos días: el Lector VPA y el volumen por hora miran los 30 días anteriores
+_warms = collections.OrderedDict()
+
+
+def _warm_bars(symbol, tf, phase, rule):
+    """
+    Las velas anteriores a la fase con que arranca la corrida (H2 del protocolo de pruebas, 22/11/2026). El ATR, los
+    swings, las líneas, los filtros y los elementos de velas empiezan con historia, como el canal gaussiano en 1D, pero
+    ninguna señal ni entrada al azar cae antes de la fase. Antes cada fase arrancaba en frío: no veía el swing anterior,
+    el ATR salía de pocas velas y el FVG o el Impulso daban señales con ese ATR.
+    Las mismas fuentes que las velas de la fase: el caché de velas o, con almacén de trades, el almacén. Las últimas
+    LEAD_BARS velas o LEAD_DAYS días, lo que sea más; en 1D las trae detect_span (todos los días anteriores).
+    """
+    start = phase.get("start")
+    if start is None or tf == DAILY:
+        return []
+    need = max(LEAD_BARS * tf * 60000, LEAD_DAYS * oe.DAY_MS)
+    key = (symbol, tf, start, rule.get("target"), rule.get("volFilter"))
+    with _lock:
+        if key in _warms:
+            _warms.move_to_end(key)
+            return _warms[key]
+    try:
+        if _on_candles(symbol, tf):
+            found = [b for b in candle_bars(symbol, tf) if start - need <= b["t"] < start]
+        else:
+            part = oe.detect(symbol, tf, start - need, start - 1, start, rule["target"], 0, rule["volFilter"])
+            found = [dict(t=b["t"], o=b["o"], h=b["h"], l=b["l"], c=b["c"], delta=b["delta"], vol=b["vol"])
+                     for b in part.get("bars") or [] if b["t"] < start]
+    except Exception:
+        found = []  # Sin velas de antes (una moneda que empieza con la fase, un símbolo de prueba): arranca en frío
+    with _lock:
+        _warms[key] = found
+        while len(_warms) > 16:
+            _warms.popitem(last=False)
+    return found
+
+
+def _warmed(symbol, tf, phase, rule, span):
+    """El tramo con sus velas de calentamiento delante (`lead` velas, que no se operan). Solo si empalman con la primera
+    vela de la fase."""
+    if "lead" in span:
+        return span
+    bars = span["bars"]
+    warm = span.get("warm")
+    if warm is None:
+        warm = _warm_bars(symbol, tf, phase, rule) if bars else []
+    if warm and bars and not (0 < bars[0]["t"] - warm[-1]["t"] <= max(GAP_MS, 2 * tf * 60000)):
+        warm = []  # No empalman: otras velas (una prueba) o un hueco en el borde
+    return {**span, "bars": list(warm) + bars, "lead": len(warm), "warm": []}
 
 
 def early_candles(symbol, tf, before_ms):
@@ -881,6 +1028,61 @@ def _minute_path(ctx, j):
     return [(ctx["T"][j] + step, p, p) for step, p in enumerate(points)]
 
 
+def _fill_time(ctx, j, side, level, kind, start=None):
+    """
+    Cuándo se llena una orden en la vela j, para ordenar las que se llenan en la misma vela: con una posición a la vez
+    entra la que se llenó primero, no la de la señal más vieja (F-04 del protocolo de pruebas, 21/11/2026). Devuelve
+    (hora, parte del tramo). Con los minutos de la moneda, el primer minuto que la llena: dentro de un mismo minuto no se
+    sabe cuál fue antes y empatan. Sin minutos (o si no muestran el llenado), el recorrido supuesto de la vela: en el
+    tramo en que el precio llega a las dos, primero la más cercana al comienzo del tramo.
+    kind: "limit" (se llena al cruzar su precio), "stop" (al tocarlo) o "market" (en la apertura).
+    start: un momento de la vela (otro resultado de esta función) desde el que se mira; None, desde la apertura.
+    """
+    T = ctx["T"]
+    if kind == "market":
+        return (T[j], 0.0)
+
+    def fills(high, low):
+        if kind == "limit":
+            return low < level if side > 0 else high > level
+        return high >= level if side > 0 else low <= level
+
+    since = start if start is not None else (T[j], 0.0)
+    reader = ctx.get("minutes")
+    data = _minutes_of(ctx, reader, j) if reader is not None else None
+    if data is not None:
+        for m, high, low in zip(data["m"], data["h"], data["l"]):
+            if int(m) * 60000 >= since[0] - since[0] % 60000 and fills(float(high), float(low)):
+                return (max(int(m) * 60000, since[0]), 0.0)
+    o, h, l, c = (float(ctx[key][j]) for key in ("O", "H", "L", "C"))
+    if since == (T[j], 0.0) and fills(o, o):
+        return (T[j], 0.0)  # Abrió más allá de la orden: se llena en la apertura
+    points = (o, h, l, c) if h - o < o - l else (o, l, h, c)
+    for step in range(max(1, int(since[0] - T[j])), 4):
+        a, b = points[step - 1], points[step]
+        if fills(max(a, b), min(a, b)):
+            part = abs(level - a) / abs(b - a) if b != a else 0.0
+            if (T[j] + step, part) >= since:
+                return (T[j] + step, part)
+    return (T[j] + 4, 0.0)
+
+
+def _exit_moment(ctx, trade, filled_at=None):
+    """Cuándo salió el trade dentro de su vela de salida, en la escala de _fill_time, para saber si una orden que se llena
+    en esa vela lo hizo después (H15 del protocolo de pruebas, 22/11/2026). Una salida al cierre o en la apertura
+    siguiente va después de todo lo de la vela; una por hueco de datos, antes. Una en un nivel (stop, objetivo u
+    objetivo arrastrado) es el primer momento en que el precio lo toca: con los minutos, su minuto; sin ellos, el tramo
+    del recorrido supuesto y la parte del tramo."""
+    j, T, tf_ms = trade["exit_i"], ctx["T"], ctx["tf"] * 60000
+    if trade["exit_t"] >= T[j] + tf_ms or trade["exit_t"] < T[j]:
+        return (trade["exit_t"], 0.0)
+    level = trade["exit"]
+    # Si entró en esa misma vela, desde su llenado: el precio pudo tocar el nivel antes (una orden stop que se llena
+    # después de pasar por el stop)
+    start = filled_at if trade["entry_i"] == j else None
+    return _fill_time(ctx, j, 1 if level > float(ctx["O"][j]) else -1, level, "stop", start=start)
+
+
 MINUTES_KEEP = 1000  # Velas cuyos minutos se guardan en el contexto de una corrida (en 4h, unos 6 MB)
 
 
@@ -914,6 +1116,7 @@ def _straddle_fill(rule, ctx, k, e, zone, sides):
         up, dn = zone[1] + off, zone[0] - off
     else:
         up, dn = C[k] + off, C[k] - off
+    up, dn = _snap(up), _snap(dn)  # Sin el ruido de coma flotante (O-25)
     for j in range(e, min(len(T), e + ent["expiry"])):
         hit = {sd: (H[j] >= up if sd > 0 else L[j] <= dn) for sd in sides}
         hit = [sd for sd, v in hit.items() if v]
@@ -936,6 +1139,13 @@ def _straddle_fill(rule, ctx, k, e, zone, sides):
     return None
 
 
+def _snap(x):
+    """Un nivel calculado sin el ruido de coma flotante (O-25 del protocolo de pruebas, 22/11/2026): 0.9557 + 3 × 0.0015 da
+    0.9601999999999998 y un mínimo de 0.9602 no lo tocaba; en el exchange, con su tick, se habría llenado. Diez decimales
+    no mueven ningún precio real (el tick más chico de las monedas es de 0.00001) y quitan ese ruido."""
+    return None if x is None else round(x, 10)
+
+
 def _stop_fill(rule, ctx, k, e, zone, side):
     """La orden stop de un lado puesta al cierre de la vela k: (precio, vela) cuando se llena, o None.
     Va en el borde de la zona a favor más `offset` ATR (sin zona, o con from "close", desde el cierre). Espera `expiry`
@@ -946,13 +1156,20 @@ def _stop_fill(rule, ctx, k, e, zone, side):
     ent = rule["entry"]
     off = ent.get("offset", 0.0) * atr[k]
     if zone is None or ent.get("from") == "close":
-        level, cancel = C[k] + side * off, None
+        level, cancel = _snap(C[k] + side * off), None
     else:
-        level = (zone[1] if side > 0 else zone[0]) + side * off
+        level = _snap((zone[1] if side > 0 else zone[0]) + side * off)
         cancel = (zone[0] if side > 0 else zone[1]) if ent.get("cancel") and zone[1] > zone[0] else None
-    expiry = (ctx.get("entryInfo") or {}).get("expiry") or ent["expiry"]
+    info = ctx.get("entryInfo") or {}
+    expiry = info["expiry"] if info.get("expiry") is not None else ent["expiry"]  # 0: la orden ya no espera (F-06)
+    # La del 3.er sabio se llena al pasar el fractal, como en el libro (un tick por encima) y como su ruptura; las demás
+    # órdenes stop, al tocar su precio. Desde que existe una orden por fractal (F-06), tocarlo sin pasarlo no la llena
+    strict = info.get("wise") == 3
     for j in range(e, min(len(T), e + expiry)):
-        hit = H[j] >= level if side > 0 else L[j] <= level
+        if strict:
+            hit = H[j] > level if side > 0 else L[j] < level
+        else:
+            hit = H[j] >= level if side > 0 else L[j] <= level
         broke = cancel is not None and (L[j] < cancel if side > 0 else H[j] > cancel)
         if not hit:
             if broke:
@@ -1004,7 +1221,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
         opposite = opposite.get(-side)
     if entry_rule["type"] == "limit" and zone is not None:
         share = {"near": 1.0, "mid": 0.5, "far": 0.0}[entry_rule["at"]]
-        price = zone[0] + share * (zone[1] - zone[0]) if side > 0 else zone[1] - share * (zone[1] - zone[0])
+        price = _snap(zone[0] + share * (zone[1] - zone[0]) if side > 0 else zone[1] - share * (zone[1] - zone[0]))
         if (O[e] - price) * side > 0:  # El precio tiene que volver hasta la limit
             entry_i = None
             for j in range(e, min(n, e + entry_rule["expiry"])):
@@ -1013,15 +1230,26 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
                     break
             if entry_i is None:
                 return {"skip": "limit sin llenar"}
-    stop = _stop_price(rule, ctx, k, side, zone, entry)
+    # Con órdenes que esperan, cuándo se llenó dentro de su vela: run() ordena por eso las que se llenan en la misma
+    fill_at = None
+    if entry_rule["type"] in ("limit", "stop", "straddle"):
+        fill_at = _fill_time(ctx, entry_i, side, entry,
+                             "limit" if limit_fill else ("stop" if entry_rule["type"] in ("straddle", "stop") else "market"))
+    stop = _snap(_stop_price(rule, ctx, k, side, zone, entry))
     risk = (entry - stop) * side if stop is not None else 0
     if risk <= 0:
         return {"skip": "stop del lado equivocado"}
-    stop_atr = risk / atr[k] if atr[k] > 0 else 0
+    # En ATR, también sin el ruido: un stop de justo el mínimo (0.1 ATR) entraba o no según el redondeo (O-10)
+    stop_atr = round(risk / atr[k], 9) if atr[k] > 0 else 0
     if stop_atr < rule["stop"]["minAtr"]:
         return {"skip": "stop muy corto"}
     if stop_atr > rule["stop"]["maxAtr"]:
         return {"skip": "stop muy largo"}
+    # H18 (22/11/2026): con un riesgo diminuto la comisión de ida y vuelta vale más que el objetivo (stops de −5 R,
+    # objetivos que pierden). Se descarta la señal si esa comisión pasa de maxFeeR R (0.3 de fábrica; 0 lo apaga)
+    cap = rule.get("maxFeeR", MAX_FEE_R)
+    if cap and (fee_in + taker) * entry / risk > cap:
+        return {"skip": "comisión muy alta para el riesgo"}
     target_r, chain_on = exit_rule["targetR"], None
     if target_r and exit_rule.get("chainTarget") and "bars" in ctx:
         # Objetivo mixto: con los flujos on-chain a favor en la vela de la señal, el objetivo de los días que dan más
@@ -1049,7 +1277,9 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
         else:
             target = levels["poc"] if rule["targetAt"] in ("poc", "mid") else (levels["vah"] if side > 0 else levels["val"])
         if (target - entry) * side < MIN_TARGET_R * risk:
-            return {"skip": "objetivo del perfil muy cerca o ya pasado"}
+            # O-08: con el centro de una caja no es "del perfil"
+            return {"skip": "objetivo del centro de la caja muy cerca o ya pasado" if levels.get("box") else "objetivo del perfil muy cerca o ya pasado"}
+    target = _snap(target)
     initial_stop = stop
     # Trailing del objetivo (_tp_trail): al llegar a tp_start el objetivo deja de ser fijo y sigue al mejor precio a una
     # distancia fijada en la entrada (con el ATR de la vela de la señal) o en % del mejor precio. El objetivo fijo nunca
@@ -1058,7 +1288,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
     goal = None if tp else target
     tp_start = tp_gap = None
     if tp:
-        tp_start = entry + side * tp["start"] * risk
+        tp_start = _snap(entry + side * tp["start"] * risk)
         tp_gap = tp["dist"] * risk if tp["unit"] == "r" else (tp["dist"] * atr[k] if tp["unit"] == "atr" else None)
     tp_on = tp_level = None  # Cuándo se activó y dónde va el objetivo arrastrado
     tp_best = entry  # Mejor precio desde la entrada, mirado dentro de la vela
@@ -1068,6 +1298,23 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
 
     def adverse(j):
         return ((L[j] if side > 0 else H[j]) - entry) * side / risk
+
+    def since_fill(j):
+        """Lo a favor y en contra de la vela del llenado de una limit u orden stop, solo desde el minuto del llenado (o
+        desde el punto del recorrido supuesto en que cruzó la entrada). H4 del protocolo de pruebas (22/11/2026): antes
+        contaba toda la vela, también lo de antes de entrar, y con trailing o stop a la entrada los arrancaba con un
+        precio anterior a la entrada."""
+        filled, hi, lo = False, None, None
+        for _mt, mh, ml in _minute_path(ctx, j):
+            if not filled:
+                filled = ((mh >= entry) if side > 0 else (ml <= entry)) if stop_fill else ((ml < entry) if side > 0 else (mh > entry))
+                if not filled:
+                    continue
+            hi = mh if hi is None else max(hi, mh)
+            lo = ml if lo is None else min(lo, ml)
+        if hi is None:
+            return 0.0, 0.0
+        return ((hi if side > 0 else lo) - entry) * side / risk, ((lo if side > 0 else hi) - entry) * side / risk
 
     def stop_reason(level):
         return "stop" if level == initial_stop else ("stop en la entrada" if level == entry else "stop arrastrado")
@@ -1099,7 +1346,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
             if not first_bar and (trough - now) * side > 0 and (trough - after) * side > 0:
                 tp_best, tp_on = top, (T[j] if tp_on is None else tp_on)
                 if tp_level is None or (after - tp_level) * side > 0:
-                    tp_level = after
+                    tp_level = _snap(after)
                 if row is not None:
                     row[2] = tp_level
             else:
@@ -1134,7 +1381,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
                 if tp_on is not None:
                     cap = tp_best - side * (tp_gap if tp_gap is not None else abs(tp_best) * tp["dist"] / 100)
                     if tp_level is None or (cap - tp_level) * side > 0:
-                        tp_level = cap
+                        tp_level = _snap(cap)
             if row is not None:
                 row[2] = tp_level
             if exit_price is not None:
@@ -1181,7 +1428,11 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
             exit_price, reason, exit_t = goal, "objetivo", exit_t or T[j]
             mfe = max(mfe, (goal - entry) * side / risk)
             break
-        mfe, mae = max(mfe, favorable(j)), min(mae, adverse(j))
+        if first_bar:
+            fav, adv = since_fill(j)
+            mfe, mae = max(mfe, fav), min(mae, adv)
+        else:
+            mfe, mae = max(mfe, favorable(j)), min(mae, adverse(j))
         # Con la vela cerrada: señal contraria, horizonte y stop arrastrado
         if exit_rule["opposite"] and opposite is not None and j > k and j in opposite and j + 1 < n:
             exit_price, exit_t, reason = O[j + 1], T[j + 1], "señal contraria"
@@ -1205,7 +1456,7 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
                 is_pivot = _is_pivot(values[p - m:j + 1], values[p], side)
                 level = values[p] - side * rule["stop"]["buffer"] * atr[j]
                 if is_pivot and (level - stop) * side > 0 and (C[j] - level) * side > 0:
-                    stop = level
+                    stop = _snap(level)
         elif exit_rule["trail"] == "bars" and j >= entry_i:
             # Williams: el stop bajo el mínimo (sobre el máximo) de las últimas trailBars velas cerradas; solo se acerca
             m = exit_rule["trailBars"]
@@ -1213,21 +1464,23 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
             window = values[max(0, j - m + 1):j + 1]
             level = (min(window) if side > 0 else max(window)) - side * rule["stop"]["buffer"] * atr[j]
             if (level - stop) * side > 0 and (C[j] - level) * side > 0:
-                stop = level
+                stop = _snap(level)
         elif exit_rule["trail"] in ("atr", "pct") and mfe >= exit_rule.get("trailStart", 0.0):
             # Con la vela cerrada: el mejor precio desde la entrada, menos la distancia; el stop solo se acerca
             best = entry + side * mfe * risk
             gap = exit_rule["trailAtr"] * atr[j] if exit_rule["trail"] == "atr" else best * exit_rule["trailPct"] / 100
             level = best - side * gap
             if (level - stop) * side > 0 and (C[j] - level) * side > 0:
-                stop = level
+                stop = _snap(level)
         if exit_rule.get("breakEven") and mfe >= exit_rule["breakEven"] and (entry - stop) * side > 0 and (C[j] - entry) * side > 0:
             stop = entry
         j += 1
 
     # Hasta dónde llegó antes del stop inicial, sin importar la salida elegida
     reach, reach_done = 0.0, False
-    for i in range(entry_i + (1 if limit_fill or stop_fill else 0), min(n, entry_i + REACH_BARS)):
+    # Las 300 velas desde la siguiente al llenado de una limit u orden stop (O-05: antes eran 299)
+    first_reach = entry_i + (1 if limit_fill or stop_fill else 0)
+    for i in range(first_reach, min(n, first_reach + REACH_BARS)):
         if i > entry_i and T[i] - T[i - 1] > ctx.get("gap", max(GAP_MS, 2 * ctx["tf"] * 60000)):
             reach_done = True
             break
@@ -1236,13 +1489,15 @@ def simulate(rule, ctx, k, side, zone=None, opposite=None, sides=None, path=None
             break
         reach = max(reach, favorable(i))
     else:
-        reach_done = entry_i + REACH_BARS <= n
+        reach_done = first_reach + REACH_BARS <= n
 
     trade = {"k": k, "entry_i": entry_i, "dir": side, "signal": T[k], "known": T[k] + tf_ms, "entry_t": T[entry_i], "entry": entry,
              "stop": initial_stop, "target": target, "risk": risk, "stop_atr": round(stop_atr, 3),
              "order": "limit" if limit_fill else ("stop" if entry_rule["type"] in ("straddle", "stop") else "market"), "reach": round(reach, 3) if reach_done else None}
     if entry_rule["type"] in ("straddle", "stop"):
         trade["trigger_atr"] = round(abs(entry - C[k]) / atr[k], 3) if atr[k] > 0 else 0.0
+    if fill_at is not None:
+        trade["fill_t"] = fill_at  # Interno: run() lo usa para ordenar y lo quita
     if chain_on is not None:
         trade["chain_on"] = chain_on  # Si el objetivo fue el de los días con los flujos on-chain a favor
     if tp:
@@ -1616,7 +1871,8 @@ def _williams_events(rule, span):
     if found is None:
         cfg = {"lookback": wise["lookback"], "angBars": wise["angBars"], "minGapAtr": wise["minGapAtr"], "requireAo": wise["requireAo"],
                "alligatorFilter": wise["teeth"]}
-        found = williams.events(bars, rule["tf"], cfg, codes, at_hit=at_hit)
+        # Con la orden stop, una orden por fractal, se rompa o no (F-06): la señal no depende de lo que viene después
+        found = williams.events(bars, rule["tf"], cfg, codes, at_hit=at_hit, orders=not at_hit)
         with _lock:
             _extra[key] = found
             while len(_extra) > 6:
@@ -1698,12 +1954,15 @@ def _fs_events(rule, span):
 
 
 def _sided(rule):
-    """La regla tiene filtros que miran el lado del trade: CVD, OI, funding, Williams o SMC."""
-    return bool(rule.get("flow") or rule.get("bwf") or rule.get("smcf") or rule.get("vpaf"))
+    """La regla tiene filtros que miran el lado del trade: línea (VWAP, EMA), CVD, OI, funding, Williams, SMC o VPA.
+    La línea desde el motor 6 (H1 del protocolo de pruebas): antes el azar no la copiaba y la ventaja incluía lo que ponía."""
+    return bool(rule.get("lines") or rule.get("flow") or rule.get("bwf") or rule.get("smcf") or rule.get("vpaf"))
 
 
 def _side_ok(rule, ctx, k, side):
     """Los filtros que miran el lado en la vela k, para los controles al azar: entran solo donde la regla podría."""
+    if rule.get("lines") and not _lines_ok(rule["lines"], ctx, k, side):
+        return False
     if rule.get("flow") and not _flow_ok(rule["flow"], ctx, k, side):
         return False
     if rule.get("bwf") and not williams.filter_ok(rule["bwf"], _bw_series(ctx), k, side):
@@ -1802,7 +2061,8 @@ def _liq_vp_events(symbol, rule, span, ctx, control=False, vp_shift=None):
 
 def _vp_levels(symbol, hours, rows, share, start_ms, end_ms):
     """Niveles de las sesiones del tramo, guardados en disco: una sesión cerrada no cambia."""
-    path = tester_dir() / "cache" / f"vp3_{symbol}_{hours}h_{rows}_{int(share)}_{_iso(start_ms)}_{_iso(end_ms - 1)}.json"
+    # vp4 (22/11/2026): las franjas sin el ruido de coma flotante en sus bordes (O-07)
+    path = tester_dir() / "cache" / f"vp4_{symbol}_{hours}h_{rows}_{int(share)}_{_iso(start_ms)}_{_iso(end_ms - 1)}.json"
     if path.exists():
         with open(path, encoding="utf-8") as fh:
             return {int(k): v for k, v in json.load(fh).items()}
@@ -1843,31 +2103,34 @@ def _vp_events(symbol, rule, span, shift=None):
 def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shift=None, trace=None):
     """La regla sobre las velas y elementos de la fase. Devuelve resumen, cortes y cada trade.
     trace (un dict): guarda ahí el contexto de las velas, los elementos y qué pasó con cada señal (trade_context)."""
-    bars, events, tf = span["bars"], span["events"], rule["tf"]
+    tf = rule["tf"]
+    # Las velas anteriores a la fase van delante (H2): todo se calcula con ellas, pero ninguna señal cae ahí
+    span = _warmed(symbol, tf, phase, rule, span)
+    bars, events, lead = span["bars"], span["events"], span["lead"]
     tf_ms = tf * 60000
-    if len(bars) < 100:
+    if len(bars) - lead < 100:
         return {"success": False, "message": "Sin velas suficientes en el almacén para esa fase"}
     ctx = _context(symbol, tf, bars)
-    ctx["bars"] = bars
+    ctx["bars"], ctx["lead"] = bars, lead
     if rule.get("gc"):
         gc = rule["gc"]
         # Con la regla invertida el trade va contra el canal: su salida por el canal también es la contraria
-        warm = span.get("warm") or []
-        leave = gaussian_channel.exits(warm + bars, gc["period"], gc["poles"], gc["mult"], gc["exit"])
-        if leave and warm:
-            leave = {side: {i - len(warm) for i in found if i >= len(warm)} for side, found in leave.items()}
+        leave = gaussian_channel.exits(bars, gc["period"], gc["poles"], gc["mult"], gc["exit"])
         ctx["exitAt"] = {1: leave[-1], -1: leave[1]} if leave and rule["invert"] else leave
     if rule["exit"].get("vpa"):
         ctx["vpaExit"] = _vpa_exit_bars(rule, ctx)
     if rule.get("regime"):
         ctx["regimeOK"] = regime_mask(rule["regime"], bars, is_stock(symbol))
+    if rule.get("hours"):
+        # El horario, para los controles al azar (H1, motor 6): la hora en que se conoce la señal, el cierre de su vela
+        ctx["hoursOK"] = np.array([_in_hours(rule["hours"], t + tf_ms) for t in ctx["T"]], dtype=bool)
     if rule.get("smcf") or rule.get("targetAt") == "weak":
         _smc_range(rule, ctx)
     extra = _extra_events(symbol, rule, span, ctx, control, vp_shift)
     events = events + extra if extra else events
     note = None
     if trace is not None:
-        trace.update(ctx=ctx, events=events, signals=[])
+        trace.update(ctx=ctx, events=events, signals=[], span=span)
         note = trace["signals"].append
     liq_info = {(e["dir"], e["known"]): e["info"] for e in extra if e["code"] == "LIQ"}
     vp_info = {(e["code"], e["dir"], e["known"]): e["info"] for e in extra if e["code"] in VP_CODES}
@@ -1885,6 +2148,8 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     zones = {}
     for e in events:
         zones.setdefault((e["code"], e["dir"], e["known"]), []).append((e["lo"], e["hi"], e["t"]))
+    # Primera vela de los elementos de varias velas (el FVG: sus tres velas), para el stop por la vela del elemento (H16)
+    firsts = {(e["code"], e["dir"], e["known"]): e["first"] for e in events if "first" in e}
     matches = os_.match_recipes(bars, events, [rule["recipe"]], tf)
     matches.sort(key=lambda m: m["known"])
     flip = -1 if rule["invert"] else 1
@@ -1894,7 +2159,16 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         if k is not None:
             known_at[m["dir"] * flip].add(k)
 
-    trades, skipped, open_count, busy_until, busy = [], {}, 0, -1, 0
+    # busy_until: la vela de la salida del último trade (la señal de esa vela ya puede entrar: al decidir, al cierre de la
+    # vela, el trade ya salió); last_exit_t, su hora. Protocolo de pruebas, H15 (22/11/2026): antes busy_until era la
+    # vela siguiente a la salida, así que a mercado se saltaba la señal de la vela de la salida, y con órdenes que esperan
+    # no entraba una que se llenaba después del minuto de la salida, en la misma vela
+    trades, skipped, open_count, busy_until, busy, last_exit_t = [], {}, 0, -1, 0, None
+
+    def cooling(k):
+        """Enfriamiento: desde la vela de la salida hasta `cooldown` velas después. Solo tras un trade cerrado: antes del
+        motor 6 también al comenzar la fase, sin ningún trade (F-01)."""
+        return bool(rule["cooldown"]) and last_exit_t is not None and k <= busy_until + rule["cooldown"]
 
     def skip(reason, k, side):
         skipped[reason] = skipped.get(reason, 0) + 1
@@ -1907,10 +2181,20 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     straddle = rule["entry"]["type"] == "straddle"
     defer = rule["oneAtATime"] and rule["entry"]["type"] in ("limit", "straddle", "stop")
     pending, placed = [], set()
+    # H19 (22/11/2026): con una posición a la vez y entrada a mercado, una vela con una señal larga y otra corta no da
+    # ninguna: nada dice cuál fue primero. Antes entraba siempre el largo, el primero de la lista
+    opposed = set()
+    if rule["oneAtATime"] and not defer:
+        sides_at = {}
+        for m in matches:
+            k = index.get(m["known"] - tf_ms)
+            if k is not None:
+                sides_at.setdefault(k, set()).add(m["dir"])
+        opposed = {k for k, found in sides_at.items() if len(found) > 1}
     for m in matches:
         k = index.get(m["known"] - tf_ms)
-        if k is None:
-            continue
+        if k is None or k < lead:
+            continue  # Sin vela, o en las velas de calentamiento (antes de la fase)
         side = m["dir"] * flip
         if straddle:
             if k in placed:
@@ -1921,8 +2205,11 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             if note is not None:
                 note({"k": k, "dir": side, "what": "posición abierta"})
             continue
-        if rule["oneAtATime"] and not defer and k < busy_until + rule["cooldown"]:
+        if rule["oneAtATime"] and not defer and cooling(k):
             skip("enfriamiento", k, side)
+            continue
+        if k in opposed:
+            skip("señales opuestas en la misma vela", k, side)
             continue
         # Con dos órdenes, cada filtro que mira el lado decide si se pone la orden de ese lado
         sides = (1, -1) if straddle else (side,)
@@ -1971,12 +2258,13 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             continue
         found = [z for code, t in m["votes"] for z in zones.get((code, m["dir"], t + tf_ms), [])]
         zone = (min(z[0] for z in found), max(z[1] for z in found)) if found else None
-        ctx["i0"] = index.get(min([e_t for _, e_t in m["votes"]] + [m["t0"]]), k)
+        ctx["i0"] = index.get(min([firsts.get((code, m["dir"], e_t + tf_ms), e_t) for code, e_t in m["votes"]] + [m["t0"]]), k)
         ctx["vp"] = next((vp_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in vp_info), None)
         boxed = next((box_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in box_info), None)
         if ctx["vp"] is None and boxed is not None:
             # El objetivo "centro" de un borde de caja: el centro de la caja
-            ctx["vp"] = {"high": boxed["high"], "low": boxed["low"], "poc": (boxed["high"] + boxed["low"]) / 2, "vah": boxed["high"], "val": boxed["low"]}
+            ctx["vp"] = {"high": boxed["high"], "low": boxed["low"], "poc": (boxed["high"] + boxed["low"]) / 2, "vah": boxed["high"], "val": boxed["low"],
+                         "box": True}
         # La espera propia de la orden stop del 3.er sabio (hasta que el precio pasa su fractal)
         ctx["entryInfo"] = next((wise_info[(code, m["dir"], t + tf_ms)] for code, t in m["votes"] if (code, m["dir"], t + tf_ms) in wise_info), None)
         steps = [] if trace is not None else None
@@ -2062,16 +2350,25 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
         if defer:
             pending.append(trade)
             continue
+        trade.pop("fill_t", None)
         trades.append(trade)
         if rule["oneAtATime"]:
-            busy_until = trade.pop("exit_i") + 1
+            busy_until, last_exit_t = trade.pop("exit_i"), trade["exit_t"]
         else:
             trade.pop("exit_i")
-    for trade in sorted(pending, key=lambda t: (t["entry_i"], t["k"])):
-        if trade["entry_i"] < busy_until:
+    for trade in trades + pending:
+        _with_costs(rule, ctx, trade)  # Deslizamiento y funding (B-05 y B-06): anotados, y descontados si la regla los pide
+    # Por vela del llenado y, dentro de ella, por cuándo se llenó cada orden (_fill_time): la de la señal más vieja solo
+    # va primero si empatan. Antes del motor 5 iba siempre primero, aunque se llenara después (F-04)
+    left = None  # Cuándo salió el último trade dentro de su vela (_exit_moment)
+    for trade in sorted(pending, key=lambda t: (t["entry_i"], t.get("fill_t") or (0, 0.0), t["k"])):
+        filled_at = trade.pop("fill_t", None) or (trade["entry_t"], 0.0)
+        # En la vela de la salida entra solo si se llenó después del momento de la salida (H15); en el mismo minuto, o en
+        # el mismo punto del recorrido supuesto, no se sabe cuál fue antes y no entra
+        if trade["entry_i"] < busy_until or (trade["entry_i"] == busy_until and left is not None and filled_at <= left):
             busy += 1
             trade["_fate"] = "posición abierta"
-        elif trade["entry_i"] < busy_until + rule["cooldown"]:
+        elif cooling(trade["entry_i"]):
             skipped["enfriamiento"] = skipped.get("enfriamiento", 0) + 1
             trade["_fate"] = "enfriamiento"
         elif trade.get("open"):
@@ -2080,7 +2377,8 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
             trade["_fate"] = "abierta al final de la fase"
         else:
             trades.append(trade)
-            busy_until = trade.pop("exit_i") + 1
+            left = _exit_moment(ctx, trade, filled_at)
+            busy_until, last_exit_t = trade.pop("exit_i"), trade["exit_t"]
     for number, trade in enumerate(trades, 1):
         trade["n"] = number
         trade.pop("k", None)
@@ -2101,22 +2399,27 @@ def run(symbol, rule, span, phase, table=None, base=True, control=False, vp_shif
     ordered = sorted(trades, key=lambda t: t["exit_t"])
     result = {
         "success": True, "symbol": symbol, "rule": rule, "phase": phase["phase"], "from": phase["from"], "to": phase["to"],
-        "bars": len(bars), "signals": len(matches), "skipped": skipped, "busy": busy, "open": open_count,
+        "data": data_mark(bars),
+        "bars": len(bars) - lead, "warm": lead,
+        # Con dos órdenes stop, una señal por vela: la receta da una por lado y se ponen las dos órdenes una vez (F-05)
+        "signals": (len({index.get(m["known"] - tf_ms) for m in matches if index.get(m["known"] - tf_ms, lead) >= lead}) if straddle
+                    else sum(1 for m in matches if index.get(m["known"] - tf_ms, lead) >= lead)),
+        "skipped": skipped, "busy": busy, "open": open_count,
         "summary": summary(ordered), "breakdowns": _breakdowns(trades, rule),
         "equity": _equity(ordered), "measuresAvailable": table is not None, "trades": trades,
     }
     if base:
         result["baseline"] = _baseline(rule, ctx, trades, symbol)
         s, b = result["summary"], result["baseline"]
-        if s.get("n") and b.get("n"):
-            edge = s["avgR"] - b["avgR"]
-            se = math.sqrt(s["seR"] ** 2 + b["seR"] ** 2)
-            result["edge"] = {"r": round(edge, 3), "low": round(edge - 1.96 * se, 3), "high": round(edge + 1.96 * se, 3),
-                              "clear": abs(edge) > 1.96 * se and not s["smallSample"]}
         if not control and vp_shift is None:
             # Seguir el tramo en velas al azar: lo que el mercado ya daba por ir a favor del movimiento
             result["legBaseline"] = _leg_baseline(rule, ctx, trades, symbol)
-            result["legEdge"] = _edge(s, result["legBaseline"])
+        if s.get("n") and b.get("n"):
+            # Contra el azar de la fase, contra el tramo y contra el azar de su trimestre y lado, con el margen por semanas
+            leg = result.get("legBaseline")
+            result.update(edges(trade_rows(result), s, b, leg if leg and leg.get("n") else None))
+        if result.get("legBaseline") and "legEdge" not in result:
+            result["legEdge"] = None
         if "liq" in rule and not control:
             # El mismo gatillo tras barrer un swing sin liquidaciones: dice si las liquidaciones aportan algo
             other = run(symbol, rule, span, phase, table, base=False, control=True)
@@ -2170,15 +2473,29 @@ def _baseline(rule, ctx, trades, symbol):
     if allowed is not None and not len(allowed):
         return {"n": 0}
     sided = "bars" in ctx and _sided(rule)
+
+    first = max(30, ctx.get("lead", 0))  # Ni en las primeras 30 velas ni en las de calentamiento
+
+    def draw():
+        return int(allowed[rng.randrange(len(allowed))]) if allowed is not None else rng.randrange(first, n - 2)
+
     for _ in range(BASE_TRADES * (6 if sided else 1)):
         if sided and len(done) >= BASE_TRADES:
             break
-        k = int(allowed[rng.randrange(len(allowed))]) if allowed is not None else rng.randrange(30, n - 2)
-        side = 1 if rng.random() < longs else -1
-        if sided and not _side_ok(rule, ctx, k, side):
-            continue  # Con filtro de CVD, OI, Williams o SMC, el azar entra solo donde el filtro deja entrar a ese lado
+        if sided:
+            # Con filtro de CVD, OI, Williams, SMC o VPA el azar entra solo donde el filtro deja entrar a ese lado. Protocolo
+            # de pruebas, F-07 (22/11/2026): primero el lado, con la proporción de la regla, y después una vela donde el
+            # filtro deje ese lado. Antes se sorteaba la vela y el lado y se descartaba lo que el filtro no dejaba: como el
+            # filtro deja más a un lado que al otro, lo que quedaba tenía otra proporción de largos y cortos
+            side = 1 if rng.random() < longs else -1
+            k = next((c for c in (draw() for _try in range(SIDED_TRIES)) if _side_ok(rule, ctx, c, side)), None)
+            if k is None:
+                continue
+        else:
+            k = draw()
+            side = 1 if rng.random() < longs else -1
         light["i0"] = k
-        trade = simulate(base_rule, light, k, side)
+        trade = _with_costs(rule, light, simulate(base_rule, light, k, side))
         if trade and "skip" not in trade and not trade.get("open"):
             done.append(trade)
     stats = summary(done)
@@ -2210,13 +2527,11 @@ QUARTER_MIN_TRADES = 20   # Un trimestre con menos trades de la regla no cuenta 
 def quarter_rows(result):
     """Por trimestre: trades de la regla, suma de R y suma de la ventaja (cada trade contra el azar de su trimestre y lado).
     {trimestre: [n, suma de R, suma de ventaja]}. Sin azar por trimestre, contra el azar de la corrida."""
-    base = result.get("baseline") or {}
-    quarters, fallback = base.get("quarters") or {}, base.get("avgR") or 0.0
+    base = result.get("baseline")
     out = {}
     for t in result.get("trades") or []:
         q = quarter_of(t["entry_t"])
-        n, total = (quarters.get(q) or {}).get(str(t["dir"]), [0, 0.0])
-        ctrl = total / n if n >= QUARTER_MIN_RANDOM else fallback
+        ctrl = quarter_control(base, t)
         cell = out.setdefault(q, [0, 0.0, 0.0])
         cell[0] += 1
         cell[1] += t["r"]
@@ -2258,11 +2573,11 @@ def _leg_baseline(rule, ctx, trades, symbol):
     for _ in range(BASE_TRADES * (6 if sided else 1)):
         if sided and len(done) >= BASE_TRADES:
             break
-        k = int(allowed[rng.randrange(len(allowed))]) if allowed is not None else rng.randrange(30, n - 2)
+        k = int(allowed[rng.randrange(len(allowed))]) if allowed is not None else rng.randrange(max(30, ctx.get("lead", 0)), n - 2)
         if sided and not _side_ok(rule, ctx, k, int(direction[k])):
             continue
         light["i0"] = k
-        trade = simulate(base_rule, light, k, int(direction[k]), sides=(int(direction[k]),))
+        trade = _with_costs(rule, light, simulate(base_rule, light, k, int(direction[k]), sides=(int(direction[k]),)))
         if trade and "skip" not in trade and not trade.get("open"):
             done.append(trade)
     stats = summary(done)
@@ -2361,20 +2676,99 @@ def regime_mask(reg, bars, session=False):
 
 def _allowed(ctx, n):
     """Con filtro de régimen, las velas en que pueden entrar los controles al azar: las mismas que la regla."""
-    ok = ctx.get("regimeOK")
-    if ok is None:
+    ok, hours = ctx.get("regimeOK"), ctx.get("hoursOK")
+    if ok is None and hours is None:
         return None
-    return np.flatnonzero(ok[30:n - 2]) + 30
+    if ok is None:
+        ok = hours
+    elif hours is not None:
+        ok = np.asarray(ok, dtype=bool) & hours
+    first = max(30, ctx.get("lead", 0))
+    return np.flatnonzero(ok[first:n - 2]) + first
 
 
-def _edge(s, b):
-    """Diferencia de R medio entre la regla y un control, con su margen. None si alguno no tiene trades."""
+def _edge(s, b, se_rule=None):
+    """Diferencia de R medio entre la regla y un control, con su margen. None si alguno no tiene trades. se_rule: el error
+    del R medio de la regla agrupado por semanas (B-08); sin él, el de trades independientes."""
     if not s.get("n") or not b.get("n"):
         return None
     edge = s["avgR"] - b["avgR"]
-    se = math.sqrt(s["seR"] ** 2 + b["seR"] ** 2)
+    se = math.sqrt((s["seR"] if se_rule is None else se_rule) ** 2 + b["seR"] ** 2)
     return {"r": round(edge, 3), "low": round(edge - 1.96 * se, 3), "high": round(edge + 1.96 * se, 3),
             "clear": abs(edge) > 1.96 * se and not s.get("smallSample")}
+
+
+WEEK_MS = 7 * oe.DAY_MS
+
+
+def week_of(ms):
+    """Semana de una hora en ms (de jueves a miércoles, desde el 01/01/1970): los trades que salen la misma semana."""
+    return int(ms // WEEK_MS)
+
+
+def clustered_se(groups, mean, n, iid_se):
+    """
+    Error estándar de un promedio con los trades agrupados por la semana de su salida (B-08 del protocolo de pruebas,
+    22/11/2026). Los trades de una misma semana (también de monedas distintas) se mueven juntos, y el error de trades
+    independientes salía de 1.02 a 1.43 veces más angosto que un bootstrap por semanas. groups: {semana: [trades, suma]}.
+    Nunca da uno más angosto que el de trades independientes.
+    """
+    count = len(groups)
+    if count < 2 or n < 2:
+        return iid_se
+    spread = sum((total - k * mean) ** 2 for k, total in groups.values())
+    return max(iid_se or 0.0, math.sqrt(spread * count / (count - 1)) / n)
+
+
+def quarter_control(baseline, t):
+    """El azar del trimestre y el lado de un trade (B-07); el de toda la corrida si su trimestre tiene pocas entradas."""
+    quarters, fallback = (baseline or {}).get("quarters") or {}, (baseline or {}).get("avgR") or 0.0
+    n, total = (quarters.get(quarter_of(t["entry_t"])) or {}).get(str(t["dir"]), [0, 0.0])
+    return total / n if n >= QUARTER_MIN_RANDOM else fallback
+
+
+def edges(rows, s, base, leg):
+    """
+    Las tres ventajas de unos trades, con el margen agrupado por semanas (B-08):
+    - edge: contra el azar de toda la fase;
+    - legEdge: contra seguir el tramo al azar (solo con `leg`);
+    - quarterEdge: cada trade contra el azar de su trimestre y su lado (B-07 del protocolo de pruebas, 22/11/2026). La
+      regla suele operar donde y cuando el azar también gana: con el azar de toda la fase, la Flecha con VWAP ganaba
+      +0.19 R en la fase 1 y con el de su trimestre y lado, +0.04. El margen suma el error del azar de toda la fase,
+      que es lo que se sabe de la incertidumbre del azar.
+    rows: [(R, R menos el azar de su trimestre y lado, salida en ms)]. s: el resumen de esos trades.
+    """
+    n = len(rows)
+    if not n or not s.get("n"):
+        return {}
+    mean_d = sum(d for _, d, _ in rows) / n
+    by_r, by_d = {}, {}
+    for r, d, t in rows:
+        cell = by_r.setdefault(week_of(t), [0, 0.0])
+        cell[0] += 1
+        cell[1] += r
+        cell = by_d.setdefault(week_of(t), [0, 0.0])
+        cell[0] += 1
+        cell[1] += d
+    mean_r = sum(r for r, _, _ in rows) / n
+    iid_d = math.sqrt(sum((d - mean_d) ** 2 for _, d, _ in rows) / (n - 1) / n) if n > 1 else 0.0
+    se_r = clustered_se(by_r, mean_r, n, s.get("seR") or 0.0)
+    se_d = clustered_se(by_d, mean_d, n, iid_d)
+    out = {"seWeeks": round(se_r, 4), "weeks": len(by_r)}
+    if base and base.get("n") is not None and base.get("avgR") is not None:
+        out["edge"] = _edge(s, {"n": base.get("n") or 1, **base}, se_r)
+        se = math.sqrt(se_d ** 2 + (base.get("seR") or 0.0) ** 2)
+        out["quarterEdge"] = {"r": round(mean_d, 3), "low": round(mean_d - 1.96 * se, 3), "high": round(mean_d + 1.96 * se, 3),
+                              "clear": abs(mean_d) > 1.96 * se and not s.get("smallSample")}
+    if leg and leg.get("avgR") is not None:
+        out["legEdge"] = _edge(s, {"n": leg.get("n") or 1, **leg}, se_r)
+    return out
+
+
+def trade_rows(result):
+    """Las filas de `edges` de una corrida: cada trade con su R, su ventaja contra el azar de su trimestre y lado, y su salida."""
+    base = result.get("baseline")
+    return [(t["r"], t["r"] - quarter_control(base, t), t["exit_t"]) for t in result.get("trades") or []]
 
 
 def with_leg_baseline(result):
@@ -2489,37 +2883,51 @@ def _runs_path():
 # no se cuentan y no se listan (_stale); siguen en el disco. 3 (20/11/2026): las entradas al azar se simulan con el
 # minuto a minuto de la moneda, como la regla (antes iban sin él y, con dos órdenes stop o una limit, la ventaja de las
 # monedas con almacén salía inflada), y una vela dudosa sin minutos se resuelve con su recorrido supuesto en vez de
-# contar siempre el stop (_minute_path). Las corridas anteriores conservan lo suyo: el número dice cómo se hicieron
-ENGINE = 4
+# contar siempre el stop (_minute_path). Las corridas anteriores conservan lo suyo: el número dice cómo se hicieron.
+# 4 (21/11/2026): la ruptura de fractal sin la orden stop va en la vela que lo rompe. 5 (21/11/2026): con órdenes que
+# esperan (limit, orden stop, dos órdenes) y una posición a la vez, si dos se llenan en la misma vela entra la que se llenó
+# primero (_fill_time); antes, la de la señal más vieja, que con limit suele estar más adentro y llenarse después a mejor
+# precio (F-04 del protocolo de pruebas: en BTC 4h, fase 1, la limit en el borde cercano del FVG pasa de +0.241 a +0.200 R)
+ENGINE = 6
 
 
 def _stale(record):
-    """Corrida que salió mal por un fallo ya corregido: una acción con el régimen medido en 1D, antes de la versión 2, o
-    una regla con la ruptura de fractal sin la orden stop, antes de la 4 (entraba sabiendo que el precio lo rompería)."""
-    rule = record.get("rule") or {}
-    reg = rule.get("regime") or {}
-    if (record.get("engine", 1) < 2 and reg.get("tf") == DAILY and record.get("tf", DAILY) < DAILY
-            and is_stock(record.get("symbol", ""))):
-        return True
-    codes = {c for slot in (rule.get("recipe") or {}).get("slots") or [] for c in slot.get("codes") or []}
-    return record.get("engine", 1) < 4 and "WF" in codes and (rule.get("entry") or {}).get("type") != "stop"
+    """
+    Corrida de un motor anterior al 6: no se reusa, no se cuenta y no se lista (sigue en el disco). Lo que fue
+    cambiando, por versión:
+    - 2: en las acciones, el régimen medido en 1D descartaba todas las señales;
+    - 3: el azar con el minuto a minuto y, sin minutos, el recorrido supuesto de la vela dudosa (las anteriores seguían
+      contando el stop: H21 del protocolo de pruebas);
+    - 4: la ruptura de fractal sin la orden stop entraba sabiendo que el precio lo rompería;
+    - 5: con órdenes que esperan y una posición a la vez, dos llenados en la misma vela tomaban la señal más vieja (F-04);
+    - 6 (22/11/2026, protocolo de pruebas): las liquidaciones sin futuro (F-16), el azar con los filtros de lado (F-07),
+      la tasa base del funding (F-08), la confluencia como el panel (F-09), la señal de la vela de la salida (H15), el
+      enfriamiento al comenzar (F-01), el stop del FVG con sus tres velas (H16), la comisión que se come el riesgo (H18),
+      las señales opuestas en la misma vela (H19), lo a favor desde el llenado (H4), el medidor VPA simétrico (H22), las
+      velas de antes de la fase (H2), el barrido de zona que se desarma (H23) y el azar que respeta la línea y el horario
+      (H1). Cambian los trades o el azar de casi todas las reglas: todas las anteriores quedan fuera.
+    """
+    return record.get("engine", 1) < 6
 
 
 def _run_path(run_id):
     return tester_dir() / "runs" / f"{run_id}.json.gz"
 
 
-def history(symbol=None):
+def history(symbol=None, stale=False):
+    """Las corridas registradas, sin las de motores anteriores (_stale). stale=True las incluye: para contar las variantes
+    que se probaron (F-12 del protocolo de pruebas: con un motor nuevo el contador bajaba, aunque esas reglas se probaron)."""
     path = _runs_path()
     rows = []
     if path.exists():
         with open(path, encoding="utf-8") as fh:
             rows = [json.loads(line) for line in fh if line.strip()]
-    return [r for r in rows if (symbol is None or r.get("symbol") == symbol) and not _stale(r)]
+    return [r for r in rows if (symbol is None or r.get("symbol") == symbol) and (stale or not _stale(r))]
 
 
 def _save(result, digest):
-    run_id = f"{result['symbol']}_{result['rule']['tf']}_f{result['phase']}_{digest}_{int(time.time())}"
+    # Con los milisegundos y cuatro letras al azar: dos trabajos de la misma regla en el mismo segundo pisaban su archivo (O-28)
+    run_id = f"{result['symbol']}_{result['rule']['tf']}_f{result['phase']}_{digest}_{int(time.time() * 1000)}{uuid.uuid4().hex[:4]}"
     result["id"], result["hash"], result["at"], result["engine"] = run_id, digest, int(time.time() * 1000), ENGINE
     with _write_lock:
         path = _run_path(run_id)
@@ -2529,7 +2937,8 @@ def _save(result, digest):
         record = {"id": run_id, "at": result["at"], "symbol": result["symbol"], "tf": result["rule"]["tf"],
                   "phase": result["phase"], "hash": digest, "name": result["rule"]["name"], "rule": result["rule"],
                   "from": result["from"], "to": result["to"], "summary": result["summary"],
-                  "baseline": result.get("baseline"), "edge": result.get("edge"), "engine": ENGINE}
+                  "baseline": result.get("baseline"), "edge": result.get("edge"), "engine": ENGINE,
+                  "data": result.get("data")}
         with open(_runs_path(), "a", encoding="utf-8") as fh:
             fh.write(json.dumps(record, ensure_ascii=False, allow_nan=False) + "\n")
     return run_id
@@ -2588,29 +2997,47 @@ def saved_rule(result):
     return rule
 
 
+_replaying = {}  # id de la corrida -> threading.Event, mientras alguien la repite (O-33)
+
+
 def _replay(result):
     """La regla de una corrida guardada, corrida otra vez sin controles y con `trace`: el contexto de sus velas, los
-    elementos y qué pasó con cada señal. Las últimas 3 en memoria: elegir otro trade de la misma corrida no la repite."""
+    elementos y qué pasó con cada señal. Las últimas 6 en memoria: elegir otro trade de la misma corrida no la repite.
+    Un pedido de una corrida que ya se está repitiendo espera esa repetición en vez de empezar otra (O-33 del protocolo de
+    pruebas, 22/11/2026: con una regla pesada, cada clic mientras decía "repitiendo la regla" lanzaba otra repetición
+    entera; con las liquidaciones en 15m se juntaron 55 y el servidor dejó de responder)."""
     run_id = result.get("id")
-    with _lock:
-        found = _replays.get(run_id)
-    if found is not None:
-        return found
-    symbol, rule = result["symbol"], saved_rule(result)
-    # El tramo de la corrida, no el de hoy: la fase 3 crece con el almacén
-    phase = {"phase": result["phase"], "from": result["from"], "to": result["to"],
-             "start": _ms(result["from"]), "end": _ms(result["to"]) + oe.DAY_MS}
-    span = detect_span(symbol, rule["tf"], phase, rule)
-    table = measures.table_for(symbol) if rule.get("filters") else None
-    trace = {}
-    if not run(symbol, rule, span, phase, table, base=False, trace=trace).get("success"):
-        return None
-    trace["span"], trace["table"] = span, table
-    with _lock:
-        _replays[run_id] = trace
-        while len(_replays) > 3:
-            _replays.pop(next(iter(_replays)))
-    return trace
+    while True:
+        with _lock:
+            found = _replays.get(run_id)
+            if found is not None:
+                _replays[run_id] = _replays.pop(run_id)  # La que se sigue usando va al final (O-30)
+                return found
+            busy = _replaying.get(run_id)
+            if busy is None:
+                mine = _replaying[run_id] = threading.Event()
+                break
+        busy.wait(600)  # Si la otra falló (no quedó en memoria), la vuelta siguiente la intenta este pedido
+    try:
+        symbol, rule = result["symbol"], saved_rule(result)
+        # El tramo de la corrida, no el de hoy: la fase 3 crece con el almacén
+        phase = {"phase": result["phase"], "from": result["from"], "to": result["to"],
+                 "start": _ms(result["from"]), "end": _ms(result["to"]) + oe.DAY_MS}
+        span = detect_span(symbol, rule["tf"], phase, rule)
+        table = measures.table_for(symbol) if rule.get("filters") else None
+        trace = {}
+        if not run(symbol, rule, span, phase, table, base=False, trace=trace).get("success"):
+            return None
+        trace["table"] = table  # trace["span"] lo deja run(), con sus velas de calentamiento
+        with _lock:
+            _replays[run_id] = trace
+            while len(_replays) > 6:  # Hasta 6 corridas abiertas a la vez sin repetirlas (O-30: con 3, cada clic repetía la regla)
+                _replays.pop(next(iter(_replays)))
+        return trace
+    finally:
+        with _lock:
+            _replaying.pop(run_id, None)
+        mine.set()
 
 
 def _regime_boxes(reg, bars, session=False):
@@ -2740,7 +3167,10 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
         out["lines"].append(entry)
         out["rows"].append(row(f"line{len(out['lines'])}", text,
                                lambda i, item=item, values=values: None if not values[i] == values[i] else _lines_ok([item], ctx, i, side),
-                               f"{name} en {_num_text(values[k])}, cierre en {_num_text(ctx['C'][k])}"))
+                               f"{name} en {_num_text(values[k])}, cierre en {_num_text(ctx['C'][k])}"
+                               # La pendiente que decide, si la regla la pide (O-15)
+                               + (f", {LINE_SLOPE_BARS} velas antes en {_num_text(values[k - LINE_SLOPE_BARS])}"
+                                  if item["slope"] and k >= LINE_SLOPE_BARS else "")))
 
     if rule.get("gc"):
         gc = rule["gc"]
@@ -2759,7 +3189,8 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
         values = cache[key]
         out["rows"].append(row("cvd", f"CVD de {flow['cvd']} velas a favor",
                                lambda i: None if not values[i] == values[i] else values[i] * side > 0,
-                               f"CVD {values[k] * 100:+.1f}% del volumen" if values[k] == values[k] else "CVD sin dato"))
+                               # Con dos decimales: con un CVD casi nulo, "+0.0%" no dejaba ver el signo que decide (O-15)
+                               f"CVD {values[k] * 100:+.2f}% del volumen" if values[k] == values[k] else "CVD sin dato"))
     if flow.get("oi"):
         if "oi" not in cache:
             oi = flow_filters.oi_at_close(symbol, bars, rule["tf"])
@@ -2795,9 +3226,9 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
     if flow.get("chain"):
         chain = flow["chain"]
         value, cz = _chain_series(chain, ctx, symbol, rule["tf"])
-        out["rows"].append(row("chain", onchain_flows.describe(chain, symbol),
+        out["rows"].append(row("chain", onchain_flows.describe(chain, symbol, side),
                                lambda i: None if not cz[i] == cz[i] else onchain_flows.chain_ok(chain, cz[i], side),
-                               f"{value[k]:+.2f}% a favor de un largo, z {cz[k]:+.2f}" if cz[k] == cz[k] else "sin dato on-chain"))
+                               f"z {cz[k]:+.2f} ({value[k]:+.2f}%)" if cz[k] == cz[k] else "sin dato on-chain"))
 
     if rule.get("regime"):
         reg = rule["regime"]
@@ -2855,7 +3286,12 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
                 return None
             at = measures.row_at(table, T[i] + tf_ms)
             return None if at is None else _passes(rule["filters"], measures.read_row(table, at, side))
-        out["rows"].append(row("filters", f"Medidas: {text}", measured, "sin la tabla de medidas" if table is None else ""))
+        # El valor de cada medida en la vela de la señal, como los demás filtros (O-26)
+        at = measures.row_at(table, T[k] + tf_ms) if table is not None else None
+        seen = measures.read_row(table, at, side) if at is not None else None
+        value = ("sin la tabla de medidas" if table is None else "sin medidas en esa vela (antes de la tabla)" if seen is None
+                 else " · ".join(f"{labels.get(f['key'], (f['key'],))[0]} {_num_text(seen.get(f['key']))}" for f in rule["filters"]))
+        out["rows"].append(row("filters", f"Medidas: {text}", measured, value))
 
     codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
     t0, t1 = out["from"], out["to"]
@@ -2880,14 +3316,64 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
     return out
 
 
+def data_mark(bars):
+    """Huella de las velas de una corrida: cuántas, la primera, la última y un resumen de precios y volúmenes. Protocolo
+    de pruebas, H20 (22/11/2026): una corrida guardada se reusaba aunque cambiaran los datos de su moneda (SUI con
+    almacén nuevo, velas reparadas); ahora se reusa solo si sus velas siguen iguales (same_data)."""
+    digest = hashlib.sha1()
+    for b in bars:
+        digest.update(f'{b["t"]},{b["o"]!r},{b["h"]!r},{b["l"]!r},{b["c"]!r},{b["vol"]!r},{b.get("delta", 0.0)!r};'.encode())
+    return {"n": len(bars), "first": bars[0]["t"] if bars else None, "last": bars[-1]["t"] if bars else None,
+            "sha1": digest.hexdigest()[:16]}
+
+
+_marks = {}  # (símbolo, marco, fase, desde, hasta, objetivo, filtro de volumen) → (hora, huella): 10 minutos
+
+
+def same_data(record, symbol=None):
+    """Si las velas de una corrida guardada siguen siendo las de hoy (H20). Una corrida sin huella (de antes del motor 6)
+    no se puede comprobar: da True, y _stale() ya la deja fuera. Se compara el tramo de la corrida (desde y hasta), no la
+    fase de hoy: la fase 3 crece con los días nuevos y eso no cambia lo ya corrido."""
+    mark = record.get("data")
+    rule = record.get("rule") or {}
+    symbol = symbol or record.get("symbol")
+    if not mark or not symbol or not rule.get("tf"):
+        return True
+    start, end = _ms(record["from"]), _ms(record["to"]) + oe.DAY_MS
+    key = (symbol, rule["tf"], record.get("phase"), start, end, rule.get("target"), rule.get("volFilter"))
+    now = time.time()
+    with _lock:
+        cached = _marks.get(key)
+    if cached is None or now - cached[0] > 600:
+        try:
+            phase = {"phase": record.get("phase"), "from": record["from"], "to": record["to"], "start": start, "end": end}
+            span = _warmed(symbol, rule["tf"], phase, rule, detect_span(symbol, rule["tf"], phase, rule))
+        except Exception:
+            return True  # Sin poder leer los datos de hoy no se descarta nada
+        lead = span["lead"]
+        inside = [b for b in span["bars"][lead:] if start <= b["t"] < end]
+        inside = span["bars"][:lead] + inside if inside else []
+        cached = (now, data_mark(inside) if inside else None)
+        with _lock:
+            _marks[key] = cached
+            while len(_marks) > 200:
+                _marks.pop(next(iter(_marks)))
+    if cached[1] is None:
+        return True  # Hoy no hay velas de ese tramo: no hay con qué comparar
+    return cached[1]["sha1"] == mark.get("sha1") and cached[1]["n"] == mark.get("n")
+
+
 def gate(symbol, rule, phase_number):
-    """Qué se sabe antes de correr una fase: corrida guardada, variantes probadas y si la fase 3 está permitida."""
+    """Qué se sabe antes de correr una fase: corrida guardada, variantes probadas y si la fase 3 está permitida.
+    Una corrida guardada solo se reusa si sus velas siguen siendo las de hoy (same_data, H20)."""
     digest = rule_hash(symbol, rule)
-    rows = history(symbol)
+    rows, tried = history(symbol), history(symbol, stale=True)
     same = [r for r in rows if r["hash"] == digest and r["phase"] == phase_number]
+    if same and phase_number > 1 and not same_data(same[-1], symbol):
+        same = []
     info = {"hash": digest, "stored": same[-1]["id"] if same and phase_number > 1 else None,
-            "variantsPhase1": len({r["hash"] for r in rows if r["phase"] == 1}),
-            "rulesInPhase": len({r["hash"] for r in rows if r["phase"] == phase_number}),
+            "variantsPhase1": len({r["hash"] for r in tried if r["phase"] == 1}),
+            "rulesInPhase": len({r["hash"] for r in tried if r["phase"] == phase_number}),
             "ranPhase1": any(r["hash"] == digest and r["phase"] == 1 for r in rows),
             "ranPhase2": any(r["hash"] == digest and r["phase"] == 2 for r in rows)}
     info["blocked"] = "La fase 3 pide haber corrido antes esta misma regla en la fase 2" if phase_number == 3 and not info["ranPhase2"] else None
@@ -2917,8 +3403,13 @@ def start(symbol, raw_rule, phase_number, confirm=False):
         return {"success": True, "run": info["stored"], "stored": True, "gate": info}
     if phase_number > 1 and not confirm:
         return {"success": True, "needsConfirm": True, "gate": info, "phase": phase}
+    with _lock:
+        running = next((j for j in _jobs.values() if j.get("state") == "running" and j.get("key") == (symbol, info["hash"], phase_number)), None)
+    if running is not None:
+        return {"success": True, "job": running["id"], "gate": info, "already": True}  # Dos clics seguidos: el mismo trabajo (O-28)
     job_id = uuid.uuid4().hex[:12]
-    job = {"id": job_id, "state": "running", "done": 0, "total": 1, "stage": "Elementos del tramo", "run": None, "error": None}
+    job = {"id": job_id, "state": "running", "done": 0, "total": 1, "stage": "Elementos del tramo", "run": None, "error": None,
+           "key": (symbol, info["hash"], phase_number)}
     with _lock:
         _jobs[job_id] = job
 
@@ -2952,7 +3443,7 @@ def _plan(rule, phase_number, group="base"):
         phase = next((p for p in phases(symbol) if p["phase"] == phase_number), None)
         info = gate(symbol, rule, phase_number)
         same = [r for r in history(symbol) if r["hash"] == info["hash"] and r["phase"] == phase_number]
-        if same:
+        if same and same_data(same[-1], symbol):
             row.update(action="stored", run=same[-1]["id"])  # La corrida es determinista: no se repite
         elif phase is None or not phase["available"]:
             row["reason"] = "sin datos de esa fase"
@@ -2964,6 +3455,8 @@ def _plan(rule, phase_number, group="base"):
             row["reason"] = "falta correr esta regla en la fase 2"
         else:
             row["action"] = "run"
+            if same:
+                row["reason"] = "sus datos cambiaron desde la corrida guardada"  # H20: se corre otra vez
         rows.append(row)
     return rows
 
@@ -3026,7 +3519,7 @@ def consolidated(raw_rule, phase_number, group="base"):
     if rule is None:
         return {"success": False, "message": "La regla no tiene elementos conocidos"}
     plan = _plan(rule, phase_number, group)
-    rows, pooled, weights, leg_weights = [], [], [], []
+    rows, pooled, weights, leg_weights, edge_rows = [], [], [], [], []
     pooled_quarters = {}
     for row in plan:
         result = with_quarter_baseline(with_leg_baseline(load_run(row["run"]))) if row["run"] else None
@@ -3039,15 +3532,16 @@ def consolidated(raw_rule, phase_number, group="base"):
             cell[2] += e
         s, b, trades = result["summary"], result.get("baseline") or {}, result["trades"]
         leg = result.get("legBaseline") or {}
+        edge_rows += trade_rows(result)
         if s.get("n") and leg.get("n"):
             leg_weights.append((s["n"], leg))
         for t in trades:
             pooled.append({"r": t["r"], "dir": t["dir"], "entry_t": t["entry_t"], "exit_t": t["exit_t"], "mfe": t.get("mfe"), "mae": t.get("mae"),
-                           "bars": t.get("bars"), "reach": t.get("reach"), "symbol": row["symbol"]})
+                           "bars": t.get("bars"), "reach": t.get("reach"), "symbol": row["symbol"], "slip": t.get("slip"), "funding": t.get("funding")})
         rows.append({"symbol": row["symbol"], "run": row["run"], "from": result["from"], "to": result["to"], "n": s.get("n", 0),
                      "winRate": s.get("winRate"), "avgR": s.get("avgR"), "totalR": s.get("totalR"), "profitFactor": s.get("profitFactor"),
                      "maxDrawdownR": s.get("maxDrawdownR"), "baseR": b.get("avgR"), "edge": result.get("edge"),
-                     "legR": leg.get("avgR"), "legEdge": result.get("legEdge")})
+                     "legR": leg.get("avgR"), "legEdge": result.get("legEdge"), "quarterEdge": result.get("quarterEdge")})
         if s.get("n") and b.get("n"):
             weights.append((s["n"], b))
     if not rows:
@@ -3057,7 +3551,8 @@ def consolidated(raw_rule, phase_number, group="base"):
            "trades": [[t["entry_t"], t["exit_t"], t["r"]] for t in ordered],  # Para la vista "como cuenta" de la ventana
            "equity": _equity(ordered), "positive": sum(1 for r in rows if (r["avgR"] or 0) > 0), "withTrades": sum(1 for r in rows if r["n"]),
            # Constancia: la ventaja de cada trimestre contra el azar de ese trimestre y lado, en cada moneda
-           "consistency": consistency(pooled_quarters)}
+           "consistency": consistency(pooled_quarters),
+           "costs": _cost_effect(rule, ordered)}
     if ordered:
         years = sorted({dt.datetime.fromtimestamp(t["entry_t"] / 1000, dt.timezone.utc).year for t in ordered})
         out["byYear"] = [_pooled_row(str(y), [t for t in ordered if dt.datetime.fromtimestamp(t["entry_t"] / 1000, dt.timezone.utc).year == y]) for y in years]
@@ -3068,21 +3563,35 @@ def consolidated(raw_rule, phase_number, group="base"):
         base = sum(n * b["avgR"] for n, b in weights) / total
         base_se = math.sqrt(sum((n * b["seR"]) ** 2 for n, b in weights)) / total
         s = out["summary"]
-        edge, se = s["avgR"] - base, math.sqrt(s["seR"] ** 2 + base_se ** 2)
         reach = {level: round(sum(n * b["reach"][level] for n, b in weights if b.get("reach")) / max(1, sum(n for n, b in weights if b.get("reach"))), 1)
                  for level in (str(x) for x in REACH_LEVELS)} if any(b.get("reach") for _, b in weights) else None
         out["baseline"] = {"avgR": round(base, 3), "seR": round(base_se, 4), "reach": reach,
                            "winRate": round(sum(n * b["winRate"] for n, b in weights) / total, 1)}
-        out["edge"] = {"r": round(edge, 3), "low": round(edge - 1.96 * se, 3), "high": round(edge + 1.96 * se, 3),
-                       "clear": abs(edge) > 1.96 * se and not s["smallSample"]}
+        # El margen agrupado por semanas (B-08) y la ventaja contra el azar del trimestre y lado de cada trade (B-07)
+        out.update(edges(edge_rows, s, {"n": total, "avgR": base, "seR": base_se}, None))
     # El control del tramo solo vale si lo tienen todas las monedas con trades: con una parte, compararía grupos distintos
     if leg_weights and ordered and len(leg_weights) == sum(1 for r in rows if r["n"]):
         total = sum(n for n, _ in leg_weights)
         pooled_leg = {"n": total, "avgR": sum(n * b["avgR"] for n, b in leg_weights) / total,
                       "seR": math.sqrt(sum((n * b["seR"]) ** 2 for n, b in leg_weights)) / total}
-        out["legEdge"] = _edge(out["summary"], pooled_leg)
+        out["legEdge"] = _edge(out["summary"], pooled_leg, out.get("seWeeks"))
         out["legBaseline"] = {"avgR": round(pooled_leg["avgR"], 3), "seR": round(pooled_leg["seR"], 4), "leg": leg_weights[0][1].get("leg"),
                               "winRate": round(sum(n * b["winRate"] for n, b in leg_weights) / total, 1)}
+    return out
+
+
+def _cost_effect(rule, trades):
+    """El R medio si se contaran el deslizamiento (0.02% y 0.05% por lado) y el funding, con lo que trae cada trade
+    (B-05 y B-06). Lo que la regla ya cuenta no se suma otra vez. None si los trades no traen sus costos."""
+    if not trades or any(t.get("slip") is None for t in trades):
+        return None
+    n = len(trades)
+    base = sum(t["r"] for t in trades) / n
+    out = {"avgR": round(base, 4), "slippage": rule.get("slippage") or 0.0, "funding": bool(rule.get("funding"))}
+    if not rule.get("slippage"):
+        out["slip"] = {f"{s:g}": round(base - sum(s / 0.01 * t["slip"] for t in trades) / n, 4) for s in (0.02, 0.05)}
+    if not rule.get("funding"):
+        out["withFunding"] = round(base + sum(t.get("funding") or 0.0 for t in trades) / n, 4)
     return out
 
 
@@ -3127,7 +3636,10 @@ def sensitivity(symbol, raw_rule):
     for window in (rule["recipe"]["window"] - 1, rule["recipe"]["window"] + 1):
         if 1 <= window <= MAX_WINDOW and len(rule["recipe"]["slots"]) > 1:
             add(f"Ventana {window} velas", {**rule, "recipe": {**rule["recipe"], "window": window}})
-    for buffer in sorted({round(rule["stop"]["buffer"] * f, 3) for f in (0.5, 2.0)} | {0.0}):
+    # Con el stop en ATR el margen no se usa, salvo en el stop arrastrado al swing o a las velas: sus variantes darían la
+    # misma regla y se leerían como que aguanta (O-19)
+    buffer_used = rule["stop"]["type"] != "atr" or rule["exit"]["trail"] in ("swing", "bars")
+    for buffer in sorted({round(rule["stop"]["buffer"] * f, 3) for f in (0.5, 2.0)} | {0.0}) if buffer_used else []:
         if buffer != rule["stop"]["buffer"]:
             add(f"Margen del stop {buffer} ATR", {**rule, "stop": {**rule["stop"], "buffer": buffer}})
     return {"success": True, "rows": rows}

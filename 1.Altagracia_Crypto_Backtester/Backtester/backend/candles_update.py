@@ -69,29 +69,75 @@ def _save(path, data):
     partial.replace(path)
 
 
-def _fetch(symbol, tf, rows, client):
-    """Suma a rows (hora → vela) lo que falta desde la última vela, o desde 2020."""
+PAGE = 1000  # Velas por pedido: el máximo de Bybit
+
+
+def _page(client, symbol, tf, start, end):
+    """Las velas de [start, end] (ms, los dos incluidos). Reintenta si la conexión falla o si Bybit responde con un error
+    ("Too many visits" llega como retCode, sin excepción); tras 4 intentos la moneda falla en vez de saltar la página."""
+    for attempt in range(4):
+        try:
+            found = client.get(f"{BASE}/kline", params={"category": "linear", "symbol": symbol, "interval": tf,
+                                                        "start": start, "end": end, "limit": PAGE}).json()
+            if found.get("retCode") == 0:
+                return (found.get("result") or {}).get("list") or []
+            error = RuntimeError(f"Bybit respondió {found.get('retCode')}: {found.get('retMsg')}")
+        except Exception as exc:
+            error = exc
+        if attempt == 3:
+            raise error
+        time.sleep(2 * (attempt + 1))
+
+
+def _fetch(symbol, tf, rows, client, start=None, stop=None):
+    """Suma a rows (hora → vela) las velas cerradas de start a stop (ms). Sin start, desde la última vela guardada (se
+    vuelve a pedir: pudo quedar a medio formar) o desde 2020. Sin stop, hasta ahora.
+    Protocolo de pruebas (22/11/2026): F-02, cada pedido iba de start a start + 1,000 velas (1,001) con límite 1,000, así
+    que Bybit devolvía las 1,000 más recientes y la primera de cada página se perdía; y un error sin excepción saltaba la
+    página entera. F-03, la vela en formación al actualizar quedaba guardada a medio formar y no se volvía a pedir."""
     now = int(time.time() * 1000)
     step = int(tf) * 60000
-    start = max(rows) + step if rows else FIRST
-    while start < now:
-        end = min(now, start + 1000 * step)
-        found = None
-        for attempt in range(4):  # Bybit corta a veces: se reintenta antes de dar la moneda por fallida
-            try:
-                found = client.get(f"{BASE}/kline", params={"category": "linear", "symbol": symbol, "interval": tf,
-                                                            "start": start, "end": end, "limit": 1000}).json()
-                break
-            except Exception:
-                if attempt == 3:
-                    raise
-                time.sleep(2 * (attempt + 1))
-        lst = (found.get("result") or {}).get("list") or []
+    if start is None:
+        start = max(rows) if rows else FIRST
+    stop = min(now, stop) if stop is not None else now
+    while start < stop:
+        end = min(stop, start + (PAGE - 1) * step)
+        lst = _page(client, symbol, tf, start, end)
         for k in lst:
             t = int(k[0])
-            rows[t] = [t, float(k[1]), float(k[2]), float(k[3]), float(k[4]), float(k[5])]
-        start = end + 1 if not lst else max(int(k[0]) for k in lst) + step
+            if t + step <= now:  # Solo velas cerradas
+                rows[t] = [t, float(k[1]), float(k[2]), float(k[3]), float(k[4]), float(k[5])]
+        start = end + step
         time.sleep(0.08)
+    for t in [t for t in rows if t + step > now]:
+        del rows[t]
+
+
+def gaps(rows, step):
+    """Tramos [desde, hasta] (ms) de velas que faltan entre la primera y la última guardadas."""
+    times = sorted(rows)
+    return [(a + step, b - step) for a, b in zip(times, times[1:]) if b - a > step]
+
+
+def repair(symbol, tf, client, since=None):
+    """Rellena los huecos (F-02) y vuelve a pedir lo bajado desde `since` (ms; F-03: las velas que quedaron a medio
+    formar en las actualizaciones). Devuelve cuántas velas se sumaron o cambiaron."""
+    path = _path(symbol, tf)
+    data = _load(path)
+    rows = {r[0]: r for r in data.get(tf, [])}
+    if not rows:
+        return 0
+    before = dict(rows)
+    step = int(tf) * 60000
+    for a, b in gaps(rows, step):
+        _fetch(symbol, tf, rows, client, start=a, stop=b + step)
+    if since is not None:
+        _fetch(symbol, tf, rows, client, start=max(min(rows), since))
+    changed = sum(1 for t, r in rows.items() if before.get(t) != r)
+    if changed:
+        data[tf] = [rows[t] for t in sorted(rows)]
+        _save(path, data)
+    return changed
 
 
 def update_fine(symbol, tf, client):
@@ -117,6 +163,12 @@ def update(symbol, client):
     print(symbol, len(data.get("60") or []), len(h4), day(h4[0][0]) if h4 else "-", day(h4[-1][0]) if h4 else "-", flush=True)
 
 
+def _since(text):
+    """AAAA-MM-DD a ms de la medianoche UTC."""
+    import calendar
+    return calendar.timegm(time.strptime(text, "%Y-%m-%d")) * 1000 if text else None
+
+
 if __name__ == "__main__":
     args = sys.argv[1:]
     fine = ()
@@ -124,6 +176,24 @@ if __name__ == "__main__":
         at = args.index("--tf")
         fine = tuple(tf for tf in (args[at + 1] if at + 1 < len(args) else "").split(",") if tf in FINE)
         args = args[:at] + args[at + 2:]
+    if "--repair" in args:
+        # python -B candles_update.py --repair [--since AAAA-MM-DD] [MONEDAS]: rellena los huecos de todo lo guardado y
+        # vuelve a pedir desde --since (UTC) las velas que pudieron quedar a medio formar
+        args.remove("--repair")
+        since = None
+        if "--since" in args:
+            at = args.index("--since")
+            since = _since(args[at + 1] if at + 1 < len(args) else "")
+            args = args[:at] + args[at + 2:]
+        symbols = args or sorted(p.name.split(".")[0] for p in DIR.glob("*.json.gz"))
+        with _client() as client:
+            for s in symbols:
+                for tf in TFS + tuple(tf for tf in FINE if _path(s, tf).exists()):
+                    try:
+                        print(s, f"{tf}m", "corregidas", repair(s, tf, client, since), flush=True)
+                    except Exception as error:
+                        print(s, f"{tf}m", "falló:", error, flush=True)
+        sys.exit(0)
     if args[:1] == ["--pick"]:
         symbols = pick(int(args[1]) if len(args) > 1 else 43)
         print("Elegidas:", " ".join(symbols), flush=True)

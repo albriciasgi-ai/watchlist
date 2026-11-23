@@ -74,6 +74,7 @@ export const FACETS = {
   canal: ['salida', 'Salida por el canal', 'no'],
   salidaVpa: ['salida', 'Salida VPA', 'no'],
   unaAlaVez: ['salida', 'Posiciones'],
+  costos: ['salida', 'Costos que se cuentan'],
   deteccion: ['deteccion', 'Detección']
 };
 
@@ -222,7 +223,8 @@ export function ruleFacets(rule, labels = {}) {
   if (recipe.swing?.on) add('extremo', `en un extremo de ${recipe.swing.bars} velas`);
   if (recipe.momentum) add('momentum', 'EMA 14 con pendiente a favor');
   if (recipe.entry?.on) add('confirmacion', `${n(recipe.entry.atr)} ATR a favor en ${recipe.entry.bars} velas`);
-  if (rule.hours) add('horario', `${clock(Number(rule.hours.from))}–${clock(Number(rule.hours.to))} UTC${rule.hours.weekdays ? ', de lunes a viernes' : ''}`);
+  // Las dos horas cuentan y el día es el UTC (O-31)
+  if (rule.hours) add('horario', `${clock(Number(rule.hours.from))}–${clock(Number(rule.hours.to))} UTC, las dos incluidas${rule.hours.weekdays ? ', de lunes a viernes (UTC)' : ''}`);
   if ((rule.filters || []).length) {
     add('medidas', rule.filters.map(f => `${labels.measures?.[f.key] || f.key} ${f.op === '<=' ? '≤' : '≥'} ${n(f.value)}`).join('; '));
   }
@@ -236,7 +238,9 @@ export function ruleFacets(rule, labels = {}) {
 
   const stop = rule.stop || {};
   const stopBase = { swing: `swing anterior de ${stop.bars} velas`, candle: 'extremo de la vela del elemento', zone: 'borde lejano de la zona', atr: `${n(stop.atr)} ATR` }[stop.type] || stop.type;
-  add('stop', `${stopBase}${stop.type !== 'atr' ? ` (margen ${n(stop.buffer)} ATR)` : ''} · máximo ${n(stop.maxAtr)} ATR`);
+  const fee = rule.maxFeeR ?? 0.3;  // El tope de la comisión (H18): solo se dice si no es el de fábrica
+  add('stop', `${stopBase}${stop.type !== 'atr' ? ` (margen ${n(stop.buffer)} ATR)` : ''} · máximo ${n(stop.maxAtr)} ATR`
+    + (fee === 0.3 ? '' : fee > 0 ? ` · comisión hasta ${n(fee)} R` : ' · sin tope de comisión'));
 
   if (targetAt === 'weak') {
     add('objetivo', 'el máximo (largo) o el mínimo (corto) del rango mayor SMC');
@@ -265,6 +269,8 @@ export function ruleFacets(rule, labels = {}) {
   if (channel) add('canal', rule.gc.exit === 'mid' ? 'al cerrar al otro lado de la línea central' : 'al cerrar de vuelta dentro de la banda');
   const cooldown = Number(rule.cooldown) || 0;
   add('unaAlaVez', rule.oneAtATime !== false ? `una a la vez${cooldown > 0 ? `, espera ${cooldown} velas tras cerrar` : ''}` : 'todas las señales');
+  const costs = [n(rule.slippage) > 0 ? `deslizamiento ${n(rule.slippage)}% por lado` : null, rule.funding ? 'el funding' : null].filter(Boolean);
+  if (costs.length) add('costos', costs.join(' y '));
   add('deteccion', `volumen ${n(rule.volFilter)} · frecuencia ${n(rule.target)}`);
   return out.sort((a, b) => ORDER.indexOf(a.key) - ORDER.indexOf(b.key));
 }
@@ -335,13 +341,18 @@ export const OFF_PATCH = {
   premium: { smcPd: false }, sesgo: { smcBias: false }, extremo: { swing: false }, momentum: { momentum: false },
   confirmacion: { confirm: false }, horario: { useHours: false }, medidas: { filters: [] },
   objetivo: { useTarget: false }, arrastre: { tpTrailOn: false }, objetivoOnchain: { chainTargetOn: false }, trailing: { trail: false, trailMode: 'off' }, aLaEntrada: { breakEvenOn: false },
-  tiempo: { useHorizon: false }, contraria: { opposite: false }, canal: { gcExit: 'none' }, salidaVpa: { vpaExitOn: false }
+  tiempo: { useHorizon: false }, contraria: { opposite: false }, canal: { gcExit: 'none' }, salidaVpa: { vpaExitOn: false },
+  costos: { slippage: 0, funding: false }
 };
 
 /**
  * El embudo de las señales de una corrida: cuántas dio la regla, cuántas quitó cada filtro o motivo, y cuántos trades
  * cerrados quedaron. [{label, count, left}] con lo que queda tras cada paso; `left` del último son los trades
  */
+/** Los descartes de antes de simular, en el orden del motor (rule_tester.run) */
+const FUNNEL_FILTERS = ['señales opuestas en la misma vela', 'filtro de VWAP o EMA', 'filtro de CVD u OI', 'filtro de régimen',
+  'filtro de Williams', 'filtro SMC', 'filtro VPA', 'fuera de horario', 'VA con hueco pequeño', 'filtro de contexto'];
+
 export function signalFunnel(result) {
   if (!result || !Number.isFinite(result.signals)) return null;
   let left = result.signals;
@@ -351,8 +362,26 @@ export function signalFunnel(result) {
     left -= count;
     steps.push({ label, count, left: Math.max(0, left) });
   };
-  take('con una posición ya abierta', result.busy);
-  Object.entries(result.skipped || {}).sort((a, b) => b[1] - a[1]).forEach(([why, count]) => take(why, count));
+  // En el orden en que el motor descarta (O-27 del protocolo de pruebas, 22/11/2026): a mercado, primero la posición
+  // abierta y el enfriamiento, después los filtros y lo que falla al simular; con órdenes que esperan y una posición a la
+  // vez, la posición abierta y el enfriamiento se miran al final, con la vela del llenado
+  const skipped = { ...(result.skipped || {}) };
+  const cooling = skipped['enfriamiento'];
+  delete skipped['enfriamiento'];
+  const pre = FUNNEL_FILTERS.filter(why => skipped[why]).map(why => [why, skipped[why]]);
+  FUNNEL_FILTERS.forEach(why => delete skipped[why]);
+  const simulated = Object.entries(skipped).sort((a, b) => b[1] - a[1]);
+  const rule = result.rule || {};
+  const deferred = rule.oneAtATime !== false && ['limit', 'stop', 'straddle'].includes(rule.entry?.type);
+  if (!deferred) {
+    take('con una posición ya abierta', result.busy);
+    take('enfriamiento', cooling);
+  }
+  [...pre, ...simulated].forEach(([why, count]) => take(why, count));
+  if (deferred) {
+    take('con una posición ya abierta', result.busy);
+    take('enfriamiento', cooling);
+  }
   take('abiertas al final de la fase', result.open);
   const trades = result.summary?.n ?? (result.trades || []).filter(t => !t.open).length;
   if (left - trades > 0) take('sin vela siguiente u otros motivos', left - trades);

@@ -54,6 +54,126 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 23 Noviembre 2026: La Búsqueda Genética con los Tres Controles del Tablero, y E-02 y E-08 Decididos
+
+**Pedido:** tras el protocolo de pruebas quedaban tres decisiones. Se midieron mientras el usuario revisaba la galería, y
+aceptó las recomendaciones con una condición: que en la búsqueda se pueda elegir si la validación pide el margen, para no
+descartar estrategias prometedoras que podrían mejorarse.
+
+**Cambios:**
+1. **Búsqueda genética** (`rule_search.py`, pestaña Búsqueda):
+   - elige con los tres controles del tablero (el azar, seguir el tramo y el azar del trimestre y el lado de cada trade),
+     con el margen agrupado por semanas: la ventaja es la del control que más le exige;
+   - "Candidata a la fase 2" si en la validación les gana a los tres y sus vecinas aguantan;
+   - casilla "En la validación, pedir también el margen", apagada de fábrica: con ella, además con margen y con R
+     positivo, como "pasa" en el tablero;
+   - cada finalista muestra sus tres ventajas con su margen.
+2. **E-02 y E-08 quedan como están:** el fallo fuera del valor en la primera vela de la sesión mira si la sesión abrió
+   dentro del valor, y la primera vela que toca el borde de caja decide la llegada.
+3. **Pruebas:** `test_rule_search.py` suma 3 (9).
+
+**IMPORTANTE:**
+- **Medido antes de decidir** (`pruebas_backtesting/REGISTRO.md`, pruebas adicionales 6 y 7):
+  - E-02: mirando el cierre de la vela anterior cambian 3 señales de 12,340;
+  - E-08: las otras dos lecturas dan 2.3 y 5.3 veces las señales y no le dan ventaja al borde;
+  - la búsqueda: de 14 finalistas que fueron candidatas, con el motor 6 siguen 7 sin el margen y ninguna con él (en 2023
+    hay de 85 a 423 trades).
+- Una búsqueda de antes sigue con su criterio, también al retomarla.
+- Con el motor 6, la aptitud de B5 en la búsqueda baja de +0.10 a −0.07; en el tablero sigue pasando las fases 1 y 2.
+- PROBADO_EN_PANTALLA
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BÚSQUEDA GENÉTICA DE REGLAS (18/11/2026)", "Los tres
+controles del tablero (23/11)"
+
+---
+
+### App 1 - 22 Noviembre 2026: Motor 6, las Correcciones del Protocolo de Pruebas del Backtesting Global
+
+**Pedido:** el protocolo de pruebas (`1.Altagracia_Crypto_Backtester/Backtester/pruebas_backtesting/`) terminó la revisión
+con un informe final (`INFORME_FINAL.md`). El usuario aceptó todas las recomendaciones ("Acepta todas") y pidió la etapa 7:
+corregir y repetir.
+
+**Cambios:**
+1. **Motor 6:** lo que cambia trades o el azar va junto, y todas las corridas anteriores quedan fuera (siguen en el disco).
+   - Datos y sin futuro: liquidaciones (F-16), velas de las monedas nuevas (F-02 y F-03, `candles_update.py --repair`),
+     huella de los datos de cada corrida (H20) y las velas de antes de la fase para calentar (H2).
+   - Trades: la señal de la vela de la salida ya entra (H15), sin enfriamiento al comenzar (F-01), señales opuestas en
+     la misma vela (H19), el stop de un FVG con sus tres velas (H16), tope de la comisión en 0.3 R (H18), lo a favor
+     desde el llenado (H4), el medidor VPA simétrico (H22) y el ruido de coma flotante en los bordes (O-25 y otros).
+   - El azar: con los filtros de lado (F-07), la línea y el horario (H1), la tasa base del funding (F-08) y la
+     confluencia como el panel (F-09).
+2. **"Pasa":** pide ganarle también al azar del trimestre y el lado de cada trade (B-07), con el margen agrupado por
+   semanas (B-08). Resumen, "Todas" y el tablero muestran las tres ventajas.
+3. **Opciones nuevas, apagadas de fábrica:** deslizamiento por lado y funding (B-05 y B-06), con su efecto en "Todas".
+4. **Lote menor y pantalla:** unos 40 arreglos de textos, embudo, registro y gráfico del trade elegido (ver `DEFECTOS.md`).
+5. **Hallado en la regresión y corregido:**
+   - la suite (`wise_smc_watch.detect`) habría tomado como rupturas de fractal las órdenes de F-06 que nunca se rompen:
+     esas órdenes quedan solo para el probador (`williams.events(..., orders=True)`);
+   - la Revisión de candidatos rechazaba la caja propia con un stop corto por el tope de la comisión: ahora se simula
+     con su comisión (`candidate_review._own_trade`);
+   - el verificador del Gimnasio nombra el martillo invertido;
+   - en la galería (abajo): si llegaban a la vez varios pedidos de trades de una corrida que se estaba repitiendo para
+     su contexto, cada uno la repetía entera (O-33). Ahora esperan esa repetición (`rule_tester._replay`).
+6. **Pruebas:** `test_motor6.py` (17), `test_controles_b07_b08.py` (4), `test_lote_menor.py` (7), `test_data_mark.py`
+   (5), `test_flujo_azar.py` (4) y `test_candles_update.py` (4), más las que ya había, al día. Todas las del backend de
+   App 1: 581 pasan y fallan las 2 de siempre. En la página solo falla `liquidations.test.mjs`, como desde el 13/11.
+   Las del servidor y de la página de la suite pasan con este App 1.
+7. **Regresión del protocolo:** invariantes en 296 combinaciones de reglas y monedas y capa A de cuatro reglas, todo
+   bien; velas de las 43 monedas nuevas reparadas (117,624).
+8. **Pruebas adicionales (22 y 23/11), pedidas antes de limpiar la copia aislada:**
+   - **galería de todos los elementos** para que el usuario confirme que cada concepto es el suyo antes de mezclar recetas:
+     `1.Altagracia_Crypto_Backtester/Backtester/pruebas_backtesting/revision_visual/galeria/` (5 páginas, 802 casos de 67
+     elementos en BTC fase 1; se abren con doble clic desde el Explorador y guardan las marcas en el navegador);
+   - los casos nuevos del motor 6 en pantalla, la simulación manual con el 2.º gráfico y el tablero de sus estrategias
+     (igual a la regresión), bien. La búsqueda genética corta corrió entera con el motor 6, sin candidatas.
+
+**IMPORTANTE:**
+- **Está en la rama del protocolo, sin commit.** La app del usuario lo tendrá al unirla a main; entonces hay que reiniciar
+  el backend de App 1 (9000) y recargar su página.
+- **Todas las corridas guardadas quedan fuera** y hay que volver a correrlas. La primera corrida de cada moneda con
+  almacén vuelve a detectar los elementos de la fase (caché `_e2`; BTC 15m, unos minutos).
+- **Tus veredictos cambian:** de los 18, pasaban 11 y ahora pasan 2 (B5 en las fases 1 y 2 de las monedas de siempre).
+  En las de siempre los cambia sobre todo H1 (el azar entra solo donde deja la línea); en las nuevas, B-08: con 43
+  monedas el margen por semanas es de 1.7 a 3.4 veces el de antes, más de lo que decía el informe (1.0 a 1.4).
+- **Las 28 corridas con liquidaciones:** ninguna pasa, y las liquidaciones no aportan con margen, como antes.
+- **E-02 y E-08 quedan como están:** lo decidió el usuario el 23/11, tras medirlos (ver la entrada del 23/11).
+- **Probado en pantalla** en la copia aislada: la sección Stop, las tres ventajas, el embudo y un trade elegido. Con el
+  motor 6 no se repitió la captura de cada trade.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Motor 6: lo que
+corrigió el protocolo de pruebas (22/11)", y `pruebas_backtesting/REGISTRO.md`, "Etapa 7 · Correcciones"
+
+---
+
+### App 1 - 21 Noviembre 2026: Orden de las Órdenes que se Llenan en la Misma Vela (motor 5)
+
+**Pedido:** el protocolo de pruebas del backtesting global (`1.Altagracia_Crypto_Backtester/Backtester/pruebas_backtesting/`) encontró en la etapa 3 un fallo grave del motor, F-04. En el punto de control, el usuario pidió corregirlo antes de seguir.
+
+**Cambios:**
+1. **El fallo:** con limit u orden stop y una posición a la vez, si las órdenes de dos señales se llenaban en la misma vela, entraba la de la señal más vieja, aunque los minutos dijeran que la otra se llenó antes.
+   - Con limit favorecía a la regla: la orden más vieja suele estar más adentro, así que se llena después y a mejor precio.
+   - Los controles al azar entran a mercado y no lo tenían.
+2. **Arreglo:** `_fill_time()` da cuándo se llena cada orden en su vela, por los minutos o por el recorrido supuesto, y `run()` ordena por eso dentro de la vela del llenado. Solo si empatan va primero la señal más vieja.
+3. **Motor 5:** las corridas anteriores con órdenes que esperan y una posición a la vez no se reusan ni se cuentan. Siguen en el disco.
+4. **Pruebas:** `test_fill_order.py` (11; con el motor anterior fallan las de orden). `test_williams_smc.py` dice ahora qué corridas deja fuera cada versión.
+
+**IMPORTANTE:**
+- **Está en la rama del protocolo, sin commit:** la app del usuario lo tendrá al unirla a main. Entonces hay que reiniciar el backend de App 1 (9000) y recargar su página.
+- **Medido** en BTC 4h, fase 1, con limit en el FVG: en todas las velas con dos llenados entraba la que se llenó después. El R medio pasa:
+  - borde cercano: de +0.241 a +0.200;
+  - mitad: de +0.018 a +0.008;
+  - borde lejano: de −0.124 a −0.150;
+  - con trailing: de +0.044 a +0.025.
+
+  Con orden stop casi no cambia. La selección se comprueba con el oráculo A del protocolo, con su propio cálculo del minuto del llenado.
+- **Corridas del usuario:** las 1,793 a mercado no cambian. Quedan fuera 68 con limit (VA abandonada y las búsquedas 1 y 5), ninguna de las cuales pasó una fase.
+- **No cambia (H15, por decidir):** una orden que se llena en la vela en que salió el trade anterior no entra, aunque se llene después de la salida.
+- Todas las del backend de App 1: 531 pasan y fallan las 2 de siempre.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Orden de llenado dentro de la vela (motor 5, 21/11)", y `pruebas_backtesting/DEFECTOS.md` (F-04)
+
+---
+
 ### App 1 - 21 Noviembre 2026: Objetivo Mixto con los Flujos On-Chain
 
 **Pedido:** tras ver que el filtro de emisión de stablecoins no mejora la ventaja de las reglas, el usuario propuso usarlo para el objetivo: en los días que pasa, buscar un objetivo más alto porque el mercado da más, y en los demás dejar el de siempre. Después pidió confirmarlo con la regla mixta en la fase 1 y llevarlo a la app.
