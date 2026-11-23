@@ -37,7 +37,8 @@ def fake_market(monkeypatch, coins=("AAAUSDT", "BBBUSDT")):
 
 
 def config(**extra):
-    return rs.clean_config({"tfs": [TF], "codes": ["RF", "HM", "EN", "DJ", "CC", "GC"], "split": SPLIT, "seed": 11,
+    # Sin el embudo: estas pruebas son las de los dos tramos (búsqueda y validación), que siguen para las búsquedas guardadas
+    return rs.clean_config({"tfs": [TF], "codes": ["RF", "HM", "EN", "DJ", "CC", "GC"], "split": SPLIT, "seed": 11, "funnel": False,
                             "population": 8, "generations": 2, "minTrades": 20, "minCoins": 1, **extra})
 
 
