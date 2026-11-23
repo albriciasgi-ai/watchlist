@@ -55,6 +55,34 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 23 Noviembre 2026: Barrido de Señales
+
+**Pedido:** un barrido ordenado para ver dónde puede haber algo antes de usar la búsqueda genética. La idea del usuario: no clasificar por stop y objetivo, sino mirar en cada punto de entrada hasta dónde fue el precio a favor y hasta dónde se devolvió, para ver las dos direcciones sin sesgarse por valores de ATR. En los marcos de la app: 5m, 15m, 1h, 4h y 1D.
+
+**Cambios:**
+1. **Pestaña "Barrido"** en el backtesting global (`signal_sweep.py`, `SweepTab.jsx`). Para cada elemento, en cada señal:
+   - si el precio llega a +2 ATR antes que a −2 ATR (sin ventaja es 50%);
+   - lo máximo a favor y en contra a 6, 12, 24 y 48 velas.
+2. **Contra el control:** las velas del mismo trimestre y lado en esa moneda. El margen agrupa las señales por semana.
+3. **Por los dos primeros tramos del embudo:** la nota es el peor de los dos. Negativa y pareja, el elemento sirve al revés. La puerta no se mira.
+4. **El reparto, primero:** cuántas pruebas pasan de ±2 errores contra lo que da el azar, y el umbral según el número de pruebas.
+5. **Parejas:** se marcan elementos y se barren sus parejas, como segundo paso.
+6. **Pruebas:** `test_signal_sweep.py` (10).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar la página.
+- **Medido en la fase 1, las 7 monedas de siempre:**
+  - 4 horas: 48 elementos, 2 pasan de ±2 y por azar se esperan 2.2. No hay nada;
+  - 15 minutos: 61 elementos, 15 pasan de ±2 contra 2.8 por azar. Hay estructura, pero los efectos son de un punto sobre 50%: quedan bajo la comisión;
+  - ninguno pasa el umbral en ningún marco.
+- La primera vez en 15 minutos tarda 42 minutos, por detectar los elementos de order flow; después queda guardado. En 5 minutos no se corrió.
+- Sin comisiones: dice dónde buscar, no qué operar.
+- La pestaña se vio en una página de prueba con un barrido real; no dentro del backtesting global.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BARRIDO DE SEÑALES (23/11/2026)"
+
+---
+
 ### App 1 - 23 Noviembre 2026: Filtro de Mercado, Búsqueda con las Monedas Nuevas y la Regla del VPA por Tramos
 
 **Pedido:** usar el embudo para buscar variaciones de la ruptura con volumen del VPA, la regla que había pasado las tres fases. Tras ver su resultado por tramos, el usuario pidió las dos cosas que faltaban: buscar con las monedas nuevas y un filtro de régimen para la regla.

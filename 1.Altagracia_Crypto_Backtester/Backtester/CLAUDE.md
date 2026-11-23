@@ -647,7 +647,7 @@ node tests/rulefacets.test.mjs
 node tests/montecarlo.test.mjs
 node tests/coach.test.mjs
 cd ../backend
-.venv\Scripts\python.exe -m pytest tests/test_search_funnel.py tests/test_market_filter.py tests/test_rule_frequency.py
+.venv\Scripts\python.exe -m pytest tests/test_search_funnel.py tests/test_market_filter.py tests/test_rule_frequency.py tests/test_signal_sweep.py
 cd ../frontend
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
@@ -2745,6 +2745,60 @@ OrderFlowData/alpaca/flow/<SIM>/<AAAA>/<SIM>_<día>.npz   delta dentro del minut
 - cierre temprano y feriado;
 - días casi vacíos;
 - `START`.
+
+## BARRIDO DE SEÑALES (23/11/2026)
+
+Pedido del usuario: antes de buscar con el algoritmo genético, un barrido ordenado que diga dónde puede haber algo. Su idea: no clasificar por un stop y un objetivo (sesgan hacia un estilo de salida), sino mirar en cada punto de entrada hasta dónde fue el precio a favor y hasta dónde se devolvió. En los cinco marcos de la app: 5m, 15m, 1h, 4h y 1D.
+
+### Qué mide
+
+```
+SweepTab.jsx (pestaña "Barrido")
+        │  POST /api/sweep/start { config } → trabajo   ·   GET /api/sweep/job/{id}   ·   /api/sweep/list   ·   /api/sweep/{id}
+        ▼
+backend/signal_sweep.py
+   element_signals()   las señales de cada elemento: sus eventos del probador con los ajustes de fábrica
+   fields()            lo que hizo el precio tras cada vela
+   Collector           por prueba y tramo, contra las velas de su trimestre y lado
+        ▼
+OrderFlowData/observer/tester/sweep/   {id}.json (cada barrido) y sweeps.jsonl (registro)
+```
+
+- **Las señales** de un elemento son las de una regla de un solo elemento, a mercado y sin filtros (lo comprueba una prueba contra `rule_frequency.signals_of`). Una vela con la señal hacia los dos lados (la compresión) no entra. El barrido de liquidaciones queda fuera: recalcula las zonas en cada vela.
+- **Desde la apertura de la vela siguiente**, en ATR de la vela de la señal y sin comisiones:
+  - **Excursiones:** lo máximo a favor y en contra a 6, 12, 24 y 48 velas. Cuenta su diferencia (la asimetría): una vela movida infla las dos por igual.
+  - **Llega a +X antes que a −X** (1, 2 y 3 ATR), con la misma distancia a los dos lados: sin ventaja es 50%, sea cual sea la volatilidad. Las dos metas en la misma vela, o ninguna en 48 velas, no cuentan. La lectura principal es X = 2.
+- **Contra el control:** cada valor menos el promedio de **todas** las velas del mismo trimestre y del mismo lado en esa moneda (`centered`). La unidad se cancela, y un elemento no gana por aparecer en un trimestre en que todo subía (prueba: en un mercado que solo sube, comprar al azar da 65% crudo y cero sobre su control).
+- **Margen** con las señales agrupadas por semana (`rt.clustered_se`), como el del motor 6.
+- **Tramos:** solo la fase 1 y solo los dos primeros tramos del embudo (hasta 2022-01-01, y de ahí más el hueco a 2023-01-01). La ventana de cada señal tiene que caber entera en su tramo. **La puerta no se mira aquí.**
+- **La nota** de cada prueba es el t del peor de sus dos tramos; si van en sentidos contrarios, cero. Una nota negativa y pareja dice que el elemento sirve al revés (de giro). Con menos de `minSignals` señales (50) en algún tramo, se muestra pero no se juzga.
+- **Umbral** (`gate`): sin ventaja, los dos tramos pasan de z a la vez con probabilidad (1 − Φ(z))² por sentido; se reparte el 5% entre las pruebas y sus dos sentidos. Con 49 pruebas son 2.0 errores en cada tramo; con 900, 2.6.
+- **El reparto, primero:** cuántas pruebas pasan de ±2 errores con los dos tramos juntos, contra el 4.6% que da el azar, y su histograma. Si se parecen, no hay nada, aunque la primera de la lista se vea bien.
+- **Parejas** (segundo paso): se marcan hasta 12 elementos y se barren sus parejas: las dos señales del mismo lado dentro de 3 velas, en la vela de la que llega después.
+- **Monedas:** las 7 de siempre, las nuevas o todas. Los elementos de order flow solo existen en las monedas con almacén y hasta 4 horas.
+- Cada barrido queda anotado, y la pestaña dice cuántas pruebas suman entre todos.
+
+### Medido (fase 1, las 7 monedas de siempre)
+
+| Marco | Pruebas juzgadas | Pasan de ±2 (por azar) | Pasan el umbral | Tiempo |
+|---|---|---|---|---|
+| 4 horas | 48 | 2 (2.2) | ninguna | 92 s |
+| 1 día | 9 | 1 (0.4) | ninguna | 165 s |
+| 15 minutos | 61 | 15 (2.8) | ninguna | 42 min la primera vez |
+
+- **En 4 horas el reparto es el del azar.** El mejor, Acumulación o distribución: nota +1.43, llega a +2 ATR antes que a −2 el 54% de las veces.
+- **En 15 minutos el reparto no es el del azar** (15 contra 2.8), pero los efectos son mínimos. Con decenas de miles de señales se distingue un punto sobre 50%: el Barrido de niveles, +1.0 y +1.3 puntos; la Barra divergente, −2.2 y −1.4 (sirve al revés). En la asimetría a 24 velas hay notas altas y parejas (FVG nuevo +0.24 y +0.15 ATR, Open POC +0.43 y +0.38, Breaker +1.11 y +0.62), pero la comisión taker de ida y vuelta es del orden de 0.4 ATR de 15 minutos: casi todo queda por debajo del costo.
+- La primera vez en 15 minutos tarda por detectar los elementos de order flow de toda la fase (ETH 10 min, GALA 7, SOL 8), que quedan en el caché del probador. En 5 minutos no se corrió: será bastante más.
+
+### Límites
+
+- Sin comisiones ni deslizamiento: una ventaja de excursión chica no sobrevive al costo.
+- La lectura principal es una sola (X = 2). La asimetría y las otras distancias se muestran, pero no entran al umbral: mirarlas todas y quedarse con la mejor sería otra forma de buscar.
+- Lo que salga es una pista para la búsqueda genética o para una regla a mano. Se eligió mirando los dos primeros tramos: se juzga después, en la puerta.
+
+### Pruebas
+
+`tests/test_signal_sweep.py` (10): excursiones y quién llega primero, el control por trimestre, una señal con ventaja contra una al azar y una invertida, un mercado que solo sube, cada señal en su tramo y la puerta sin mirar, pocas señales y tramos opuestos, el umbral, las parejas, las señales iguales a las del probador, y la corrida guardada. La pestaña se vio en una página de prueba con un barrido real de 4 horas (reparto, tabla, detalle y parejas); no dentro del backtesting global.
 
 ## EMBUDO DE LA BÚSQUEDA (23/11/2026)
 

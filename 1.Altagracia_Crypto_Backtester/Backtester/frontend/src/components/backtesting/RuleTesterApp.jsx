@@ -8,6 +8,7 @@ import { withoutSubdivisions } from './marketData';
 import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import RuleSearchTab from './RuleSearchTab';
+import SweepTab from './SweepTab';
 import RegimeTab from './RegimeTab';
 import RuleMonteCarlo from './RuleMonteCarlo';
 import RuleFrequency from './RuleFrequency';
@@ -2673,7 +2674,7 @@ const RuleTesterApp = () => {
     </>
   );
 
-  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['estrategias', 'Estrategias'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión'], ['busqueda', 'Búsqueda'], ['regimen', 'Régimen']];
+  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['estrategias', 'Estrategias'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión'], ['barrido', 'Barrido'], ['busqueda', 'Búsqueda'], ['regimen', 'Régimen']];
   const enabledCount = Object.values(indicatorStates).filter(Boolean).length;
 
   return (
@@ -2774,6 +2775,7 @@ const RuleTesterApp = () => {
                   loadAll(saved, phaseNumber);
                 }} />
             )}
+            {tab === 'barrido' && <SweepTab />}
             {tab === 'busqueda' && <RuleSearchTab onLoadRule={(saved) => { loadBackendRule(saved); setPhase(1); setTab('regla'); }} />}
           </div>
           <div style={{ padding: 8, borderTop: '1px solid var(--t-line, #ddd)', flexShrink: 0 }}>
