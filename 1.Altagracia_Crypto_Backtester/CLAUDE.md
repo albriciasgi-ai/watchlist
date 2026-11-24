@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Barrido de Señales
+
+Pestaña "Barrido" del backtesting global: para cada elemento, y después para las parejas de los que se marquen, lo que hizo el precio tras cada señal, sin entrada, stop ni objetivo: si llega a +2 ATR antes que a −2 ATR y cuánto fue a favor y en contra, contra las velas de su trimestre y lado. En 5m, 15m, 1h, 4h y 1D, por los dos primeros tramos del embudo y con el umbral según el número de pruebas. En 4 horas el reparto es el del azar; en 15 minutos no, pero los efectos quedan bajo el costo. Después, a pedido del usuario, las parejas se eligen también por familias: dentro de una familia o entre dos, con un tope de 150 parejas por barrido. Detalle en `Backtester/CLAUDE.md`, "BARRIDO DE SEÑALES (23/11/2026)".
+
 ### Noviembre 2026: Embudo de la Búsqueda
 
 La búsqueda genética parte la fase 1 en tres tramos con hueco: trabaja en dos y califica por el peor; el tercero es una puerta que solo miran las mejores, con cupo, y cuyo margen sube con cada mirada, también las de búsquedas anteriores. A la fase 2 quedan pocas. Las finalistas traen su resultado por régimen (tendencia y volatilidad de 4 horas). Las búsquedas guardadas siguen con sus dos tramos. Detalle en `Backtester/CLAUDE.md`, "EMBUDO DE LA BÚSQUEDA (23/11/2026)".

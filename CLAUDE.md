@@ -78,6 +78,74 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### App 1 - 23 Noviembre 2026: Panel Lateral del Backtesting Global con Ancho Ajustable
+
+**Pedido:** poder ampliar o reducir hacia los lados el panel lateral donde están las reglas, arrastrando con el mouse: las tablas del barrido no cabían.
+
+**Cambios** (`RuleTesterApp.jsx`, `rule_tester.css`):
+1. **Borde arrastrable** entre el panel y el gráfico. El ancho va de 300 px hasta dejarle 320 al gráfico.
+2. **Doble clic** en el borde vuelve al ancho de fábrica (420 px).
+3. **Se guarda** con la vista de la ventana y se ajusta si la ventana se achica.
+
+**IMPORTANTE:**
+- Basta recargar la página: no cambió el backend.
+- No se vio en pantalla: la ventana compila.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Ventana"
+
+---
+
+### App 1 - 23 Noviembre 2026: Barrido por Familias
+
+**Pedido:** tras su primer barrido, el usuario preguntó si tomaba los elementos por parejas y pidió poder barrer por familias. Eligió dejar el modo actual y sumar los dos de familias.
+
+**Cambios** (pestaña "Barrido", `signal_sweep.py` y `SweepTab.jsx`):
+1. **Nueve familias** de elementos: Volumen y VPA, Delta del footprint, Desequilibrios y agresión, Valor y POC, Estructura y SMC, Williams, Patrones de vela, Cajas, impulso y canal, e Interés abierto.
+2. **Tres formas de barrer parejas**, sobre la tabla de un barrido de elementos:
+   - a mano, marcando elementos (lo de antes);
+   - dentro de una familia: un clic en la familia marca sus elementos;
+   - entre dos familias: cada elemento de una con cada uno de la otra.
+3. **Tope:** 150 parejas por barrido, en lugar de 12 elementos marcados. La pestaña dice cuántas van antes de correr.
+4. **Pruebas:** `test_signal_sweep.py` suma 1 (11).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar la página.
+- Las familias salen de un barrido de elementos ya hecho, con los que ese barrido juzgó.
+- "Barrer los elementos" sigue igual: cada elemento solo.
+- No se vio en pantalla: las pruebas pasan y la pestaña compila.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BARRIDO DE SEÑALES (23/11/2026)"
+
+---
+
+### App 1 - 23 Noviembre 2026: Barrido de Señales
+
+**Pedido:** un barrido ordenado para ver dónde puede haber algo antes de usar la búsqueda genética. La idea del usuario: no clasificar por stop y objetivo, sino mirar en cada punto de entrada hasta dónde fue el precio a favor y hasta dónde se devolvió, para ver las dos direcciones sin sesgarse por valores de ATR. En los marcos de la app: 5m, 15m, 1h, 4h y 1D.
+
+**Cambios:**
+1. **Pestaña "Barrido"** en el backtesting global (`signal_sweep.py`, `SweepTab.jsx`). Para cada elemento, en cada señal:
+   - si el precio llega a +2 ATR antes que a −2 ATR (sin ventaja es 50%);
+   - lo máximo a favor y en contra a 6, 12, 24 y 48 velas.
+2. **Contra el control:** las velas del mismo trimestre y lado en esa moneda. El margen agrupa las señales por semana.
+3. **Por los dos primeros tramos del embudo:** la nota es el peor de los dos. Negativa y pareja, el elemento sirve al revés. La puerta no se mira.
+4. **El reparto, primero:** cuántas pruebas pasan de ±2 errores contra lo que da el azar, y el umbral según el número de pruebas.
+5. **Parejas:** se marcan elementos y se barren sus parejas, como segundo paso.
+6. **Pruebas:** `test_signal_sweep.py` (10).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar la página.
+- **Medido en la fase 1, las 7 monedas de siempre:**
+  - 4 horas: 48 elementos, 2 pasan de ±2 y por azar se esperan 2.2. No hay nada;
+  - 15 minutos: 61 elementos, 15 pasan de ±2 contra 2.8 por azar. Hay estructura, pero los efectos son de un punto sobre 50%: quedan bajo la comisión;
+  - ninguno pasa el umbral en ningún marco.
+- La primera vez en 15 minutos tarda 42 minutos, por detectar los elementos de order flow; después queda guardado. En 5 minutos no se corrió.
+- Sin comisiones: dice dónde buscar, no qué operar.
+- La pestaña se vio en una página de prueba con un barrido real; no dentro del backtesting global.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BARRIDO DE SEÑALES (23/11/2026)"
+
+---
+
 ### App 1 - 23 Noviembre 2026: Filtro de Mercado, Búsqueda con las Monedas Nuevas y la Regla del VPA por Tramos
 
 **Pedido:** usar el embudo para buscar variaciones de la ruptura con volumen del VPA, la regla que había pasado las tres fases. Tras ver su resultado por tramos, el usuario pidió las dos cosas que faltaban: buscar con las monedas nuevas y un filtro de régimen para la regla.
