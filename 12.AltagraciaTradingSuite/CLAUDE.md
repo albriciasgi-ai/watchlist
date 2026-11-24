@@ -1113,6 +1113,8 @@ Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de c
 
 ## DX en vivo (22/11)
 
+> **24/11:** repetida con el motor 6 del probador, DX no pasa ninguna fase (−0.075, −0.077 y −0.123 R por trade en las 7 monedas). Ver `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, «DX con el motor 6: no pasa». El registro sigue corriendo hasta que el usuario decida. Desde ese día, una diferencia con lo anotado como final se avisa una sola vez (`_revise`): antes se repetía en cada vela.
+
 Paso 4 del plan de las estrategias de Byko y Dale (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, "DX en vivo"). DX, los apilados desplazados, es la única regla de esos PDF que pasó las fases 2 y 3 del probador, por poco y sensible a la ejecución. Se registra en vivo antes de creerla, y cómo se juzga quedó fijado en el plan antes de registrar nada. Nunca envía nada: ni al bot ni a otro lado.
 
 - **La regla:** la de las fases 2 y 3, sin cambios (`dx_watch.RULE_RAW`, la de `OrderFlowData/research/dale/2026-11-22/dx.py`).

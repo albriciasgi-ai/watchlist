@@ -2830,6 +2830,34 @@ Fijado antes de correr: Martillo o estrella con "invertir", 45 minutos, stop de 
 - **La limit no ayuda:** paga menos comisión, pero se llena cuando el precio va primero en contra, y su ventaja baja.
 - Con nota negativa no llega a la puerta: queda sin tocar. La dirección del efecto es real (el patrón de giro falla), pero no alcanza para operarlo solo.
 
+### Por contexto: la tendencia de 4 horas (23/11, estudio aparte)
+
+Última pregunta del barrido: si el contexto separa a los elementos. El usuario pidió correrlo sin construirlo en la app. Script y resultados en `OrderFlowData/research/barrido/2026-11-23/` (`ctx_sweep.py`); no guarda nada en el registro.
+
+- Cada señal, según su lado y la tendencia de 4 horas del filtro de mercado (`rt.market_labels`): a favor, en contra o en rango.
+- El control son las velas del mismo trimestre, lado **y contexto**: así no se cuenta la tendencia como mérito del elemento.
+- Lectura principal, fijada antes: la diferencia entre "a favor" y "en contra" por elemento, por el peor de los dos tramos. La puerta no se miró.
+
+| Marco | Diferencia a favor − en contra: pasan de ±2 (por azar) | Pasan el umbral | Cada contexto por separado: pasan de ±2 (por azar) | Pasan su umbral |
+|---|---|---|---|---|
+| 30 minutos | 0 de 58 (2.6) | ninguna | 22 de 176 (8.0) | 1: Desequilibrio repetido en rango, +2.39 (+3.2 y +4.0 puntos) |
+| 45 minutos | 2 de 53 (2.4) | ninguna | 14 de 171 (7.8) | ninguna |
+| 1 hora | 0 de 51 (2.3) | ninguna | 5 de 160 (7.3) | ninguna |
+
+- **La tendencia de 4 horas no separa a los elementos:** la diferencia entre ir a favor y en contra es la del azar en los tres marcos.
+- Lo poco que hay está **con 4 horas en rango**: ahí fallan los patrones de giro (Barra divergente, Envolvente, Martillo: −2 a −5 puntos) y suman los de continuación del order flow (Desequilibrio repetido, POC fuera de rango, FVG nuevo: +2 a +4). Siguen siendo 2 a 4 puntos, del orden de la comisión.
+- Con esto se cierra la pregunta de los elementos solos: ni por marco, ni por parejas, ni por contexto dan una ventaja de dirección que supere el costo.
+
+**La tendencia anterior al rango (idea del usuario, `prev_trend.py`).** Con 4 horas en rango, ¿rinde distinto una señal a favor de la tendencia que había antes del rango? Fijado antes de correr, para gastar pocas pruebas: la tendencia anterior es la última subida o bajada antes del rango actual, sin tope de antigüedad; dos grupos ya elegidos, continuación (Desequilibrio repetido, POC fuera de rango, FVG nuevo) y giro (Barra divergente, Envolvente, Martillo); una lectura, la diferencia a favor − en contra por el peor tramo; 6 pruebas, umbral ±1.52. El control son las velas en rango de su trimestre, lado y tendencia anterior.
+
+| Marco | Continuación: nota · diferencia de los dos tramos | Giro: nota · diferencia |
+|---|---|---|
+| 30 minutos | +0.31 · +1.0 ±3.0 puntos | 0.00 · −1.0 ±3.4 |
+| 45 minutos | 0.00 · 0.0 ±3.7 | +0.30 · +1.4 ±4.3 |
+| 1 hora | −0.17 · −1.1 ±4.0 | 0.00 · 0.0 ±4.9 |
+
+**No separa:** ninguna de las 6 se acerca al umbral y las diferencias son de un punto con márgenes de 3 a 5. El rango no se resuelve, en el plazo de estas señales, hacia donde venía el precio. Cerca del 29% de las velas está en rango, y de ellas la mitad viene de una subida.
+
 ### Límites
 
 - Sin comisiones ni deslizamiento: una ventaja de excursión chica no sobrevive al costo.

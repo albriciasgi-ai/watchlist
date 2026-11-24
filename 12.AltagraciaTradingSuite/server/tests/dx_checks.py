@@ -168,6 +168,17 @@ try:
     check("cada orden pasa por sus pasos en orden y sin repetirse", keys and all(v in allowed for v in keys.values()),
           str([v for v in keys.values() if v not in allowed][:3]))
     check("ninguna revision con datos que no cambian", not any(e["type"] == "revision" for e in events_e))
+    # Una diferencia con lo anotado como final se anota una vez, no en cada vela; si la diferencia cambia, otra vez
+    final = next(o for o in restarted._orders[SYM].values() if o["status"] == "cerrada")
+    snap_of = lambda change: {k: (dict(o, **change) if k == final["key"] else dict(o)) for k, o in restarted._orders[SYM].items()}
+    before = len(log_of(TMP / "e"))
+    for _ in range(3):
+        restarted._apply(SYM, snap_of({"status": "no entra", "r": None, "exit_t": None}), END + 75_000)
+    same = [e for e in log_of(TMP / "e")[before:] if e["type"] == "revision"]
+    restarted._apply(SYM, snap_of({"r": (final["r"] or 0) + 1}), END + 75_000)
+    other = [e for e in log_of(TMP / "e")[before:] if e["type"] == "revision"]
+    check("la misma revision se anota una sola vez, y lo anotado se queda",
+          len(same) == 1 and len(other) == 2 and restarted._orders[SYM][final["key"]]["status"] == "cerrada", f"{len(same)} {len(other)}")
     armada = [e for e in events_e if e["type"] == "armada"]
     check("cada orden armada dice su limit, su stop, su objetivo y hasta cuando vale",
           armada and all(e.get("limit") and e.get("stop") and e.get("target") and "vale hasta" in e["text"] for e in armada))

@@ -55,6 +55,52 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite - 24 Noviembre 2026: DX no Pasa con el Motor 6, y el Registro en Vivo ya no Repite Revisiones
+
+**Pedido:** el usuario preguntó cómo se iba a probar DX. Al mirar su registro en vivo salieron las mismas 13 revisiones repetidas en cada vela, y pidió investigarlo.
+
+**Cambios:**
+1. **Suite** (`dx_watch.py`): una diferencia con lo anotado como final se avisa una sola vez. Antes se volvía a anotar en cada vela de 30 minutos: 534 revisiones en dos días.
+2. **Pruebas:** `dx_checks.py` suma 1 (49).
+3. **Las tres fases de DX repetidas con el motor 6,** por script y sin guardar corridas (`OrderFlowData/research/dale/2026-11-24/`).
+
+**IMPORTANTE:**
+- **La causa de las revisiones:** las 13 órdenes se armaron antes del 23/11 a las 15:18 UTC, cuando el motor 6 del probador entró a la carpeta del usuario. El motor nuevo corrige qué orden entra cuando dos se llenan en la misma vela, y da otro resultado para ellas.
+- **DX no pasa con el motor 6.** Es la regla que el 22/11 había pasado las fases 2 y 3 por poco:
+
+| Fase | Motor 4 (22/11), las 7 monedas | Motor 6 (24/11), las mismas 7 |
+|---|---|---|
+| 1 | 15,986 trades, +0.099 R | 20,882 trades, −0.075 R |
+| 2 | 10,747 trades, +0.056 R (de +0.028 a +0.084) | 14,651 trades, −0.077 R |
+| 3 | 11,416 trades, +0.030 R (de +0.003 a +0.057) | 15,128 trades, −0.123 R |
+
+- **Por qué:** DX va con limit y una posición a la vez, el caso exacto que el protocolo de pruebas corrigió (F-04 y H15). El motor anterior le daba a la regla la orden mejor ubicada y saltaba las que se llenaban en la vela de una salida.
+- **Comprobado:** GALA en la fase 2 da +0.142 R con el backend del motor 4, igual a lo del 22/11, y −0.114 R con el del motor 6.
+- **Con esto, ninguna regla de los PDF de Byko y Dale pasa.** Las entradas anteriores de DX en este historial (22/11) quedan superadas por esta.
+- **El registro en vivo sigue corriendo.** Sus 53 trades cerrados dan −0.02 R (−0.05 con la ejecución medida), ±0.39. Seguir o apagarlo queda por decidir.
+- La suite se reinicia sola al abrirla, cuando este cambio esté en la carpeta del usuario.
+
+**Ver:** `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, «DX con el motor 6: no pasa», y `12.AltagraciaTradingSuite/CLAUDE.md` sección "DX en vivo (22/11)"
+
+---
+
+### App 1 - 23 Noviembre 2026: Barrido por Contexto (Estudio, sin Cambios en la App)
+
+**Pedido:** ver si el contexto separa a los elementos. El usuario pidió correr las simulaciones aparte y ver el resultado, sin construirlo en la app.
+
+**Cambios:** ninguno en el código. Script y resultados en `OrderFlowData/research/barrido/2026-11-23/`.
+
+**IMPORTANTE:**
+- **Cómo se midió:** cada señal según la tendencia de 4 horas respecto a su lado (a favor, en contra o en rango), contra las velas de su trimestre, lado y contexto. En 30m, 45m y 1h, las 7 monedas, los dos primeros tramos. La puerta no se miró.
+- **La tendencia de 4 horas no separa:** la diferencia entre ir a favor y en contra es la del azar (0 de 58, 2 de 53 y 0 de 51 pasan de ±2).
+- **Lo poco que hay está con 4 horas en rango:** fallan los patrones de giro y suman los de continuación, con 2 a 4 puntos. Una sola celda pasa su umbral: Desequilibrio repetido en rango, en 30 minutos.
+- **Se cierra la pregunta de los elementos solos:** ni por marco, ni por parejas, ni por contexto superan la comisión.
+- **La tendencia anterior al rango (idea del usuario) tampoco separa:** con 4 horas en rango, ir a favor o en contra de la tendencia que había antes da lo mismo. Fueron 6 pruebas fijadas de antemano (continuación y giro, en 30m, 45m y 1h): diferencias de un punto con márgenes de 3 a 5.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BARRIDO DE SEÑALES (23/11/2026)", "Por contexto"
+
+---
+
 ### App 1 - 23 Noviembre 2026: Marco de 45 Minutos en la Regla y el Martillo al Revés
 
 **Pedido:** el barrido de 45 minutos dio una sola prueba sobre el umbral: tras un Martillo o estrella, el precio sigue en contra del patrón. El usuario pidió sumar 45 minutos al formulario de la regla y armar esa regla.

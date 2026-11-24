@@ -446,3 +446,22 @@ Cada una es un corte que deja solo los trades con la tendencia a favor. Se mide 
 - **Un límite del criterio:** las dos corridas comparten muchos trades, así que el margen de la diferencia sale más ancho que el real. Con este criterio, fijado antes, no alcanza.
 - **Conclusión de la versión refinada:** el ripple, las salidas más lejanas, una orden por zona y la tendencia por el precio no le ganan a DX con margen. DX queda como está y sigue su registro en vivo.
 - **Lo que queda en el probador:** la EMA leída en un marco mayor, para otras reglas.
+
+### DX con el motor 6: no pasa (24/11/2026)
+
+El 24/11, al revisar el registro en vivo, salieron 534 revisiones repetidas: 13 órdenes anotadas antes del 23/11 a las 15:18 UTC, cuando el motor 6 del probador entró a la carpeta del usuario, daban otro resultado al recalcularse. Eso llevó a repetir las tres fases de DX con el motor actual, que nadie había repetido (el motor 6 dejó fuera las corridas de DX, pero se hicieron por script y no estaban en el registro).
+
+La misma regla y el mismo criterio del 22/11, sin el tope de la comisión (`OrderFlowData/research/dale/2026-11-24/dx_motor6.py`, sin guardar corridas):
+
+| Fase | Motor 4 (22/11), las 7 monedas | Motor 6 (24/11), las mismas 7 |
+|---|---|---|
+| 1 | 15,986 trades, +0.099 R | 20,882 trades, −0.075 R |
+| 2 | 10,747 trades, +0.056 R (de +0.028 a +0.084) | 14,651 trades, −0.077 R |
+| 3 | 11,416 trades, +0.030 R (de +0.003 a +0.057) | 15,128 trades, −0.123 R |
+
+- **DX no pasa ninguna fase:** el R por trade es negativo con margen en las tres, y en 0 o 1 de las monedas es positivo. Le sigue ganando al azar y al tramo (+0.12 a +0.15 R), pero el criterio pedía R positivo.
+- **Por qué cambia:** la regla va con limit y una posición a la vez, justo el caso de F-04 del protocolo de pruebas. Con el motor anterior, si dos órdenes se llenaban en la misma vela entraba la de la señal más vieja (más adentro, a mejor precio), y una orden que se llenaba en la vela en que salió el trade anterior no entraba. Con el motor 6 entra la que se llena primero, y la que se llena después de la salida entra. Son un 30% más de trades, y los que quedan entran a peor precio.
+- **Comprobado:** GALA en la fase 2 da 100 trades y +0.142 R con el backend del motor 4, igual a lo anotado el 22/11, y 130 trades y −0.114 R con el del motor 6. La diferencia es el motor, no los datos.
+- Con las 11 monedas que hoy tienen almacén (suma AAVE, RUNE, TRX y UNI): −0.100, −0.101 y −0.146 R.
+- **Lo que queda en pie:** nada de Byko ni de Dale pasa. La curiosidad de los apilados desplazados era un artefacto del motor, que favorecía a las reglas con limit.
+- **El registro en vivo** sigue corriendo con el motor 6. Cada diferencia con lo anotado se avisa ahora una sola vez (`dx_watch._revise`). Seguir o apagarlo lo decide el usuario.

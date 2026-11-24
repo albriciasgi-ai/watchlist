@@ -475,13 +475,11 @@ class DxWatch:
                     if old["status"] == "abierta":
                         old.update(last=rec.get("last"), open_r=rec.get("open_r"))
                     elif old["status"] == "cerrada" and rec.get("r") != old.get("r"):
-                        events.append(self._revision(old, rec, now))
-                        changed = True
+                        changed = self._revise(old, rec, now, events) or changed
                     continue
                 path = STEPS.get((old["status"], rec["status"]))
                 if path is None:
-                    events.append(self._revision(old, rec, now))
-                    changed = True
+                    changed = self._revise(old, rec, now, events) or changed
                     if old["status"] in FINAL:
                         continue          # lo anotado como final se queda: es lo que se supo en vivo
                     path = ()
@@ -536,6 +534,17 @@ class DxWatch:
         return {"type": "hueco", "symbol": symbol, "key": f"{symbol}|{t}|hueco", "dir": 0, "at": int(t), "detected_at": now,
                 "delay_ms": now - int(t), "status": "sin datos",
                 "text": f"La vela de las {_when(t)} UTC no se completo en dos dias: se salta"}
+
+    def _revise(self, old, rec, now, events) -> bool:
+        """Anota la revision una sola vez por diferencia. Lo final se queda como se anoto, asi que la misma diferencia
+        vuelve a salir en cada corrida: del 23 al 24/11/2026, 13 ordenes anotadas antes de un cambio del motor del probador
+        sumaron 534 revisiones repetidas, 13 en cada vela."""
+        mark = [rec.get("status"), rec.get("r"), rec.get("exit_t")]
+        if old.get("revised") == mark:
+            return False
+        old["revised"] = mark
+        events.append(self._revision(old, rec, now))
+        return True
 
     def _revision(self, old, rec, now) -> dict:
         return {"type": "revision", "symbol": old["symbol"], "key": old["key"], "dir": old["dir"], "at": now, "detected_at": now,
