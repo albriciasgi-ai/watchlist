@@ -55,6 +55,27 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 23 Noviembre 2026: Marco de 45 Minutos en la Regla y el Martillo al Revés
+
+**Pedido:** el barrido de 45 minutos dio una sola prueba sobre el umbral: tras un Martillo o estrella, el precio sigue en contra del patrón. El usuario pidió sumar 45 minutos al formulario de la regla y armar esa regla.
+
+**Cambios:**
+1. **45 minutos** en el marco de la regla del backtesting global. El gráfico no tiene ese marco, como con 30m y 1D.
+2. **La regla,** fijada antes de correr: Martillo o estrella invertido, stop de 2 ATR, objetivo de 1R y cierre a las 48 velas; a mercado y con limit. Por los dos primeros tramos del embudo, con los tres controles, sin guardar nada en el registro del usuario.
+
+**IMPORTANTE:**
+- Basta recargar la página: el backend ya tenía el marco desde el barrido.
+- **No pasa:**
+  - a mercado, 2,478 trades y 0.00 R por trade; les gana a los tres controles por 0.05 R (de +0.01 a +0.10), que es lo que se lleva la comisión;
+  - en el tramo 1 la ventaja no tiene margen (+0.01);
+  - con limit es peor: se llena cuando el precio va primero en contra.
+- **La puerta del embudo no se miró:** con nota negativa (−0.07) la regla no llega a ella.
+- El botón de 45 minutos del formulario no se vio en pantalla: las pruebas de la página pasan.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BARRIDO DE SEÑALES (23/11/2026)", "La pista del martillo al revés, como regla"
+
+---
+
 ### App 1 - 23 Noviembre 2026: Barrido en 30 y 45 Minutos
 
 **Pedido:** tras barrer 5m, 15m, 1h y 4h, el usuario cree que entre 15 minutos y 1 hora puede haber algo: montar el barrido en 30 y 45 minutos.

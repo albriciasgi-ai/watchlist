@@ -2815,6 +2815,21 @@ Después pidió **30 y 45 minutos**, por si hay algo entre 15 minutos y 1 hora:
 - Los elementos de order flow usan en 30 y 45 el step de análisis de 15 minutos (`footprint_store.STEP_BY_INTERVAL` no los tiene).
 - Probado con datos reales en 45 minutos: sin order flow en BTC y TRX (31 pruebas, 176 s); con order flow en BTC (56 pruebas, 43 s), y el barrido completo de las 7 monedas con `run()`, sin anotarlo en el registro del usuario: **45 minutos**, 59 pruebas, 5 pasan de ±2 (por azar 2.7) y una pasa el umbral (±2.04), Martillo o estrella al revés (nota −2.75; −4.0 y −3.6 puntos; 1,640 y 1,929 señales), en 6 minutos; **30 minutos**, 60 pruebas, 16 pasan de ±2 (por azar 2.7) y ninguna pasa el umbral (±2.05) por poco: Breaker +2.01 (+6.0 y +6.6 puntos; 293 y 431 señales), en 11 minutos. Los patrones de giro fallan en todos los marcos (Martillo o estrella y Barra divergente negativos en 30m, 45m y 1h): el precio tiende a seguir. A ±2 ATR, 54% a 57% deja de 0.15 a 0.28 ATR antes de comisiones, del orden de la comisión taker en esos marcos.
 
+### La pista del martillo al revés, como regla (23/11)
+
+El usuario pidió llevar a una regla lo único que pasó el umbral en 45 minutos. Para eso el formulario de la regla suma el marco de 45 minutos (`RULE_TIMEFRAMES`); el gráfico no lo tiene, como 30m y 1D.
+
+Fijado antes de correr: Martillo o estrella con "invertir", 45 minutos, stop de 2 ATR, objetivo de 1R (los ±2 ATR del barrido) y cierre a las 48 velas; a mercado, y con limit en el borde lejano de la vela (válida 3 velas). Las 7 monedas de siempre, por los dos primeros tramos del embudo, con los tres controles. **La puerta no se miró.** Se corrió con `rule_search.Evaluator` (`gate=False`), sin guardar nada.
+
+| Entrada | Tramo 1 | Tramo 2 | Los dos | Nota del embudo |
+|---|---|---|---|---|
+| A mercado | 1,129 trades, −0.02 R, ventaja +0.01 (−0.06 a +0.08) | 1,349, +0.01 R, ventaja +0.08 (+0.02 a +0.15) | 2,478, 0.00 R, ventaja +0.05 (+0.01 a +0.10) | −0.07 |
+| Limit | 999, −0.02 R, ventaja 0.00 | 1,183, 0.00 R, ventaja +0.06 | 2,182, −0.01 R, ventaja +0.03 | −0.09 |
+
+- **No pasa:** el R por trade es cero. Le gana a los tres controles por unos 0.05 R (0.1 ATR, lo que decía el barrido), pero eso es lo que se lleva la comisión, y en el tramo 1 la ventaja no tiene margen.
+- **La limit no ayuda:** paga menos comisión, pero se llena cuando el precio va primero en contra, y su ventaja baja.
+- Con nota negativa no llega a la puerta: queda sin tocar. La dirección del efecto es real (el patrón de giro falla), pero no alcanza para operarlo solo.
+
 ### Límites
 
 - Sin comisiones ni deslizamiento: una ventaja de excursión chica no sobrevive al costo.
