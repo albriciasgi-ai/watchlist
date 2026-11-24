@@ -51,7 +51,7 @@ import vp_sessions
 import vpa
 import williams
 
-TFS = (5, 15, 30, 60, 240, 1440)
+TFS = (5, 15, 30, 45, 60, 240, 1440)  # 45 (23/11): solo lo ofrece el barrido
 DAY_MS = 86400000
 DAILY = 1440   # En 1 día la regla corre sobre velas, en todas las monedas: solo valen los elementos de CANDLE_CODES
 CUTS = ("2024-01-01", "2025-07-01")  # Inicio de la fase 2 y de la fase 3 (la 3 coincide con el corte de los setups)
@@ -107,7 +107,7 @@ def _iso(ms):
 
 CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
 CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC", "BX", "BE", "CP", "FV", "SP", "IM") + tuple(williams.CODES) + tuple(smc.CODES) + tuple(vpa.CODES) + tuple(byko.CODES) + ("DA", "DC")
-CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 60: ("1h", 1), 240: ("4h", 1), 1440: ("4h", 6)}  # marco → (clave del caché, velas que se unen)
+CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 45: ("15m", 3), 60: ("1h", 1), 240: ("4h", 1), 1440: ("4h", 6)}  # marco → (clave del caché, velas que se unen)
 MIN_STORE_DAYS = 60
 _candles = {}
 
@@ -126,7 +126,7 @@ def _on_candles(symbol, tf):
 # Monedas nuevas: velas de 1h y 4h de Bybit que baja candles_update.py, fuera del repositorio. Nunca se usaron para
 # elegir reglas: sirven para comprobar en todas sus fechas una regla elegida en las de App 1
 EXTRA_DIR = pathlib.Path(os.environ.get("TESTER_CANDLES", r"C:\Users\inven\OrderFlowData\candles"))
-EXTRA_KEYS = {5: ("5", 1), 15: ("15", 1), 30: ("15", 2), 60: ("60", 1), 240: ("240", 1), 1440: ("240", 6)}
+EXTRA_KEYS = {5: ("5", 1), 15: ("15", 1), 30: ("15", 2), 45: ("15", 3), 60: ("60", 1), 240: ("240", 1), 1440: ("240", 6)}
 EXTRA_FINE = ("5", "15")  # Desde el 21/11, cada uno en su carpeta (candles/15/{moneda}.json.gz), para no cargarlos con 1h y 4h
 GROUPS = ("base", "new", "stocks", "all")
 # Acciones de EE. UU. (Alpaca), que baja alpaca_candles.py (otra sesión): velas de 15 minutos, 1 hora, 4 horas y 1 día

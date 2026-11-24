@@ -2796,6 +2796,25 @@ OrderFlowData/observer/tester/sweep/   {id}.json (cada barrido) y sweeps.jsonl (
 - **En 15 minutos el reparto no es el del azar** (15 contra 2.8), pero los efectos son mínimos. Con decenas de miles de señales se distingue un punto sobre 50%: el Barrido de niveles, +1.0 y +1.3 puntos; la Barra divergente, −2.2 y −1.4 (sirve al revés). En la asimetría a 24 velas hay notas altas y parejas (FVG nuevo +0.24 y +0.15 ATR, Open POC +0.43 y +0.38, Breaker +1.11 y +0.62), pero la comisión taker de ida y vuelta es del orden de 0.4 ATR de 15 minutos: casi todo queda por debajo del costo.
 - La primera vez en 15 minutos tarda por detectar los elementos de order flow de toda la fase (ETH 10 min, GALA 7, SOL 8), que quedan en el caché del probador. En 5 minutos no se corrió: será bastante más.
 
+### Lo que corrió el usuario y los marcos de 30 y 45 minutos (23/11)
+
+El usuario corrió en su app los marcos que faltaban, con las 7 monedas de siempre:
+
+| Marco | Pruebas juzgadas | Pasan de ±2 (por azar) | Pasan el umbral |
+|---|---|---|---|
+| 5 minutos | 64 | 9 (2.9) | 1: Ruptura con volumen, al revés (−1.3 puntos en los dos tramos, 41 mil señales) |
+| 1 hora | 59 | 4 (2.7) | ninguna (la mejor, Volumen decreciente, +1.66) |
+
+- En 5 minutos el efecto es real pero de un punto sobre 50%: la comisión taker de ida y vuelta ronda 1 ATR de 5 minutos.
+- Orden grande y Barrido real casi no tienen señales en el tramo 2: en 2022 Bybit publicó la hora en segundos y no se separan las órdenes.
+- Un cruce de dos familias en 4 horas (Volumen y VPA × Delta del footprint, 18 parejas): ninguna pasa de ±2. Con 60 a 200 señales por tramo, las parejas en 4 horas no distinguen nada.
+
+Después pidió **30 y 45 minutos**, por si hay algo entre 15 minutos y 1 hora:
+- 30 minutos ya existía en el probador; el barrido lo suma a `SWEEP_TFS`.
+- 45 minutos es nuevo (`rt.TFS`, `CANDLE_KEYS` y `EXTRA_KEYS`: tres velas de 15 minutos; en las monedas con almacén, del almacén de trades). Las velas se cuentan desde las 00:00 UTC (32 por día). Solo lo ofrece el barrido: el formulario de la regla sigue con sus marcos (`RULE_TIMEFRAMES`).
+- Los elementos de order flow usan en 30 y 45 el step de análisis de 15 minutos (`footprint_store.STEP_BY_INTERVAL` no los tiene).
+- Probado con datos reales en 45 minutos: sin order flow en BTC y TRX (31 pruebas, 176 s); con order flow en BTC (56 pruebas, 43 s), y el barrido completo de las 7 monedas con `run()`, sin anotarlo en el registro del usuario: **45 minutos**, 59 pruebas, 5 pasan de ±2 (por azar 2.7) y una pasa el umbral (±2.04), Martillo o estrella al revés (nota −2.75; −4.0 y −3.6 puntos; 1,640 y 1,929 señales), en 6 minutos; **30 minutos**, 60 pruebas, 16 pasan de ±2 (por azar 2.7) y ninguna pasa el umbral (±2.05) por poco: Breaker +2.01 (+6.0 y +6.6 puntos; 293 y 431 señales), en 11 minutos. Los patrones de giro fallan en todos los marcos (Martillo o estrella y Barra divergente negativos en 30m, 45m y 1h): el precio tiende a seguir. A ±2 ATR, 54% a 57% deja de 0.15 a 0.28 ATR antes de comisiones, del orden de la comisión taker en esos marcos.
+
 ### Límites
 
 - Sin comisiones ni deslizamiento: una ventaja de excursión chica no sobrevive al costo.
