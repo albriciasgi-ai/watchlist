@@ -17,7 +17,7 @@ import { elementLabel } from './elementLabels.js';
  */
 
 const SWEEP_KEY = 'tester_sweep_v1';
-const TFS = [5, 15, 60, 240, 1440];
+const TFS = [5, 15, 30, 45, 60, 240, 1440];
 const GROUPS = [['base', 'las 7 de siempre'], ['new', 'las nuevas'], ['all', 'todas']];
 const DEFAULT = { tf: 240, group: 'base', flow: true, minSignals: 50 };
 

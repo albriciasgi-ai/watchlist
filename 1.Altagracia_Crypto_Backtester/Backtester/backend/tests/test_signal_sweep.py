@@ -146,7 +146,7 @@ def test_el_umbral_sube_con_las_pruebas_y_la_configuracion_se_acota():
     cfg = sw.clean_config({"tf": 7, "group": "otra", "minSignals": 1, "split1": "2022-12-01", "pairs": ["A"] * 40})
     assert cfg["tf"] == 240 and cfg["group"] == "base" and cfg["minSignals"] == 20
     assert (cfg["split1"], cfg["split"]) == ("2022-01-01", "2023-01-01") and cfg["pairs"] == ["A"] and cfg["pairsB"] == []
-    assert [sw.clean_config({"tf": tf})["tf"] for tf in sw.SWEEP_TFS] == [5, 15, 60, 240, 1440]
+    assert [sw.clean_config({"tf": tf})["tf"] for tf in sw.SWEEP_TFS] == [5, 15, 30, 45, 60, 240, 1440]
 
 
 def test_parejas_las_dos_señales_del_mismo_lado_en_la_ventana():

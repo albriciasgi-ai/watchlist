@@ -55,6 +55,27 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 23 Noviembre 2026: Barrido en 30 y 45 Minutos
+
+**Pedido:** tras barrer 5m, 15m, 1h y 4h, el usuario cree que entre 15 minutos y 1 hora puede haber algo: montar el barrido en 30 y 45 minutos.
+
+**Cambios:**
+1. **30 minutos** en la pestaña "Barrido": el probador ya lo tenía.
+2. **45 minutos**, marco nuevo en el backend (`rule_tester.py`): tres velas de 15 minutos, contadas desde las 00:00 UTC. Solo lo ofrece el barrido; el formulario de la regla sigue con sus marcos.
+3. **Pruebas:** las del barrido, del probador, del embudo, de las monedas nuevas y de las acciones pasan (45).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar la página.
+- Los elementos de order flow de 30 y 45 minutos ya quedaron detectados y guardados (6 y 11 minutos la primera vez): en la app del usuario el barrido tarda poco.
+- **Lo que corrió el usuario antes:**
+  - 5 minutos: 9 de 64 pasan de ±2 (por azar 2.9) y una pasa el umbral, la Ruptura con volumen al revés, con un punto sobre 50%: muy bajo el costo;
+  - 1 hora: 4 de 59 (por azar 2.7), ninguna pasa el umbral.
+- Probado con datos reales en 45 minutos: sin order flow en BTC y TRX; con order flow en BTC (56 pruebas, 43 s), y el barrido completo de las 7 monedas con `run()`, sin anotarlo en el registro del usuario: **45 minutos**, 59 pruebas, 5 pasan de ±2 (por azar 2.7) y una pasa el umbral (±2.04), Martillo o estrella al revés (nota −2.75; −4.0 y −3.6 puntos; 1,640 y 1,929 señales), en 6 minutos; **30 minutos**, 60 pruebas, 16 pasan de ±2 (por azar 2.7) y ninguna pasa el umbral (±2.05) por poco: Breaker +2.01 (+6.0 y +6.6 puntos; 293 y 431 señales), en 11 minutos. Los patrones de giro fallan en todos los marcos (Martillo o estrella y Barra divergente negativos en 30m, 45m y 1h): el precio tiende a seguir. A ±2 ATR, 54% a 57% deja de 0.15 a 0.28 ATR antes de comisiones, del orden de la comisión taker en esos marcos.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BARRIDO DE SEÑALES (23/11/2026)"
+
+---
+
 ### Altagracia Trading Suite - 23 Noviembre 2026: Módulo "Monedas", un Solo Registro de lo que se Guarda de Cada Moneda (fase 1)
 
 **Pedido:** al agregar RUNE desde el scanner, el usuario preguntó qué hacía falta para bajar de ella lo mismo que de las monedas guardadas. Después pidió centralizar la lista: elegir desde un menú de la suite, moneda por moneda, lo que se guarda en Northflank, el almacén de trades y lo demás. Aceptó el plan de tres fases: la 1 es el PC.
