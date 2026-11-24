@@ -156,7 +156,7 @@ function CoinDetail({ symbol, data, error, config, inBot, inSuite, pinned, onTog
         <button type="button" className="suite-btn" onClick={() => onTogglePin(symbol)}>{pinned ? 'Soltar de la cuadrícula' : 'Fijar en la cuadrícula'}</button>
         {!inSuite && SUITE_SYMBOL.test(symbol) && (
           <button type="button" className="suite-btn" disabled={adding} onClick={() => onAdd(symbol)}
-                  title="La suma a las monedas de la suite: desde ahí se graban su libro, su cinta y Hyperliquid">
+                  title="Abre «Monedas» con ella: eliges qué se graba en el PC (libro, cinta y Hyperliquid) y si se baja su historia, y la agregas a la suite">
             Agregar a la suite
           </button>
         )}
@@ -245,7 +245,7 @@ function ConfigSection({ config, onSaved }) {
 
 export default function ScannerPanel({
   active, scan, panelList, onPanelList, source, onSource, gridList, onGridList, count, onCount, pins, onTogglePin,
-  suiteSymbols, onSymbolsAdded, onOpenChart, gridTf, onRefresh, onHide,
+  suiteSymbols, onSymbolsAdded, onOpenChart, gridTf, onRefresh, onHide, onAddCoin = null,
 }) {
   const [selected, setSelected] = useState(null);
   const [detail, setDetail] = useState({ symbol: null, data: null, error: null });
@@ -296,6 +296,11 @@ export default function ScannerPanel({
     }
   };
   const addToSuite = async (sym) => {
+    // Con el módulo Monedas (23/11), ahí se elige qué se guarda de ella (su grabación y su historia) antes de agregarla
+    if (onAddCoin) {
+      onAddCoin(sym);
+      return;
+    }
     if (!window.confirm(`¿Agregar ${short(sym)} a la suite?\n\nDesde ahí la suite graba su libro, su cinta y Hyperliquid mientras esté abierta: de 3 a 20 MB de libro por día. La nube no la graba.`)) return;
     setAdding(true);
     setAddError(null);
