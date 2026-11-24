@@ -29,6 +29,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 - **Puerta móvil (21/11):** fase 1 de la app Android: celulares emparejados, vigilante de eventos y avisos push, apagada de fábrica. Ver "Puerta móvil".
 - **DX en vivo (22/11):** el servidor registra la hipótesis de los apilados desplazados con la regla y el código del probador de App 1, y mide la ejecución con la cinta, sin enviar nada. Ver "DX en vivo".
 - **Scanner (22/11):** mira todos los perpetuos USDT de Bybit y arma listas para la Watchlist (En juego, Tendencia con fuerza, Rápidos y Mis monedas), con el costo de operar en R y el estado del mercado. Solo mira: no envía nada ni graba esas monedas. Ver "Scanner".
+- **Reglas en vivo (24/11):** Impulso, FVG nuevo y B1 del probador de App 1, registradas en 4 horas en las 50 monedas del probador, sin enviar nada. Ver "Reglas en vivo".
 - **Falta:**
   - la app Android (fases 2 a 4 de "Puerta móvil");
   - las alertas del Swing quedan para la central de alertas de confluencia;
@@ -73,6 +74,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── wise_smc_watch.py  Sabios de Williams y estructura SMC del servidor (williams.py y smc.py de App 1): anota en data/wsmc; nunca envía
 │   ├── wise_smc_measures.py   Medidas de Williams y SMC de cada trade del journal (grupo "Williams y SMC")
 │   ├── dx_watch.py        DX en vivo: la regla del probador de App 1 sobre el almacén en vivo; anota en data/dx y nunca envía
+│   ├── rule_watch.py      Reglas en vivo (24/11): Impulso, FVG nuevo y B1 del probador de App 1 en 4h; anota en data/rules y nunca envía
 │   ├── scanner.py         Scanner de monedas (22/11): todos los perpetuos USDT de Bybit, listas y estado del mercado; anota en data/scanner y nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── coins.py           Registro de monedas (23/11): qué se graba de cada una y lo que se muestra en el módulo "Monedas" (ver "Monedas")
@@ -83,7 +85,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
 │   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
 │   ├── quiet_log.py       El registro del servidor sin los pedidos que salen bien, sin repetir errores y con los lentos (23/11; ver "Escritorio", "Registros")
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (48), scanner_checks.py (120), log_checks.py (22) y coins_checks.py (94), sin conexión
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (49), rule_checks.py (52), scanner_checks.py (120), log_checks.py (22) y coins_checks.py (94), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
@@ -1110,6 +1112,24 @@ Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de c
   - el estado y las ballenas elegidas por capital y por volumen;
   - las posiciones y el mapa;
   - el grabador con un HTTP falso: anota por día, una cuenta caída no corta la vuelta, solo pide `info` y retoma al arrancar.
+
+## Reglas en vivo (24/11)
+
+Pedido del usuario: grabar en vivo Impulso, FVG nuevo y B1, las tres reglas que con el motor 6 quedaron cerca de la fase 2 y cuya fase 3 nunca se miró. El plan, fijado antes de registrar, está en `docs/PLAN_REGLAS_EN_VIVO.md`: las reglas exactas, los datos y el juicio. No se cambian: `POST /api/rules/config` solo enciende o apaga.
+
+- **Módulo** (`server/rule_watch.py`, datos en `data/rules`): 90 s después del cierre de cada vela de 4 horas (y 20 s después de arrancar), por cada una de las 50 monedas del probador (`rule_tester.candle_symbols("all")`):
+  - pide a Bybit las velas que faltan (la primera vez, 1,000) y suma las cerradas a lo visto (`span/{moneda}.json.gz`). La vela en curso no cuenta. Si entre lo visto y lo nuevo falta una vela, o falta una en medio, queda el error y no se anota nada hasta que estén todas;
+  - corre `rule_tester.run` de App 1 con cada regla sobre lo visto, desde `since` (el primer cierre que vio el registro en esa moneda), sin minuto a minuto;
+  - compara con lo anotado (`orders/{regla}/{moneda}.json`) y escribe lo nuevo en `log/AAAA-MM-DD.jsonl`: señal, entrada, salida con su R, "no entra" (había una posición abierta) y "no se opera".
+- **Por qué se recalcula desde `since`:** las velas cerradas de Bybit no cambian, así que la corrida da siempre lo mismo y la suite puede estar cerrada días sin perder nada. Lo anotado como final no se reescribe: si una corrida da otra cosa (por ejemplo, tras un cambio del motor del probador), queda una revisión, una sola vez.
+- **B1, el OI y el funding:** usa los archivos de App 1 (`OrderFlowData/oi/{moneda}_4h.json` y `OrderFlowData/funding`). Si no llegan al cierre de la última vela (`flow_ready`), los pone al día (`oi_update.update` y `funding_update.update`, a lo sumo cada 10 minutos por moneda) y, si siguen sin llegar, B1 de esa moneda espera y la vuelta se repite a los 10 minutos. Impulso y FVG no esperan. Una moneda sin serie de OI no da señales de B1, como en el probador.
+- **Rutas:** `GET /api/rules/status` (estado, por regla cerradas y abiertas, errores y monedas en espera), `/report` (R por trade con el margen por semanas, por lado y las lecturas a los 3, 6 y 12 meses), `/log?record&symbol&limit`, `GET/POST /api/rules/config` (`{"enabled": bool}`). `/api/suite/status` trae `rules`.
+- **Panel** (`WatchlistView.jsx`, `RuleSections`): debajo de DX. Estado y botón, una fila por regla (trades, R por trade con su margen, abiertas; la lectura vencida al pasar el mouse), las posiciones abiertas y las últimas 25 entradas, salidas y revisiones. Un clic abre la moneda en 4h. Se lee cada 60 s.
+- **Un solo proceso por carpeta** (`detector.lock`). `SUITE_RULES=0` lo apaga; sin esa variable vale `SUITE_SWING`, que las pruebas ponen en 0. Una configuración ilegible lo deja apagado y lo dice.
+- **Nunca envía nada,** ni al bot ni a otro lado.
+- **Peso:** una vuelta de las 50 monedas son 50 pedidos de velas a Bybit cada 4 horas, por el turno de `candles.bybit_turn()` como los demás. La primera vuelta baja 1,000 velas por moneda.
+- **Pruebas:** `server/tests/rule_checks.py` (52): el registro vela a vela igual a una corrida del probador, con cualquier ritmo; sin repetir al reiniciar; la vela en curso y los huecos; la espera de B1; la revisión una sola vez; el margen por semanas, las lecturas, la configuración y las rutas.
+- **Probado con Bybit real** (24/11, carpeta temporal, sin la suite): BTC, SOL, DOGE y LINK, 30 días vela a vela, 642 s: el registro quedó igual al del probador, sin revisiones ni errores. Después se comprobó que el OI de BTC llega al último cierre al ponerlo al día. No se probó dentro de la suite, en pantalla ni en Electron.
 
 ## DX en vivo (22/11)
 

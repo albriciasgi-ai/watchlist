@@ -55,6 +55,35 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 24 Noviembre 2026: Impulso, FVG Nuevo y B1 Registradas en Vivo
+
+**Pedido:** las tres reglas que quedaron cerca de la fase 2 con el motor 6 no tienen su fase 3 mirada. En lugar de gastarla, el usuario pidió grabarlas en vivo.
+
+**Cambios:**
+1. **Plan fijado antes de registrar:** `docs/PLAN_REGLAS_EN_VIVO.md`, con las reglas exactas, las monedas, los datos y el juicio.
+2. **Registro en vivo** (`12.AltagraciaTradingSuite/server/rule_watch.py`):
+   - tras el cierre de cada vela de 4 horas pide las velas a Bybit y corre `rule_tester.run` de App 1 con cada regla, en las 50 monedas del probador;
+   - anota la señal, la entrada, la salida con su R, las señales que no entran por tener una posición abierta y las que no se operan;
+   - si la suite estuvo cerrada, al abrirla se pone al día: las velas de Bybit están completas y el registro queda igual;
+   - lo anotado como final no se reescribe: una diferencia queda como revisión, una sola vez.
+3. **B1 y el OI:** el registro pone al día el OI y el funding de App 1 antes de evaluar. Si el dato de una moneda no llega al cierre de la vela, B1 de esa moneda espera; las otras dos reglas siguen.
+4. **App 1** (`flow_filters.py`): el OI de BTC salía solo de su serie de 5 minutos, que termina el 05/11/2026, así que sus filtros de OI no pasaban en las fechas nuevas. Desde ahí sigue con la de 4 horas, como las demás monedas. Lo anterior no cambia.
+5. **Panel:** en la Watchlist, debajo de DX: por regla, trades, R por trade con su margen y abiertas; las posiciones abiertas y las últimas entradas y salidas.
+6. **Pruebas:** `server/tests/rule_checks.py` (52). Pasan las de DX, el Swing, los sabios y `run_checks.py`, y las de flujo de App 1.
+
+**IMPORTANTE:**
+- **El registro empieza cuando la suite del usuario corra este código** (al unir la rama a main y poner al día su carpeta). Cada moneda arranca en el primer cierre de 4 horas que ve: lo anterior no cuenta.
+- **No envía nada al bot.** `SUITE_RULES=0` lo apaga; también el botón del panel.
+- **El juicio, por regla, con las 50 monedas juntas y el margen por semanas:** a los 3 y a los 6 meses se descarta si el margen queda entero bajo cero; a los 12 meses pasa si queda entero sobre cero.
+- **Lo que puede esperarse:** con unas 50 semanas en un año el margen ronda ±0.2 R. Sirve para descartar con claridad; confirma solo una ventaja grande.
+- **Diferencia con el probador:** sin minuto a minuto, también en las 7 monedas de siempre (una vela con el stop y el objetivo dentro sigue su recorrido supuesto).
+- **Probado con Bybit real,** en una carpeta temporal: BTC, SOL, DOGE y LINK, 30 días vela a vela, dieron el mismo registro que una corrida del probador, sin revisiones. El OI de BTC llegó al último cierre tras ponerlo al día. El panel compila; no se vio en pantalla ni se probó dentro de la suite.
+- Las pruebas hallaron un fallo antes de registrar nada: un hueco en medio de las velas que da Bybit no se detectaba. Corregido.
+
+**Ver:** `docs/PLAN_REGLAS_EN_VIVO.md` y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Reglas en vivo (24/11)"
+
+---
+
 ### App 1 - 24 Noviembre 2026: Consolidado de Estrategias y las Abiertas Repetidas con el Motor 6
 
 **Pedido:** un informe consolidado de todo lo probado en las distintas sesiones, con los parámetros, los resultados y el análisis de cada estrategia que llegó a la fase 2 o a la 3 (incluida la del VPA), y qué se podría mejorar. Después, repetir con el motor 6 las fases ya vistas de las que habían quedado abiertas.
