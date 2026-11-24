@@ -68,6 +68,7 @@ import mobile_devices  # noqa: E402  celulares emparejados y pedidos firmados
 import mobile_events  # noqa: E402  vigilante del bot para el celular y avisos push
 import mobile_gate  # noqa: E402  puerta movil: otro puerto, apagada de fabrica
 import quiet_log  # noqa: E402  el registro sin los pedidos que salen bien, sin repetir errores y con los lentos (23/11)
+import coins  # noqa: E402  registro de monedas (23/11): que se graba de cada una y la historia de su almacen
 from symbols import SYMBOL_RE as COIN_RE, SymbolList  # noqa: E402
 
 COLOMBIA_TZ = timezone(timedelta(hours=-5))
@@ -110,21 +111,23 @@ async def _startup():
     alpaca_data.set_client(_http)
     DRAWINGS_DIR.mkdir(parents=True, exist_ok=True)
     try:
-        coins = SYMBOLS.load()
+        suite_coins = SYMBOLS.load()
     except Exception as e:
         print(f"[SUITE] lista de monedas ilegible ({e}); se graban las de fabrica")
         from symbols import DEFAULT_SYMBOLS
-        coins = list(DEFAULT_SYMBOLS)
-    await recorder.start(coins, DATA, SUITE_DIR.parent)
-    await book_recorder.start(coins, DATA, CONFIG["bybit_url"], _http, candles.bybit_turn)
-    await hl_recorder.start(coins, DATA, _http)
-    book_cloud.start(DATA, os.environ.get("SUITE_CLOUD_URL", book_cloud.DEFAULT_URL), _official_symbols, _http)
+        suite_coins = list(DEFAULT_SYMBOLS)
+    rec = coins.recording_lists(COINS.registry, suite_coins)   # cada grabador, con las que lo tienen encendido
+    await recorder.start(rec["trades"], DATA, SUITE_DIR.parent)
+    await book_recorder.start(rec["book"], DATA, CONFIG["bybit_url"], _http, candles.bybit_turn)
+    await hl_recorder.start(rec["hl"], DATA, _http)
+    book_cloud.start(DATA, os.environ.get("SUITE_CLOUD_URL", book_cloud.DEFAULT_URL), _book_symbols, _http)
     hl_cloud.start(DATA, os.environ.get("SUITE_CLOUD_URL", book_cloud.DEFAULT_URL), _http)
     official.start(DATA, _official_symbols)
     await SWING.start()
     await WSMC.start()
     await DX.start()
     await SCANNER.start()
+    COINS.start()
     if MOBILE_GATE.host and os.environ.get("SUITE_MOBILE", "1") != "0":
         MOBILE_EVENTS.start()
         MOBILE_GATE.start()
@@ -133,6 +136,7 @@ async def _startup():
 
 @app.on_event("shutdown")
 async def _shutdown():
+    await COINS.stop()
     await MOBILE_GATE.stop()
     await MOBILE_EVENTS.stop()
     await SWING.stop()
@@ -150,11 +154,29 @@ async def _shutdown():
 
 
 SYMBOLS = SymbolList(CONFIG["data_dir"])
+# Registro de monedas (23/11, docs/PLAN_MONEDAS.md): el modulo "Monedas" de la pagina elige que se graba de cada una
+# y baja la historia de su almacen. Sin elegir nada, todo sigue como antes
+COINS = coins.Coins(
+    CONFIG["data_dir"], DATA, SYMBOLS, swing=SWING, wsmc=WSMC, dx_symbols=dx_watch.SYMBOLS,
+    bot=lambda *a, **kw: _bot(*a, **kw), http=lambda: _http, instrument=lambda s: _instrument(s),
+    cloud_url=os.environ.get("SUITE_CLOUD_URL", book_cloud.DEFAULT_URL), app1_backend=CONFIG["app1_backend"],
+    official_busy=lambda: official.status().get("running"))
+app.include_router(coins.make_router(COINS))
 
 
 def _official_symbols():
+    """Las monedas cuyo almacen pone al dia official.py: las que lo tienen encendido en el registro, salvo las que baja
+    o arma en ese momento el modulo "Monedas". Antes del registro eran las de la suite con almacen: es lo mismo."""
     try:
-        return SYMBOLS.load()
+        return COINS.store_symbols()
+    except Exception:
+        return []
+
+
+def _book_symbols():
+    """Las monedas de la suite con el libro encendido: book_cloud.py les tapa los huecos con lo que graba la nube."""
+    try:
+        return coins.recording_lists(COINS.registry, SYMBOLS.load(), quiet=True)["book"]
     except Exception:
         return []
 
@@ -442,9 +464,8 @@ async def add_symbol(request: Request):
         symbols = SYMBOLS.add(symbol)
     except ValueError as e:
         raise HTTPException(status_code=400, detail=str(e))
-    await recorder.add_symbol(symbol)
-    await book_recorder.add_symbol(symbol)
-    hl_recorder.add_symbol(symbol)
+    # Lo que se graba de ella: lo elegido antes en el modulo "Monedas" o, si no, todo (trades, libro y Hyperliquid)
+    await coins.start_recording(symbol, COINS.recording_options(symbol))
     return {"success": True, "symbols": symbols}
 
 
