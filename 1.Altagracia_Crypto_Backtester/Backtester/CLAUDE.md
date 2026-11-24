@@ -1105,6 +1105,7 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
 - El gráfico es `MiniChart` en modo backtesting con `currentTime` = final de la fase: no hay reloj. Las cajas van por `getTradeBoxes` y el trade elegido por `getTradeBoundaries` y `focusOn()`.
 - El marco del gráfico es aparte del de la regla (una regla de 30m se mira en 15m o 1h). Las velas salen del caché del navegador de la principal o, si faltan, se pide al backend solo ese marco.
 - Los indicadores usan los ajustes de la principal. Las reglas guardadas quedan en `tester_rules_v1` y la vista en `tester_view_v1`.
+- **Ancho del panel lateral (23/11, pedido del usuario):** se arrastra su borde derecho (`rt-split`, `startSideDrag`). De 300 px hasta dejarle 320 al gráfico; doble clic vuelve a 420. Queda en `tester_view_v1` (`sideWidth`) y se ajusta si la ventana se achica. Mientras se arrastra, el gráfico no recibe el mouse. No se vio en pantalla: la ventana compila.
 
 ### Lo que usó la regla en el trade elegido (20/11)
 
