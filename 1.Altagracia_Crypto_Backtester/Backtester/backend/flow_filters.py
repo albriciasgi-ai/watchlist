@@ -89,7 +89,17 @@ def source(symbol):
     """Serie de OI: (tiempos en ms, valores, minutos entre datos) o None."""
     pts = oi_store.points(symbol)
     if pts is not None and len(pts[0]):
-        return np.asarray(pts[0], dtype=np.int64) * 60000, np.asarray(pts[1], dtype=float), oi_store.BASE_MINUTES
+        times, values = np.asarray(pts[0], dtype=np.int64) * 60000, np.asarray(pts[1], dtype=float)
+        # La serie de 5 minutos (solo BTC) solo se baja hacia atrás y termina el 05/11/2026: desde ahí sigue la de 4
+        # horas, que sí se pone al día. Sin esto el OI de BTC quedaba sin dato en las fechas nuevas y sus filtros no
+        # pasaban (24/11/2026). Lo anterior al final de la serie de 5 minutos no cambia. Con velas de menos de 2 horas,
+        # un dato de 4 horas es viejo para oi_at_close y sigue sin valer
+        later = _json_series(symbol)
+        if later is not None:
+            keep = later[0] > times[-1]
+            if keep.any():
+                times, values = np.r_[times, later[0][keep]], np.r_[values, later[1][keep]]
+        return times, values, oi_store.BASE_MINUTES
     return _json_series(symbol)
 
 

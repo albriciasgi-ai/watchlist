@@ -284,6 +284,119 @@ const dxR = (x, digits = 3) => (x == null || !Number.isFinite(x) ? '—' : `${x 
 const DX_EVENT = { armada: 'Armada', entrada: 'Entrada', salida: 'Salida', vencida: 'Vencida',
   'no entra': 'No entra (ocupada)', 'no se opera': 'No se opera', revision: 'Revisión', anulada: 'Anulada' };
 
+const RULE_EVENT = { senal: 'Señal', entrada: 'Entrada', salida: 'Salida', 'no entra': 'No entra (ocupada)', 'no se opera': 'No se opera',
+  revision: 'Revisión', anulada: 'Anulada' };
+
+/** Reglas en vivo (24/11/2026): Impulso, FVG nuevo y B1 del probador de App 1, en 4 horas y en las 50 monedas del probador.
+ *  Registra señales, entradas y salidas; nada se envía al bot. Cómo se juzga: docs/PLAN_REGLAS_EN_VIVO.md */
+function RuleSections({ rules, onChange, onOpenChart }) {
+  const status = rules.status;
+  if (!status) {
+    return (
+      <div className="bot-section">
+        <h3>Reglas en vivo (Impulso, FVG nuevo y B1)</h3>
+        <div className="bot-empty">{rules.error ? `Sin respuesta del servidor: ${rules.error}` : 'Cargando…'}</div>
+      </div>
+    );
+  }
+  const state = status.detecting ? 'Registra en vivo'
+    : !status.enabled ? 'Apagado'
+      : status.env_off ? 'Apagado en este servidor (SUITE_RULES=0)'
+        : status.other_process ? 'Otro proceso registra con esta carpeta de datos' : 'Encendido; empieza en el próximo cierre';
+  const records = rules.report?.records || {};
+  const ids = Object.keys(status.records || {});
+  const open = ids.flatMap(id => (status.records[id].open || []).map(o => ({ ...o, name: status.records[id].name })));
+  const errors = Object.entries(status.errors || {});
+  const waiting = Object.keys(status.waiting || {});
+  const next = ids.length ? (records[ids[0]]?.checkpoints || []).find(m => !m.due && m.at) : null;
+  return (
+    <>
+      <div className="bot-section">
+        <h3>Reglas en vivo (Impulso, FVG nuevo y B1)</h3>
+        <div className="wl-row">
+          <span className={`suite-dot ${status.detecting ? 'ok' : 'bad'}`} />
+          <span>{state}</span>
+        </div>
+        <div className="wl-row">
+          <button type="button" className="suite-btn" disabled={rules.saving} onClick={() => onChange({ enabled: !status.enabled })}>
+            {status.enabled ? 'Apagar el registro' : 'Encender el registro'}
+          </button>
+        </div>
+        <div className="wl-row wl-muted" title="Las reglas exactas del probador, a mercado en la apertura siguiente a la señal, una posición a la vez por moneda y regla. El margen agrupa los trades por semana">
+          {status.since ? `Desde el ${colombiaDay(status.since)}` : 'Empieza con el primer cierre'} · {status.checked || 0} de {status.symbols} monedas en 4h. No envía nada al bot.
+        </div>
+        <table className="bot-table">
+          <thead><tr><th>Regla</th><th>Trades</th><th>R por trade</th><th>Abiertas</th></tr></thead>
+          <tbody>
+            {ids.map(id => {
+              const book = records[id]?.book || {};
+              const done = (records[id]?.checkpoints || []).filter(m => m.due);
+              return (
+                <tr key={id} title={done.map(m => `Lectura de los ${m.months} meses: ${m.verdict}`).join(' · ') || 'Lecturas del plan a los 3, 6 y 12 meses'}>
+                  <td>{status.records[id].name}</td>
+                  <td>{book.n || 0}</td>
+                  <td className={(book.avgR ?? 0) >= 0 ? 'pos' : 'neg'}>
+                    {book.n ? `${dxR(book.avgR)}${book.low != null ? ` (${dxR(book.low, 2)} a ${dxR(book.high, 2)})` : ''}` : '—'}
+                  </td>
+                  <td>{(status.records[id].open || []).length}</td>
+                </tr>
+              );
+            })}
+          </tbody>
+        </table>
+        {next ? <div className="wl-row wl-muted">Próxima lectura del plan: {colombiaDay(next.at)}, a los {next.months} meses.</div> : null}
+        {waiting.length > 0 && (
+          <div className="wl-row wl-muted" title={waiting.join(', ')}>B1 espera el OI o el funding de {waiting.length} monedas: se evalúa cuando llegue.</div>
+        )}
+        {errors.length > 0 && (
+          <div className="suite-result bad" title={errors.map(([s, e]) => `${s}: ${e}`).join(' · ')}>
+            {errors.length} monedas con error: {errors.slice(0, 4).map(([s]) => s.replace(/USDT$/, '')).join(', ')}{errors.length > 4 ? '…' : ''}
+          </div>
+        )}
+        {rules.error && <div className="suite-result bad">{rules.error}</div>}
+      </div>
+      <div className="bot-section">
+        <h3>Posiciones abiertas de las reglas</h3>
+        {open.length === 0 ? <div className="bot-empty">Ninguna abierta.</div> : (
+          <table className="bot-table">
+            <thead><tr><th>Moneda</th><th>Regla</th><th>Entrada</th><th>R</th></tr></thead>
+            <tbody>
+              {open.map(o => (
+                <tr key={`${o.record}-${o.key}`} className="wl-signal" onClick={() => onOpenChart(o.symbol, '4h')}
+                    title={`${o.dir > 0 ? 'Largo' : 'Corto'} en ${dxPrice(o.entry)} · stop ${dxPrice(o.stop)} · objetivo ${dxPrice(o.target)} · entró el ${colombiaStamp(o.entry_t)}`}>
+                  <td>{o.symbol.replace(/USDT$/, '')}</td>
+                  <td>{o.name}</td>
+                  <td className={o.dir > 0 ? 'pos' : 'neg'}>{o.dir > 0 ? 'Largo' : 'Corto'} {dxPrice(o.entry)}</td>
+                  <td>{dxR(o.open_r, 2)}</td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+      <div className="bot-section">
+        <h3>Últimas entradas y salidas de las reglas</h3>
+        {rules.log.length === 0 ? <div className="bot-empty">Todavía ninguna.</div> : (
+          <table className="bot-table">
+            <thead><tr><th>Hora</th><th>Moneda</th><th>Qué pasó</th></tr></thead>
+            <tbody>
+              {rules.log.map(e => (
+                <tr key={`${e.record}-${e.key}-${e.type}-${e.detected_at}`} className="wl-signal" onClick={() => onOpenChart(e.symbol, '4h')} title={e.text}>
+                  <td>{colombiaStamp(e.at)}</td>
+                  <td>{e.symbol.replace(/USDT$/, '')}</td>
+                  <td className={e.type === 'salida' ? ((e.r ?? 0) >= 0 ? 'pos' : 'neg') : e.dir > 0 ? 'pos' : 'neg'}>
+                    {status.records[e.record]?.name || e.record} · {RULE_EVENT[e.type] || e.type}{e.type === 'salida' && e.r != null ? ` · ${dxR(e.r, 2)} R` : ''}
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+          </table>
+        )}
+      </div>
+    </>
+  );
+}
+
 /** DX en vivo: la hipótesis de los apilados desplazados, con la regla del probador de App 1 sobre el almacén en vivo.
  *  Registra órdenes, entradas y salidas; nada se envía al bot. Cómo se juzga: docs/PLAN_ESTRATEGIAS_BYKO_DALE.md, «DX en vivo» */
 function DxSections({ dx, onChange, onOpenChart }) {
@@ -518,6 +631,7 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
   const [swing, setSwing] = useState({ status: null, log: [], error: null, saving: false });
   const [wsmc, setWsmc] = useState({ status: null, log: [], error: null, saving: false });
   const [dxState, setDx] = useState({ status: null, report: null, log: [], error: null, saving: false });
+  const [ruleState, setRules] = useState({ status: null, report: null, log: [], error: null, saving: false });
   const days = clampDays(tf, daysByTf[tf]);
 
   const wrapRef = useRef(null);
@@ -800,6 +914,33 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
     const timer = setInterval(readDx, 30000);
     return () => clearInterval(timer);
   }, [active, showPanel, readDx]);
+  // Las reglas en vivo (Impulso, FVG nuevo y B1), con el mismo ritmo
+  const readRules = useCallback(async () => {
+    try {
+      const [status, report, log] = await Promise.all([getJson('/api/rules/status'), getJson('/api/rules/report'), getJson('/api/rules/log?limit=600')]);
+      const trades = (log.events || []).filter(e => e.type === 'entrada' || e.type === 'salida' || e.type === 'revision').slice(0, 25);
+      setRules(s => ({ ...s, status, report, log: trades, error: null }));
+    } catch (e) {
+      setRules(s => ({ ...s, error: e.message }));
+    }
+  }, []);
+  useEffect(() => {
+    if (!active || !showPanel) return undefined;
+    readRules();
+    const timer = setInterval(readRules, 60000);
+    return () => clearInterval(timer);
+  }, [active, showPanel, readRules]);
+  const changeRules = async (body) => {
+    setRules(s => ({ ...s, saving: true, error: null }));
+    try {
+      await postJson('/api/rules/config', body);
+      await readRules();
+    } catch (e) {
+      setRules(s => ({ ...s, error: e.message }));
+    } finally {
+      setRules(s => ({ ...s, saving: false }));
+    }
+  };
   const changeDx = async (body) => {
     setDx(s => ({ ...s, saving: true, error: null }));
     try {
@@ -978,6 +1119,7 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
               extra={<>
                 <WiseSmcSections wsmc={wsmc} onChange={changeWsmc} onOpenChart={onOpenChart} />
                 <DxSections dx={dxState} onChange={changeDx} onOpenChart={onOpenChart} />
+                <RuleSections rules={ruleState} onChange={changeRules} onOpenChart={onOpenChart} />
               </>} />
           )}
           {panel === 'scanner' && (

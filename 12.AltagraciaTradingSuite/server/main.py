@@ -61,6 +61,7 @@ import book_defense  # noqa: E402  defensa de las zonas dibujadas, para la pesta
 import ladder  # noqa: E402  price ladder de la pestana "Mapa", del libro en memoria
 import swing_watch  # noqa: E402  Swing del servidor: detecta y anota, nunca envia
 import wise_smc_watch  # noqa: E402  Sabios de Williams y estructura SMC del servidor: detecta y anota, nunca envia
+import rule_watch  # noqa: E402  Reglas en vivo (Impulso, FVG nuevo y B1 del probador de App 1): registra y nunca envia
 import dx_watch  # noqa: E402  DX en vivo: la regla del probador de App 1 sobre el almacen en vivo, registra y nunca envia
 import scanner  # noqa: E402  scanner de monedas (22/11): mira todos los perpetuos USDT de Bybit; nunca envia ni graba
 import alpaca_data  # noqa: E402  acciones de EE. UU. desde Alpaca: footprints, velas y OI de opciones
@@ -98,6 +99,8 @@ app.include_router(wise_smc_watch.make_router(WSMC))
 DX = dx_watch.DxWatch(Path(CONFIG["data_dir"]) / "dx", DATA, store_until=market_routes._store_until)
 app.include_router(dx_watch.make_router(DX))
 book_defense.ZONE_SOURCES.append(DX.zones)   # las limit de DX en la defensa de zona de la pestana Mapa
+RULES = rule_watch.RuleWatch(Path(CONFIG["data_dir"]) / "rules")   # docs/PLAN_REGLAS_EN_VIVO.md
+app.include_router(rule_watch.make_router(RULES))
 SCANNER = scanner.Scanner(Path(CONFIG["data_dir"]) / "scanner", symbols_source=lambda: SYMBOLS.load())
 app.include_router(scanner.make_router(SCANNER))
 app.include_router(alpaca_data.make_router())
@@ -126,6 +129,7 @@ async def _startup():
     await SWING.start()
     await WSMC.start()
     await DX.start()
+    await RULES.start()
     await SCANNER.start()
     COINS.start()
     if MOBILE_GATE.host and os.environ.get("SUITE_MOBILE", "1") != "0":
@@ -142,6 +146,7 @@ async def _shutdown():
     await SWING.stop()
     await WSMC.stop()
     await DX.stop()
+    await RULES.stop()
     await SCANNER.stop()
     official.stop()
     await book_cloud.stop()
@@ -531,7 +536,7 @@ async def suite_status():
             "local_tape": tape, "bot": bot_state,
             "recorder": recorder.status(), "book": book_recorder.brief(), "book_cloud": book_cloud.brief(),
             "hyperliquid": hl_recorder.brief(), "hyperliquid_cloud": hl_cloud.brief(),
-            "official": official.status(), "swing": SWING.brief(), "wsmc": WSMC.brief(), "dx": DX.brief(),
+            "official": official.status(), "swing": SWING.brief(), "wsmc": WSMC.brief(), "dx": DX.brief(), "rules": RULES.brief(),
             "scanner": SCANNER.brief()}
 
 
