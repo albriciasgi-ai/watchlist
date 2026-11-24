@@ -76,6 +76,29 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### Altagracia Trading Suite - 23 Noviembre 2026: Módulo "Monedas", un Solo Registro de lo que se Guarda de Cada Moneda (fase 1)
+
+**Pedido:** al agregar RUNE desde el scanner, el usuario preguntó qué hacía falta para bajar de ella lo mismo que de las monedas guardadas. Después pidió centralizar la lista: elegir desde un menú de la suite, moneda por moneda, lo que se guarda en Northflank, el almacén de trades y lo demás. Aceptó el plan de tres fases: la 1 es el PC.
+
+**Cambios:**
+1. **Plan:** `docs/PLAN_MONEDAS.md`, con la lista de hoy de cada parte, las decisiones y las fases 2 (la nube, por una ruta con clave) y 3 (App 1, en un grupo aparte).
+2. **Registro** (`server/coins.py`, `data/coins.json`): solo lo elegido. Sin entrada, una moneda graba todo y su almacén se pone al día si ya tiene historia: el primer día no cambia nada.
+3. **Grabar en el PC:** trades, libro y Hyperliquid, cada uno aparte. Encender vale al instante; apagar, al reiniciar la suite (los grabadores del libro y de Hyperliquid son copias exactas de los del collector y no se tocan).
+4. **Almacén** (`server/coin_history.py`): baja la historia con `ingest.py` del panel, una moneda a la vez y aparte (sigue aunque se cierre la suite), con su avance. Al terminar una descarga, de quien sea, la arma con `build_store.py` si nadie la está armando. «Detener» como en el panel. `official.py` pone al día las que tienen el almacén encendido.
+5. **Página:** módulo "Monedas" desde "Pestañas" → "Monedas · Abrir aquí". «Agregar a la suite» del scanner lo abre con esa moneda. Por moneda: en la suite, las tres grabaciones, lo que escriben por día, lo que ocupa, el almacén con su botón, el Swing, y la nube, App 1, DX y el bot como información.
+6. **Pruebas:** `coins_checks.py` (94) y `coins.test.mjs` (9). Pasan las demás del servidor y de la página, y la página se arma.
+
+**IMPORTANTE:**
+- Llega a la suite del usuario al unir esta rama a main y poner al día su carpeta. La suite se reinicia sola al abrirla y arma la página nueva.
+- **La historia de RUNE se está bajando desde el panel** (el 23/11 desde las 15:53, 1,820 días). Con este código, la suite arma su almacén al terminar aunque el panel esté cerrado.
+- Las copias de prueba (`SUITE_RECORD=0`) solo miran: no bajan ni arman nada.
+- **Probado en dos copias aisladas** a 1366×768: una con el `OrderFlowData` real, solo mirando (sus 23 monedas, unos 204 MB por día entre todas y RUNE al 57 %), y otra con herramientas falsas (bajar, esperar, detener, seguir, armar y el scanner). No se probó en Electron ni con una descarga real de Bybit.
+- Un botón en la barra de la Watchlist la partía en dos líneas a 1366 px: no se puso.
+
+**Ver:** `docs/PLAN_MONEDAS.md` y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Monedas (23/11)"
+
+---
+
 ### App 1 - 23 Noviembre 2026: Panel Lateral del Backtesting Global con Ancho Ajustable
 
 **Pedido:** poder ampliar o reducir hacia los lados el panel lateral donde están las reglas, arrastrando con el mouse: las tablas del barrido no cabían.

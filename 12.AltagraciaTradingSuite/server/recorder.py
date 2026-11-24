@@ -157,6 +157,15 @@ async def add_symbol(symbol: str):
         await asyncio.to_thread(rec.load_scales)
 
 
+def symbols_now():
+    """Las monedas cuyos trades graba ahora esta suite (suscritas y con su escala), o None si no graba aqui: apagada,
+    otro proceso graba la carpeta o espera la red. Para el modulo "Monedas" (coins.py)."""
+    rec = _local_tape.get_recorder() if (_feed is not None and _local_tape is not None) else None
+    if rec is None:
+        return None
+    return sorted(set(rec.scales) & set(_feed.symbols))
+
+
 def status() -> dict:
     if _feed is None:
         return {"enabled": os.environ.get("SUITE_RECORD", "1") != "0", "running": False}

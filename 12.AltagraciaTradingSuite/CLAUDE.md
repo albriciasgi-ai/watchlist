@@ -75,22 +75,24 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── dx_watch.py        DX en vivo: la regla del probador de App 1 sobre el almacén en vivo; anota en data/dx y nunca envía
 │   ├── scanner.py         Scanner de monedas (22/11): todos los perpetuos USDT de Bybit, listas y estado del mercado; anota en data/scanner y nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
+│   ├── coins.py           Registro de monedas (23/11): qué se graba de cada una y lo que se muestra en el módulo "Monedas" (ver "Monedas")
+│   ├── coin_history.py    La historia del almacén de cada moneda: ingest.py y build_store.py del panel, una descarga a la vez
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
 │   ├── alpaca_data.py     Acciones de EE. UU. desde Alpaca: trades con lado del agresor, footprints, velas y OI de opciones (ver "Alpaca")
 │   ├── mobile_devices.py  Celulares emparejados y pedidos firmados (ver "Puerta móvil")
 │   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
 │   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
 │   ├── quiet_log.py       El registro del servidor sin los pedidos que salen bien, sin repetir errores y con los lentos (23/11; ver "Escritorio", "Registros")
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (48), scanner_checks.py (120) y log_checks.py (22), sin conexión
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (48), scanner_checks.py (120), log_checks.py (22) y coins_checks.py (94), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
-        ├── SuiteApp.jsx   Módulos (Gráfico, Watchlist, Bot) y modal "Estilo" de App 1; abre el módulo que pide una pestaña nueva
+        ├── SuiteApp.jsx   Módulos (Gráfico, Watchlist, Bot, Mapa y Monedas) y modal "Estilo" de App 1; abre el módulo que pide una pestaña nueva
         ├── ChartView.jsx  Formato de la pestaña principal de App 1: barra de dibujo, encabezado, un MiniChart por marco, indicadores y sus ⚙️
         ├── TradingPanel.jsx   Panel de trading en vivo: caja TP/SL, tamaño fijo o por riesgo, orden al bot
         ├── tabs.js        Pestañas 1 a 5: ajustes propios, y dibujos y monedas compartidos (BroadcastChannel)
         ├── tabChoice.js   En qué pestaña se abre una moneda del scanner (sin tocar la página, para probarlo con node)
-        ├── TabsMenu.jsx   Menú "Pestañas": abre de la 2 a la 5 con el gráfico, la Watchlist, el journal o el bot
+        ├── TabsMenu.jsx   Menú "Pestañas": abre de la 2 a la 5 con el gráfico, la Watchlist, el journal o el bot; abajo, "Monedas"
         ├── BotView.jsx    Estado, pausa, avisos críticos, posiciones, órdenes y alertas del bot
         ├── BotConfig.jsx  Configuración del bot como en App 10
         ├── BotAccounts.jsx    Cuentas de Bybit del bot: saldo, posiciones, agregar y cambiar la activa
@@ -104,8 +106,10 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
         ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing; desde el 22/11, también las del scanner
         ├── ScannerPanel.jsx   Panel del scanner en la Watchlist: estado del mercado, listas con su porqué, detalle de cada moneda y ajustes
-        └── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
-    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5), tapelines.test.mjs (6) y tabchoice.test.mjs (6), con node
+        ├── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
+        ├── CoinsView.jsx  El módulo "Monedas" (23/11): qué se guarda de cada moneda, su almacén y las descargas
+        └── coinsView.js   Los textos del módulo "Monedas" (sin React, para probarlo con node)
+    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5), tapelines.test.mjs (6), tabchoice.test.mjs (6) y coins.test.mjs (9), con node
 ```
 
 ## Puertos
@@ -1274,6 +1278,38 @@ Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el us
 - **Pruebas:** `tests/scanner_checks.py` (120), sin conexión, con un Bybit falso: lectura de instrumentos, tickers, velas y anuncios; volumen relativo por tipo de día; ATR, eficiencia, correlación y beta; costo con un libro conocido y en R; candidatas, listas, entrar y salir, la lista rápida y el orden de los libros (también con las listas llenas, 23/11); registro con un final cortado, eventos, liquidez, candado, el estado al reiniciar (23/11), configuración y rutas.
 - **Falta** (pasos 2 a 4 del plan): posicionamiento (proporción de cuentas, liquidaciones, Hyperliquid de todas las monedas), las listas Compresión y Posicionamiento extremo, "candidata a quitar" más visible, el estudio en App 1 ("¿aporta elegir por volumen relativo?", con el universo sin sesgo de supervivencia) y, si lo confirma, los detectores y la central de alertas sobre las monedas del scanner.
 
+## Monedas (23/11): un solo registro de lo que se guarda de cada moneda
+
+**Pedido:** al agregar RUNE desde el scanner, el usuario preguntó qué hacía falta para bajar de ella lo mismo que de las monedas guardadas, y después pidió elegir desde un menú de la suite, moneda por moneda, lo que se guarda: la nube, el almacén de trades y lo demás. Plan en `docs/PLAN_MONEDAS.md`; esto es la fase 1 (el PC). La nube (fase 2) y App 1 (fase 3) se muestran como están.
+
+- **Registro** (`server/coins.py`, `data/coins.json`): solo lo elegido. Una moneda sin entrada graba todo, como antes, y su almacén se pone al día si ya tiene historia: el primer día no cambió nada. Un `coins.json` ilegible no se pisa: se graba todo y el módulo no deja cambiar nada hasta arreglarlo.
+- **Grabar en el PC** (trades, libro y Hyperliquid, cada uno aparte):
+  - al arrancar, cada grabador recibe las monedas de la suite que lo tienen encendido (`coins.recording_lists` en `_startup`);
+  - encender vale al instante, con los mismos `add_symbol` de agregar una moneda;
+  - apagar vale al reiniciar la suite: los grabadores del libro y de Hyperliquid son copias exactas de los del collector, y sacar una moneda en caliente sin dejar huecos mal anotados obligaría a cambiarlos en los dos lados. La fila dice "hasta reiniciar";
+  - `book_cloud.py` tapa los huecos del libro solo de las que lo tienen encendido;
+  - «+ Moneda» y el «+» del gráfico graban lo elegido antes para esa moneda o, si no, todo (`COINS.recording_options`).
+- **Almacén** (`server/coin_history.py`), con las herramientas del panel de Order Flow sin cambiarlas:
+  - `ingest.py MONEDA` se lanza aparte (como desde el panel): sigue aunque se cierre la suite, y al volver la suite la encuentra por su candado (`work/MONEDA.lock`). Su avance sale de `status_MONEDA.json`;
+  - una descarga a la vez, como en el panel: si baja otra (del panel, de su cola o de la suite), la pedida espera. Lo pedido queda en `coins.json` y se retoma al arrancar; un pedido que ya empezó y no sigue se da por cumplido;
+  - al terminar una descarga, de quien sea, `build_store.py` arma el almacén si le faltan días y lo tiene encendido. `build_store.py` no tiene candado: no se arma si alguien escribió en su `store/` o `flow/` en los últimos 90 s, si la descarga terminó hace menos de 3 min (el panel arma el suyo hasta 2 min después) ni mientras corre `official.py`. Un armado que no completa la moneda no se repite antes de 6 h;
+  - «Detener» escribe `stop` en `control.json`, como el panel: la descarga termina el día en curso, las que esperaban se cancelan y después `stop` vuelve a `false` (si no, la cola del panel y `official.py` quedarían detenidos);
+  - `official.py` pone al día las que tienen el almacén encendido, salvo las que se bajan o se arman en ese momento (`_official_symbols`);
+  - con `SUITE_RECORD=0` (pruebas y copias aisladas) solo mira: no baja ni arma nada. `SUITE_COIN_HISTORY=1` la enciende igual.
+- **Página:** el módulo "Monedas" (`CoinsView.jsx`), desde "Pestañas" → "Monedas · Abrir aquí". «Agregar a la suite» del scanner abre el módulo con esa moneda, para elegir antes de agregarla. Un botón en la barra de la Watchlist la partía en dos líneas a 1366 px: no se puso. Por moneda:
+  - quitar de la suite o agregar (con lo elegido antes);
+  - las tres grabaciones, lo que escriben por día (libro y cinta, promedio de los últimos 3 días UTC completos) y lo que ocupa en el disco;
+  - el almacén: en qué está (bajando, en espera, armando, sin historia, a medias, por armar o al día) con su botón, y la casilla de tenerlo al día;
+  - el Swing (con `/api/swing/config`, como su panel);
+  - como información: la nube (`/api/symbols` del collector), el grupo de App 1, DX y el bot.
+- **Rutas:** `GET /api/coins`, `POST /api/coins` (agregar con lo elegido y la historia), `POST /api/coins/{moneda}` (una opción), `POST` y `DELETE /api/coins/{moneda}/history` (pedirla o sacarla de la espera) y `POST /api/coins/history/stop`. Quitar de la suite sigue en `DELETE /api/suite/symbols/{moneda}`.
+- **Pruebas:** `tests/coins_checks.py` (94), con herramientas falsas en una carpeta temporal: el registro y su archivo dañado, las listas al arrancar, una descarga a la vez, la espera tras otra del panel o de su cola, el avance, armar al terminar y lo que lo impide, un armado que falla, «Detener», el reinicio, lo que ocupa y escribe por día, las rutas y que `main.py` usa el registro. `web/tests/coins.test.mjs` (9), los textos.
+- **Probado en dos copias aisladas** a 1366×768:
+  - con el `OrderFlowData` real, solo mirando (Oscuro): las 23 monedas del usuario, unos 204 MB por día entre todas y la descarga de RUNE desde el panel con su avance (57 %, 1,044 de 1,820 días); agregar, quitar, apagar el libro, el Swing y «Pestañas»;
+  - con herramientas falsas (Nítido): bajar la historia, la espera, «Detener», «Seguir bajando», el armado solo al terminar, apagar el almacén y «Agregar a la suite» del scanner.
+
+  No se probó en Electron ni con una descarga real de Bybit.
+
 ## Escritorio (Electron)
 
 Pedido del usuario (12/11): que la app no se congele por inactividad (el navegador frena las pestañas en segundo plano) y no pierda datos ni alertas. La página es la misma que sirve el servidor; Electron solo la muestra sin ese freno.
@@ -1331,11 +1367,12 @@ C:\Python314\python.exe -B tests\book_defense_checks.py
 C:\Python314\python.exe -B tests\book_events_checks.py
 C:\Python314\python.exe -B tests\wise_smc_checks.py
 C:\Python314\python.exe -B tests\scanner_checks.py
+C:\Python314\python.exe -B tests\coins_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
 
-Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5). Las líneas de la cinta: `node tests/tapelines.test.mjs` (6). La pestaña de las monedas del scanner: `node tests/tabchoice.test.mjs` (6).
+Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5). Las líneas de la cinta: `node tests/tapelines.test.mjs` (6). La pestaña de las monedas del scanner: `node tests/tabchoice.test.mjs` (6). Los textos del módulo "Monedas": `node tests/coins.test.mjs` (9).
 
 `journal_checks.py` pone `SUITE_ORDERFLOW_DATA` en una carpeta temporal y reemplaza el pedido de OI a Bybit por uno falso: la lectura de la regla y las medidas nunca leen el almacén real ni salen a la red.
 
