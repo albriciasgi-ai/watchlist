@@ -55,6 +55,23 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 23 Noviembre 2026: Panel Lateral del Backtesting Global con Ancho Ajustable
+
+**Pedido:** poder ampliar o reducir hacia los lados el panel lateral donde están las reglas, arrastrando con el mouse: las tablas del barrido no cabían.
+
+**Cambios** (`RuleTesterApp.jsx`, `rule_tester.css`):
+1. **Borde arrastrable** entre el panel y el gráfico. El ancho va de 300 px hasta dejarle 320 al gráfico.
+2. **Doble clic** en el borde vuelve al ancho de fábrica (420 px).
+3. **Se guarda** con la vista de la ventana y se ajusta si la ventana se achica.
+
+**IMPORTANTE:**
+- Basta recargar la página: no cambió el backend.
+- No se vio en pantalla: la ventana compila.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Ventana"
+
+---
+
 ### App 1 - 23 Noviembre 2026: Barrido por Familias
 
 **Pedido:** tras su primer barrido, el usuario preguntó si tomaba los elementos por parejas y pidió poder barrer por familias. Eligió dejar el modo actual y sumar los dos de familias.

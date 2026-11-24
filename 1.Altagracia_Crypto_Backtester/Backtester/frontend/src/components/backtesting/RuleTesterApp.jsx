@@ -63,6 +63,15 @@ const DRAW_TOOLS = [['select', 'Cursor'], ['trendline', 'Línea de tendencia'], 
   ['rectangle', 'Rectángulo'], ['fibonacci', 'Fibonacci'], ['textbox', 'Texto'], ['tpsl', 'Caja TP/SL larga'], ['tpsl-short', 'Caja TP/SL corta']];
 const TF_MINUTES = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
 
+// Ancho del panel lateral (23/11/2026, pedido del usuario): se arrastra su borde derecho. El gráfico conserva 320 px
+const SIDE_DEFAULT = 420;
+const SIDE_MIN = 300;
+const clampSide = (width) => {
+  const room = typeof window === 'undefined' ? 1366 : window.innerWidth;
+  const value = Number(width);
+  return Math.round(Math.min(Math.max(SIDE_MIN, room - 320), Math.max(SIDE_MIN, Number.isFinite(value) ? value : SIDE_DEFAULT)));
+};
+
 const loadView = () => {
   try {
     return JSON.parse(localStorage.getItem(VIEW_KEY)) || {};
@@ -270,6 +279,10 @@ const RuleTesterApp = () => {
   useUiTheme();
   const symbol = useMemo(testerSymbol, []);
   const view = useMemo(loadView, []);
+  const [sideWidth, setSideWidth] = useState(() => clampSide(view.sideWidth ?? SIDE_DEFAULT));
+  const [sideDragging, setSideDragging] = useState(false);
+  const sideWidthRef = useRef(sideWidth);
+  sideWidthRef.current = sideWidth;
   const [info, setInfo] = useState(null);
   const [phase, setPhase] = useState(1);
   const [rule, setRule] = useState(() => ({ ...defaultRule(), ...(view.rule || {}) }));
@@ -367,11 +380,37 @@ const RuleTesterApp = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext, sections: openSections, planOpen }));
+      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext, sections: openSections, planOpen, sideWidth }));
     } catch {
       // Sin almacenamiento la vista dura hasta cerrar la ventana
     }
-  }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext, openSections, planOpen]);
+  }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext, openSections, planOpen, sideWidth]);
+
+  // Arrastrar el borde del panel: el ancho sigue al mouse hasta soltarlo. Doble clic vuelve al de fábrica
+  const startSideDrag = useCallback((event) => {
+    event.preventDefault();
+    const origin = event.clientX;
+    const from = sideWidthRef.current;
+    const move = (e) => setSideWidth(clampSide(from + e.clientX - origin));
+    const stop = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', stop);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+      setSideDragging(false);
+    };
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = 'col-resize';
+    setSideDragging(true);
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', stop);
+  }, []);
+  useEffect(() => {
+    // Si la ventana se achica, el panel no deja al gráfico sin lugar
+    const fit = () => setSideWidth(previous => clampSide(previous));
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, []);
 
   // Monedas nuevas y acciones no tienen caché de App 1: sus velas salen del probador (del disco). Pedirlas a
   // /api/backtesting/bulk-data las bajaría de Bybit y las guardaría en ese caché, que está en git y decide cuáles
@@ -2750,7 +2789,7 @@ const RuleTesterApp = () => {
       </div>
 
       <div className="rt-body">
-        <div className="rt-side">
+        <div className="rt-side" style={{ width: sideWidth }}>
           <div className="rt-tabs">
             {tabs.map(([key, label]) => <button key={key} type="button" className={`rt-tab${tab === key ? ' on' : ''}`} onClick={() => setTab(key)}>{label}</button>)}
           </div>
@@ -2829,7 +2868,9 @@ const RuleTesterApp = () => {
           </div>
         </div>
 
-        <div className="rt-chart backtesting-main" onMouseDown={() => { setShowList(false); setShowDraw(false); }}>
+        <div className={`rt-split${sideDragging ? ' on' : ''}`} onMouseDown={startSideDrag} onDoubleClick={() => setSideWidth(clampSide(SIDE_DEFAULT))}
+          title="Arrastra para cambiar el ancho del panel. Doble clic: el ancho de fábrica" />
+        <div className="rt-chart backtesting-main" style={sideDragging ? { pointerEvents: 'none' } : undefined} onMouseDown={() => { setShowList(false); setShowDraw(false); }}>
           {status && <div className="rt-overlay">{status}</div>}
           {!status && phaseInfo && !chartOpen && !ordersView && (
             <div className="rt-overlay" style={{ zIndex: 5, background: 'var(--t-page, #fff)', opacity: 1, flexDirection: 'column', gap: 12 }}>
