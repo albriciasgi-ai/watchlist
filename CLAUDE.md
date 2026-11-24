@@ -55,6 +55,35 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 24 Noviembre 2026: Consolidado de Estrategias y las Abiertas Repetidas con el Motor 6
+
+**Pedido:** un informe consolidado de todo lo probado en las distintas sesiones, con los parámetros, los resultados y el análisis de cada estrategia que llegó a la fase 2 o a la 3 (incluida la del VPA), y qué se podría mejorar. Después, repetir con el motor 6 las fases ya vistas de las que habían quedado abiertas.
+
+**Cambios:** ninguno en el código.
+1. **`1.Altagracia_Crypto_Backtester/Backtester/CONSOLIDADO_ESTRATEGIAS.pdf`** (14 páginas): cuadro general, una ficha por estrategia, lo que no salió de la fase 1, lo que cambió la forma de medir, qué tienen en común las que fallaron y qué probar distinto.
+2. **Repetición con el motor 6,** por script, con las reglas exactas del registro, juntadas como el informe "Todas" y sin guardar corridas (`OrderFlowData/research/consolidado/2026-11-24/`).
+
+**IMPORTANTE:**
+- **Con el motor 6 ninguna estrategia pasa las tres fases, y solo la B5 pasa la fase 2** (en las 7 monedas de siempre; cae en la fase 3).
+- **Las que habían pasado la fase 2 con la medición anterior ya no la pasan,** aunque ganan lo mismo:
+
+| Regla | Fase 2, de siempre | Fase 2, nuevas | Lo que le falta |
+|---|---|---|---|
+| Impulso, 3R | 652 trades, +0.207 R | 3,539 trades, +0.197 R | Le gana al azar con margen; al tramo y a su trimestre y lado, +0.15 con el borde bajo en −0.02 |
+| FVG nuevo a mercado, 3R | 781, +0.184 R | 4,709, +0.100 R | Sin margen sobre el tramo ni su trimestre. Pasa solo la fase 1 de las de siempre |
+| B1 | 213, +0.271 R | 1,283, +0.141 R | Solo le gana al azar, y en las de siempre |
+| Ruptura con volumen (VPA) | 586, +0.166 R | 3,379, +0.205 R | Ningún control con margen. En la fase 3 queda bajo el azar de su trimestre y lado (−0.13 y −0.08) |
+
+- **Lo que cambió es el margen, no el R:** con los trades agrupados por semana, una fase de 18 meses da un margen de ±0.17 a ±0.20 R. Una ventaja real de +0.15 no se puede confirmar en una sola fase.
+- **Impulso es la que queda más cerca:** positiva en las dos fases y los dos grupos, 38 de 43 monedas nuevas.
+- **La fase 3 de Impulso, FVG nuevo y B1 no se corrió:** nunca se miró.
+- **La lectura de fondo:** casi todo lo que llegó lejos es la misma apuesta (momentum de 4 horas, stop de 1 a 2 ATR, 2 a 3R), que gana junta en las fases 1 y 2 y cae junta en la 3.
+- Hay dos B5 con el mismo nombre (stop en la vela del elemento o de 1.5 ATR): el informe dice de cuál es cada cifra.
+
+**Ver:** el PDF, y `OrderFlowData/research/consolidado/2026-11-24/motor6_abiertas.log`
+
+---
+
 ### App 1 + Altagracia Trading Suite - 24 Noviembre 2026: DX no Pasa con el Motor 6, y el Registro en Vivo ya no Repite Revisiones
 
 **Pedido:** el usuario preguntó cómo se iba a probar DX. Al mirar su registro en vivo salieron las mismas 13 revisiones repetidas en cada vela, y pidió investigarlo.
