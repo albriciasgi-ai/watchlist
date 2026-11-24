@@ -7,7 +7,7 @@ import { defaultWilliamsConfig } from '../indicators/williams.js';
 import { defaultSmcConfig } from '../indicators/smcStructure.js';
 
 export const TESTER_PARAM = 'probador';
-export const RULE_TIMEFRAMES = [5, 15, 30, 60, 240, 1440];
+export const RULE_TIMEFRAMES = [5, 15, 30, 45, 60, 240, 1440];
 export const DAILY_TF = 1440; // En 1 día la regla corre sobre velas: solo valen los elementos que no necesitan el almacén de trades
 export const CHART_TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h'];
 export const TF_LABEL = { 5: '5m', 15: '15m', 30: '30m', 45: '45m', 60: '1h', 240: '4h', 1440: '1D' };
