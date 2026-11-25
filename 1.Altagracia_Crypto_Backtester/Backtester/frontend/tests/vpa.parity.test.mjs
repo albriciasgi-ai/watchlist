@@ -62,7 +62,10 @@ print(json.dumps(clean({"s": s, "ev": ev})))
 `;
 
 const KEYS = ['atr', 'rv', 'rr', 'q', 'absorb', 'trap', 'valid', 'upper', 'lower', 'body', 'closeLoc', 'star', 'hammer', 'doji',
-  'ext', 'maturity', 'fade', 'contrib', 'meter', 'leg', 'legStart', 'legExtreme', 'dir', 'hang', 'invh'];
+  'ext', 'maturity', 'fade', 'contrib', 'meter', 'leg', 'legStart', 'legExtreme', 'dir', 'hang', 'invh',
+  'rvn', 'rrn', 'rvHi', 'wide', 'absorbE', 'validE', 'boxLow', 'boxHigh'];
+// Los valores que repiten la regla de antes del motor 7 (galería 2 del protocolo de pruebas, 24/11/2026)
+const BEFORE_M7 = { nearBars: 0, skipAfterWide: false, wideResult: false, wideMeter: false, testBox: false, testAfter: false, stopWick: [0.25, 0.4], pullBack: false };
 const nn = (x) => (typeof x === 'number' && Number.isNaN(x) ? null : x);
 
 function runPython(bars, tf, cfg) {
@@ -96,22 +99,62 @@ test('los parámetros fuera de rango vuelven a un valor válido', () => {
   assert.equal(p.legAtr, 0.5);
 });
 
+const strip = (e) => ({ code: e.code, dir: e.dir, index: e.index, lo: e.lo, hi: e.hi, grade: e.grade });
+
 for (const [tf, step, n, seed] of [[240, 14400000, 1500, 7], [15, 900000, 4000, 11], [1440, 86400000, 400, 3]]) {
-  test(`vpa.js y vpa.py dan lo mismo al bit en ${tf} minutos`, () => {
-    const bars = randomBars(n, seed, step);
-    const cfg = defaultVpaParams();
-    const py = runPython(bars, tf, cfg);
-    const js = computeVpa(bars, tf, cfg);
-    for (const key of KEYS) {
-      assert.equal(js.s[key].length, n, key);
-      for (let i = 0; i < n; i += 1) assert.equal(nn(js.s[key][i]), py.s[key][i], `${key}[${i}]`);
-    }
-    const strip = (e) => ({ code: e.code, dir: e.dir, index: e.index, lo: e.lo, hi: e.hi, grade: e.grade });
-    assert.deepEqual(js.events.map(strip), py.ev.map(strip));
-    const codes = new Set(js.events.map(e => e.code));
-    if (tf !== 1440) for (const code of ['QA', 'QB', 'QT', 'QE']) assert.ok(codes.has(code), `aparece ${code}`);
-  });
+  for (const [name, extra, must] of [['de fábrica', {}, ['QA', 'QV', 'QB', 'QE', 'QG']], ['con la regla de antes del motor 7', BEFORE_M7, ['QA', 'QB', 'QT', 'QE']]]) {
+    test(`vpa.js y vpa.py dan lo mismo al bit en ${tf} minutos, ${name}`, () => {
+      const bars = randomBars(n, seed, step);
+      const cfg = { ...defaultVpaParams(), ...extra };
+      const py = runPython(bars, tf, cfg);
+      const js = computeVpa(bars, tf, cfg);
+      for (const key of KEYS) {
+        assert.equal(js.s[key].length, n, key);
+        for (let i = 0; i < n; i += 1) assert.equal(nn(js.s[key][i]), py.s[key][i], `${key}[${i}]`);
+      }
+      assert.deepEqual(js.events.map(strip), py.ev.map(strip));
+      const codes = new Set(js.events.map(e => e.code));
+      if (tf !== 1440) for (const code of must) assert.ok(codes.has(code), `aparece ${code}`);
+    });
+  }
 }
+
+test('motor 7: con la regla de antes, los elementos de siempre no cambian; de fábrica, lo alto también frente a las vecinas', () => {
+  const bars = randomBars(3000, 13, 14400000);
+  const before = computeVpa(bars, 240, { ...defaultVpaParams(), ...BEFORE_M7 });
+  const now = computeVpa(bars, 240);
+  // El medidor solo cambia por wideMeter, y solo en las velas anchas
+  const meterOld = computeVpa(bars, 240, { ...defaultVpaParams(), wideMeter: false });
+  for (let i = 0; i < bars.length; i += 1) assert.equal(meterOld.s.meter[i], before.s.meter[i], `meter[${i}]`);
+  let moved = 0;
+  for (let i = 0; i < bars.length; i += 1) {
+    if (now.s.contrib[i] !== meterOld.s.contrib[i]) {
+      moved += 1;
+      assert.ok(now.s.wide[i] > 0, `el medidor cambia en una vela que no es ancha ${i}`);
+      assert.ok(now.s.absorb[i] <= meterOld.s.absorb[i] && now.s.valid[i] >= meterOld.s.valid[i], `${i}`);
+    }
+  }
+  assert.ok(moved > 0, 'alguna vela ancha cambia el medidor');
+  const fire = now.cfg.fire;
+  for (const e of now.events) {
+    const i = e.index;
+    if (['QA', 'QV', 'QB'].includes(e.code)) assert.ok(now.s.rvHi[i] <= now.s.rv[i] && now.s.rvHi[i] <= now.s.rvn[i], `${e.code} ${i}`);
+    if (e.code === 'QA') assert.ok(!(now.s.wide[i - 1] >= fire), `esfuerzo tras una vela ancha ${i}`);
+    if (e.code === 'QA') assert.ok(!(now.s.wide[i] > 1 - fire), `esfuerzo sin resultado en una vela ancha ${i}`);
+    if (e.code === 'QV') assert.ok(now.s.wide[i] >= fire, `esfuerzo con resultado en una vela que no es ancha ${i}`);
+    if (e.code === 'QT') assert.ok(Number.isFinite(now.s.boxLow[i]), `prueba fuera de una caja ${i}`);
+    if (e.code === 'QR') assert.ok(Number.isFinite(e.info.breakout), 'el retroceso sabe su ruptura');
+  }
+  // Lo que no cambió: la ruptura sin volumen; y el cruce del medidor, sin wideMeter
+  const only = (r, code) => r.events.filter(e => e.code === code).map(strip);
+  assert.deepEqual(only(now, 'QF'), only(before, 'QF'), 'QF');
+  assert.deepEqual(only(meterOld, 'QE'), only(before, 'QE'), 'QE');
+  // El esfuerzo sin resultado y la ruptura con volumen de fábrica están entre los de antes
+  for (const code of ['QA', 'QB']) {
+    const old = new Set(before.events.filter(e => e.code === code).map(e => `${e.index}:${e.dir}`));
+    for (const e of now.events.filter(x => x.code === code)) assert.ok(old.has(`${e.index}:${e.dir}`), `${code} ${e.index}`);
+  }
+});
 
 test('agregar velas no cambia lo ya calculado (sin futuro)', () => {
   const bars = randomBars(1200, 5, 14400000);
@@ -128,6 +171,7 @@ test('el cuadro de la vela dice lo que leyó', () => {
   const lines = describeVpa(reader, 399);
   assert.ok(lines.length >= 2);
   assert.ok(lines.at(-1).startsWith('Tramo'));
+  assert.match(lines[0], /su hora · .* las 20 anteriores/, 'el volumen, contra su hora y contra las vecinas');
   assert.deepEqual(describeVpa(reader, 0), ['Sin volumen normal de esta hora todavía (primeros días)']);
 });
 

@@ -405,15 +405,26 @@ def clean_rule(raw):
         if struct_tf not in structure.STRUCT_TFS or struct_tf < tf or struct_tf % tf:
             struct_tf = tf
         # tf: marco de las velas de la estructura. offset: minutos desde las 00:00 UTC en que empiezan (810 = 13:30)
+        # ref: el swing que se rompe, el que originó el último tramo ("origin") o el último ("last", la regla hasta el
+        # motor 6). closes: un extremo nuevo de la tendencia cuenta si alguna vela cerró más allá del anterior. Los dos,
+        # de fábrica desde el motor 7 (decidido por el usuario el 24/11/2026, galería del protocolo de pruebas)
         extra["cc"] = {"tf": struct_tf, "offset": int(_num(cc.get("offset"), 0, 0, 1439)) % struct_tf,
-                       "swing": int(_num(cc.get("swing"), 3, 2, 20)), "legs": int(_num(cc.get("legs"), 2, 2, 5))}
+                       "swing": int(_num(cc.get("swing"), 3, 2, 20)), "legs": int(_num(cc.get("legs"), 2, 2, 5)),
+                       "ref": "last" if cc.get("ref") == "last" else "origin", "closes": cc.get("closes") is not False}
     if any(c in PATTERN_CODES for slot in recipe["slots"] for c in slot["codes"]):
         pat = raw.get("pat") or {}
         # trend: el patrón pide un movimiento previo en contra, de trendBars velas. minZ: z-score mínimo del volumen de su vela
         # contra las 20 anteriores (None = sin filtro). wick: mecha mínima del martillo y la estrella, en cuerpos
+        # Desde el motor 7 (23/11/2026, decidido por el usuario en la galería del protocolo de pruebas): el patrón cuenta si
+        # lo que hace mide al menos minPart ATR (la mecha del martillo, la estrella y el doji; el cuerpo de la envolvente)
+        # y si es un swing: su extremo pasa el de las swingBefore velas anteriores y las swingAfter siguientes no lo
+        # alcanzan. Se conoce al cerrar la última de ellas. 0 apaga cada filtro
         extra["pat"] = {"trend": pat.get("trend") is not False, "trendBars": int(_num(pat.get("trendBars"), 5, 1, 50)),
                         "minZ": None if pat.get("minZ") in (None, "") else _num(pat.get("minZ"), 1.0, -3.0, 20.0),
-                        "wick": _num(pat.get("wick"), 2.0, 0.5, 10.0)}
+                        "wick": _num(pat.get("wick"), 2.0, 0.5, 10.0),
+                        "minPart": _num(pat.get("minPart"), 0.5, 0.0, 5.0),
+                        "swingBefore": int(_num(pat.get("swingBefore"), 5, 0, 50)),
+                        "swingAfter": int(_num(pat.get("swingAfter"), 2, 0, 20))}
     if any(c in RV_CODES for slot in recipe["slots"] for c in slot["codes"]):
         rv = raw.get("rv") or {}
         # leg: ATR con que gira el tramo. spike: veces el volumen normal de su hora. arrow: la flecha va a favor del
@@ -471,9 +482,10 @@ def clean_rule(raw):
         extra["bx"] = {"maxHeight": None if bx.get("maxHeight") in (None, "", 0) else _num(bx.get("maxHeight"), 5.0, 0.5, 50.0)}
     if "BE" in codes_used:
         be = raw.get("be") or {}
-        # share: parte de la caja que cuenta como borde. maxBody: cuerpo máximo de la vela en ATR (0 = sin límite).
+        # share: parte de la caja que cuenta como borde (5% de fábrica desde el motor 7, decidido por el usuario el
+        # 23/11/2026; antes 20%). maxBody: cuerpo máximo de la vela en ATR (0 = sin límite).
         # rejection: dónde tiene que cerrar la vela, de 0 (en el borde) a 1 (en el otro extremo de su vela)
-        extra["be"] = {"share": _num(be.get("share"), 0.2, 0.05, 0.5), "maxBody": _num(be.get("maxBody"), 1.0, 0.0, 10.0),
+        extra["be"] = {"share": _num(be.get("share"), 0.05, 0.02, 0.5), "maxBody": _num(be.get("maxBody"), 1.0, 0.0, 10.0),
                        "rejection": _num(be.get("rejection"), 0.6, 0.0, 1.0)}
         if be.get("pattern"):
             extra["be"]["pattern"] = True  # Además un patrón de rechazo a favor en la vela; solo entra si se pide
@@ -749,6 +761,8 @@ def _vpa_exit_bars(rule, ctx):
       climax  clímax o frenado (QC, QS) contra el lado del trade
       absorb  esfuerzo sin resultado contra el trade (una vela verde con mucho volumen y poco rango avisa a los largos)
       push    retroceso con volumen: una vela validada (rango ancho con volumen alto) del color contrario al trade
+    Desde el motor 7, absorb y push leen el grado de los elementos (QA y QV): alto para su hora y frente a las velas
+    anteriores
       meter   el medidor en contra del trade, a thr o más
       fade    el esfuerzo se agota en un tramo del lado del trade"""
     ve = rule["exit"]["vpa"]
@@ -765,11 +779,11 @@ def _vpa_exit_bars(rule, ctx):
         _vpa_note(out[-e["dir"]], e["index"], "VPA: " + VPA_EXITS["climax"])
     for i in range(len(ctx["C"])):
         d, leg = series["dir"][i], series["leg"][i]
-        if "absorb" in on and finite(series["absorb"][i]) and series["absorb"][i] >= fire:
+        if "absorb" in on and finite(series["absorbE"][i]) and series["absorbE"][i] >= fire:
             against = -d if d else -leg
             if against:
                 _vpa_note(out[-against], i, "VPA: " + VPA_EXITS["absorb"])
-        if "push" in on and d and finite(series["valid"][i]) and series["valid"][i] >= fire:
+        if "push" in on and d and finite(series["validE"][i]) and series["validE"][i] >= fire:
             _vpa_note(out[-d], i, "VPA: " + VPA_EXITS["push"])
         if "meter" in on and finite(series["meter"][i]) and finite(series["rv"][i]):
             for side in (1, -1):
@@ -1854,13 +1868,40 @@ def _bars_key(bars):
             sum(b["vol"] for b in bars))
 
 
+def _pattern_part(kind, bar):
+    """Lo que hace el patrón: la mecha del martillo y del doji libélula (abajo), de la estrella y del doji lápida
+    (arriba), y el cuerpo de la envolvente."""
+    if kind in ("HAMMER", "DOJI_DRAGONFLY"):
+        return min(bar["o"], bar["c"]) - bar["l"]
+    if kind in ("SHOOTING_STAR", "DOJI_GRAVESTONE"):
+        return bar["h"] - max(bar["o"], bar["c"])
+    return abs(bar["c"] - bar["o"])
+
+
+def _pattern_swing(bars, first, i, side, before, after):
+    """El extremo del patrón (de sus velas, de first a i) pasa el de las `before` velas anteriores y las `after`
+    siguientes no lo alcanzan: un empate no es swing. Da el índice de la vela que lo confirma, o None."""
+    key = "l" if side > 0 else "h"
+    extreme = min(b[key] for b in bars[first:i + 1]) if side > 0 else max(b[key] for b in bars[first:i + 1])
+    reaches = (lambda v: v <= extreme) if side > 0 else (lambda v: v >= extreme)
+    if first - before < 0 or i + after >= len(bars):
+        return None
+    if any(reaches(b[key]) for b in bars[first - before:first]) or any(reaches(b[key]) for b in bars[i + 1:i + after + 1]):
+        return None
+    return i + after
+
+
 def _pattern_events(rule, span):
-    """Patrones de vela de candle_patterns sobre las velas de la fase: una vela, a lo sumo un patrón."""
+    """Patrones de vela de candle_patterns sobre las velas de la fase: una vela, a lo sumo un patrón. Desde el motor 7,
+    solo los de tamaño (minPart ATR) y en un swing confirmado (swingBefore y swingAfter velas), conocidos al cerrar la
+    vela que confirma el swing. La envolvente es de dos velas: su zona y su primera vela (`first`, para el stop por la
+    vela del elemento) son las dos."""
     pat = rule.get("pat")
     bars = span["bars"]
     if not pat or not bars:
         return []
-    key = (_bars_key(bars), rule["tf"], "pat", pat["trend"], pat["trendBars"], pat["minZ"], pat["wick"])
+    key = (_bars_key(bars), rule["tf"], "pat", pat["trend"], pat["trendBars"], pat["minZ"], pat["wick"],
+           pat.get("minPart", 0.0), pat.get("swingBefore", 0), pat.get("swingAfter", 0))
     with _lock:
         found = _extra.get(key)
     if found is None:
@@ -1869,12 +1910,31 @@ def _pattern_events(rule, span):
         opts = {"minWickRatio": pat["wick"], "enabled": {"hammer": True, "shootingStar": True, "engulfing": True, "doji": True},
                 "requireTrend": pat["trend"], "trendBars": pat["trendBars"],
                 "volume": {"enabled": pat["minZ"] is not None, "lookback": 20, "minZ": pat["minZ"] if pat["minZ"] is not None else 0.0}}
+        atr = os_._series(bars)[1] if pat.get("minPart", 0.0) > 0 else None
+        before, after = pat.get("swingBefore", 0), pat.get("swingAfter", 0)
         found = []
         for p in candle_patterns.find_patterns(candles, opts):
-            b = bars[p["index"]]
-            found.append({"code": PATTERN_OF[p["type"]], "dir": 1 if p["type"] in candle_patterns.BULLISH else -1, "t": b["t"],
-                          "known": b["t"] + tf_ms, "lo": b["l"], "hi": b["h"],
-                          "info": {"type": p["type"], "volumeZ": None if p["volumeZ"] is None else round(p["volumeZ"], 2)}})
+            i, kind = p["index"], p["type"]
+            b, code, side = bars[i], PATTERN_OF[kind], 1 if kind in candle_patterns.BULLISH else -1
+            part = _pattern_part(kind, b)
+            if atr is not None and not (atr[i] > 0 and part >= pat["minPart"] * atr[i]):
+                continue
+            first = i - 1 if code == "EN" and i > 0 else i
+            k = i
+            if before or after:
+                k = _pattern_swing(bars, first, i, side, before, after)
+                if k is None:
+                    continue
+            event = {"code": code, "dir": side, "t": b["t"], "known": bars[k]["t"] + tf_ms,
+                     "lo": min(x["l"] for x in bars[first:i + 1]), "hi": max(x["h"] for x in bars[first:i + 1]),
+                     "info": {"type": kind, "volumeZ": None if p["volumeZ"] is None else round(p["volumeZ"], 2),
+                              **({"partAtr": round(float(part / atr[i]), 2)} if atr is not None else {}),
+                              **({"confirmed": int(bars[k]["t"])} if k != i else {})}}
+            if first != k:
+                # El voto cae en la vela que confirma el swing: el stop "extremo de la vela del elemento" cubre desde la
+                # primera vela del patrón (como el FVG con sus tres velas, H16)
+                event["first"] = bars[first]["t"]
+            found.append(event)
         with _lock:
             _extra[key] = found
             while len(_extra) > 6:
@@ -1927,11 +1987,12 @@ def _cc_events(rule, span):
     bars = span["bars"]
     if not cc or not bars:
         return []
-    key = (_bars_key(bars), rule["tf"], "cc", cc["tf"], cc["offset"], cc["swing"], cc["legs"])
+    ref, closes = cc.get("ref", "origin"), cc.get("closes", True)
+    key = (_bars_key(bars), rule["tf"], "cc", cc["tf"], cc["offset"], cc["swing"], cc["legs"], ref, closes)
     with _lock:
         found = _extra.get(key)
     if found is None:
-        found = structure.events(bars, rule["tf"], cc["tf"], cc["offset"], cc["swing"], cc["legs"])
+        found = structure.events(bars, rule["tf"], cc["tf"], cc["offset"], cc["swing"], cc["legs"], ref, closes)
         with _lock:
             _extra[key] = found
             while len(_extra) > 6:
@@ -2141,8 +2202,9 @@ LABELS = {"WD": "Barra divergente", "WA": "AO tres barras", "WF": "Ruptura de fr
           "VX": "Aceptación fuera del valor", "VE": "Borde del valor", "CC": "Cambio de carácter", "HM": "Martillo o estrella",
           "EN": "Envolvente", "DJ": "Doji", "RF": "Flecha de volumen", "RB": "Rombo de volumen", "GC": "Canal gaussiano",
           "BX": "Ruptura de caja", "BE": "Borde de caja", "FV": "FVG nuevo", "SP": "Swing",
-          "QA": "Esfuerzo sin resultado", "QB": "Ruptura con volumen", "QF": "Ruptura sin volumen", "QR": "Retroceso sin volumen",
-          "QT": "Prueba de poco volumen", "QS": "Frenado o techo", "QC": "Clímax de volumen", "QE": "Medidor VPA",
+          "QA": "Esfuerzo sin resultado", "QV": "Esfuerzo con resultado", "QB": "Ruptura con volumen", "QF": "Ruptura sin volumen",
+          "QR": "Retroceso sin volumen", "QT": "Prueba de poco volumen", "QS": "Frenado o techo", "QC": "Clímax de volumen",
+          "QE": "Medidor VPA", "QG": "Giro del medidor",
           "FB": "Falso rompimiento", "BA": "Ruptura tras acumulación", "TA": "Trampa de absorción", "PO": "Purga de OI",
           "DS": "Apilados con regreso", "DN": "Nodo doble con regreso", "DG": "Orden grande con regreso",
           "DA": "Acumulación con regreso", "DC": "Cluster del tramo con regreso", "DX": "Apilados desplazados con regreso"}
@@ -2852,8 +2914,15 @@ def _regime_ok(a, reg):
         ok = ~state
     else:
         ok = np.zeros(len(state), dtype=bool)
+        import regime
+        atr_ = regime.atr(a["h"], a["l"], a["c"])
         for z in zones["zones"]:
-            ok[z["end"] + 1:z["end"] + 1 + reg["after"]] = True  # La vela que rompe y las que siguen
+            i = z["end"] + 1
+            # Solo las cajas que rompió el precio: una caja de la eficiencia también termina cuando su eficiencia pasa de
+            # exit_er, sin cierre afuera (F-18 del protocolo de pruebas, motor 7). El rango mayor termina con cierres fuera
+            if not reg["major"] and i < len(a["c"]) and z["low"] - params["buffer"] * atr_[i] <= a["c"][i] <= z["high"] + params["buffer"] * atr_[i]:
+                continue
+            ok[i:i + reg["after"]] = True  # La vela que rompe y las que siguen
         ok &= ~state
     ok[:params["n"]] = False  # Antes de tener las velas del detector no se sabe el régimen
     return ok
@@ -3161,7 +3230,7 @@ def _runs_path():
 # esperan (limit, orden stop, dos órdenes) y una posición a la vez, si dos se llenan en la misma vela entra la que se llenó
 # primero (_fill_time); antes, la de la señal más vieja, que con limit suele estar más adentro y llenarse después a mejor
 # precio (F-04 del protocolo de pruebas: en BTC 4h, fase 1, la limit en el borde cercano del FVG pasa de +0.241 a +0.200 R)
-ENGINE = 6
+ENGINE = 7
 
 
 def _stale(record):
@@ -3179,8 +3248,42 @@ def _stale(record):
       las señales opuestas en la misma vela (H19), lo a favor desde el llenado (H4), el medidor VPA simétrico (H22), las
       velas de antes de la fase (H2), el barrido de zona que se desarma (H23) y el azar que respeta la línea y el horario
       (H1). Cambian los trades o el azar de casi todas las reglas: todas las anteriores quedan fuera.
+    - 7 (23 y 24/11/2026, galería del protocolo de pruebas, decidido por el usuario): los patrones de vela solo con
+      tamaño y en un swing confirmado; el rombo del Volumen de Respuesta solo cuando sube la respuesta (y con él la
+      medida "velas desde el último equilibrio"); la ruptura de caja con el primer cierre afuera (y sin la de una caja que
+      termina por su eficiencia, F-18, también en el filtro de régimen "tras romper"); el borde de caja al 5% y con el
+      rearme después de la llegada (F-19); el cambio de carácter con el swing que originó el tramo, la tendencia
+      confirmada por cierres y el extremo de la tendencia (F-20). Del lector VPA (24/11, galería 2): el volumen alto de
+      los elementos también frente a las 20 velas anteriores, el esfuerzo sin resultado no en una vela ancha ni tras ella,
+      el esfuerzo con resultado en la vela ancha con volumen alto, la prueba dentro de una caja y tras un frenado o un
+      clímax, el frenado con mecha de media vela y el retroceso con una vela en contra (y con ellos los avisos de la salida
+      VPA que los leen); y el medidor, que lee la vela ancha con volumen alto como los elementos (su cruce, su giro, su
+      filtro y la salida por el medidor). Solo quedan fuera las corridas que usan alguno.
     """
-    return record.get("engine", 1) < 6
+    engine = record.get("engine", 1)
+    return engine < 6 or (engine < 7 and _touched_by_engine7(record.get("rule") or {}))
+
+
+# Lo que cambió con el motor 7: los patrones, el rombo, las cajas y el cambio de carácter (galería 1) y los elementos del
+# lector VPA (galería 2), con el medidor (su cruce QE, su filtro y su aviso en la salida). La ruptura sin volumen (QF) y
+# el esfuerzo que se agota (fade) no cambiaron
+ENGINE7_CODES = {"HM", "EN", "DJ", "RB", "BX", "BE", "CC", "QA", "QV", "QB", "QR", "QT", "QS", "QC", "QE", "QG"}
+ENGINE7_VPA_EXITS = {"climax", "absorb", "push", "meter"}  # Los avisos de la salida VPA que leen lo que cambió
+
+
+def _touched_by_engine7(rule):
+    """La regla usa algo que cambió con el motor 7 (ver _stale)."""
+    codes = {c for slot in (rule.get("recipe") or {}).get("slots", []) for c in slot.get("codes", [])}
+    if codes & ENGINE7_CODES:
+        return True
+    if set(((rule.get("exit") or {}).get("vpa") or {}).get("on") or []) & ENGINE7_VPA_EXITS:
+        return True
+    if rule.get("vpaf"):  # El filtro del medidor, también leído en un marco mayor
+        return True
+    reg = rule.get("regime") or {}
+    if reg.get("mode") == "breakout" and not reg.get("major"):
+        return True
+    return any(str(f.get("key", "")).startswith("since_signal_") for f in rule.get("filters") or [])
 
 
 def _run_path(run_id):
@@ -3586,6 +3689,10 @@ def trade_context(run_id, number, before=CONTEXT_BEFORE, after=CONTEXT_AFTER):
         out["rows"].append(row("filters", f"Medidas: {text}", measured, value))
 
     codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
+    # Con elementos de order flow, el step de análisis del día de la señal: el gráfico dibuja el footprint con esas celdas,
+    # las de los elementos, y no con su step automático (O-39 del protocolo de pruebas, 25/11/2026)
+    if codes & set(oe.CATALOG) and has_store(symbol):
+        out["ofStep"] = oe.day_step(symbol, rule["tf"], trade["signal"])
     t0, t1 = out["from"], out["to"]
     out["elements"] = [{"code": ev["code"], "dir": ev["dir"], "t": ev["t"], "known": ev["known"], "lo": clean(ev["lo"]), "hi": clean(ev["hi"])}
                        for ev in trace["events"] if ev["code"] in codes and t0 <= ev["t"] < t1][:400]

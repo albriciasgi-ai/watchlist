@@ -389,7 +389,7 @@ function volumeRow(row) {
 
 const VPA_STATES = { favor: 'a favor', neutral: 'neutro', against: 'en contra' };
 const VPA_LAST = {
-  absorb: 'esfuerzo sin resultado', trap: 'resultado sin esfuerzo', valid: 'validado', star: 'estrella',
+  absorb: 'esfuerzo sin resultado', trap: 'resultado sin esfuerzo', valid: 'esfuerzo con resultado', star: 'estrella',
   hammer: 'martillo', hang: 'hanging man', doji: 'doji', fade: 'el esfuerzo se agota'
 };
 

@@ -79,11 +79,13 @@ def ramp(points):
 def test_la_regla_filtra_con_la_ema_de_la_hora_y_la_anota_en_el_trade(monkeypatch):
     monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
     raw = {"name": "P", "tf": 15, "recipe": {"slots": [{"codes": ["HM"]}]}, "stop": {"type": "candle", "buffer": 0.1, "maxAtr": 100},
-           "exit": {"targetR": None, "horizon": 5}, "cooldown": 0, "lines": [{"type": "ema", "period": 3, "mode": "side", "tf": 60}]}
+           "exit": {"targetR": None, "horizon": 5}, "cooldown": 0, "lines": [{"type": "ema", "period": 3, "mode": "side", "tf": 60}],
+           # El martillo como hasta el motor 6 (sin tamaño ni swing): esta prueba es del filtro de la EMA
+           "pat": {"minPart": 0, "swingBefore": 0, "swingAfter": 0}}
     # Subiendo, el cierre de la última hora cerrada queda sobre su EMA: el martillo (largo) pasa
     rising = ramp([100 + k * 0.5 for k in range(60)] + [130] * 60)
     rising[45].update(o=122.9, c=123.0, h=123.05, l=121.5)
-    rule = rt.clean_rule({**raw, "pat": {"trend": False}})
+    rule = rt.clean_rule({**raw, "pat": {**raw["pat"], "trend": False}})
     (trade,) = rt.run("X", rule, {"bars": rising, "events": []}, PHASE, None, base=False)["trades"]
     ctx = rt._context("X", 15, rising)
     assert trade["signal"] == rising[45]["t"] and trade["lines"][0]["tf"] == 60

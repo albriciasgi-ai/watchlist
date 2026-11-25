@@ -16,6 +16,10 @@ export function defaultResponseConfig() {
     top: 5,
     dominance: 2,
     balance: 1,
+    // El rombo, solo en una vela de respuesta que sube el promedio de la respuesta (decidido por el usuario el 23/11/2026,
+    // galería del protocolo de pruebas). false: la regla de antes, que también daba el rombo cuando una vela de la
+    // tendencia dejaba la ventana
+    rising: true,
     adjustHour: true,
     spikeMultiple: 2,
     showArrows: true,
@@ -82,6 +86,7 @@ export class ResponseSeries {
     this.direction = [];
     this.start = [];
     this.balance = [];
+    this.answer = [];
     this.signal = [];
     this.rangeTotal = [0];
     this.hourVolumes = new Map();
@@ -161,6 +166,11 @@ export class ResponseSeries {
 
   /** T / R: promedio de las velas principales de la tendencia contra las de la respuesta */
   balanceAt(i) {
+    return this.readingAt(i)[0];
+  }
+
+  /** [T / R, R]: el balance y el promedio de las velas principales de la respuesta (null sin velas de respuesta) */
+  readingAt(i) {
     const { window, top } = this.config;
     const direction = this.direction[i];
     const trend = [];
@@ -169,11 +179,11 @@ export class ResponseSeries {
       if (this.side[j] === direction) trend.push(this.weight[j]);
       else if (this.side[j] === -direction) response.push(this.weight[j]);
     }
-    if (!response.length) return trend.length ? MAX_BALANCE : 1;
-    if (!trend.length) return MIN_BALANCE;
-    const answer = topAverage(response, top);
-    if (answer <= 0) return MAX_BALANCE;
-    return Math.min(MAX_BALANCE, Math.max(MIN_BALANCE, topAverage(trend, top) / answer));
+    const answer = response.length ? topAverage(response, top) : null;
+    if (!response.length) return [trend.length ? MAX_BALANCE : 1, answer];
+    if (!trend.length) return [MIN_BALANCE, answer];
+    if (answer <= 0) return [MAX_BALANCE, answer];
+    return [Math.min(MAX_BALANCE, Math.max(MIN_BALANCE, topAverage(trend, top) / answer)), answer];
   }
 
   push(candle) {
@@ -198,8 +208,9 @@ export class ResponseSeries {
     this.direction.push(this.leg.direction);
     this.start.push(this.leg.start);
 
-    const balance = this.balanceAt(i);
+    const [balance, answer] = this.readingAt(i);
     this.balance.push(balance);
+    this.answer.push(answer);
 
     if (this.start[i] !== this.armedLeg || (i > 0 && this.direction[i] !== this.direction[i - 1])) {
       this.armedLeg = this.start[i];
@@ -209,8 +220,14 @@ export class ResponseSeries {
     if (balance >= this.config.dominance) {
       this.armed = true;
     } else if (this.armed && balance <= this.config.balance) {
-      signal = true;
-      this.armed = false;
+      // Solo en una vela de respuesta que sube el promedio de la respuesta: si el balance baja porque una vela de la
+      // tendencia deja la ventana, el rombo sigue armado (measures.equilibrium del backend, la misma regla)
+      const sameLeg = i > 0 && this.start[i - 1] === this.start[i] && this.direction[i - 1] === this.direction[i];
+      const before = sameLeg ? this.answer[i - 1] : null;
+      if (this.config.rising === false || (this.side[i] === -this.direction[i] && (before === null || answer > before))) {
+        signal = true;
+        this.armed = false;
+      }
     }
     this.signal.push(signal);
   }

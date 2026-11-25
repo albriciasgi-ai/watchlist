@@ -1,12 +1,14 @@
 """
 Elementos del probador hechos con las cajas de la eficiencia con caja (regime_detectors.er_box), sin futuro:
 
-- BX, ruptura de caja: la vela que cierra fuera de una caja vigente y la termina, a favor de la ruptura. Se conoce
-  al cierre de esa vela. La zona es la caja entera.
-- BE, borde de caja: dentro de una caja vigente, la vela que llega al quinto (`share`) de arriba o de abajo, hacia
-  el centro. Un evento por llegada; se rearma cuando el precio vuelve al tercio del centro. Filtros del estudio:
+- BX, ruptura de caja: la primera vela que cierra fuera de una caja vigente, a favor de ese lado (desde el motor 7,
+  23/11/2026: antes era la vela que la terminaba, a más de 0.5 ATR, o la que seguía a una caja terminada por su
+  eficiencia aunque cerrara dentro, F-18). Se conoce al cierre de esa vela. La zona es la caja entera.
+- BE, borde de caja: dentro de una caja vigente, la vela que llega a la franja del borde (`share` de la caja: 5% de
+  fábrica desde el motor 7; antes, la quinta parte) de arriba o de abajo, hacia el centro. Un evento por llegada; se
+  rearma cuando una vela cierra en el tercio del centro, desde la vela siguiente (F-19). Filtros del estudio:
   la vela no puede ser grande (cuerpo ≤ `maxBody` ATR) y tiene que cerrar lejos del borde (en su vela, a
-  `rejection` o más del extremo del borde). La zona va del borde a su quinto: el stop "borde lejano de la zona"
+  `rejection` o más del extremo del borde). La zona va del borde a su franja: el stop "borde lejano de la zona"
   queda detrás del borde, y el objetivo "centro" es el centro de la caja. Con `pattern`, la vela tiene que ser además
   un patrón de rechazo a favor (martillo, envolvente o doji, con tendencia previa: la regla de candle_patterns).
 
@@ -59,18 +61,24 @@ def events(bars, tf, bx=None, be=None, cp=None):
                     out.append({"code": "CP", "dir": side, "t": int(t[i]), "known": int(t[i] + step), "lo": z["low"], "hi": z["high"],
                                 "info": {**box, "heightAtr": round(float(height / atr[i]), 2)}})
         if bx is not None:
-            i = z["end"] + 1
-            if i < len(c):
-                side = 1 if c[i] > mid else -1
+            # La primera vela que cierra fuera de la caja, desde que se conoce hasta la que la termina (motor 7, 23/11/2026:
+            # decidido por el usuario, sin el margen de 0.5 ATR con que la caja se da por terminada). Una caja que termina
+            # por su eficiencia sin ningún cierre afuera no da ruptura (F-18 del protocolo de pruebas)
+            for i in range(z["detected"] + 1, min(z["end"] + 2, len(c))):
+                if z["low"] <= c[i] <= z["high"]:
+                    continue
+                side = 1 if c[i] > z["high"] else -1
                 if bx.get("maxHeight") is None or height / atr[i] <= bx["maxHeight"]:
                     out.append({"code": "BX", "dir": side, "t": int(t[i]), "known": int(t[i] + step), "lo": z["low"], "hi": z["high"],
-                                "info": {**box, "heightAtr": round(float(height / atr[i]), 2), "bars": int(z["end"] - z["start"] + 1)}})
+                                "info": {**box, "heightAtr": round(float(height / atr[i]), 2), "bars": int(i - z["start"])}})
+                break
         if be is not None:
             share = be["share"]
             armed = {1: True, -1: True}
             for i in range(z["detected"] + 1, min(z["end"] + 1, len(c))):
-                if abs(c[i] - mid) < height / 6:
-                    armed = {1: True, -1: True}
+                # El rearme va después de mirar la llegada de la vela (F-19 del protocolo de pruebas, 23/11/2026): si la
+                # vela toca el borde y cierra en el centro, el toque fue antes de volver al centro y no es una llegada nueva
+                rearm = abs(c[i] - mid) < height / 6
                 for side, hit in ((1, l[i] <= z["low"] + share * height), (-1, h[i] >= z["high"] - share * height)):
                     if not hit or not armed[side]:
                         continue
@@ -86,4 +94,6 @@ def events(bars, tf, bx=None, be=None, cp=None):
                     lo, hi = (z["low"], z["low"] + share * height) if side > 0 else (z["high"] - share * height, z["high"])
                     out.append({"code": "BE", "dir": side, "t": int(t[i]), "known": int(t[i] + step), "lo": lo, "hi": hi,
                                 "info": {**box, "closeAt": round(float(close_at), 2)}})
+                if rearm:
+                    armed = {1: True, -1: True}
     return out

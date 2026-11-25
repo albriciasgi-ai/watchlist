@@ -17,6 +17,7 @@ import numpy as np
 
 import candle_patterns
 import measures
+import regime
 import regime_detectors as rd
 import rule_tester as rt
 
@@ -211,10 +212,14 @@ def breakouts(a, params=None):
     params = params or rd.PARAMS["er_box"]["params"]
     zones = rd.er_box(a, **params)["zones"]
     c, atr = a["c"], a["atr"]
+    box_atr = regime.atr(a["h"], a["l"], c)  # El ATR con que er_box da la caja por terminada
     out = []
     for z in zones:
         i = z["end"] + 1  # La vela que rompe
         if i >= len(c) - 2 or i < 210:
+            continue
+        # Una caja que terminó por su eficiencia, sin cierre a más del margen afuera, no se rompió (F-18 del protocolo)
+        if z["low"] - params["buffer"] * box_atr[i] <= c[i] <= z["high"] + params["buffer"] * box_atr[i]:
             continue
         mid = (z["low"] + z["high"]) / 2
         side = 1 if c[i] > mid else -1

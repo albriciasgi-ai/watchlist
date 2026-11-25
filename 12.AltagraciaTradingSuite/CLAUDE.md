@@ -1357,6 +1357,9 @@ Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el us
   - la carrera a 2 ATR, y lo máximo a favor, en contra y el cierre a 1, 4, 12 y 24 h;
   - lo que se movió antes, el OI, las cuentas en largo, la prima, el volumen de la última hora y BTC;
   - los 33 elementos de velas del probador de App 1 (`signal_sweep.element_signals`, ajustes de fábrica), en 15 min y 1 h, cada uno en la vela en que se conoce.
+    Desde la unión con el motor 7 de App 1 (25/11) son 35 (suma el esfuerzo con resultado y el medidor que gira), con
+    las definiciones nuevas de los patrones, el rombo, las cajas, el cambio de carácter y el Lector VPA. Lo medido no
+    anota con qué motor: los hallazgos medidos antes conservan los del motor 6, y el informe junta los dos.
 
   Todo sale de la historia pública: con la suite cerrada se mide al abrirla y da lo mismo. Lo anotado desde el 23/11 se arma al encenderse: unos 170 hallazgos y 270 controles, en cerca de una hora y primero los hallazgos. Si Bybit no da las 24 h, otra vez en 10 min; tras 12 intentos queda «sin datos». Nunca envía nada ni graba nada en vivo.
 - **Datos** (`data/scanner/follow`, un miembro gzip por línea, como el registro del scanner):
