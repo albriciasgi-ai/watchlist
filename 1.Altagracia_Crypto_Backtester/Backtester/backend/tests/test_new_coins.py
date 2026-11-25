@@ -51,6 +51,21 @@ def test_las_monedas_nuevas_se_leen_aparte_de_las_de_siempre(tmp_path, monkeypat
     assert plan[0]["action"] == "run"
 
 
+def test_las_monedas_de_siempre_no_dependen_de_la_carpeta_de_trabajo(tmp_path, monkeypatch):
+    """25/11: con la ruta relativa, la suite (que corre desde su carpeta) no veía las 7 monedas de siempre y el registro
+    en vivo de Impulso, FVG nuevo y B1 vigilaba 43 de las 50. El caché va junto a rule_tester.py y measures.py."""
+    import pathlib
+
+    import measures
+
+    here = pathlib.Path(rt.__file__).resolve().parent
+    assert rt.CANDLE_DIR.is_absolute() and rt.CANDLE_DIR == here / "backtesting_cache"
+    own = sorted(p.name.split("_")[0] for p in (here / "backtesting_cache").glob("*_backtesting_data.json.gz"))
+    monkeypatch.chdir(tmp_path)  # una carpeta de trabajo sin caché: con la ruta relativa no salía ninguna
+    assert rt.base_symbols() == own
+    assert measures._cache_path("BTCUSDT") == here / "backtesting_cache" / "BTCUSDT_backtesting_data.json.gz"
+
+
 def test_la_busqueda_arma_reglas_con_las_piezas_nuevas():
     cfg = rs.clean_config({"tfs": [240], "codes": ["CP", "IM", "BX"], "maxElements": 1, "seed": 3})
     opts = rs._options(cfg)
