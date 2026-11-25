@@ -175,7 +175,9 @@ def test_el_estudio_de_rupturas_y_bordes_no_mira_adelante():
 
 def test_ruptura_y_borde_de_caja_como_elementos():
     import box_elements as bx
-    bars = series(seed=9)
+    # Desde el motor 7 (F-19) una vela que toca el borde y cierra en el centro no es una llegada nueva: con la serie 9
+    # ya no quedaba ningún borde. La 29 tiene llegadas antes y después del corte
+    bars = series(seed=29)
     full = bx.events(bars, 240, {"maxHeight": None}, {"share": 0.2, "maxBody": 1.0, "rejection": 0.6})
     assert {e["code"] for e in full} == {"BX", "BE"}
     for e in full:

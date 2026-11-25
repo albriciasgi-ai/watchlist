@@ -4,10 +4,11 @@ import assert from 'node:assert/strict';
 import {
   defaultRule, deleteRule, describeRule, fromBackendRule, isRuleTester, loadSavedRules, ruleTesterUrl, saveRule,
   accountStats, sortTrades, testerSymbol, toBackendRule, tradeBoxes, contextBands, skippedSignals, signalChecklist, checklistBand, tradeBands,
-  targetInR, chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, listText
+  targetInR, chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, listText, ruleOrderFlowConfig, ruleOFElementsConfig, isRunOf
 } from '../src/components/backtesting/ruleTester.js';
 import { defaultWilliamsConfig } from '../src/components/indicators/williams.js';
 import { defaultSmcConfig } from '../src/components/indicators/smcStructure.js';
+import { defaultOFElementsConfig } from '../src/components/indicators/ofElements.js';
 
 const tests = [];
 const test = (name, run) => tests.push([name, run]);
@@ -252,6 +253,38 @@ test('el trade elegido dibuja dónde se activa el trailing del objetivo y el obj
   const check = { time: 0, items: [] };
   assert.equal(checklistBand(check, { tf: 240, rows: [], side: 1 }, 'x').below, true);
   assert.equal(checklistBand(check, { tf: 240, rows: [], side: -1 }, 'x').below, false);
+});
+
+test('la corrida de la dirección (&run=): los ids de antes y los del motor 6, con 4 cifras hexadecimales al final (O-41)', () => {
+  assert.equal(isRunOf('BTCUSDT_240_f1_8d3448fe08d8f268_1763600000', 'BTCUSDT'), true, 'los de antes del motor 6');
+  assert.equal(isRunOf('BTCUSDT_15_f1_d26d67c4fbf75243_179540489726964fe', 'BTCUSDT'), true, 'los de hoy');
+  assert.equal(isRunOf('ETHUSDT_15_f1_d26d67c4fbf75243_179540489726964fe', 'BTCUSDT'), false, 'de otra moneda, no');
+  assert.equal(isRunOf('BTCUSDT_15_f1_d26d67c4fbf75243_../x', 'BTCUSDT'), false);
+  assert.equal(isRunOf(null, 'BTCUSDT'), false);
+});
+
+test('al elegir un trade de order flow, el footprint con las celdas del elemento y los Elementos OF de la regla (O-39)', () => {
+  const back = (change) => toBackendRule({ ...defaultRule(), tf: 15, ...change });
+  const zp = back({ codes: ['ZP'] });
+  assert.deepEqual(ruleIndicators(zp), ['Order Flow', 'Elementos OF']);
+  assert.deepEqual(ruleIndicators(back({ codes: ['XD'], cvdOn: true })), ['CVD', 'Order Flow', 'Elementos OF']);
+  assert.deepEqual(ruleIndicators(back({ codes: ['FV'] })), [], 'el FVG no es un elemento de order flow');
+  // El footprint: el step de análisis del día de la señal, en el marco de la regla; sin él, nada que cambiar
+  const mine = { fontSize: 11, stepByMinutes: { 60: 25 }, imbalanceRatio: 3, imbalanceMode: 'level', stackedMinLevels: 4 };
+  assert.equal(ruleOrderFlowConfig(zp, mine, null), null, 'el contexto del trade todavía no llegó');
+  const flow = ruleOrderFlowConfig(zp, mine, 2);
+  assert.deepEqual(flow.stepByMinutes, { 60: 25, 15: 2 });
+  assert.equal(flow.fontSize, 11, 'lo que muestra el gráfico queda');
+  assert.deepEqual([flow.imbalanceRatio, flow.imbalanceMode], [3, 'level'], 'sin elementos de desequilibrios, los del gráfico');
+  const st = ruleOrderFlowConfig(back({ codes: ['ST'] }), mine, 5);
+  assert.deepEqual([st.imbalanceRatio, st.imbalanceMode, st.stackedMinLevels], [4, 'diagonal', 3], 'los del elemento');
+  // Los Elementos OF: solo los de la regla, con sus umbrales; lo que muestra el gráfico queda
+  const current = { ...defaultOFElementsConfig(), showBands: false, showTable: false, bandOpacity: 0.3 };
+  const el = ruleOFElementsConfig(back({ codes: ['ZP'], volFilter: 3, target: 0.08 }), current);
+  assert.deepEqual(Object.keys(el.codes).filter(code => el.codes[code]), ['ZP']);
+  assert.deepEqual([el.target, el.volFilter], [8, 3], 'el backend da la parte de las velas; el indicador, el %');
+  assert.deepEqual([el.showBands, el.showTable, el.bandOpacity], [false, false, 0.3]);
+  assert.equal(ruleOFElementsConfig(back({ codes: ['XD', 'ZP'] }), current).showTable, true, 'con un elemento de la tabla, la tabla');
 });
 
 test('al elegir un trade, los indicadores de la regla: cuáles, en qué marco y con qué ajustes (21/11)', () => {

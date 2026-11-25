@@ -19,7 +19,8 @@ const NAMES = {
   WD: 'Barra divergente (1.er sabio de Williams)', WA: 'AO tres barras (2.º sabio)', WF: 'Ruptura de fractal (3.er sabio)',
   BS: 'Ruptura de estructura (SMC)', OB: 'Order block (SMC)', BK: 'Breaker (SMC)', EQ: 'Barrido de iguales (SMC)',
   QA: 'Esfuerzo sin resultado (VPA)', QB: 'Ruptura con volumen (VPA)', QF: 'Ruptura sin volumen (VPA)', QR: 'Retroceso sin volumen (VPA)',
-  QT: 'Prueba de poco volumen (VPA)', QS: 'Volumen de frenado o de techo (VPA)', QC: 'Clímax de volumen (VPA)', QE: 'Medidor VPA cruza el umbral'
+  QT: 'Prueba de poco volumen (VPA)', QS: 'Volumen de frenado o de techo (VPA)', QC: 'Clímax de volumen (VPA)', QE: 'Medidor VPA cruza el umbral',
+  QV: 'Esfuerzo con resultado (VPA)', QG: 'Medidor VPA gira'
 };
 const DEFAULT_CONFIG = {
   tfs: [240], codes: ['CC', 'VH', 'HM', 'EN', 'DJ', 'RF', 'RB', 'GC', 'BX', 'BE', 'CP', 'FV', 'SP', 'IM', 'WD', 'WA', 'WF', 'BS', 'OB', 'BK', 'EQ'],

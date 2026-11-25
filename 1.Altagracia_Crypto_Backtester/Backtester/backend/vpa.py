@@ -6,10 +6,16 @@ tests/test_vpa.py). Si cambia una regla aquí, hay que cambiarla allá.
 Reglas propias, no del libro (el libro no trae números): la autora dice que VPA "es un arte" porque juzga todo de forma
 relativa, por grados y según dónde cae la vela. Aquí eso va así:
 - Relativo: el volumen y el rango de cada vela se comparan con la mediana de esa misma hora en los `days` días anteriores
-  (en cripto la hora pesa: medido con el Volumen de Respuesta). En 1D, con los días anteriores.
+  (en cripto la hora pesa: medido con el Volumen de Respuesta). En 1D, con los días anteriores. Desde el motor 7
+  (24/11/2026, galería 2 del protocolo de pruebas), para los elementos un volumen alto (o un rango ancho) lo es también
+  frente a la mediana de las `nearBars` velas anteriores: lo que ve el ojo. El medidor sigue con su hora, salvo en la
+  vela ancha con volumen alto, que lee como los elementos (`wideMeter`).
 - Por grados: cada lectura es un grado de 0 a 1 con rampas (bajo, alto, ultra alto, estrecho, ancho), no un sí o no.
 - Esfuerzo contra resultado (3.ª ley de Wyckoff): q = rango relativo ÷ volumen relativo. Mucho volumen con poco rango es
-  esfuerzo sin resultado (absorción); mucho rango con poco volumen, resultado sin esfuerzo (trampa).
+  esfuerzo sin resultado (absorción); mucho rango con poco volumen, resultado sin esfuerzo (trampa). Desde el motor 7,
+  en los elementos el resultado lo da también el tamaño de la vela: una vela ancha con volumen alto tuvo resultado,
+  aunque su volumen fuera todavía mayor que su rango (`wideResult`). El medidor la lee igual (`wideMeter`): no le suma
+  como esfuerzo sin resultado, contra su color, sino como esfuerzo con resultado, a favor.
 - El lugar: el tramo (zigzag de `legAtr` ATR, como el Volumen de Respuesta) y cuánto lleva recorrido. Un martillo arriba
   de un tramo alcista es un "hanging man" y avisa debilidad; una estrella abajo de un tramo bajista, un martillo
   invertido, avisa fuerza (desde el 22/11, H22 del protocolo de pruebas: antes restaba como cualquier estrella).
@@ -18,18 +24,31 @@ relativa, por grados y según dónde cae la vela. Aquí eso va así:
 
 Elementos del probador (solo necesitan velas: valen en todas las monedas, en las acciones y en 1D), todos se saben al
 cerrar su vela (`known`):
-- QA esfuerzo sin resultado: contra el color de la vela (una verde estrecha con mucho volumen es debilidad).
+- QA esfuerzo sin resultado: contra el color de la vela (una verde estrecha con mucho volumen es debilidad). Desde el
+  motor 7, no cuenta si la vela anterior fue ancha (`skipAfterWide`): esa sí tuvo resultado y esta es su pausa. Tampoco
+  si la vela misma es ancha (`wideResult`): se movió, y eso es resultado.
+- QV esfuerzo con resultado (motor 7): la vela ancha con volumen alto, a favor de su color (`wideResult`; sin él, la
+  vela validada: además el rango sigue al volumen). Para usarla de gatillo tras un clímax, un frenado o una prueba.
 - QB ruptura con volumen y QF ruptura sin volumen: el primer cierre fuera del rango de las `rangeBars` velas anteriores
   (de hasta `maxRangeAtr` ATR de alto); con volumen alto sigue la ruptura, con volumen bajo va en contra (trampa).
 - QR retroceso sin volumen: tras una QB, el precio vuelve al nivel roto en `pullBars` velas o menos con poco volumen y
-  una vela cierra a favor de la ruptura.
+  una vela cierra a favor de la ruptura. Desde el motor 7 (`pullBack`), antes de esa vela al menos una vuelve en contra.
 - QT prueba de poco volumen: vela de cuerpo chico, mecha larga y poco volumen que entra a una zona con mucho volumen
-  contrario en las `testLook` velas anteriores (la prueba de oferta es alcista; la de demanda, bajista).
+  contrario en las `testLook` velas anteriores (la prueba de oferta es alcista; la de demanda, bajista). Desde el motor
+  7, solo dentro de una caja de la pestaña Régimen (`testBox`: la de oferta en su mitad de abajo, la de demanda en la de
+  arriba) y tras un frenado o un clímax de su lado en las `testLook` velas anteriores (`testAfter`): la prueba que dice
+  si terminó la tendencia, como en el libro.
 - QS volumen de frenado o de techo: en un tramo de al menos `legAtr` ATR, 2 de las últimas `stopBars` velas con mecha
-  contra el tramo, cierre en su mitad de ese lado y volumen alto. Contra el tramo; una vez por tramo.
+  contra el tramo (`stopWick`: desde el motor 7, de media vela), cierre en su mitad de ese lado y volumen alto. Contra
+  el tramo; una vez por tramo.
 - QC clímax: en las últimas `climaxBars` velas, 2 o más con volumen ultra alto y mecha contra el tramo, en el mismo
   precio (a menos de 1 ATR). Contra el tramo; una vez por tramo.
 - QE el medidor cruza el umbral `meter`: hacia arriba, alcista; hacia abajo, bajista.
+- QG el medidor gira (motor 7): cruza el cero después de haber pasado el umbral del otro lado. QE sirve para seguir el
+  movimiento; QG, para el giro (los dos modos que pidió el usuario).
+
+Con los valores de antes de cada parámetro del motor 7 (nearBars 0, skipAfterWide, wideResult, wideMeter, testBox,
+testAfter y pullBack apagados, stopWick [0.25, 0.4]) los elementos y el medidor son los del motor 6.
 
 Filtro (filter_ok): el medidor a favor del trade (`favor`: medidor × lado ≥ umbral) o que no esté en contra
 (`notAgainst`: medidor × lado > −umbral), en la vela de la señal.
@@ -41,6 +60,7 @@ DAY_MS = 86400000
 
 CODES = {
     "QA": "Esfuerzo sin resultado (VPA)",
+    "QV": "Esfuerzo con resultado (VPA)",
     "QB": "Ruptura con volumen (VPA)",
     "QF": "Ruptura sin volumen (VPA)",
     "QR": "Retroceso sin volumen tras la ruptura (VPA)",
@@ -48,6 +68,7 @@ CODES = {
     "QS": "Volumen de frenado o de techo (VPA)",
     "QC": "Clímax de volumen (VPA)",
     "QE": "Medidor VPA cruza el umbral",
+    "QG": "Medidor VPA gira",
 }
 
 DEFAULTS = {
@@ -56,7 +77,24 @@ DEFAULTS = {
     "volLow": [0.6, 0.95], "volHigh": [1.2, 1.8], "volUltra": [2.0, 3.0], "spreadWide": [1.2, 1.8],
     "decay": 0.75, "fire": 0.5, "meter": 1.0,
     "rangeBars": 20, "maxRangeAtr": 6.0, "pullBars": 8, "testLook": 20, "stopBars": 3, "climaxBars": 6,
+    # Motor 7 del probador (24/11/2026): lo que decidió el usuario en la galería 2 del protocolo de pruebas
+    # (pruebas_backtesting/revision_visual/G2_RESPUESTAS.md). Entre paréntesis, el valor que repite la regla de antes:
+    "nearBars": 20,  # El volumen alto (y el rango ancho) de los elementos, también frente a las N velas anteriores (0)
+    "skipAfterWide": True,  # El esfuerzo sin resultado no cuenta tras una vela ancha (False)
+    # Con volumen alto, la vela ancha tuvo resultado: no es esfuerzo sin resultado, y el esfuerzo con resultado no pide
+    # que el rango siga al volumen (False). Lo vio el usuario en el caso 2 de la galería 2
+    "wideResult": True,
+    # El medidor también: la vela ancha con volumen alto le suma como esfuerzo con resultado, no sin él (False)
+    "wideMeter": True,
+    "testBox": True,  # La prueba, solo dentro de una caja de la pestaña Régimen (False)
+    "testAfter": True,  # La prueba, solo tras un frenado o un clímax de su lado en las testLook velas anteriores (False)
+    "stopWick": [0.4, 0.6],  # Rampa de la mecha del frenado o techo: grado 0.5 con media vela ([0.25, 0.4]: un tercio)
+    "pullBack": True,  # El retroceso pide una vela en contra de la ruptura antes de la que confirma (False)
 }
+
+# La caja de la pestaña Régimen ("Eficiencia con caja", regime_detectors.er_box con sus parámetros de
+# regime_detectors.PARAMS): la consolidación de la prueba de poco volumen. tests/test_motor7.py comprueba que es la misma
+BOX = {"n": 20, "below": 0.2, "buffer": 0.5, "exit_er": 0.5}
 
 FILTER_MODES = ("favor", "notAgainst", "notFavor")  # notFavor (22/11): que no esté fuerte a favor (el ripple medido)
 
@@ -126,6 +164,46 @@ def relative_by_hour(t, values, tf_ms, days, min_days):
     return out
 
 
+def relative_to_near(values, bars):
+    """Cada valor dividido por la mediana de los `bars` valores anteriores, sin el suyo (NaN en los primeros o con
+    mediana 0). Es lo que compara el ojo: la vela contra las de al lado (motor 7)."""
+    out = [NAN] * len(values)
+    if bars <= 0:
+        return out
+    for i in range(bars, len(values)):
+        usual = _median(values[i - bars:i])
+        if usual > 0:
+            out[i] = values[i] / usual
+    return out
+
+
+def boxes(h, l, c, atr):
+    """La caja de la pestaña Régimen vigente en cada vela (regime_detectors.er_box con BOX, operación por operación):
+    (bajos, altos), NaN fuera de una caja. Vigente desde la vela siguiente a la que la detecta hasta la última que queda
+    dentro: en cada vela solo se sabe lo de esa vela y las anteriores."""
+    n, m = BOX["n"], len(c)
+    low, high = [NAN] * m, [NAN] * m
+    path = [0.0] * m  # np.cumsum de |cierre − cierre anterior|, con la primera en cero
+    box, run = None, 0
+    for i in range(m):
+        step = abs(c[i] - (c[i - 1] if i else c[0]))
+        path[i] = path[i - 1] + step if i else step
+        if i < n:
+            continue
+        eff = abs(c[i] - c[i - n]) / max(path[i] - path[i - n], 1e-12)
+        if box is None:
+            run = run + 1 if eff < BOX["below"] else 0
+            if run >= 1:
+                start = i - n + 1
+                box = (min(l[start:i + 1]), max(h[start:i + 1]))
+            continue
+        if c[i] > box[1] + BOX["buffer"] * atr[i] or c[i] < box[0] - BOX["buffer"] * atr[i] or eff > BOX["exit_er"]:
+            box, run = None, 0
+            continue
+        low[i], high[i] = box
+    return low, high
+
+
 def zigzag(h, l, c, atr, k):
     """Tramo conocido al cierre de cada vela (la regla de measures.zigzag): dirección, inicio y extremo."""
     n = len(c)
@@ -161,6 +239,20 @@ def _cfg(cfg):
     return out
 
 
+def _absorb_grade(x, y, vh):
+    """Esfuerzo sin resultado con volumen x y rango y relativos (NaN si no se puede medir)."""
+    if not (_finite(x) and _finite(y) and x > 0):
+        return NAN
+    return min(up(x, vh[0], vh[1]), down(y / x, 0.35, 0.7))
+
+
+def _valid_grade(x, y, vh, sw):
+    """Esfuerzo con resultado (la vela validada) con volumen x y rango y relativos (NaN si no se puede medir)."""
+    if not (_finite(x) and _finite(y) and x > 0):
+        return NAN
+    return min(up(y, sw[0], sw[1]), up(x, vh[0], vh[1]), up(y / x, 0.6, 0.9))
+
+
 def compute(t, o, h, l, c, v, tf, cfg=None):
     """Las lecturas de cada vela cerrada (listas del mismo largo que las velas). tf en minutos."""
     cfg = _cfg(cfg)
@@ -168,15 +260,20 @@ def compute(t, o, h, l, c, v, tf, cfg=None):
     tf_ms = int(tf) * 60000
     atr = atr_of(h, l, c, 14)
     rng = [h[i] - l[i] for i in range(n)]
-    rv = relative_by_hour(t, [float(x) for x in v], tf_ms, int(cfg["days"]), int(cfg["minDays"]))
+    fv = [float(x) for x in v]
+    rv = relative_by_hour(t, fv, tf_ms, int(cfg["days"]), int(cfg["minDays"]))
     rr = relative_by_hour(t, rng, tf_ms, int(cfg["days"]), int(cfg["minDays"]))
+    near = int(cfg["nearBars"])
+    rvn, rrn = relative_to_near(fv, near), relative_to_near(rng, near)
     leg, leg_start, leg_ext = zigzag(h, l, c, atr, cfg["legAtr"])
     vl, vh, vu, sw = cfg["volLow"], cfg["volHigh"], cfg["volUltra"], cfg["spreadWide"]
     keys = ("q", "absorb", "trap", "valid", "upper", "lower", "body", "closeLoc", "star", "hammer", "doji",
-            "ext", "maturity", "fade", "contrib", "meter")
+            "ext", "maturity", "fade", "contrib", "meter", "rvHi", "wide", "absorbE", "validE")
     out = {k: [NAN] * n for k in keys}
+    box_low, box_high = boxes(h, l, c, atr)
     out.update({"atr": atr, "rv": rv, "rr": rr, "leg": leg, "legStart": leg_start, "legExtreme": leg_ext,
-                "dir": [0] * n, "hang": [0.0] * n, "invh": [0.0] * n})
+                "dir": [0] * n, "hang": [0.0] * n, "invh": [0.0] * n, "rvn": rvn, "rrn": rrn,
+                "boxLow": box_low, "boxHigh": box_high})
     meter = 0.0
     for i in range(n):
         d = 1 if c[i] > o[i] else (-1 if c[i] < o[i] else 0)
@@ -197,6 +294,14 @@ def compute(t, o, h, l, c, v, tf, cfg=None):
             out["hammer"][i] = min(up(lower, 0.45, 0.6), down(body, 0.2, 0.35), down(upper, 0.1, 0.25))
             out["doji"][i] = min(down(body, 0.05, 0.15), up(min(upper, lower), 0.25, 0.35))
         x, y = rv[i], rr[i]
+        # Lo alto de los elementos (motor 7): alto para su hora y frente a las velas anteriores. Sin nearBars, su hora
+        if near > 0:
+            x_hi = min(x, rvn[i]) if _finite(x) and _finite(rvn[i]) else NAN
+            y_wide = min(y, rrn[i]) if _finite(y) and _finite(rrn[i]) else NAN
+        else:
+            x_hi, y_wide = x, y
+        out["rvHi"][i] = x_hi
+        out["wide"][i] = up(y_wide, sw[0], sw[1]) if _finite(y_wide) else NAN
         if _finite(x) and _finite(y) and x > 0:
             q = y / x
             out["q"][i] = q
@@ -204,6 +309,26 @@ def compute(t, o, h, l, c, v, tf, cfg=None):
             trap = min(down(x, vl[0], vl[1]), up(q, 1.6, 2.5), up(y, sw[0], sw[1]))
             valid = min(up(y, sw[0], sw[1]), up(x, vh[0], vh[1]), up(q, 0.6, 0.9))
             out["absorb"][i], out["trap"][i], out["valid"][i] = absorb, trap, valid
+            # Las de los elementos: el mismo grado medido también contra las velas anteriores, el menor de los dos.
+            # El medidor sigue con el de su hora (absorb y valid), salvo en la vela ancha (abajo)
+            if near > 0:
+                a2, v2 = _absorb_grade(rvn[i], rrn[i], vh), _valid_grade(rvn[i], rrn[i], vh, sw)
+                out["absorbE"][i] = min(absorb, a2) if _finite(a2) else 0.0
+                out["validE"][i] = min(valid, v2) if _finite(v2) else 0.0
+            else:
+                out["absorbE"][i], out["validE"][i] = absorb, valid
+            # La vela ancha (contra su hora y las velas anteriores) con volumen alto tuvo resultado: el caso 2 de la
+            # galería 2, de 10 veces su rango con 20 veces su volumen, era esfuerzo con resultado
+            w = out["wide"][i]
+            if cfg["wideResult"] and _finite(w):
+                out["absorbE"][i] = min(out["absorbE"][i], 1.0 - w)
+                out["validE"][i] = min(w, up(x_hi, vh[0], vh[1]))
+            # El medidor la lee igual (lo pidió el usuario): no le suma como esfuerzo sin resultado y le suma como
+            # esfuerzo con resultado, con el grado del elemento. Lo demás del medidor sigue con su hora
+            if cfg["wideMeter"] and _finite(w):
+                absorb = min(absorb, 1.0 - w)
+                valid = max(valid, min(w, up(x_hi, vh[0], vh[1])))
+                out["absorb"][i], out["valid"][i] = absorb, valid
             against = -d if d else -leg[i]
             contrib += against * absorb * W_ABSORB + against * trap * W_TRAP + d * valid * W_VALID
             weight = 0.25 + 0.35 * up(x, 0.8, 1.2) + 0.4 * up(x, 1.5, 2.5)  # Lo que pesa la forma según su volumen
@@ -256,19 +381,30 @@ def detect(t, o, h, l, c, v, tf, cfg=None, series=None):
     s = series or compute(t, o, h, l, c, v, tf, cfg)
     n = len(c)
     fire = cfg["fire"]
-    atr, rv, leg = s["atr"], s["rv"], s["leg"]
+    atr, rv, leg, hv = s["atr"], s["rv"], s["leg"], s["rvHi"]
     out = []
     used_stop, used_climax = set(), set()
     breakouts = []  # Rupturas con volumen que todavía esperan su retroceso: {dir, level, index, done}
     R = int(cfg["rangeBars"])
+    look = int(cfg["testLook"])
+    sw0, sw1 = cfg["stopWick"]
+    turned = {1: -10 ** 9, -1: -10 ** 9}  # La última vela con un frenado o un clímax de cada lado (testAfter)
+    g_side, g_beyond, g_peak = 0, False, 0.0  # El medidor: de qué lado del cero, si pasó el umbral y hasta dónde llegó
     for i in range(n):
         a = atr[i]
         x = rv[i]
         d = s["dir"][i]
-        # Esfuerzo sin resultado
-        if s["absorb"][i] == s["absorb"][i] and s["absorb"][i] >= fire and d:
-            out.append({"code": "QA", "dir": -d, "index": i, "lo": l[i], "hi": h[i], "grade": s["absorb"][i],
-                        "info": {"rv": x, "rr": s["rr"][i]}})
+        # Esfuerzo sin resultado; tras una vela ancha no cuenta (esa tuvo resultado: esta es su pausa)
+        grade = s["absorbE"][i]
+        if grade == grade and grade >= fire and d and not (
+                cfg["skipAfterWide"] and i >= 1 and _finite(s["wide"][i - 1]) and s["wide"][i - 1] >= fire):
+            out.append({"code": "QA", "dir": -d, "index": i, "lo": l[i], "hi": h[i], "grade": grade,
+                        "info": _near_info({"rv": x, "rr": s["rr"][i]}, s, i)})
+        # Esfuerzo con resultado
+        grade = s["validE"][i]
+        if grade == grade and grade >= fire and d:
+            out.append({"code": "QV", "dir": d, "index": i, "lo": l[i], "hi": h[i], "grade": grade,
+                        "info": _near_info({"rv": x, "rr": s["rr"][i]}, s, i)})
         # Rupturas del rango de las R velas anteriores
         if i > R and _finite(x) and a > 0:
             hi_r, lo_r = max(h[i - R:i]), min(l[i - R:i])
@@ -278,11 +414,11 @@ def detect(t, o, h, l, c, v, tf, cfg=None, series=None):
                     crossed = (c[i] - level) * side > 0.1 * a and (c[i - 1] - level) * side <= 0
                     if not crossed:
                         continue
-                    strong, weak = _vol_high(cfg, x), _vol_low(cfg, x)
+                    strong, weak = _vol_high(cfg, hv[i]), _vol_low(cfg, x)
                     if strong >= fire:
                         lo, hi = (min(l[i], level), level) if side > 0 else (level, max(h[i], level))
                         out.append({"code": "QB", "dir": side, "index": i, "lo": lo, "hi": hi, "grade": strong,
-                                    "info": {"rv": x, "level": level, "height": (hi_r - lo_r) / prev_a}})
+                                    "info": _near_info({"rv": x, "level": level, "height": (hi_r - lo_r) / prev_a}, s, i)})
                         breakouts.append({"dir": side, "level": level, "index": i, "done": False})
                     elif weak >= fire:
                         lo, hi = (level, h[i]) if side > 0 else (l[i], level)
@@ -299,6 +435,8 @@ def detect(t, o, h, l, c, v, tf, cfg=None, series=None):
             touched = (l[i] - level <= 0.5 * a) if side > 0 else (level - h[i] <= 0.5 * a)
             if not touched or d != side or (c[i] - level) * side <= 0:
                 continue
+            if cfg["pullBack"] and not any(s["dir"][j] == -side for j in range(b["index"] + 1, i)):
+                continue  # Ninguna vela volvió en contra de la ruptura: es la ruptura que sigue, no un retroceso
             seg = rv[b["index"] + 1:i + 1]
             if not all(_finite(y) for y in seg):
                 continue
@@ -315,21 +453,32 @@ def detect(t, o, h, l, c, v, tf, cfg=None, series=None):
                 b["done"] = True
         if breakouts and breakouts[0]["done"]:
             breakouts = [b for b in breakouts if not b["done"]]
-        # Prueba de poco volumen
+        # Prueba de poco volumen: dentro de una consolidación y tras un frenado o un clímax de su lado (motor 7)
         if _finite(x) and s["body"][i] == s["body"][i]:
             weak = _vol_low(cfg, x)
             body_ok = down(s["body"][i], 0.25, 0.4)
-            look = range(max(0, i - int(cfg["testLook"])), i)
+            window = range(max(0, i - look), i)
             for side, wick in ((1, s["lower"][i]), (-1, s["upper"][i])):
                 grade = min(weak, body_ok, up(wick, 0.45, 0.6))
                 if grade < fire:
                     continue
+                if cfg["testAfter"] and i - turned[side] > look:
+                    continue  # Sin un frenado o un clímax de su lado antes, no hay tendencia que probar
+                if cfg["testBox"]:
+                    box_lo, box_hi = s["boxLow"][i], s["boxHigh"][i]
+                    if not _finite(box_lo):
+                        continue  # Fuera de una consolidación
+                    mid = (box_lo + box_hi) / 2
+                    if (side > 0 and l[i] > mid) or (side < 0 and h[i] < mid):
+                        continue  # La prueba de oferta, en la mitad de abajo de la caja; la de demanda, en la de arriba
                 # Mucho volumen contrario en las velas anteriores, en el precio al que entra la prueba
-                heavy = [j for j in look if _finite(rv[j]) and rv[j] >= cfg["volHigh"][1] and s["dir"][j] == -side
+                heavy = [j for j in window if _finite(hv[j]) and hv[j] >= cfg["volHigh"][1] and s["dir"][j] == -side
                          and ((l[i] <= h[j]) if side > 0 else (h[i] >= l[j]))]
                 if heavy:
-                    out.append({"code": "QT", "dir": side, "index": i, "lo": l[i], "hi": h[i], "grade": grade,
-                                "info": {"rv": x, "heavy": heavy[-1]}})
+                    info = {"rv": x, "heavy": heavy[-1]}
+                    if cfg["testAfter"]:
+                        info["turn"] = turned[side]
+                    out.append({"code": "QT", "dir": side, "index": i, "lo": l[i], "hi": h[i], "grade": grade, "info": info})
         # Volumen de frenado (tramo bajista) o de techo (alcista)
         k = int(cfg["stopBars"])
         if i >= k - 1 and _finite(s["ext"][i]) and s["ext"][i] >= cfg["legAtr"] and (leg[i], s["legStart"][i]) not in used_stop:
@@ -338,17 +487,18 @@ def detect(t, o, h, l, c, v, tf, cfg=None, series=None):
             for j in range(i - k + 1, i + 1):
                 wick = s["lower"][j] if g < 0 else s["upper"][j]
                 loc = s["closeLoc"][j]
-                if not (_finite(wick) and _finite(loc) and _finite(rv[j])):
+                if not (_finite(wick) and _finite(loc) and _finite(hv[j])):
                     grades.append(0.0)
                     continue
                 side_loc = loc if g < 0 else 1 - loc
-                grades.append(min(up(wick, 0.25, 0.4), up(side_loc, 0.45, 0.55), _vol_high(cfg, rv[j])))
+                grades.append(min(up(wick, sw0, sw1), up(side_loc, 0.45, 0.55), _vol_high(cfg, hv[j])))
             hits = [gr for gr in grades if gr >= fire]
             if len(hits) >= 2 and grades[-1] >= fire:
                 lo, hi = min(l[i - k + 1:i + 1]), max(h[i - k + 1:i + 1])
                 out.append({"code": "QS", "dir": -g, "index": i, "lo": lo, "hi": hi, "grade": _plain_sum(hits) / len(hits),
                             "info": {"bars": len(hits), "leg": g, "ext": s["ext"][i]}})
                 used_stop.add((leg[i], s["legStart"][i]))
+                turned[-g] = i
         # Clímax
         m = int(cfg["climaxBars"])
         if i >= 1 and (leg[i], s["legStart"][i]) not in used_climax and a > 0:
@@ -356,9 +506,9 @@ def detect(t, o, h, l, c, v, tf, cfg=None, series=None):
             hits = []
             for j in range(max(0, i - m + 1), i + 1):
                 wick = s["upper"][j] if g > 0 else s["lower"][j]
-                if not (_finite(wick) and _finite(rv[j])):
+                if not (_finite(wick) and _finite(hv[j])):
                     continue
-                grade = min(up(rv[j], cfg["volUltra"][0], cfg["volUltra"][1]), up(wick, 0.25, 0.4))
+                grade = min(up(hv[j], cfg["volUltra"][0], cfg["volUltra"][1]), up(wick, 0.25, 0.4))
                 if grade >= fire:
                     hits.append(j)
             if len(hits) >= 2 and hits[-1] == i:
@@ -368,15 +518,34 @@ def detect(t, o, h, l, c, v, tf, cfg=None, series=None):
                     out.append({"code": "QC", "dir": -g, "index": i, "lo": lo, "hi": hi, "grade": 1.0,
                                 "info": {"bars": len(hits), "leg": g}})
                     used_climax.add((leg[i], s["legStart"][i]))
-        # El medidor cruza el umbral
+                    turned[-g] = i
         if i >= 1:
             now, before, thr = s["meter"][i], s["meter"][i - 1], cfg["meter"]
+            # El medidor cruza el umbral
             if now >= thr > before:
                 out.append({"code": "QE", "dir": 1, "index": i, "lo": l[i], "hi": h[i], "grade": 1.0, "info": {"meter": now}})
             elif now <= -thr < before:
                 out.append({"code": "QE", "dir": -1, "index": i, "lo": l[i], "hi": h[i], "grade": 1.0, "info": {"meter": now}})
+            # El medidor gira: cruza el cero después de haber pasado el umbral del otro lado
+            side_now = 1 if now > 0 else (-1 if now < 0 else 0)
+            if side_now and side_now != g_side:
+                if g_side and g_beyond:
+                    out.append({"code": "QG", "dir": side_now, "index": i, "lo": l[i], "hi": h[i], "grade": 1.0,
+                                "info": {"meter": now, "peak": g_peak}})
+                g_side, g_beyond, g_peak = side_now, False, now
+            elif side_now and abs(now) > abs(g_peak):
+                g_peak = now
+            if side_now and abs(now) >= thr:
+                g_beyond = True
     out.sort(key=lambda e: (e["index"], e["code"], -e["dir"]))
     return out
+
+
+def _near_info(info, s, i):
+    """La info de un elemento de volumen alto con su volumen frente a las velas anteriores, si se pudo medir."""
+    if _finite(s["rvn"][i]):
+        info["rvn"] = s["rvn"][i]
+    return info
 
 
 def events(bars, tf, cfg=None, codes=tuple(CODES)):
@@ -390,7 +559,7 @@ def events(bars, tf, cfg=None, codes=tuple(CODES)):
             continue
         # Con 10 cifras significativas: con 4 decimales una moneda barata perdía cifras del nivel (O-12)
         info = {key: (float(f"{val:.10g}") if isinstance(val, float) and _finite(val) else val) for key, val in e["info"].items()}
-        for key in ("breakout", "heavy"):
+        for key in ("breakout", "heavy", "turn"):
             if key in info:
                 info[key] = bars[info[key]]["t"]  # La vela, por su hora
         info["grade"] = round(e["grade"], 3)

@@ -101,10 +101,11 @@ def test_una_regla_de_antes_conserva_su_identidad_y_lo_nuevo_solo_entra_si_se_pi
 
 def test_los_elementos_en_la_corrida_con_sus_zonas():
     bars = walk(3000, seed=9)
-    for code in ("QB", "QA", "QT", "QE"):
+    # La prueba de poco volumen, desde el motor 7, sale poco (dentro de una caja y tras un frenado o un clímax): 1 basta
+    for code, least in (("QB", 6), ("QA", 6), ("QV", 6), ("QT", 1), ("QE", 6), ("QG", 6)):
         rule = rule_of((code,), stop={"type": "zone", "maxAtr": 20, "buffer": 0}, exit={"targetR": 2})
         result = rt.run("TEST", rule, {"bars": bars, "events": []}, PHASE)
-        assert result["summary"]["n"] > 5, code
+        assert result["summary"]["n"] >= least, code
         for t in result["trades"][:20]:
             info = t["elements"][0]
             assert info["code"] == code and 0 <= info["grade"] <= 1

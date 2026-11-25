@@ -163,6 +163,24 @@ def test_el_maximo_es_por_vela_y_no_cambia_las_demas(store):
     assert result["step_size"] == 1.0, "el step base sigue igual para las proximas velas"
 
 
+def test_con_el_tope_por_vela_solo_la_vela_ancha_agrupa_sus_niveles(store):
+    """O-39 del protocolo de pruebas (25/11/2026): con el step de los elementos de order flow, una vela ancha subía el
+    step de todas (aquí, 5 en las dos); con el tope por vela, la angosta queda con el step pedido y la ancha une sus
+    niveles en grupos redondos, que son sumas de las celdas pedidas"""
+    make_day(store, [8, 1000])
+    narrow, wide = read_two(step=1)["footprints"]
+    assert narrow["step_size"] == wide["step_size"] == 5.0, "sin el tope por vela, la ancha sube el step de todas"
+    result = read_two(step=1, cap_per_candle=True)
+    narrow, wide = result["footprints"]
+    assert narrow["step_size"] == 1.0 and narrow["num_levels"] == 8
+    assert wide["step_size"] == 5.0 and wide["num_levels"] <= fs.MAX_LEVELS_PER_CANDLE
+    assert result["step_size"] == 1.0
+    plain = read_two(step=1, max_levels=10_000)["footprints"][1]
+    assert sum(x["total_volume"] for x in wide["levels"]) == pytest.approx(sum(x["total_volume"] for x in plain["levels"]))
+    assert read_two(cap_per_candle=True)["footprints"][0]["step_size"] == read_two()["footprints"][0]["step_size"], \
+        "sin step elegido no cambia nada"
+
+
 def test_una_vela_de_diez_niveles_no_se_toca(store):
     make_day(store, [10])
     assert read(1, step=1, max_levels=10)["footprints"][0]["step_size"] == 1.0

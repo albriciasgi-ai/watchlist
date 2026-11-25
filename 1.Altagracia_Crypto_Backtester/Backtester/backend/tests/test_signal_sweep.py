@@ -184,11 +184,12 @@ def test_las_señales_de_un_elemento_son_las_de_su_regla_en_el_probador(monkeypa
     span = rt._warmed("AAAUSDT", TF, phase, rt.clean_rule({"tf": TF, "recipe": {"slots": [{"codes": ["RF"]}]}}), spans["AAAUSDT"])
     ctx = rt._context("AAAUSDT", TF, span["bars"])
     ctx["bars"], ctx["lead"] = span["bars"], span["lead"]
-    found = sw.element_signals("AAAUSDT", TF, span, ctx, ["RF", "HM", "EN"])
-    for code in ("RF", "HM", "EN"):
+    found = sw.element_signals("AAAUSDT", TF, span, ctx, ["RF", "HM", "EN", "QV"])
+    for code in ("RF", "HM", "EN", "QV"):
         rule = rt.clean_rule({"tf": TF, "recipe": {"slots": [{"codes": [code]}]}})
         _, signals, _ = rf.signals_of("AAAUSDT", rule, spans["AAAUSDT"], phase)
-        assert found[code] == set(signals) and len(found[code]) > 5, code
+        # Con el motor 7 el martillo pide tamaño y un swing confirmado: en este mercado salen 3, en la vela que confirma
+        assert found[code] == set(signals) and len(found[code]) >= (3 if code == "HM" else 6), code
     # Una vela con la señal hacia los dos lados no dice una dirección: no entra
     monkeypatch.setattr(rt, "_extra_events", lambda symbol, rule, span, ctx: [
         {"code": "CP", "dir": d, "t": span["bars"][k]["t"], "known": span["bars"][k]["t"] + MS, "lo": 1, "hi": 2} for k in (200, 300) for d in (1, -1)
