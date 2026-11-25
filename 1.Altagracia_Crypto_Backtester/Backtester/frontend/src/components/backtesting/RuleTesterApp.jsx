@@ -18,11 +18,14 @@ import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
   contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText, usesVpa, VPA_EXITS,
-  chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, ruleVpaConfig, listText, DALE_CODES, VPA_FILTER_TFS, vpaFilterTf
+  chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, ruleVpaConfig, listText, DALE_CODES, VPA_FILTER_TFS, vpaFilterTf,
+  ruleOrderFlowConfig, ruleOFElementsConfig, isRunOf
 } from './ruleTester.js';
 import { loadWilliamsSettings, mergeWilliamsConfig } from '../indicators/williams.js';
 import { loadSmcSettings, mergeSmcConfig } from '../indicators/smcStructure.js';
 import { defaultVpaParams, loadVpaSettings } from '../indicators/vpa.js';
+import { loadOrderFlowSettings } from '../indicators/OrderFlowIndicator.js';
+import { cleanOFElementsConfig, defaultOFElementsConfig, loadOFElementsSettings } from '../indicators/ofElements.js';
 import { elementLabel, elementLabels } from './elementLabels.js';
 import {
   FACETS, OFF_PATCH, SECTIONS, exitScale, facetPhrase, loadedSummary, ruleDifferences, ruleFacets, sectionCounts, sectionSummary, signalFunnel
@@ -469,7 +472,7 @@ const RuleTesterApp = () => {
     if (!runId) return;
     params.delete('run');
     window.history.replaceState(null, '', `?${params.toString()}`);
-    if (!/^[A-Za-z0-9.-]+_\d+_f\d_[0-9a-f]+_\d+$/.test(runId) || !runId.startsWith(`${symbol}_`)) return;
+    if (!isRunOf(runId, symbol)) return;
     loadRun(runId).catch(error => setMessage(error.message));
   }, [loadRun, symbol]);
 
@@ -736,6 +739,8 @@ const RuleTesterApp = () => {
   const chartIndicators = useMemo(() => (ruleIndicatorsOn
     ? { ...indicatorStates, ...Object.fromEntries(ruleIndicatorNames.map(name => [name, true])) } : indicatorStates),
   [ruleIndicatorsOn, ruleIndicatorNames, indicatorStates]);
+  // El step de análisis de los elementos de order flow en el día de la señal del trade elegido (O-39): llega con su contexto
+  const ofStep = contextTrade && tradeContext?.runId === result?.id && tradeContext?.n === contextTrade.n ? tradeContext.ofStep ?? null : null;
   // Solo los cálculos que la regla usa: con solo CVD u OI, los de Williams y SMC del gráfico quedan como están
   const indicatorOverrides = useMemo(() => {
     if (!ruleIndicatorsOn) return null;
@@ -743,8 +748,12 @@ const RuleTesterApp = () => {
       ? ruleWilliamsConfig(result.rule, mergeWilliamsConfig(loadWilliamsSettings(symbol))) : null;
     const smc = ruleIndicatorNames.includes('Estructura SMC') ? ruleSmcConfig(result.rule, mergeSmcConfig(loadSmcSettings(symbol))) : null;
     const vpa = ruleIndicatorNames.includes('Lector VPA') ? ruleVpaConfig(result.rule, loadVpaSettings(symbol), defaultVpaParams()) : null;
-    return williams || smc || vpa ? { williams, smc, vpa } : null;
-  }, [ruleIndicatorsOn, ruleIndicatorNames, result, symbol]);
+    // El footprint con las celdas de los elementos y los Elementos OF de la regla (O-39 del protocolo de pruebas, 25/11/2026)
+    const orderflow = ruleIndicatorNames.includes('Order Flow') ? ruleOrderFlowConfig(result.rule, loadOrderFlowSettings(symbol), ofStep) : null;
+    const elements = ruleIndicatorNames.includes('Elementos OF')
+      ? ruleOFElementsConfig(result.rule, cleanOFElementsConfig({ ...defaultOFElementsConfig(), ...loadOFElementsSettings(symbol) })) : null;
+    return williams || smc || vpa || orderflow || elements ? { williams, smc, vpa, orderflow, elements } : null;
+  }, [ruleIndicatorsOn, ruleIndicatorNames, result, symbol, ofStep]);
   useEffect(() => {
     if (tab === 'regimen' && regimeBands) {
       // Régimen: solo la referencia y las zonas del detector, sin trades encima
@@ -1129,7 +1138,16 @@ const RuleTesterApp = () => {
               <span title="Mecha mínima del martillo y de la estrella fugaz, en veces su cuerpo">· mecha ≥</span>
               <Num value={rule.patWick} min={0.5} max={10} step={0.5} onChange={(patWick) => patch({ patWick })} /><span>cuerpos</span>
             </div>
-            <div className="rt-note">Son los patrones del indicador Rejection Patterns, con su misma regla. El lado lo da el patrón: una vela tiene a lo sumo uno. Para el stop detrás de la vela usa "Extremo de la vela del elemento".</div>
+            <div className="rt-row">
+              <Check checked={rule.patSizeOn !== false} onChange={(patSizeOn) => patch({ patSizeOn })} title="La mecha del martillo, la estrella y el doji, o el cuerpo de la envolvente, en ATR">Lo que hace el patrón mide al menos</Check>
+              <Num value={rule.patMinPart} min={0.05} max={5} step={0.05} disabled={rule.patSizeOn === false} onChange={(patMinPart) => patch({ patMinPart })} /><span>ATR</span>
+            </div>
+            <div className="rt-row">
+              <Check checked={rule.patSwingOn !== false} onChange={(patSwingOn) => patch({ patSwingOn })} title="Su extremo pasa el de las velas anteriores y las siguientes no lo alcanzan. La señal espera esa confirmación">En un swing: extremo de las</Check>
+              <Num value={rule.patSwingBefore} min={1} max={50} disabled={rule.patSwingOn === false} onChange={(patSwingBefore) => patch({ patSwingBefore })} /><span>velas anteriores, confirmado con</span>
+              <Num value={rule.patSwingAfter} min={0} max={20} disabled={rule.patSwingOn === false} onChange={(patSwingAfter) => patch({ patSwingAfter })} /><span>después</span>
+            </div>
+            <div className="rt-note">Son los patrones del indicador Rejection Patterns, con su misma regla, y desde el 23/11 solo los de tamaño y en un swing: la señal se conoce al cerrar la vela que confirma el swing. El lado lo da el patrón: una vela tiene a lo sumo uno. Para el stop detrás del patrón usa "Extremo de la vela del elemento" (en la envolvente cubre sus dos velas).</div>
           </>
         )}
         {rule.codes.includes('GC') && (
@@ -1234,7 +1252,7 @@ const RuleTesterApp = () => {
               <Num value={Math.round(rule.vpaFire * 100)} min={10} max={100} onChange={(v) => patch({ vpaFire: (Number(v) || 50) / 100 })} /><span>% · tramo de</span>
               <Num value={rule.vpaLeg} min={0.5} max={10} step={0.5} onChange={(vpaLeg) => patch({ vpaLeg })} /><span>ATR</span>
             </div>
-            {rule.codes.includes('QE') && (
+            {(rule.codes.includes('QE') || rule.codes.includes('QG')) && (
               <div className="rt-row">
                 <span title="El medidor suma la evidencia de cada vela y la deja desvanecerse: la memoria es lo que queda en la vela siguiente">Medidor: umbral ±</span>
                 <Num value={rule.vpaMeter} min={0.2} max={5} step={0.1} onChange={(vpaMeter) => patch({ vpaMeter })} /><span>memoria</span>
@@ -1250,10 +1268,13 @@ const RuleTesterApp = () => {
               </div>
             )}
             <div className="rt-note">
-              El Lector VPA (Coulling) con reglas propias: el volumen y el rango de cada vela contra lo normal de su hora. <b>Esfuerzo sin resultado</b> va contra
-              el color de la vela; <b>ruptura con volumen</b> sigue la ruptura y <b>sin volumen</b> va en contra (trampa); <b>retroceso sin volumen</b> entra al volver
-              al nivel roto; <b>prueba de poco volumen</b>, <b>frenado o techo</b> y <b>clímax</b> van contra el tramo. Con el stop "Borde lejano de la zona", el stop
-              queda detrás del elemento (detrás del nivel roto en las rupturas).
+              El Lector VPA (Coulling) con reglas propias: el volumen y el rango de cada vela contra lo normal de su hora; un volumen alto lo es también frente a
+              las 20 velas anteriores. <b>Esfuerzo sin resultado</b> va contra el color de la vela, y no en una vela ancha ni tras ella; <b>esfuerzo con resultado</b>, la vela ancha con volumen alto, lo sigue
+              (sirve de gatillo tras un clímax, un frenado o una prueba); <b>ruptura con volumen</b> sigue la ruptura y <b>sin volumen</b> va en contra (trampa);
+              <b>retroceso sin volumen</b> entra al volver al nivel roto, con una vela en contra antes; <b>frenado o techo</b> y <b>clímax</b> van contra el tramo, y la
+              <b>prueba de poco volumen</b>, dentro de una caja del Régimen y tras un frenado o un clímax de su lado. El <b>medidor</b> cruza su umbral (seguir) o
+              <b>gira</b>: cruza el cero tras pasar el umbral del otro lado. Con el stop "Borde lejano de la zona", el stop queda detrás del elemento (detrás del
+              nivel roto en las rupturas).
             </div>
           </>
         )}
@@ -1325,7 +1346,7 @@ const RuleTesterApp = () => {
             {rule.codes.includes('BE') && (
               <div className="rt-row">
                 <span title="Parte de la caja que cuenta como borde">Borde: el</span>
-                <Num value={rule.beShare} min={0.05} max={0.5} step={0.05} onChange={(beShare) => patch({ beShare })} /><span>de la caja · cuerpo hasta</span>
+                <Num value={rule.beShare} min={0.02} max={0.5} step={0.01} onChange={(beShare) => patch({ beShare })} /><span>de la caja · cuerpo hasta</span>
                 <Num value={rule.beMaxBody} min={0} max={10} step={0.1} onChange={(beMaxBody) => patch({ beMaxBody })} /><span>ATR · cierra a</span>
                 <Num value={rule.beRejection} min={0} max={1} step={0.05} onChange={(beRejection) => patch({ beRejection })} /><span>o más del borde en su vela</span>
                 <Check checked={rule.bePattern} onChange={(bePattern) => patch({ bePattern })} title="Además la vela es un martillo, envolvente o doji a favor, con tendencia previa (la regla del indicador Rejection Patterns)">con patrón de rechazo</Check>

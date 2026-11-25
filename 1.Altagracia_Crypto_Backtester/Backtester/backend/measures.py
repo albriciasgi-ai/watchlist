@@ -26,7 +26,7 @@ import numpy as np
 import footprint_store
 import oi_store
 
-VERSION = 1
+VERSION = 2  # 2 (23/11/2026): el rombo del Volumen de Respuesta, solo cuando sube la respuesta (equilibrium)
 MINUTE = 60000
 DAY = 86400000
 FRAMES = (("15m", 15), ("1h", 60), ("4h", 240))
@@ -175,10 +175,12 @@ def hour_volume(ts, volume, days=HOUR_DAYS):
     return result
 
 
-def balance(side, weight, direction, start):
-    """Promedio de las velas principales de la tendencia contra las de la respuesta."""
+def balance(side, weight, direction, start, parts=False):
+    """Promedio de las velas principales de la tendencia contra las de la respuesta. Con parts=True da además el
+    promedio de la respuesta de cada vela (nan sin velas de respuesta en la ventana), para equilibrium."""
     n = len(side)
     result = np.empty(n)
+    answers = np.full(n, np.nan)
     for i in range(n):
         d = direction[i]
         trend, response = [], []
@@ -187,21 +189,27 @@ def balance(side, weight, direction, start):
                 trend.append(weight[j])
             elif side[j] == -d:
                 response.append(weight[j])
+        if response:
+            response.sort(reverse=True)
+            answers[i] = sum(response[:RESPONSE_TOP]) / min(RESPONSE_TOP, len(response))
         if not response:
             result[i] = MAX_BALANCE if trend else 1.0
         elif not trend:
             result[i] = MIN_BALANCE
         else:
             trend.sort(reverse=True)
-            response.sort(reverse=True)
             strength = sum(trend[:RESPONSE_TOP]) / min(RESPONSE_TOP, len(trend))
-            answer = sum(response[:RESPONSE_TOP]) / min(RESPONSE_TOP, len(response))
+            answer = answers[i]
             result[i] = min(MAX_BALANCE, max(MIN_BALANCE, strength / answer)) if answer > 0 else MAX_BALANCE
-    return result
+    return (result, answers) if parts else result
 
 
-def equilibrium(values, direction, start):
-    """Velas donde la respuesta iguala a la tendencia despues de que esta domino."""
+def equilibrium(values, direction, start, answers=None, side=None):
+    """Velas donde la respuesta iguala a la tendencia despues de que esta domino.
+
+    Con `answers` (el promedio de la respuesta de cada vela, de balance(parts=True)) y `side`, el rombo sale solo en una
+    vela de respuesta que sube ese promedio: si el balance baja porque una vela de la tendencia deja la ventana, el
+    rombo sigue armado. Lo decidió el usuario el 23/11/2026 (galería del protocolo de pruebas, G1_RESPUESTAS.md)."""
     found = np.zeros(len(values), dtype=bool)
     armed = False
     leg = -1
@@ -212,6 +220,11 @@ def equilibrium(values, direction, start):
         if value >= DOMINANCE:
             armed = True
         elif armed and value <= BALANCE:
+            if answers is not None:
+                same_leg = i > 0 and start[i - 1] == start[i] and direction[i - 1] == direction[i]
+                before = answers[i - 1] if same_leg else np.nan
+                if side[i] != -direction[i] or not (np.isnan(before) or answers[i] > before):
+                    continue
             found[i] = True
             armed = False
     return found
@@ -269,8 +282,8 @@ def frame_columns(frame, minutes):
     direction, start, extreme = zigzag(high, low, close, atr_values, LEG_ATR)
     side = np.sign(close - open_).astype(np.int8)
     relative = hour_volume(ts, volume)
-    values = balance(side, relative, direction, start)
-    signal = equilibrium(values, direction, start)
+    values, answers = balance(side, relative, direction, start, parts=True)
+    signal = equilibrium(values, direction, start, answers, side)
     bars = CONTEXT_BARS[minutes]
 
     pivot = np.where(direction > 0, low[start], high[start])

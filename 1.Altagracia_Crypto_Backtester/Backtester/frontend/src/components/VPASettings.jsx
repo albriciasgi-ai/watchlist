@@ -61,7 +61,9 @@ const VPASettings = ({ symbol, indicator, onApply, onClose }) => {
             <h4>Qué es</h4>
             <span className="hint" style={{ display: 'block' }}>
               El Volume Price Analysis de Anna Coulling con reglas propias. Cada vela se compara con lo normal de su misma hora en los días anteriores
-              (volumen y rango). Cada lectura es un grado de 0 a 100%: esfuerzo sin resultado (mucho volumen, poco rango), resultado sin esfuerzo
+              (volumen y rango); en los elementos, un volumen alto lo es también frente a las 20 velas anteriores, y una vela ancha con volumen alto es
+              esfuerzo con resultado. Cada lectura es un grado de 0 a
+              100%: esfuerzo sin resultado (mucho volumen, poco rango), resultado sin esfuerzo
               (mucho rango, poco volumen), estrella, martillo, hanging man, doji y esfuerzo que se agota. Todas suman evidencia a un medidor que se
               desvanece vela a vela: arriba de cero es fuerza, abajo debilidad. Ninguna vela decide sola, como pide el libro.
             </span>

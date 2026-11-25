@@ -55,6 +55,150 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 25 Noviembre 2026: El Trade Elegido de Order Flow con su Footprint, y las Galerías 3 a 5 con lo que Faltaba
+
+**Pedido:** en la galería 3 del protocolo de pruebas, al 2.º sabio le faltaba el AO. El usuario pidió revisar qué otras
+imágenes no traían los indicadores que hacen falta para juzgar y corregirlas de una vez. Después aceptó llevar a la app
+lo que faltaba en el order flow («Sí, hazlo»).
+
+**Cambios:**
+1. **Galerías 3 a 5** (solo las capturas, O-38):
+   - el 1.º y el 2.º sabio, con el panel del AO;
+   - el order flow, con el footprint en las celdas con que se calcula cada elemento, sus Elementos OF, el volumen y la
+     tabla de la vela;
+   - en los 16 elementos de celdas, una imagen de cerca con las cifras y un marco en las del elemento;
+   - al pie, el valor contra su umbral;
+   - el regreso, el fallo y el extremo del valor, con el área de valor entera.
+2. **En la app, el trade elegido de una regla de order flow (O-39):** con «Ver en el gráfico lo que usó la regla»:
+   - enciende el footprint y los Elementos OF de la regla;
+   - el footprint va con el step de análisis del día de la señal (`ofStep` del contexto, `of_elements.day_step`) y, en
+     las reglas de desequilibrios, con los del elemento;
+   - el tope de 200 niveles es por vela (`step_cap=candle`): una vela ancha ya no sube el step de todas;
+   - al desmarcar la casilla vuelve lo guardado.
+3. **O-41:** desde el motor 6 la ventana no abría la corrida de la dirección (`&run=`), tampoco al abrir otra moneda
+   desde «Todas»: el id termina en 4 cifras hexadecimales. Corregido (`isRunOf`).
+4. **Pruebas:** `ruletester.test.mjs` (17), `test_trade_context.py` (7) y `test_footprint_rules.py`, una más cada una.
+
+**IMPORTANTE:**
+- **Está en la rama del protocolo, sin commit,** como el motor 7.
+- Reiniciar el backend de App 1 (9000) y recargar su página.
+- Sin `step_cap` el footprint queda como antes: la suite conserva su step parejo.
+- **Probado en pantalla** con la copia aislada y el Zero Print, trade 559. Antes, las 162 velas salían con celdas de 2.5 en
+  vez de 2. Ahora 161 van con 2 y la única ancha, con 4.
+- Las marcas de las galerías siguen: cada caso conserva su clave.
+- **Pendiente (O-40):** el Historial lista solo las 200 corridas más recientes de cada moneda.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", «Los de order
+flow (25/11, O-39…)», y `pruebas_backtesting/REGISTRO.md`, punto 12
+
+---
+
+### App 1 + Altagracia Trading Suite - 24 Noviembre 2026: Motor 7, lo que Decidió el Usuario en la Galería del Lector VPA
+
+**Pedido:** el usuario revisó la galería 2 del protocolo de pruebas (Lector VPA): 16 Sí, 12 No y 4 No sé. Casi todos los
+"No" tenían la misma causa: la app medía el volumen contra lo normal de su hora, y el usuario lo comparaba con las velas
+de al lado. Se le hicieron siete propuestas, medidas antes (`pruebas_backtesting/revision_visual/G2_RESPUESTAS.md`), y las
+aceptó todas. Después juzgó el caso 2 del esfuerzo sin resultado: esa vela grande tuvo resultado. Y pidió que el medidor
+la lea igual.
+
+**Cambios:**
+1. **Lector VPA del motor 7**, en `vpa.py` y `vpa.js`, iguales al bit:
+   - el volumen alto de los elementos lo es también frente a las 20 velas anteriores;
+   - el esfuerzo sin resultado no cuenta en una vela ancha ni tras ella;
+   - el medidor lee la vela ancha con volumen alto como esfuerzo con resultado, no sin él. En las demás velas no cambia;
+   - la prueba de poco volumen va solo dentro de una caja del Régimen y tras un frenado o un clímax de su lado;
+   - el frenado o techo pide media vela de mecha;
+   - el retroceso pide una vela en contra antes de la que confirma;
+   - dos elementos nuevos: **esfuerzo con resultado** (QV), la vela ancha con volumen alto, y **el medidor gira** (QG).
+2. **También cambian:**
+   - en la salida VPA, los avisos que leen esos elementos y el del medidor;
+   - el cruce del umbral y el filtro del medidor;
+   - la lectura VPA del Observador, que pasa a la versión 2.
+3. **Galería:**
+   - los elementos que cambiaron o son nuevos traen casos nuevos, con el panel del lector más alto y sus cifras al pie
+     (O-37);
+   - todos los casos del lector se capturaron otra vez con el medidor nuevo; cada vela que ya era caso conserva la marca
+     del usuario.
+4. **Pruebas:**
+   - `test_motor7.py` (17) y `test_vpa.py`, al día;
+   - la paridad `vpa.parity.test.mjs` (12);
+   - con las velas reales de BTC 4h, el navegador y el backend dan los mismos 2,037 elementos.
+
+**IMPORTANTE:**
+- **Está en la rama del protocolo, sin commit,** como el resto del motor 7.
+- **Corridas que quedan fuera:**
+  - las que usan un elemento del lector, salvo la ruptura sin volumen;
+  - las que usan el filtro del medidor, también el ripple de la ruptura con volumen;
+  - las que usan la salida VPA, salvo con solo el esfuerzo que se agota.
+- **Medido en BTC 4h, fase 1:**
+  - el esfuerzo sin resultado pasa de 197 a 25 y la prueba de poco volumen, de 430 a 10;
+  - el frenado, de 75 a 30, y el clímax, de 44 a 18;
+  - el esfuerzo con resultado da 1,066 y el medidor que gira, 183;
+  - el cruce del umbral, de 244 a 247: 76 salen y 79 entran;
+  - el medidor suma distinto en 529 de 8,076 velas.
+- **En la suite**, el indicador Lector VPA tiene los elementos nuevos y el medidor nuevo, porque usa el de App 1. Los dos
+  elementos nuevos vienen apagados.
+- La primera vez, el informe del Observador vuelve a leer el lector de las órdenes (unos 20 s).
+- **El caso 2 del esfuerzo sin resultado** (17/04/21: 10 veces su rango normal con 20 veces su volumen): el usuario lo
+  juzgó esfuerzo con resultado, y así quedó (`wideResult`). Las marcas de los casos que siguen se conservan.
+- **El medidor también** (lo pidió el usuario, `wideMeter`):
+  - esa vela lo subía de +0.28 a +0.72; ahora lo baja a −0.29;
+  - el caso 75 del cruce, un «No» del usuario, ya no es un cruce: en el desplome de junio de 2022 las rojas con mucho
+    volumen subían el medidor.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Motor 7", y
+`pruebas_backtesting/revision_visual/G2_RESPUESTAS.md`
+
+---
+
+### App 1 + Altagracia Trading Suite - 24 Noviembre 2026: Motor 7, lo que Decidió el Usuario en la Galería de Elementos
+
+**Pedido:** el usuario revisó la galería 1 del protocolo de pruebas (velas, patrones y cajas): 38 Sí, 20 No y 1 No sé.
+Cada caso se revisó con los datos de su corrida (`pruebas_backtesting/revision_visual/G1_RESPUESTAS.md`). Después pidió
+4 casos por elemento en vez de 12, la barra de volumen en los elementos de volumen, y decidió cómo deben ser cinco
+elementos.
+
+**Cambios:**
+1. **Motor 7** del probador (lo decidió el usuario):
+   - patrones de vela, solo con tamaño (0.5 ATR) y en un swing confirmado por las 2 velas siguientes;
+   - rombo del Volumen de Respuesta, solo cuando sube la respuesta (también en el indicador);
+   - ruptura de caja, con el primer cierre afuera;
+   - borde de caja, con la franja del 5%;
+   - cambio de carácter, con el swing que originó el tramo y la tendencia confirmada por cierres.
+2. **Fallos que salieron de la galería, corregidos:**
+   - F-18: la ruptura tras una caja que terminaba por su eficiencia, también en el filtro "tras romper";
+   - F-19: el rearme del borde de caja;
+   - F-20: el extremo del cambio de carácter;
+   - O-34: las cajas de los elementos tapaban la mecha de su vela.
+3. **Galería:**
+   - 4 casos por elemento (268), con sus marcas de antes;
+   - el volumen a la vista y su cifra al pie en los elementos de volumen;
+   - las cinco páginas capturadas otra vez;
+   - los 8 elementos que cambiaron, con casos nuevos del motor 7.
+4. **Pruebas:**
+   - `test_motor7.py` (9), y una más en `test_response_volume.py` y en `response.test.mjs`;
+   - las demás, al día;
+   - la paridad del indicador del Volumen de Respuesta con la investigación da 0 de diferencia.
+
+**IMPORTANTE:**
+- **Está en la rama del protocolo, sin commit.** Se une a main cuando el usuario termine las cinco galerías.
+- **Corridas que quedan fuera con el motor 7:** solo las que usan algo que cambió (`_touched_by_engine7`): patrones, rombo,
+  ruptura o borde de caja, cambio de carácter, el filtro "tras romper" sin rango mayor, o un filtro con "velas desde el
+  último equilibrio".
+- **La tabla de medidas** del Observador se vuelve a armar (`measures.VERSION` 2), por la medida del último equilibrio.
+- **En la suite**, el indicador Volumen de Respuesta muestra el rombo nuevo, porque usa el de App 1.
+- **Medido en BTC 4h, fase 1:**
+  - patrones: de 215, 578 y 18 a 96, 143 y 11;
+  - cambio de carácter: de 181 a 87;
+  - bordes de caja: de 178 a 80;
+  - rupturas de caja (cajas de hasta 5.5 ATR): 147.
+- **Gaussian Channel 42:** sin fallo, lo confirmó el usuario.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Motor 7", y
+`pruebas_backtesting/revision_visual/G1_RESPUESTAS.md`
+
+---
+
 ### App 1 - 23 Noviembre 2026: La Búsqueda Genética con los Tres Controles del Tablero, y E-02 y E-08 Decididos
 
 **Pedido:** tras el protocolo de pruebas quedaban tres decisiones. Se midieron mientras el usuario revisaba la galería, y
@@ -150,8 +294,9 @@ corregir y repetir.
    bien; velas de las 43 monedas nuevas reparadas (117,624).
 8. **Pruebas adicionales (22 y 23/11), pedidas antes de limpiar la copia aislada:**
    - **galería de todos los elementos** para que el usuario confirme que cada concepto es el suyo antes de mezclar recetas:
-     `1.Altagracia_Crypto_Backtester/Backtester/pruebas_backtesting/revision_visual/galeria/` (5 páginas, 802 casos de 67
-     elementos en BTC fase 1; se abren con doble clic desde el Explorador y guardan las marcas en el navegador);
+     `1.Altagracia_Crypto_Backtester/Backtester/pruebas_backtesting/revision_visual/galeria/` (5 páginas, 67 elementos en
+     BTC fase 1, con 4 casos cada uno desde el 23/11: 268 de los 802 capturados; se abren con doble clic desde el
+     Explorador y guardan las marcas en el navegador);
    - los casos nuevos del motor 6 en pantalla, la simulación manual con el 2.º gráfico y el tablero de sus estrategias
      (igual a la regresión), bien. La búsqueda genética corta corrió entera con el motor 6, sin candidatas.
 

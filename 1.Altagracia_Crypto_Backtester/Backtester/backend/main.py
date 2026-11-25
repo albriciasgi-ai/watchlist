@@ -3552,9 +3552,9 @@ async def observer_blind_start(request: Request, symbol: str, first: int, last: 
 
 # ==================== ORDER FLOW ====================
 
-def _footprints_body(symbol, interval, start, end, cut, step, rules, limit):
+def _footprints_body(symbol, interval, start, end, cut, step, rules, limit, per_candle=False):
     """Calcula y serializa en un hilo: al desplazarse son hasta 200 ms que detendrían todo el backend."""
-    result = footprint_store.footprints(symbol, int(interval), start, end, cut, step, rules, limit)
+    result = footprint_store.footprints(symbol, int(interval), start, end, cut, step, rules, limit, cap_per_candle=per_candle)
     return json.dumps({
         "success": True,
         "footprints": result["footprints"],
@@ -3586,10 +3586,14 @@ async def get_orderflow_historical(
     imbalance_cell_pct: float = 0.0,
     imbalance_zero: bool = False,
     stacked_levels: int = 3,
-    max_levels: Optional[int] = None
+    max_levels: Optional[int] = None,
+    step_cap: Optional[str] = None
 ):
     """
     Retorna footprints históricos para backtesting.
+
+    step_cap="candle" (con step): el tope de niveles es de cada vela, y una vela ancha agrupa los suyos sin cambiar el step
+    de las demás (el trade elegido del probador, con el step de los elementos de order flow: O-39, 25/11/2026).
 
     Con start_timestamp y end_timestamp lee el almacén diario de trades de Bybit, cortado en
     known_until para no mostrar el futuro. Sin ese rango usa el archivo local anterior
@@ -3619,7 +3623,8 @@ async def get_orderflow_historical(
             }
             limit = max(2, max_levels) if max_levels else None
             body = await run_in_threadpool(
-                _footprints_body, sanitize_filename(symbol), interval, start_timestamp, end_timestamp, cut, step, rules, limit
+                _footprints_body, sanitize_filename(symbol), interval, start_timestamp, end_timestamp, cut, step, rules, limit,
+                step_cap == "candle"
             )
             return Response(content=body, media_type="application/json")
 

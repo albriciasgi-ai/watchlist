@@ -103,6 +103,19 @@ def analysis_step(price, interval_minutes, cell):
     return min(options, key=lambda x: abs(x - target)) if options else cell
 
 
+def day_step(symbol, interval_minutes, t_ms):
+    """El step de análisis de la vela que empieza en t_ms: el de su día UTC, que sale de la apertura del primer minuto del
+    día, como en _compute_day. None si el almacén no tiene ese día. El trade elegido del probador dibuja el footprint con
+    estas celdas, las de los elementos (O-39 del protocolo de pruebas, 25/11/2026)."""
+    day = dt.datetime.fromtimestamp(t_ms / 1000, dt.timezone.utc).date()
+    data = fs._load_day(symbol, day.isoformat())
+    if data is None:
+        return None
+    ps, _, ticks = (int(x) for x in data["info"])
+    step = analysis_step(float(data["o"][0]) / ps, int(interval_minutes), ticks / ps)
+    return max(ticks, int(round(step * ps / ticks)) * ticks) / ps
+
+
 def _run(mask):
     """Racha más larga de True: (largo, primer índice, último índice)."""
     best = (0, -1, -1)

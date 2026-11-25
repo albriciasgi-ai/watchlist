@@ -47,15 +47,20 @@ BLIND_MIN_SEPARATION_DAYS = 14
 SAME_MOVE_OVERLAP = 0.6
 SMALL_SAMPLE = 30
 
-# Lector VPA en el minuto de la orden (22/11/2026): el medidor y los elementos Q del marco de la orden, de 1 hora y de 4 horas
-VPA_VERSION = 1
+# Lector VPA en el minuto de la orden (22/11/2026): el medidor y los elementos Q del marco de la orden, de 1 hora y de 4 horas.
+# Versión 2 (24/11, motor 7 del probador): los elementos de la galería 2 y los dos nuevos (QV y QG); las lecturas
+# guardadas con la 1 se vuelven a leer
+VPA_VERSION = 2
 VPA_FRAMES = (60, 240)
 VPA_LOOK = 3  # Elementos de las ultimas 3 velas cerradas
 VPA_LEAN = 0.3  # Desde aqui el medidor se inclina; desde su umbral (1) es fuerte. Con ±1 casi toda orden quedaba neutra
 VPA_CACHE_NAME = "vpa_readings.json"
 VPA_SOURCE = "Lector VPA"
 TF_MINUTES = {"1m": 1, "5m": 5, "15m": 15, "30m": 30, "1h": 60, "4h": 240}
-VPA_LAST = ("absorb", "trap", "valid", "star", "hammer", "hang", "doji", "fade")
+# Lo que leyó la última vela, desde 0.5: el esfuerzo sin y con resultado con el grado de sus elementos (motor 7: alto
+# para su hora y frente a las velas anteriores); lo demás, las lecturas del medidor
+VPA_LAST = {"absorb": "absorbE", "trap": "trap", "valid": "validE", "star": "star", "hammer": "hammer", "hang": "hang",
+            "doji": "doji", "fade": "fade"}
 
 _lock = threading.Lock()
 
@@ -300,7 +305,7 @@ def _vpa_frame(bars, tf, side):
     for e in vpa.detect(t, o, h, l, c, v, tf, series=series):
         if e["index"] > k - VPA_LOOK and e["grade"] >= vpa.DEFAULTS["fire"]:
             elements.append({"code": e["code"], "dir": e["dir"], "ago": k - e["index"], "grade": round(e["grade"], 3)})
-    last = {key: round(float(series[key][k]), 3) for key in VPA_LAST if math.isfinite(series[key][k]) and series[key][k] >= 0.5}
+    last = {key: round(float(series[src][k]), 3) for key, src in VPA_LAST.items() if math.isfinite(series[src][k]) and series[src][k] >= 0.5}
     return {
         "tf": tf, "known": True, "time": t[k], "meter": round(meter, 3), "thr": thr, "lean": VPA_LEAN,
         "state": "favor" if value >= VPA_LEAN else "against" if value <= -VPA_LEAN else "neutral",

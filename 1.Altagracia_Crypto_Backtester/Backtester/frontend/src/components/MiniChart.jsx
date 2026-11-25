@@ -37,6 +37,8 @@ import { createRedrawPacer } from './redrawPacer.js';
 import { loadWilliamsSettings, mergeWilliamsConfig } from './indicators/williams.js';
 import { loadVpaSettings } from './indicators/vpa.js';
 import { loadSmcSettings, mergeSmcConfig } from './indicators/smcStructure.js';
+import { loadOrderFlowSettings } from './indicators/OrderFlowIndicator.js';
+import { cleanOFElementsConfig, defaultOFElementsConfig, loadOFElementsSettings } from './indicators/ofElements.js';
 
 // Al acercarse, una vela ancha deja leer su footprint
 const MAX_BAR_WIDTH = 400;
@@ -222,7 +224,7 @@ const MiniChart = forwardRef(({
   captureChosenStyle = null, // En las imágenes de las órdenes: el mismo de chosenStyle, o 'lines' (solo sus líneas y aros: App 1, cuyo visor pone los números)
   chosenItems = null, // Lo elegido que se muestra en lugar de la lista del panel (suite, 13/11: lo de un trade en su análisis post-trade). Mientras está, un clic no abre el menú de niveles. App 1 no lo pasa
   drawingsSource = null, // Otra capa de dibujos en lugar de los de la moneda (suite, 13/11: el análisis post-trade de un trade): { key, load(), save(shapes) }. Sin ella, /api/drawings/{símbolo} como siempre
-  indicatorOverrides = null, // Ajustes de cálculo que reemplazan por un rato los guardados (probador, 21/11: los de la regla del trade elegido): { williams, smc, vpa }, configuraciones completas. Al quitarlos vuelven los guardados. Nadie más lo pasa
+  indicatorOverrides = null, // Ajustes de cálculo que reemplazan por un rato los guardados (probador, 21/11: los de la regla del trade elegido): { williams, smc, vpa, orderflow, elements }, configuraciones completas. Al quitarlos vuelven los guardados. Nadie más lo pasa
   hideLastPrice = false, // Sin la línea ni la etiqueta del último precio (probador, 22/11, O-17: su hora es el final de la fase y se leía como un nivel del trade). Nadie más lo pasa
   onOpenVpSettings,
   onOpenRangeDetectionSettings,
@@ -2013,7 +2015,10 @@ const MiniChart = forwardRef(({
             continue;
           }
           if (band.end < viewStart || band.start > viewEnd) continue;
-          const x1 = Math.max(marginLeft, timeToX(Math.max(band.start, viewStart)));
+          // Las cajas empiezan en el borde izquierdo de su primera vela: desde su centro, el borde de la caja tapaba la
+          // mecha de esa vela (O-34 del protocolo de pruebas, 23/11/2026). Las líneas de nivel siguen desde el centro
+          const startX = band.kind === 'level' ? timeToX : edge;
+          const x1 = Math.max(marginLeft, startX(Math.max(band.start, viewStart)));
           const x2 = Math.min(marginLeft + chartWidth, timeToX(Math.min(band.end, viewEnd)));
           if (!(x2 > x1)) continue;
           if (band.kind === 'strip') {
@@ -3622,6 +3627,25 @@ const MiniChart = forwardRef(({
     const hub = manager.getWilliamsHub?.();
     const smcIndicator = manager.getSMCIndicator?.();
     const vpaIndicator = manager.getVPAIndicator?.();
+    // El footprint con las celdas de los elementos de order flow y los Elementos OF de la regla (O-39 del protocolo de
+    // pruebas, 25/11/2026). Cada uno vuelve a lo guardado en cuanto deja de venir, aunque sigan viniendo los otros: el
+    // trade de otra regla no se queda con el step de la anterior
+    const flowIndicator = manager.getOrderFlowIndicator?.();
+    const elementsIndicator = manager.getOFElementsIndicator?.();
+    if (overrides?.orderflow) {
+      flowIndicator?.updateConfig(overrides.orderflow);
+      manager.flowOverridden = true;
+    } else if (manager.flowOverridden) {
+      flowIndicator?.updateConfig({ ...flowIndicator.getDefaultConfig(), ...loadOrderFlowSettings(symbol) });
+      manager.flowOverridden = false;
+    }
+    if (overrides?.elements) {
+      elementsIndicator?.updateConfig(overrides.elements);
+      manager.elementsOverridden = true;
+    } else if (manager.elementsOverridden) {
+      elementsIndicator?.updateConfig(cleanOFElementsConfig({ ...defaultOFElementsConfig(), ...loadOFElementsSettings(symbol) }));
+      manager.elementsOverridden = false;
+    }
     if (overrides) {
       if (overrides.williams) hub?.setConfig(overrides.williams);
       if (overrides.smc) smcIndicator?.updateConfig(overrides.smc);

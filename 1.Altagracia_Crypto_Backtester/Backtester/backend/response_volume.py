@@ -24,7 +24,9 @@ def events(bars, tf, leg=measures.LEG_ATR, spike=measures.AGGRESSION, arrow="wit
     relative = measures.hour_volume(ts, v)
     direction, start, extreme = measures.zigzag(h, l, c, atr, leg)
     side = np.sign(c - o).astype(np.int8)
-    signal = measures.equilibrium(measures.balance(side, relative, direction, start), direction, start)
+    # El rombo, solo en una vela de respuesta que sube el promedio de la respuesta (motor 7, 23/11/2026)
+    values, answers = measures.balance(side, relative, direction, start, parts=True)
+    signal = measures.equilibrium(values, direction, start, answers, side)
     tf_ms = tf * 60000
     out = []
     for i in np.nonzero((relative >= spike) & (side != 0))[0]:

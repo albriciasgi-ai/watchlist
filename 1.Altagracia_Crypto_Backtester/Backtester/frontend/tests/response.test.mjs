@@ -152,6 +152,17 @@ test('señal: respeta el umbral de equilibrio', () => {
   assert.equal(series.signal[3], true);
 });
 
+test('señal: solo cuando sube la respuesta, no cuando la tendencia deja la ventana (23/11/2026)', () => {
+  // La verde de 100 deja la ventana en la vela 4 y el balance cae: con la regla de antes salía ahí el rombo. Ahora
+  // sigue armado: la roja de 20 no sube la respuesta (30) y la de 50 sí, y ahí sale
+  const rows = [[100, 101, 100], [101, 100.8, 30], [100.8, 101.2, 10], [101.2, 101.6, 10], [101.6, 102, 10], [102, 101.8, 20], [101.8, 101.5, 50]];
+  const now = run(rows, { legAtr: 6, window: 4, top: 1 });
+  assert.ok(now.balance[4] <= 1 && now.balance[5] <= 1);
+  assert.deepEqual(now.signal.flatMap((on, i) => (on ? [i] : [])), [6]);
+  const before = run(rows, { legAtr: 6, window: 4, top: 1, rising: false });
+  assert.deepEqual(before.signal.flatMap((on, i) => (on ? [i] : [])), [4]);
+});
+
 test('señal: cambiar de tramo desarma', () => {
   const series = run([[100, 101, 100], [100.9, 97, 50]], { legAtr: 1, window: 10, top: 1 });
   assert.equal(series.direction[1], -1);

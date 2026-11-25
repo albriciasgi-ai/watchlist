@@ -593,7 +593,7 @@ GET /api/orderflow/coverage/{symbol}
 ### Parámetros
 
 - `OrderFlowSettings.jsx` y `FVGSettings.jsx` se abren con el ⚙️ junto al indicador. Aplican a todos los marcos y se guardan por símbolo en `orderflow_settings_{symbol}` y `fvg_settings_{symbol}`
-- `stepByMinutes` guarda el step por marco, en minutos. Sin valor es automático. Un step escrito se respeta: el backend lo ajusta a múltiplos de la celda guardada y solo lo sube si una vela pasaría de 200 niveles (`MAX_LEVELS_PER_CANDLE`)
+- `stepByMinutes` guarda el step por marco, en minutos. Sin valor es automático. Un step escrito se respeta: el backend lo ajusta a múltiplos de la celda guardada y solo lo sube si una vela pasaría de 200 niveles (`MAX_LEVELS_PER_CANDLE`). Con `stepPerCandle` (`step_cap=candle`, 25/11: lo usa el trade elegido del probador con el step de los elementos, O-39) el tope es de cada vela: la ancha une sus niveles en grupos redondos y las demás quedan con el step
 - `/api/orderflow/historical` acepta `imbalance_ratio`, `imbalance_mode` (`level` o `diagonal`), `imbalance_min_volume`, `imbalance_candle_pct`, `imbalance_candle_bars`, `imbalance_cell_pct`, `imbalance_zero` y `stacked_levels`
 - **Filtros relativos de imbalances (14/11, reemplazan el mínimo en monedas, `imbalanceMinVolume`, que ya no se envía):**
   - `imbalanceCandleVolumePct` y `imbalanceCandleVolumeBars` (20): una vela solo tiene imbalances si su volumen llega a ese % del promedio de las N velas anteriores. Sin velas anteriores no se filtra. Cada footprint trae `candle_volume_ratio`;
@@ -1181,6 +1181,34 @@ Pedido del usuario para depurar: al elegir un trade se veían la caja TP/SL y la
     - desmarcar la casilla vuelve a los indicadores de siempre.
 
     Prueba en `ruletester.test.mjs` (15).
+- **Los de order flow (25/11, O-39 del protocolo de pruebas, pedido del usuario):** con un elemento de order flow en la
+  regla, el trade elegido no encendía el footprint ni los Elementos OF. Y el footprint iba con su step automático (unos
+  10 niveles por vela), no con las celdas con que se calcula el elemento (`of_elements.analysis_step`: de 1 a 10 USD en
+  BTC 15m, según el precio): la celda que nombra el elemento no se veía.
+  - `ruleIndicators()` suma «Order Flow» y «Elementos OF».
+  - **El footprint con las celdas del elemento** (`ruleOrderFlowConfig`):
+    - el step de análisis del día UTC de la señal, que da el contexto del trade (`ofStep`, con `of_elements.day_step`:
+      la apertura del primer minuto del día, como `_compute_day`);
+    - en las reglas con desequilibrios (ST, VI, IR, RD, IV), los del elemento: diagonales de 4 a 1, apilados de 3;
+    - el tope de 200 niveles, por vela (`stepPerCandle`, `step_cap=candle`, `footprint_store.footprints(...,
+      cap_per_candle=True)`). Antes, una sola vela ancha de lo pedido subía el step de todas, y no a un múltiplo: en el
+      trade 559 del Zero Print, las 162 velas salían con celdas de 2.5 en vez de 2. Ahora esa vela une sus niveles en
+      grupos redondos (2, 5, 10...), sumas de las celdas del elemento, y las demás quedan con el step. Sin `step_cap`,
+      todo queda como antes: la suite conserva su step parejo.
+  - **Los Elementos OF de la regla** (`ruleOFElementsConfig`): solo sus elementos, con su `target` (en %) y su
+    `volFilter`, y la tabla de la vela si usa uno de la tabla. El gráfico conserva sus franjas, glifos, EMA y opacidad.
+  - `MiniChart` (`indicatorOverrides.orderflow` y `.elements`) los aplica mientras vienen, y cada uno vuelve a lo
+    guardado en cuanto deja de venir, aunque sigan viniendo los otros.
+  - Mientras llega el contexto del trade, el footprint pide una vez con su step automático.
+  - **Probado en pantalla** con la copia aislada (Zero Print, BTC 15m, fase 1, trade 559) y la lista de indicadores
+    apagada:
+    - el gráfico encendió el footprint (celdas de 2; la única vela ancha, de 4), la tabla de la vela y el Zero Print;
+    - desmarcar la casilla los apagó, con el step automático y los elementos de fábrica, y marcarla los volvió a poner.
+
+  Pruebas: `ruletester.test.mjs` (17), `test_trade_context.py` (7) y `test_footprint_rules.py` (una más).
+- **La corrida de la dirección (`&run=`, O-41):** desde el motor 6 el id de una corrida termina en los milisegundos y 4
+  cifras hexadecimales (O-28), y la ventana pedía solo dígitos al final. La corrida no se abría, tampoco al abrir otra
+  moneda desde "Todas". `isRunOf()` acepta los dos (prueba en `ruletester.test.mjs`).
 
 ### Objetivo arrastrado (20/11)
 
@@ -1460,6 +1488,96 @@ los dos ATR (H13).
 `test_flujo_azar.py` (4), `test_candles_update.py` (4), y las que ya había, al día (`test_williams_smc.py` y
 `test_candidate_review.py` suman 1 cada una). En la página, `rulefacets.test.mjs` (13) y `vpa.parity.test.mjs` (8). Las
 del servidor y de la página de la suite pasan con este App 1 (la suite importa `williams.py` y `MiniChart`).
+
+### Motor 7: lo que decidió el usuario en la galería de elementos (23 y 24/11)
+
+La galería de elementos del protocolo de pruebas (`pruebas_backtesting/revision_visual/`, respuestas en
+`G1_RESPUESTAS.md` y `G2_RESPUESTAS.md`) llevó a cambiar cinco elementos de velas, seis del lector VPA, a sumar dos
+elementos al lector y a corregir dos fallos de las cajas. `_stale()` deja fuera solo las corridas que usan alguno:
+- `_touched_by_engine7`: esos elementos (`ENGINE7_CODES`);
+- el filtro de régimen "tras romper" sin rango mayor;
+- un filtro de medidas con "velas desde el último equilibrio";
+- la salida VPA con el clímax, el esfuerzo en contra, el retroceso con volumen o el medidor (`ENGINE7_VPA_EXITS`);
+- el filtro del medidor, también leído en un marco mayor (`vpaf`).
+
+Siguen en el disco.
+
+- **Patrones de vela (HM, EN, DJ):**
+  - cuentan si lo que hace el patrón mide al menos `pat.minPart` ATR (0.5: la mecha del martillo, la estrella y el
+    doji; el cuerpo de la envolvente);
+  - y si es un swing: su extremo pasa el de las `swingBefore` velas anteriores (5) y las `swingAfter` siguientes (2) no
+    lo alcanzan; un empate no es swing;
+  - se conocen al cerrar la vela que confirma el swing, y el stop "extremo de la vela del elemento" cubre desde la
+    primera vela del patrón (`first`; la envolvente, sus dos velas);
+  - en BTC 4h, fase 1: de 215 martillos y estrellas quedan 96; de 578 envolventes, 143; de 18 dojis, 11;
+  - 0 apaga cada filtro. El indicador Rejection Patterns no cambia.
+- **Rombo del Volumen de Respuesta (RB):**
+  - sale solo en una vela de respuesta que sube el promedio de la respuesta: si el balance baja porque una vela de la
+    tendencia deja la ventana, sigue armado (`measures.equilibrium` con `answers` y `side` de `balance(parts=True)`);
+  - el indicador hace lo mismo (`responseBalance.js`, `rising` de fábrica; `false` es la regla de antes), y la
+    investigación lo tiene como opción (`engine.signals`). La paridad da 0 de diferencia en 15m, 1h y 4h;
+  - `measures.VERSION` pasa a 2 por la medida "velas desde el último equilibrio": la tabla de medidas se vuelve a armar.
+- **Ruptura de caja (BX):**
+  - la primera vela que cierra fuera de la caja, desde que se conoce hasta la que la termina (antes, la que la
+    terminaba, a más de 0.5 ATR);
+  - una caja que termina por su eficiencia sin cierre afuera no da ruptura (F-18). El filtro de régimen "tras romper"
+    tampoco la cuenta, y `regime_study.breakouts` la salta;
+  - en BTC 4h, fase 1, con cajas de hasta 5.5 ATR: 147 rupturas.
+- **Borde de caja (BE):**
+  - la franja del borde es el 5% de la caja (`be.share`, antes 20%);
+  - el rearme va después de mirar la llegada de la vela (F-19): una vela que tocaba el borde y cerraba en el centro
+    contaba como una llegada nueva;
+  - en BTC 4h, fase 1: 178 bordes antes, 124 con el arreglo y 20%, y 80 con el 5%.
+- **Cambio de carácter (CC):**
+  - rompe el swing que originó el último tramo (`cc.ref` "origin"; "last" es la regla de antes);
+  - la tendencia se confirma por cierres (`cc.closes`): un máximo más alto cuenta solo si alguna vela cerró sobre el
+    anterior, y un mínimo más bajo, bajo el anterior;
+  - el extremo de la zona es el de la tendencia, desde el swing roto, y trae su vela (`extremeT`), desde donde se dibuja
+    la línea (F-20);
+  - en BTC 4h, fase 1: de 181 a 87.
+- **En la ventana:**
+  - los patrones suman "Lo que hace el patrón mide al menos … ATR" y "En un swing";
+  - el borde de caja va de 2% a 50%, de a 1%;
+  - las cajas de los elementos empiezan en el borde de su vela (O-34, sin cambiar trades).
+- **Lector VPA (galería 2, 24/11):** `vpa.py` y `vpa.js`, iguales al bit. Cada cambio es un parámetro (entre
+  paréntesis, el valor que repite la regla de antes: con todos, los mismos 1,488 elementos del motor 6 en BTC 4h fase 1):
+  - **el volumen alto de los elementos** (y el rango ancho) lo es también frente a la mediana de las `nearBars` (20)
+    velas anteriores, sin la suya (0). El medidor sigue con su hora (salvo en la vela ancha: abajo). Lo usan el esfuerzo sin y con resultado
+    (`absorbE` y `validE`: el menor de los dos grados), la ruptura con volumen, las velas pesadas de la prueba, el
+    frenado y el clímax (`rvHi`);
+  - **el esfuerzo sin resultado** no cuenta si la vela anterior fue ancha (`skipAfterWide`; false): esa tuvo resultado;
+  - **la vela ancha con volumen alto tuvo resultado** (`wideResult`; false), por el caso 2 de la galería: una vela de 10
+    veces su rango con 20 veces su volumen. El esfuerzo sin resultado no cuenta en ella (`absorbE` ≤ 1 − `wide`), y el
+    esfuerzo con resultado es esa vela, sin pedir que el rango siga al volumen (`validE` = la menor entre `wide` y el
+    volumen alto de `rvHi`). La medida de ancha es la de `skipAfterWide`;
+  - **el medidor la lee igual** (`wideMeter`; false), a pedido del usuario: en la vela ancha con volumen alto no suma
+    el esfuerzo sin resultado, contra su color (`absorb` ≤ 1 − `wide`), y suma como esfuerzo con resultado, a favor
+    (`valid` ≥ el grado del elemento). En las demás velas el medidor no cambia. La vela del 17/04/21 lo subía de +0.28
+    a +0.72; ahora lo baja a −0.29. Con él cambian el cruce del umbral (QE), el giro, el filtro del medidor y la salida
+    por el medidor;
+  - **la prueba de poco volumen**, solo dentro de una caja de la pestaña Régimen (`testBox`; false), la de oferta en su
+    mitad de abajo y la de demanda en la de arriba, y tras un frenado o un clímax de su lado en las `testLook` velas
+    anteriores (`testAfter`; false). La caja es `vpa.boxes`: `er_box` con sus parámetros (`vpa.BOX`), operación por
+    operación;
+  - **el frenado o techo**, con mecha de media vela (`stopWick` [0.4, 0.6]; [0.25, 0.4]);
+  - **el retroceso**, con una vela en contra de la ruptura antes de la que confirma (`pullBack`; false);
+  - **dos elementos nuevos:** QV, esfuerzo con resultado (la vela ancha con volumen alto, a favor de su color, para usarla de gatillo)
+    y QG, el medidor gira (cruza el cero tras pasar el umbral del otro lado; `info.peak`, su pico);
+  - **la salida VPA:** "esfuerzo en contra" y "retroceso con volumen" leen los grados de los elementos, y el Observador
+    pasa su lectura VPA a la versión 2 (`VPA_LAST` da esos mismos grados);
+  - **en BTC 4h, fase 1:**
+    - el esfuerzo sin resultado pasa de 197 a 25 y la prueba de poco volumen, de 430 a 10;
+    - el frenado, de 75 a 30, y el clímax, de 44 a 18;
+    - la ruptura con volumen, de 374 a 350, y el retroceso, de 45 a 38;
+    - el esfuerzo con resultado da 1,066 y el medidor que gira, 183 (sin `wideResult` ni `wideMeter`: 29, 650 y 174);
+    - el cruce del umbral pasa de 244 a 247 (168 siguen, 76 salen y 79 entran), por el medidor;
+    - el medidor suma distinto en 529 de 8,076 velas, y cambia de lado (±0.3) en el 6.4%;
+    - la ruptura sin volumen (11) no cambia.
+- **Pruebas:**
+  - `test_motor7.py` (17), y una más en `test_response_volume.py` (8) y en `response.test.mjs` (48);
+  - la paridad del lector, `vpa.parity.test.mjs` (12), con la regla nueva y la de antes;
+  - `test_structure.py`, `test_line_tf.py`, `test_regime.py` y `test_vpa.py` al día: prueban la regla de antes con sus
+    valores explícitos, o con otra serie.
 
 ### Acciones de Alpaca en el probador (20/11)
 
@@ -2418,6 +2536,7 @@ VPAIndicator.js + VPASettings.jsx               rule_tester (elementos Q*, filtr
 | Código | Nombre | Lado | Zona |
 |---|---|---|---|
 | QA | Esfuerzo sin resultado | contra el color | la vela |
+| QV | Esfuerzo con resultado (motor 7) | el color | la vela |
 | QB | Ruptura con volumen | con la ruptura | del nivel roto a la vela (el stop "borde lejano" queda tras la vela) |
 | QF | Ruptura sin volumen | contra la ruptura | del nivel al extremo |
 | QR | Retroceso sin volumen | con la ruptura | del mínimo del retroceso al nivel |
@@ -2425,6 +2544,14 @@ VPAIndicator.js + VPASettings.jsx               rule_tester (elementos Q*, filtr
 | QS | Frenado o techo | contra el tramo | las velas |
 | QC | Clímax | contra el tramo | las velas del clímax |
 | QE | Medidor cruza ±`meter` | el del cruce | la vela |
+| QG | El medidor gira (motor 7): cruza el cero tras pasar ±`meter` del otro lado | el del cruce | la vela |
+
+Desde el motor 7 (24/11, galería 2): lo alto de los elementos, también frente a las 20 velas anteriores; el esfuerzo sin
+resultado, no en una vela ancha ni tras ella; el esfuerzo con resultado, la vela ancha con volumen alto, y el medidor
+la lee igual; la prueba,
+dentro de una caja del Régimen y tras un frenado o un clímax; el frenado,
+con mecha de media vela; y el retroceso, con una vela en contra. Detalle en "PROBADOR DE REGLAS DEL OBSERVADOR",
+"Motor 7".
 
 - Ruptura: el primer cierre a más de 0.1 ATR fuera del máximo o mínimo de las `rangeBars` (20) velas anteriores, con ese rango de hasta `maxRangeAtr` (6) ATR. Retroceso: en `pullBars` (8) velas vuelve a ½ ATR del nivel con volumen medio bajo y cierra a favor.
 - Prueba: entra al precio de una vela de las `testLook` (20) anteriores con volumen alto entero y del color contrario.
