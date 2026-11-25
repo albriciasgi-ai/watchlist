@@ -55,6 +55,78 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite + App 1 - 25 Noviembre 2026: Las Reglas de App 1 en las Monedas del Scanner (parte 4 del concepto de compras)
+
+**Pedido:** tras ver que H1 y H3 no pasan la fase 2, el usuario aceptó probar si las reglas del registro en vivo rinden más en las monedas del scanner («Sí, pruébalo»).
+
+**Cambios** (fuera del repositorio, en `OrderFlowData/research/scanner/historia/`):
+1. **Fijado antes de mirar** en `docs/PLAN_SEGUIMIENTO_SCANNER.md`, «Parte 4, primer paso»:
+   - las tres reglas exactas del registro (`rule_watch.RECORDS`), con el probador de App 1;
+   - cada trade según la moneda al decidir: en el scanner (En juego o Tendencia), candidata sin lista o fuera;
+   - el criterio, y que la fase 2 solo se mide para la regla que pase la 1.
+2. **El OI de 4 horas** de las 828 monedas, también de las cerradas (`oi_hist.py`), para B1. El probador lee el OI, el funding y su carpeta de trabajo de la historia: las carpetas de App 1 no se tocan.
+3. **`reglas.py`:** las reglas sobre las velas de 4 horas de la historia, y cada trade con el scanner reconstruido.
+
+**IMPORTANTE:**
+- **Comprobado:**
+  - sobre la historia dan los mismos trades que sobre las velas de App 1: 748 de 748 en 5 monedas, B1 incluida;
+  - el OI bajado es igual al de App 1.
+- **Fase 1 (2023), 31,757 trades: ninguna pasa.** R por trade después del costo:
+
+| Regla | En el scanner | Candidatas sin lista | Diferencia |
+|---|---|---|---|
+| Impulso | 4,270 trades, +0.05 ± 0.16 | 992, +0.04 ± 0.18 | +0.02 ± 0.18 |
+| FVG nuevo | 5,274, −0.01 ± 0.14 | 2,041, +0.03 ± 0.20 | −0.04 ± 0.16 |
+| B1 | 2,025, −0.08 ± 0.12 | 275, +0.04 ± 0.28 | −0.12 ± 0.23 |
+
+- **No hay fase 2:** esta prueba no la tocó.
+- **Lo que queda:** ni las hipótesis de la historia ni estas reglas sacan una compra del scanner. El scanner dice qué monedas se mueven, no hacia dónde.
+- No cambió el código de las apps.
+
+**Ver:** `OrderFlowData/research/scanner/historia/resumen.md` y `docs/PLAN_SEGUIMIENTO_SCANNER.md`, «Parte 4»
+
+---
+
+### Altagracia Trading Suite - 25 Noviembre 2026: La Historia del Scanner, Fases 1 y 2 (parte 3 del concepto de compras)
+
+**Pedido:** con el seguimiento en main, el usuario eligió «La historia»: reconstruir el scanner de 2023 a 2026, también con las monedas ya cerradas, para tener miles de hallazgos en mercados distintos. Tras la fase 1 eligió las hipótesis H1 y H3 para la fase 2 («H1 y H3»).
+
+**Cambios** (fuera del repositorio, en `OrderFlowData/research/scanner/historia/`):
+1. **Fijado antes de mirar** en `docs/PLAN_SEGUIMIENTO_SCANNER.md`, «Parte 3»:
+   - el universo, sin sesgo de supervivencia;
+   - los datos;
+   - lo que no se puede reconstruir: el libro, Rápidos y el OI;
+   - las fases de App 1.
+2. **Datos:** velas de 15 min y funding de las 828 monedas de cripto e innovación, también las 312 cerradas (`descarga.py`, en `OrderFlowData/scanner_history`).
+3. **El scanner reconstruido:** las medidas de `scanner.py` sobre toda la historia (`replay.py`) y las listas vuelta a vuelta, con los hallazgos y el control de la parte 1 (`fase.py`). También los elementos del probador de App 1 (`elementos.py`) y el informe (`informe.py`).
+4. **Las hipótesis, fijadas antes de reconstruir la fase 2** (plan, «Las hipótesis de la fase 2»; `hipotesis.py`):
+   - **H1:** ir en contra de los hallazgos con 10 ATR de 1 h o más a favor en 24 h;
+   - **H3:** seguirlos con un canal gaussiano de 15 min en contra en la hora anterior;
+   - **la apuesta:** objetivo y stop a 2 ATR de 1 h, 24 h como mucho y 14 bps de costo;
+   - **pasan** si son positivas con margen y le ganan con margen a la misma apuesta sin la condición. El margen agrupa los trades por semana.
+
+**IMPORTANTE:**
+- **Comprobado contra el scanner en vivo:**
+  - las medidas coinciden en el 99.3 % al 100 % de 1,260 filas;
+  - en las listas, encuentra el 98 % de En juego sin las monedas de la suite ni el libro. La historia incluye cerca de un tercio más de miembros: las de libro caro.
+- **Fase 1 (2023):** 25,192 hallazgos y 69,720 controles.
+  - Se mueven más y antes que el control, sin dirección: la carrera a 2 ATR sigue en el 49.6 % contra el 51.3 %.
+  - Los elementos dan estructura (32 de 127 pruebas, contra 5.8 del azar), pero de 2 a 6 puntos, del orden del costo.
+  - Con la regla exacta, H1 daba +0.32 ± 0.40 ATR por trade y H3 +0.03 ± 0.20: ya en la fase 1 el margen tocaba el cero. La cuenta rápida anterior (+0.53 ATR en H1) no tenía margen, y dejaba fuera los trades que tocan los dos niveles en la misma vela o ninguno.
+- **Fase 2 (2024 a mitad de 2025), medida una vez:** 50,545 hallazgos en 622 monedas. **Ninguna pasa, y no hay fase 3:**
+
+| | Trades | Acierto | Después del costo (ATR) | Contra sin la condición |
+|---|---|---|---|---|
+| H1 | 511 | 50.0 % | −0.11 ± 0.37 | +0.03 ± 0.37 |
+| H3 | 2,288 | 50.9 % | −0.07 ± 0.16 | −0.02 ± 0.17 |
+
+- **Lo que queda:** el scanner encuentra monedas que se mueven más y antes, pero no dice hacia dónde. Una compra basada en él necesita otra hipótesis, fijada con la fase 1 y medida en la 2.
+- No cambió el código de las apps.
+
+**Ver:** `OrderFlowData/research/scanner/historia/resumen.md` y `docs/PLAN_SEGUIMIENTO_SCANNER.md`, «Parte 3»
+
+---
+
 ### Altagracia Trading Suite - 24 Noviembre 2026: Seguimiento de los Hallazgos del Scanner (partes 1 y 2 del concepto de compras)
 
 **Pedido:** ver, desde que el scanner encuentra una moneda, en qué punto ocurrió un movimiento importante y qué variables e indicadores se estaban encendiendo, para definir un procedimiento de compra. Se le dio un concepto en 4 partes: el seguimiento, la pantalla, la historia del scanner y el procedimiento. Pidió empezar por el seguimiento («Sí, empieza»).
