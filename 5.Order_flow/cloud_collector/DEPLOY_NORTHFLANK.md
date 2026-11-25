@@ -285,6 +285,25 @@ Ver `12.AltagraciaTradingSuite/CLAUDE.md`, seccion "Nube contra el archivo ofici
 - **La página de Northflank** tardó unos 3 minutos en cargar, porque su archivo principal baja a unos 25 KB/s. Una dirección escrita a mano la vuelve a cargar entera: conviene moverse con clics dentro de la página.
 
 
+## Memoria que glibc no devuelve (23/11/2026)
+
+**Pedido:** revisar la memoria del collector. El 23/11, un día después de desplegar Hyperliquid, usaba 348 de 512 MB.
+
+**Lo visto en Northflank:** tras cada reinicio la memoria sube de forma pareja unas 12 a 24 horas y después se aplana. La instancia anterior hizo lo mismo antes de Hyperliquid: 167 MB al desplegarla el 13/11, y entre 340 y 370 MB durante días. Hyperliquid no cambió la curva.
+
+**Medido en el PC** (media hora, las 21 monedas, sin Hyperliquid, con tracemalloc):
+- lo que ocupan los objetos de Python se queda plano en unos 50 MB, casi todo el libro;
+- el proceso, en cambio, sube de 283 a 331 MB.
+
+No son datos que se acumulen: es memoria que el asignador de glibc retiene después de que Python la libera (fragmentación).
+
+**Cambio** (`main.py`):
+- cada `MEM_TRIM_SECONDS` (600 de fábrica; 0 lo apaga) hace `gc.collect()` y `malloc_trim(0)`, que devuelve al sistema lo que glibc tiene libre. Fuera de Linux no hace nada;
+- `/health` suma `memory`: la memoria residente del proceso (`VmRSS`), cuántas veces se devolvió, cuánto en total y la última.
+
+**Pruebas:** `tests/mem_checks.py` (5), con un libc falso. `malloc_trim` solo existe en Linux: el efecto real se mide en Northflank.
+
+
 ## Trades sumados al final del día, sin quedarse sin memoria (13/11/2026)
 
 **Problema:** al ir a desplegar el libro, Northflank mostraba el servicio con 4 reinicios en un día, el último "Out-of-Memory killed (OOMKilled)". Fueron hoy a las 12:51, 13:34 y 14:58 de Colombia, todos por la tarde UTC. El plan es `nf-compute-20`: 0.2 vCPU y 512 MB. Cada reinicio deja un hueco en los trades.
