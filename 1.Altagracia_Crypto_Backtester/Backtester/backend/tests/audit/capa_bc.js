@@ -82,8 +82,10 @@ function setOrderFlow(of = {}) {
   const out = [];
   const flow = im.indicators.find(x => x.name === 'Order Flow');
   if (flow && of.step) {
-    flow.updateConfig({ stepByMinutes: { [flow.tfMinutes]: of.step }, imbalanceRatio: 4, imbalanceMode: 'diagonal', stackedMinLevels: 3,
-                        showImbalances: of.imbalances !== false });
+    // stepPerCandle (25/11, O-39): el tope de 200 niveles es de cada vela. Sin él, una vela ancha de lo encuadrado
+    // agrandaba las celdas de todas (8 casos de la galería 4 salieron así y se repitieron)
+    flow.updateConfig({ stepByMinutes: { [flow.tfMinutes]: of.step }, stepPerCandle: true, imbalanceRatio: 4,
+                        imbalanceMode: 'diagonal', stackedMinLevels: 3, showImbalances: of.imbalances !== false });
     out.push(`footprint con celdas de ${of.step}` + (flow.enabled ? '' : ' ⚠ apagado'));
   }
   const elements = im.indicators.find(x => x.name === 'Elementos OF');
@@ -287,8 +289,10 @@ async function closeUp(folder, name, n, info, tf, of) {
   const before = of.closeBefore ?? 2, after = of.closeAfter ?? 1;
   // De cerca va sin lo que dibuja la regla ni la marca de los Elementos OF: sus rellenos y la etiqueta de la franja del
   // elemento tapaban las cifras de su celda. Las celdas del elemento las señala un marco fino, sobre la copia
-  setOrderFlow({ codes: [] });
   const context = await contextShown(false);
+  // Desde O-39 (25/11), desmarcar la casilla devuelve el footprint y los Elementos OF a lo guardado (celdas automáticas
+  // y todos los códigos): las celdas del elemento y los Elementos OF sin marcas se ponen después
+  setOrderFlow({ codes: [], step: (of.steps || {})[n], imbalances: of.imbalances });
   // Las franjas del trade elegido (la zona de cada elemento, con su nombre encima de las celdas) salen solo de esta copia:
   // el arreglo de getTradeBands se vacía y se devuelve al terminar
   const props = (chartFiber() || {}).f?.memoizedProps || {};
