@@ -87,6 +87,23 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### Altagracia Trading Suite - 24 Noviembre 2026: Panel Lateral de la Watchlist con Partes Plegables
+
+**Pedido:** con el panel de las reglas en vivo, el panel lateral de la Watchlist quedó muy largo y lo último queda muy abajo. El usuario pidió que cada parte sea desplegable.
+
+**Cambios** (`WatchlistView.jsx`, `suite.css`):
+1. **Cada parte se pliega con un clic en su título:** las 12 del panel (Swing, sus monedas y sus señales; sabios y SMC y sus últimas; DX, sus órdenes y sus últimas; reglas en vivo, sus posiciones y sus últimas).
+2. **Plegada, deja el título con una nota corta:** el estado y la cuenta («Registra en vivo · 0 trades · 2 abiertas», «65 trades · +0.013 R», «168 esperando»).
+3. **Se recuerda** en la pestaña (`suite_wl_folds`). De fábrica todo sigue desplegado.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- No se vio en pantalla: el archivo compila.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Reglas en vivo (24/11)", "Panel"
+
+---
+
 ### Altagracia Trading Suite + App 1 - 24 Noviembre 2026: Impulso, FVG Nuevo y B1 Registradas en Vivo
 
 **Pedido:** las tres reglas que quedaron cerca de la fase 2 con el motor 6 no tienen su fase 3 mirada. En lugar de gastarla, el usuario pidió grabarlas en vivo.

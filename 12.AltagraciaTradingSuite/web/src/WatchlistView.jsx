@@ -186,6 +186,38 @@ const GridChart = React.memo(function GridChart({ symbol, tf, days, states, redr
   );
 });
 
+// Partes del panel lateral que el usuario plegó (24/11): se recuerdan en la pestaña
+const FOLD_KEY = 'suite_wl_folds';
+const loadFolds = () => {
+  try { return JSON.parse(localStorage.getItem(FOLD_KEY) || '{}') || {}; } catch { return {}; }
+};
+
+/** Una parte del panel lateral: un clic en su título la pliega o la despliega. Plegada, deja el título y una nota corta */
+function Fold({ id, title, note = null, right = null, children }) {
+  const [closed, setClosed] = useState(() => !!loadFolds()[id]);
+  const toggle = () => {
+    const next = !closed;
+    setClosed(next);
+    try {
+      const all = loadFolds();
+      if (next) all[id] = 1; else delete all[id];
+      localStorage.setItem(FOLD_KEY, JSON.stringify(all));
+    } catch { /* sin almacenamiento, vale hasta recargar */ }
+  };
+  const head = (
+    <h3 className="wl-fold-title" onClick={toggle} title={closed ? 'Desplegar' : 'Plegar'}>
+      <span className="wl-fold-mark">{closed ? '▸' : '▾'}</span>{title}
+      {closed && note ? <span className="wl-fold-note"> · {note}</span> : null}
+    </h3>
+  );
+  return (
+    <div className="bot-section">
+      {right ? <div className="wl-panel-title">{head}{right}</div> : head}
+      {closed ? null : children}
+    </div>
+  );
+}
+
 /** El Swing del servidor: si detecta, su marco, las monedas que vigila y lo último que anotó. Nada se envía al bot */
 function PanelTitle({ onHide }) {
   return (
@@ -218,8 +250,7 @@ function WiseSmcSections({ wsmc, onChange, onOpenChart }) {
   const coins = status.allSymbols ? `Todas las monedas de la suite (${status.symbols.length})` : `${status.symbols.length} monedas`;
   return (
     <>
-      <div className="bot-section">
-        <h3>Sabios de Williams y estructura SMC</h3>
+      <Fold id="wsmc" title="Sabios de Williams y estructura SMC" note={`${state} · hoy ${status.today ?? 0}`}>
         <div className="wl-row">
           <span className={`suite-dot ${status.detecting ? 'ok' : 'bad'}`} />
           <span>{state}</span>
@@ -241,9 +272,8 @@ function WiseSmcSections({ wsmc, onChange, onOpenChart }) {
           Ninguna superó al azar en el probador: son ayudas de lectura, no señales.
         </div>
         {wsmc.error && <div className="suite-result bad">{wsmc.error}</div>}
-      </div>
-      <div className="bot-section">
-        <h3>Últimas de los sabios y SMC</h3>
+      </Fold>
+      <Fold id="wsmc-log" title="Últimas de los sabios y SMC" note={`${wsmc.log.length}`}>
         {wsmc.log.length === 0 ? <div className="bot-empty">Todavía ninguna.</div> : (
           <table className="bot-table">
             <thead><tr><th>Hora</th><th>Moneda</th><th>Señal</th></tr></thead>
@@ -260,7 +290,7 @@ function WiseSmcSections({ wsmc, onChange, onOpenChart }) {
             </tbody>
           </table>
         )}
-      </div>
+      </Fold>
     </>
   );
 }
@@ -311,8 +341,8 @@ function RuleSections({ rules, onChange, onOpenChart }) {
   const next = ids.length ? (records[ids[0]]?.checkpoints || []).find(m => !m.due && m.at) : null;
   return (
     <>
-      <div className="bot-section">
-        <h3>Reglas en vivo (Impulso, FVG nuevo y B1)</h3>
+      <Fold id="rules" title="Reglas en vivo (Impulso, FVG nuevo y B1)"
+            note={`${state} · ${ids.reduce((n, id) => n + (records[id]?.book?.n || 0), 0)} trades · ${open.length} abiertas`}>
         <div className="wl-row">
           <span className={`suite-dot ${status.detecting ? 'ok' : 'bad'}`} />
           <span>{state}</span>
@@ -354,9 +384,8 @@ function RuleSections({ rules, onChange, onOpenChart }) {
           </div>
         )}
         {rules.error && <div className="suite-result bad">{rules.error}</div>}
-      </div>
-      <div className="bot-section">
-        <h3>Posiciones abiertas de las reglas</h3>
+      </Fold>
+      <Fold id="rules-open" title="Posiciones abiertas de las reglas" note={`${open.length}`}>
         {open.length === 0 ? <div className="bot-empty">Ninguna abierta.</div> : (
           <table className="bot-table">
             <thead><tr><th>Moneda</th><th>Regla</th><th>Entrada</th><th>R</th></tr></thead>
@@ -373,9 +402,8 @@ function RuleSections({ rules, onChange, onOpenChart }) {
             </tbody>
           </table>
         )}
-      </div>
-      <div className="bot-section">
-        <h3>Últimas entradas y salidas de las reglas</h3>
+      </Fold>
+      <Fold id="rules-log" title="Últimas entradas y salidas de las reglas" note={`${rules.log.length}`}>
         {rules.log.length === 0 ? <div className="bot-empty">Todavía ninguna.</div> : (
           <table className="bot-table">
             <thead><tr><th>Hora</th><th>Moneda</th><th>Qué pasó</th></tr></thead>
@@ -392,7 +420,7 @@ function RuleSections({ rules, onChange, onOpenChart }) {
             </tbody>
           </table>
         )}
-      </div>
+      </Fold>
     </>
   );
 }
@@ -428,8 +456,8 @@ function DxSections({ dx, onChange, onOpenChart }) {
   const waiting = (status.symbols || []).reduce((n, s) => n + (status.by_symbol?.[s]?.pendingCount || 0), 0);
   return (
     <>
-      <div className="bot-section">
-        <h3>DX en vivo (apilados desplazados)</h3>
+      <Fold id="dx" title="DX en vivo (apilados desplazados)"
+            note={book.n ? `${book.n} trades · ${dxR(book.avgR)} R` : state}>
         <div className="wl-row">
           <span className={`suite-dot ${status.detecting ? 'ok' : 'bad'}`} />
           <span>{state}</span>
@@ -461,9 +489,8 @@ function DxSections({ dx, onChange, onOpenChart }) {
           <div className="suite-result bad">{failing.map(s => `${s.replace(/USDT$/, '')}: ${status.by_symbol[s].error}`).join(' · ')}</div>
         )}
         {dx.error && <div className="suite-result bad">{dx.error}</div>}
-      </div>
-      <div className="bot-section">
-        <h3>Órdenes de DX</h3>
+      </Fold>
+      <Fold id="dx-orders" title="Órdenes de DX" note={`${waiting} esperando`}>
         {waiting > 0 && (
           <div className="wl-row wl-muted">{waiting} esperando en total; se ven las 3 más cerca del precio de cada moneda y las posiciones abiertas.</div>
         )}
@@ -486,9 +513,8 @@ function DxSections({ dx, onChange, onOpenChart }) {
             </tbody>
           </table>
         )}
-      </div>
-      <div className="bot-section">
-        <h3>Últimas entradas y salidas de DX</h3>
+      </Fold>
+      <Fold id="dx-log" title="Últimas entradas y salidas de DX" note={`${dx.log.length}`}>
         {dx.log.length === 0 ? <div className="bot-empty">Todavía ninguna.</div> : (
           <table className="bot-table">
             <thead><tr><th>Hora</th><th>Moneda</th><th>Qué pasó</th></tr></thead>
@@ -506,7 +532,7 @@ function DxSections({ dx, onChange, onOpenChart }) {
             </tbody>
           </table>
         )}
-      </div>
+      </Fold>
     </>
   );
 }
@@ -531,8 +557,8 @@ function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart, onHide, ext
   };
   return (
     <div className="wl-panel">
-      <div className="bot-section">
-        <PanelTitle onHide={onHide} />
+      <Fold id="swing" title="Swing del servidor" note={`${state} · hoy ${status.today ?? 0}`}
+            right={<button type="button" className="suite-btn" onClick={onHide} title="Ocultar el panel (se vuelve a abrir con «Panel del Swing»)">Ocultar ›</button>}>
         <div className="wl-row">
           <span className={`suite-dot ${status.detecting ? 'ok' : 'bad'}`} />
           <span>{state}</span>
@@ -560,9 +586,8 @@ function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart, onHide, ext
         )}
         <div className="wl-row wl-muted">Hoy: {status.today ?? 0} señales. No envía alertas: quedan para la central de confluencia.</div>
         {swing.error && <div className="suite-result bad">{swing.error}</div>}
-      </div>
-      <div className="bot-section">
-        <h3>Monedas vigiladas ({watched.size})</h3>
+      </Fold>
+      <Fold id="swing-coins" title={`Monedas vigiladas (${watched.size})`}>
         <div className="wl-coins">
           {symbols.map(sym => (
             <label key={sym} className="wl-coin">
@@ -571,9 +596,8 @@ function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart, onHide, ext
             </label>
           ))}
         </div>
-      </div>
-      <div className="bot-section">
-        <h3>Últimas señales</h3>
+      </Fold>
+      <Fold id="swing-log" title="Últimas señales" note={`${swing.log.length}`}>
         {swing.log.length === 0 ? <div className="bot-empty">Todavía ninguna.</div> : (
           <table className="bot-table">
             <thead><tr><th>Hora</th><th>Moneda</th><th>Swing</th><th>Precio</th></tr></thead>
@@ -590,7 +614,7 @@ function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart, onHide, ext
             </tbody>
           </table>
         )}
-      </div>
+      </Fold>
       {extra}
     </div>
   );
