@@ -55,6 +55,38 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite - 25 Noviembre 2026: Nuevo Consolidado de Estrategias, con un Esquema de Cada Una
+
+**Pedido:** un consolidado nuevo de las estrategias probadas, en PDF. Debía traer imágenes claras de cómo funcionaría cada una, con énfasis en lo que sí funciona, y explicar:
+- los controles (azar, tramo);
+- por qué cada corrida sesga más los resultados;
+- las fases con sus partes y la puerta.
+
+**Cambios:** ninguno en el código de las apps.
+1. **`1.Altagracia_Crypto_Backtester/Backtester/CONSOLIDADO_ESTRATEGIAS_2026-11-25.pdf`** (26 páginas):
+   - el mapa de las 35 ideas probadas, con hasta qué fase llegó cada una;
+   - el método: las fases con sus tramos y la puerta, los tres controles con un esquema y cómo se lee la ventaja;
+   - un gráfico de cuánto gana la mejor regla por puro azar según cuántas se prueben;
+   - lo que sí funciona;
+   - una ficha con su esquema por estrategia, y las compras desde el scanner y el pump.
+2. **El generador:** `OrderFlowData/research/consolidado/2026-11-25/consolidado_v2.py`, con `graficos.py`. El consolidado del 24/11 sigue en su lugar.
+
+**IMPORTANTE:**
+- **Hallado al prepararlo: el registro en vivo de Impulso, FVG nuevo y B1 vigila 43 monedas y no las 50 del plan.**
+  - Le faltan las 7 de siempre: BTC, ETH, SOL, ARB, GALA, SUI y TRX.
+  - La causa: `rule_tester.base_symbols()` de App 1 busca `backtesting_cache` con una ruta relativa, y el servidor de la suite no corre desde la carpeta de App 1.
+  - No se corrigió: queda propuesto. Lo registrado en las 43 vale.
+- **Las cuentas del informe:**
+  - el registro del probador tiene 2,013 corridas, de 192 reglas distintas;
+  - las 8 búsquedas genéticas probaron 4,823 reglas, todas sobre la fase 1;
+  - con 300 trades por regla, la mejor de 192 reglas sin ventaja muestra +0.25 R por trade por puro azar, y la mejor de 4,823, +0.34 R. Es lo que mostraban las mejores.
+- **El motor 7 no se ha repetido** en la B5, la ruptura con volumen ni la Ruptura de caja: sus cifras siguen siendo del motor 6.
+- **DX en vivo al 25/11:** 88 trades y −0.04 R por trade (de −0.34 a +0.26).
+
+**Ver:** el PDF.
+
+---
+
 ### Altagracia Trading Suite + App 1 - 25 Noviembre 2026: Las Reglas de App 1 en las Monedas del Scanner (parte 4 del concepto de compras)
 
 **Pedido:** tras ver que H1 y H3 no pasan la fase 2, el usuario aceptó probar si las reglas del registro en vivo rinden más en las monedas del scanner («Sí, pruébalo»).
