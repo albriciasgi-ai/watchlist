@@ -267,6 +267,19 @@ try:
         client.post("/api/rules/config", json={"enabled": True})
         check("el estado de la suite trae las reglas", "rules" in client.get("/api/suite/status").json())
     check("el modulo no tiene con que enviar al bot", "bot" not in Path(rw.__file__).read_text(encoding="utf-8").lower().replace("al bot", ""))
+
+    # --- 10. las monedas del plan, desde la carpeta de la suite (25/11) ---
+    # Con la ruta relativa del cache de App 1, desde aqui no salian las 7 de siempre: el registro vigilaba 43 de 50.
+    cache = Path(rt.__file__).resolve().parent / "backtesting_cache"
+    own = sorted(p.name.split("_")[0] for p in cache.glob("*_backtesting_data.json.gz"))
+    here_cwd = os.getcwd()
+    try:
+        os.chdir(TMP)
+        coins = rw.default_symbols()
+        check("las monedas de siempre salen sin importar la carpeta de trabajo", rt.CANDLE_DIR.is_absolute() and rt.base_symbols() == own
+              and set(own) <= set(coins), f"{len(own)} de siempre, {len(coins)} en el registro")
+    finally:
+        os.chdir(here_cwd)
 finally:
     shutil.rmtree(TMP, ignore_errors=True)
 

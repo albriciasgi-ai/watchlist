@@ -55,6 +55,57 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite - 25 Noviembre 2026: Guías de Elementos con Imágenes Reales, el Consolidado con el Motor 7 y el Registro en Vivo en las 50 Monedas
+
+**Pedido:** tres cosas tras el consolidado:
+- corregir el registro en vivo, que vigilaba 43 de las 50 monedas («sí, corrígelo»);
+- correr con el motor 7 las estrategias que faltaban y poner sus cifras en el informe;
+- un PDF explicativo por familia de elementos, según lo que salió de las galerías, y rehacer los de order flow y VPA con
+  imágenes reales de cada elemento.
+
+**Cambios:**
+1. **El registro en vivo** (`rule_tester.py` y `measures.py` de App 1):
+   - la ruta del caché de velas va junto al archivo, no relativa a la carpeta de trabajo;
+   - desde la carpeta de la suite salen las 50 monedas;
+   - pruebas: una más en `test_new_coins.py` y en `rule_checks.py` (53).
+2. **El motor 7 en el consolidado:**
+   - la B5, la ruptura con volumen y la Ruptura de caja (también la de solo cortos), repetidas con el motor 7 en las
+     fases ya vistas;
+   - por script y sin guardar corridas (`OrderFlowData/research/consolidado/2026-11-25/motor7/`);
+   - el PDF del consolidado quedó al día.
+3. **Cinco guías de elementos** en `1.Altagracia_Crypto_Backtester/Backtester/` (152 páginas):
+   - `GUIA_ELEMENTOS_VELAS_PATRONES_CAJAS.pdf`, con 15 elementos;
+   - `GUIA_ELEMENTOS_VPA.pdf`, con 10;
+   - `GUIA_ELEMENTOS_WILLIAMS_SMC.pdf`, con 7;
+   - `GUIA_ELEMENTOS_ORDER_FLOW.pdf`, con 31;
+   - `GUIA_ELEMENTOS_PERFIL_LIQUIDACIONES.pdf`, con 6.
+
+   Cada ficha dice cómo lo calcula la app hoy, qué mirar, sus parámetros de fábrica, qué salió de la galería y lo medido.
+   Trae dos o tres casos reales de la galería del protocolo; en order flow, con el footprint en las celdas del elemento y
+   de cerca. Generador: `OrderFlowData/research/guias_elementos/2026-11-25/guias.py`.
+
+**IMPORTANTE:**
+- **El registro llega a la suite al unir esta rama a main** y poner al día su carpeta; la suite se reinicia sola al
+  abrirla. Las 7 de siempre empiezan en el primer cierre de 4 horas que vea, y lo registrado en las 43 vale.
+- **Con el motor 7 ningún veredicto cambia** (R por trade; las 7 de siempre · las 43 nuevas):
+
+| Regla | Fase 1 | Fase 2 | Fase 3 |
+|---|---|---|---|
+| B5 | +0.193 (pasa) · +0.048 | +0.205 (pasa) · +0.067 | −0.036 · −0.008 |
+| Ruptura con volumen | +0.194 · +0.065 | +0.216 · +0.208 | +0.007 · +0.028 |
+| Ruptura de caja | +0.300 · +0.139 | +0.264 · +0.133 | −0.069 · +0.048 |
+
+- La B5 sigue siendo la única que pasa la fase 2, en las 7 de siempre, y cae en la 3.
+- **Las guías anteriores siguen en su lugar:** la de pruebas de order flow del 10/11, con los 91 setups y la lista de
+  chequeo, y la del VPA del 22/11, con el tutorial y el informe de reglas.
+- **Las galerías 3 a 5 siguen sin revisar:** sus fichas dicen lo que aclaró el protocolo de pruebas.
+- Las imágenes son de la galería (BTC, fase 1, copia aislada); los elementos que cambió el motor 7 traen casos del
+  motor 7.
+
+**Ver:** los PDF.
+
+---
+
 ### App 1 + Altagracia Trading Suite - 25 Noviembre 2026: Nuevo Consolidado de Estrategias, con un Esquema de Cada Una
 
 **Pedido:** un consolidado nuevo de las estrategias probadas, en PDF. Debía traer imágenes claras de cómo funcionaría cada una, con énfasis en lo que sí funciona, y explicar:
@@ -75,12 +126,13 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 - **Hallado al prepararlo: el registro en vivo de Impulso, FVG nuevo y B1 vigila 43 monedas y no las 50 del plan.**
   - Le faltan las 7 de siempre: BTC, ETH, SOL, ARB, GALA, SUI y TRX.
   - La causa: `rule_tester.base_symbols()` de App 1 busca `backtesting_cache` con una ruta relativa, y el servidor de la suite no corre desde la carpeta de App 1.
-  - No se corrigió: queda propuesto. Lo registrado en las 43 vale.
+  - Se corrigió después, el mismo día (entrada de arriba). Lo registrado en las 43 vale.
 - **Las cuentas del informe:**
   - el registro del probador tiene 2,013 corridas, de 192 reglas distintas;
   - las 8 búsquedas genéticas probaron 4,823 reglas, todas sobre la fase 1;
   - con 300 trades por regla, la mejor de 192 reglas sin ventaja muestra +0.25 R por trade por puro azar, y la mejor de 4,823, +0.34 R. Es lo que mostraban las mejores.
-- **El motor 7 no se ha repetido** en la B5, la ruptura con volumen ni la Ruptura de caja: sus cifras siguen siendo del motor 6.
+- **El motor 7 no se había repetido** en la B5, la ruptura con volumen ni la Ruptura de caja. Se repitió después, el
+  mismo día, y el PDF quedó con esas cifras (entrada de arriba).
 - **DX en vivo al 25/11:** 88 trades y −0.04 R por trade (de −0.34 a +0.26).
 
 **Ver:** el PDF.
