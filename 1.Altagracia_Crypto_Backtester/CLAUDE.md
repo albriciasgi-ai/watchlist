@@ -6,6 +6,18 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Barrido de Señales
+
+Pestaña "Barrido" del backtesting global: para cada elemento, y después para las parejas de los que se marquen, lo que hizo el precio tras cada señal, sin entrada, stop ni objetivo: si llega a +2 ATR antes que a −2 ATR y cuánto fue a favor y en contra, contra las velas de su trimestre y lado. En 5m, 15m, 1h, 4h y 1D, por los dos primeros tramos del embudo y con el umbral según el número de pruebas. En 4 horas el reparto es el del azar; en 15 minutos no, pero los efectos quedan bajo el costo. Después, a pedido del usuario, las parejas se eligen también por familias: dentro de una familia o entre dos, con un tope de 150 parejas por barrido. Detalle en `Backtester/CLAUDE.md`, "BARRIDO DE SEÑALES (23/11/2026)".
+
+### Noviembre 2026: Embudo de la Búsqueda
+
+La búsqueda genética parte la fase 1 en tres tramos con hueco: trabaja en dos y califica por el peor; el tercero es una puerta que solo miran las mejores, con cupo, y cuyo margen sube con cada mirada, también las de búsquedas anteriores. A la fase 2 quedan pocas. Las finalistas traen su resultado por régimen (tendencia y volatilidad de 4 horas). Las búsquedas guardadas siguen con sus dos tramos. Detalle en `Backtester/CLAUDE.md`, "EMBUDO DE LA BÚSQUEDA (23/11/2026)".
+
+### Noviembre 2026: Monte Carlo de Trades, Frecuencia de la Señal y Figuras del Entrenador
+
+Del análisis de LuxAlgo Quant, lo que el usuario quiso: Monte Carlo de los trades en el dashboard, en el journal de la suite y en el probador (por semanas de salida); "Frecuencia de la señal" en el probador, una pregunta sin entrada ni salida, solo en la fase 1 y contra una vela cualquiera, y figuras que Claude dibuja en una capa aparte al entrenar. El embudo de búsqueda por tramos queda por hacer. Detalle en `Backtester/CLAUDE.md`, "MONTE CARLO, FRECUENCIA DE LA SEÑAL Y FIGURAS DEL ENTRENADOR (23/11/2026)".
+
 ### Noviembre 2026: Apilados Desplazados (DX), Hipótesis Juzgada en las Fases 2 y 3
 
 El control de los apilados de Dale como regla, DX, fijada antes de correrla. Pasa las fases 2 y 3 por poco: +0.056 y +0.030 R por trade, con margen sobre el azar y el tramo. La ventaja antes de comisiones es estable, pero los stops son cortos: aguanta solo con el objetivo como orden limit y poco deslizamiento, y en BTC pierde. Detalle en `Backtester/CLAUDE.md`, "ZONAS DE TRADER DALE CON EL PRIMER REGRESO (21/11/2026)", "Hipótesis DX".

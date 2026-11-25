@@ -8,6 +8,13 @@ Búsqueda genética de reglas para el probador, solo en la fase 1.
 - La fase 1 se parte en dos por fecha: el tramo de búsqueda (hasta `split`) y la validación interna (desde
   `split` hasta el final de la fase 1). La aptitud usa solo el tramo de búsqueda. La validación se calcula para
   cada regla pero nunca elige nada: al final dice si lo encontrado se sostiene antes de gastar la fase 2.
+- Con el embudo (23/11, de fábrica en las búsquedas nuevas; `funnel` en la configuración): la fase 1 va en tres
+  tramos seguidos, con un hueco de `gapDays` días tras cada corte. La búsqueda trabaja en los dos primeros (hasta
+  `split1`, y de ahí a `split`) y la aptitud de cada regla es la del peor de los dos. El tercero (desde `split`) es la
+  puerta: mientras se busca no se calcula para nadie; al terminar la miran solo las `gateQuota` mejores, y de las que
+  la pasan quedan como candidatas a la fase 2 a lo sumo `phase2Quota`. Cada mirada a la puerta cuenta, también las de
+  búsquedas anteriores con el mismo corte: el margen que pide sube con ellas (_gate_z). Las finalistas traen además
+  su resultado por régimen (trade_regime.py). Una búsqueda guardada antes no trae `funnel` y sigue como abajo.
 - Nada lee las fases 2 y 3. Las reglas probadas no se anotan en el registro del probador (runs.jsonl): la búsqueda
   lleva su propia cuenta, que el informe muestra junto con el umbral de suerte que da probar tantas.
 
@@ -33,6 +40,7 @@ import random
 import threading
 import time
 import uuid
+from statistics import NormalDist
 
 import numpy as np
 
@@ -40,6 +48,7 @@ import gaussian_channel
 import measures
 import rule_tester as rt
 import structure
+import trade_regime
 
 SEARCH_TFS = (60, 240, 1440)
 CTRL_TRADES = 1000        # Entradas de cada control, por moneda y tramo
@@ -49,6 +58,8 @@ FINALISTS = 5
 MIN_HOLD_TRADES = 30
 MIN_COIN_TRADES = 10      # Una moneda con menos trades no cuenta ni a favor ni en contra
 MIN_QUARTERS = 4          # Con aptitud por constancia, trimestres con trades suficientes que hacen falta
+DAY_MS = 86400000
+PARTS = ("a", "b")        # Embudo: los dos tramos en que trabaja la búsqueda; el tercero ("hold") es la puerta
 
 STOPS = (("atr", 1.0), ("atr", 1.5), ("atr", 2.0), ("atr", 3.0), ("swing", 3), ("swing", 5), ("candle", None), ("zone", None))
 TARGETS = (1.0, 1.5, 2.0, 3.0, 5.0, None)
@@ -97,6 +108,16 @@ GENES = {
     # Desde el 21/11: los flujos on-chain diarios de Coin Metrics (apagado de fábrica): medida y días, modo y umbral del z
     "chain": (None, ("net", 7), ("net", 30), ("stable", 7), ("stable", 30)), "chainMode": ("favor", "nocontra"),
     "chainZ": (0.5, 0.0, 1.0),
+    # Desde el 23/11: el filtro de mercado (tendencia y volatilidad de 4 horas, trade_regime.py), apagado de fábrica
+    "market": (None, "noUpHigh", "range", "trend", "calm", "wild"),
+}
+# Lo que deja pasar cada opción del gen de mercado
+MARKETS = {
+    "noUpHigh": [c for c in trade_regime.COMBOS if c != "subida-alta"],
+    "range": [c for c in trade_regime.COMBOS if c.startswith("rango")],
+    "trend": [c for c in trade_regime.COMBOS if not c.startswith("rango")],
+    "calm": [c for c in trade_regime.COMBOS if c.endswith("baja")],
+    "wild": [c for c in trade_regime.COMBOS if c.endswith("alta")],
 }
 
 _lock = threading.Lock()
@@ -128,6 +149,17 @@ def clean_config(raw):
     low, high = rt._ms("2021-06-01"), rt._ms(rt.CUTS[0]) - 90 * 86400000
     if not low <= split_ms <= high:
         split = "2023-01-01"
+    # Embudo (23/11): la fase 1 en tres tramos seguidos, con un hueco entre ellos. La búsqueda trabaja en los dos
+    # primeros (hasta split1, y de split1 a split) y califica por el peor; el tercero (desde split) es una puerta que
+    # solo ven las finalistas, con cupo. Una búsqueda guardada antes no trae "funnel" y sigue con sus dos tramos
+    split_ms = rt._ms(split)
+    split1 = str(raw.get("split1") or "")[:10]
+    try:
+        split1_ms = rt._ms(split1)
+    except ValueError:
+        split1_ms = None
+    if split1_ms is None or not rt._ms("2020-12-01") <= split1_ms <= split_ms - 180 * DAY_MS:
+        split1 = time.strftime("%Y-%m-%d", time.gmtime((split_ms - 365 * DAY_MS) / 1000))
     seed = raw.get("seed")
     try:
         seed = int(seed)
@@ -140,7 +172,7 @@ def clean_config(raw):
         "mutation": rt._num(raw.get("mutation"), 0.1, 0.01, 0.5),
         "maxElements": int(rt._num(raw.get("maxElements"), 2, 1, 3)),
         "minTrades": int(rt._num(raw.get("minTrades"), 150, 20, 5000)),
-        "minCoins": int(rt._num(raw.get("minCoins"), 4, 1, 10)),
+        "minCoins": int(rt._num(raw.get("minCoins"), 4, 1, 50)),
         "lines": raw.get("lines") is not False, "invert": raw.get("invert") is not False,
         # Piezas que la búsqueda puede usar además de los elementos (todas de fábrica)
         "flow": raw.get("flow") is not False, "regime": raw.get("regime") is not False,
@@ -160,6 +192,15 @@ def clean_config(raw):
         # Desde el 23/11 (protocolo de pruebas): los tres controles del tablero, con el margen por semanas, en la aptitud y
         # en la validación. holdMargin: la candidata pide además el margen en la validación (de fábrica no)
         "controls": "tres", "holdMargin": raw.get("holdMargin") is True,
+        # Embudo: tramos, hueco entre ellos (lo que miran atrás las medidas), cupo de la puerta y cupo para la fase 2
+        "funnel": raw.get("funnel") is not False, "split1": split1,
+        "gapDays": int(rt._num(raw.get("gapDays"), 30, 0, 60)),
+        "gateQuota": int(rt._num(raw.get("gateQuota"), 10, 5, 20)),
+        "phase2Quota": int(rt._num(raw.get("phase2Quota"), 5, 3, 5)),
+        # Con qué monedas elige: "base" (las 7 de siempre), "new" (las nuevas) o "all". Al terminar, las finalistas se
+        # corren además en el otro grupo, que no eligió nada. Y el filtro de mercado, como pieza
+        "group": raw.get("group") if raw.get("group") in ("new", "all") else "base",
+        "market": raw.get("market") is not False,
         "seed": seed,
     }
 
@@ -178,6 +219,8 @@ def _options(cfg):
         opts["cvd"], opts["oi"], opts["crowd"], opts["steady"] = (None,), (None,), (None,), (False,)
     if not cfg.get("regime", True):
         opts["regime"] = (None,)
+    if not cfg.get("market"):
+        opts["market"] = (None,)  # Una búsqueda guardada antes no lo trae: sigue sin él
     if not cfg.get("trailing", True):
         opts["trail"] = TRAILS[:2]
     # Sin las dos órdenes stop o sin la orden stop a favor, esas entradas salen de la lista; las demás conservan su lugar
@@ -200,7 +243,7 @@ def random_genome(cfg, rng):
     genome = {name: rng.randrange(len(values)) for name, values in opts.items()}
     # Reglas simples primero: el segundo y el tercer elemento, y el filtro de línea, empiezan apagados más seguido
     for name in ("e2", "e3", "line", "cvd", "oi", "regime", "crowd", "steady", "bwf", "bwZone", "smcPd", "smcBias", "targetWeak",
-                 "bwAo", "bwAc", "bwGator", "bwMfi", "vpaf", "chain"):
+                 "bwAo", "bwAc", "bwGator", "bwMfi", "vpaf", "chain", "market"):
         if len(opts[name]) > 1 and rng.random() < 0.6:
             genome[name] = 0
     return genome
@@ -272,6 +315,8 @@ def decode(genome, cfg):
     }
     if pick["regime"]:
         raw["regime"] = {"mode": pick["regime"], "major": pick["regimeMajor"], "majorOut": 6, "after": 6}
+    if pick.get("market"):
+        raw["market"] = {"allow": MARKETS[pick["market"]]}
     struct = [s for s in structure.STRUCT_TFS if s >= tf and s % tf == 0]
     raw["cc"] = {"tf": struct[min(len(struct) - 1, pick["ccStruct"])] if struct else tf, "swing": pick["ccSwing"], "legs": pick["ccLegs"]}
     if pick["line"]:
@@ -287,7 +332,7 @@ def rule_key(rule):
 def complexity(rule):
     flow, bwf, smcf = rule.get("flow") or {}, rule.get("bwf") or {}, rule.get("smcf") or {}
     return (len(rule["recipe"]["slots"]) + len(rule.get("lines") or []) + len(rule.get("filters") or [])
-            + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(flow.get("crowd")) + bool(flow.get("steady")) + bool(flow.get("chain")) + bool(rule.get("regime"))
+            + bool(flow.get("cvd")) + bool(flow.get("oi")) + bool(flow.get("crowd")) + bool(flow.get("steady")) + bool(flow.get("chain")) + bool(rule.get("regime")) + bool(rule.get("market"))
             + bool(bwf.get("alligator")) + bool(bwf.get("zone")) + bool(smcf.get("pd")) + bool(smcf.get("bias"))
             + bool(bwf.get("ao")) + bool(bwf.get("ac")) + bool(bwf.get("gator")) + bool(bwf.get("mfi")) + bool(rule.get("vpaf")))
 
@@ -300,6 +345,15 @@ class Evaluator:
     def __init__(self, cfg, progress=None, group="base"):
         self.cfg = cfg
         self.split = rt._ms(cfg["split"])
+        # Cada tramo: (inicio, fin) en ms; None = hasta el borde de la fase 1. Un trade es de un tramo si entra desde su
+        # inicio y sale antes de su fin: los que cruzan un corte, o caen en el hueco, no son de ninguno
+        self.funnel = bool(cfg.get("funnel"))
+        if self.funnel:
+            gap = int(cfg.get("gapDays", 0)) * DAY_MS
+            first = rt._ms(cfg["split1"])
+            self.bounds = {"a": (None, first), "b": (first + gap, self.split), "hold": (self.split + gap, None)}
+        else:
+            self.bounds = {"train": (None, self.split), "hold": (self.split, None)}
         self.data = {}      # (moneda, marco) → {span, phase, ctx, bounds}
         self.controls = {}  # clave del control → resumen
         self.legs = {}      # (moneda, marco, ATR del tramo) → dirección del tramo en cada vela
@@ -325,7 +379,7 @@ class Evaluator:
                 ctx = rt._context(symbol, tf, span["bars"])
                 T = ctx["T"]
                 cut = int(np.searchsorted(np.array(T, dtype=np.int64), self.split))
-                item = {"span": span, "phase": phase, "ctx": ctx, "cut": cut, "n": len(T)}
+                item = {"span": span, "phase": phase, "ctx": ctx, "cut": cut, "n": len(T), "T": np.array(T, dtype=np.int64)}
         self.data[key] = item
         return item
 
@@ -339,7 +393,9 @@ class Evaluator:
 
     def _control(self, symbol, tf, item, rule, trades, segment, kind):
         """Entradas al azar en el tramo: `random` con la proporción de largos de la regla, `leg` a favor del tramo."""
-        lo, hi = (30, item["cut"]) if segment == "train" else (max(30, item["cut"]), item["n"])
+        start, end = self.bounds[segment]
+        lo = 30 if start is None else max(30, int(np.searchsorted(item["T"], start)))
+        hi = item["n"] if end is None else int(np.searchsorted(item["T"], end))
         if hi - lo < 50:
             return None
         base_rule = rt._random_rule(rule, trades)
@@ -350,6 +406,8 @@ class Evaluator:
         core = {"stop": base_rule["stop"], "exit": {**base_rule["exit"], "opposite": False}, "gc": rule.get("gc"),
                 "invert": rule["invert"] if rule.get("gc") else False, "entry": base_rule["entry"],
                 "regime": rule.get("regime"), "flow": rule.get("flow"), "lines": rule.get("lines")}
+        if rule.get("market"):
+            core["market"] = rule["market"]  # Solo si la regla lo trae: los controles de las demás conservan su clave
         for name in ("bwf", "smcf", "vpaf"):
             if rule.get(name):
                 core[name] = rule[name]
@@ -374,8 +432,11 @@ class Evaluator:
             # Con filtro de régimen el azar entra solo en las velas que el filtro deja; con filtro de flujo, solo del lado
             # que el filtro deja entrar. Si no, la ventaja mezclaría el filtro con la señal
             allowed = None
-            if rule.get("regime"):
-                mask = rt.regime_mask(rule["regime"], item["span"]["bars"], rt.is_stock(symbol))
+            if rule.get("regime") or rule.get("market"):
+                bars_ = item["span"]["bars"]
+                mask = rt.regime_mask(rule["regime"], bars_, rt.is_stock(symbol)) if rule.get("regime") else np.ones(len(bars_), dtype=bool)
+                if rule.get("market"):
+                    mask = np.asarray(mask, dtype=bool) & rt.market_mask(rule["market"], bars_, tf)
                 allowed = [k for k in range(lo, hi - 2) if mask[k]]
                 if len(allowed) < 50:
                     return None
@@ -401,7 +462,7 @@ class Evaluator:
                 trade = rt.simulate(base_rule, ctx, k, side, sides=sides)
                 if not trade or "skip" in trade or trade.get("open"):
                     continue
-                if segment == "train" and trade["exit_t"] >= self.split:
+                if end is not None and trade["exit_t"] >= end:
                     continue
                 by_side[trade["dir"]].append(trade["r"])
                 by_quarter.setdefault((rt.quarter_of(trade["entry_t"]), trade["dir"]), []).append(trade["r"])
@@ -420,13 +481,18 @@ class Evaluator:
         mix = math.sqrt((longs * (se.get(1) or 0.0)) ** 2 + ((1 - longs) * (se.get(-1) or 0.0)) ** 2)
         return {"avgR": longs * found[1] + (1 - longs) * found[-1], "se": mix, "q": found["q"]}
 
-    def evaluate(self, rule):
-        """Resultado de la regla en el tramo de búsqueda y en la validación interna, con las monedas juntas."""
-        segments = {"train": [], "hold": []}
-        raw_r = {"train": [], "hold": []}
-        quarters = {"train": {}, "hold": {}}  # Por trimestre: [trades, suma de R, suma de la ventaja contra el azar de ese trimestre]
-        rows3 = {"train": [], "hold": []}     # Para las tres ventajas: (R, azar de su trimestre y lado, salida)
-        coin_ctrls = {"train": [], "hold": []}  # Por moneda: sus trades y (promedio, error) de cada control
+    def evaluate(self, rule, gate=True, detail=False):
+        """Resultado de la regla en el tramo de búsqueda y en la validación interna, con las monedas juntas.
+        Con el embudo: en los tramos a y b (y los dos juntos, "train"), y en la puerta ("hold") solo con `gate`: la
+        búsqueda nunca la pide; la piden las finalistas al terminar. detail: además, el resultado por régimen."""
+        names = [name for name in self.bounds if gate or name != "hold"]
+        keys = list(self.bounds) + (["train"] if self.funnel else [])
+        segments = {k: [] for k in keys}
+        raw_r = {k: [] for k in keys}
+        quarters = {k: {} for k in keys}    # Por trimestre: [trades, suma de R, suma de la ventaja contra el azar de ese trimestre]
+        rows3 = {k: [] for k in keys}       # Para las tres ventajas: (R, azar de su trimestre y lado, salida)
+        coin_ctrls = {k: [] for k in keys}  # Por moneda: sus trades y (promedio, error) de cada control
+        regime_rows = {k: [] for k in keys}  # Con detail: (tendencia, volatilidad, R, R menos el control de su moneda)
         coins = []
         codes = {c for slot in rule["recipe"]["slots"] for c in slot["codes"]}
         for symbol in self.symbols():
@@ -440,36 +506,55 @@ class Evaluator:
             if not result.get("success"):
                 continue
             trades = result["trades"]
-            row = {"symbol": symbol}
-            for segment in ("train", "hold"):
-                if segment == "train":
-                    picked = [t for t in trades if t["exit_t"] < self.split]
-                else:
-                    picked = [t for t in trades if t["entry_t"] >= self.split]
+            row = {"symbol": symbol, **{k: {"n": 0} for k in keys}}
+            if detail and "regime" not in item:
+                item["regime"] = trade_regime.labels(item["span"]["bars"], rule["tf"])
+            for segment in names:
+                start, end = self.bounds[segment]
+                picked = [t for t in trades if (start is None or t["entry_t"] >= start) and (end is None or t["exit_t"] < end)]
                 if not picked:
-                    row[segment] = {"n": 0}
                     continue
+                # Con el embudo, lo de los tramos a y b se junta además en "train" (los dos tramos de búsqueda)
+                into = (segment, "train") if self.funnel and segment in PARTS else (segment,)
                 controls = [self._control(symbol, rule["tf"], item, rule, picked, segment, kind) for kind in ("random", "leg")]
+                if self.funnel and controls[0] is None:
+                    # La moneda tiene muy pocas velas en ese tramo para armar su control al azar (menos de 50, o menos de
+                    # 50 que el filtro deje): no entra en ese tramo. Sin esto, sus trades dejaban a todo el tramo sin las
+                    # tres ventajas y la nota caía al cálculo viejo de dos controles
+                    continue
                 values = [c["avgR"] for c in controls if c and c["avgR"] is not None]
                 ctrl = max(values) if values else 0.0
                 rs = [t["r"] for t in picked]
                 row[segment] = {"n": len(rs), "avgR": round(float(np.mean(rs)), 4), "control": round(ctrl, 4),
                                 "edge": round(float(np.mean(rs)) - ctrl, 4)}
-                segments[segment].extend(r - ctrl for r in rs)
-                raw_r[segment].extend(rs)
                 rnd, leg = (c if c and c["avgR"] is not None else None for c in controls)
-                coin_ctrls[segment].append({"n": len(rs), "random": (rnd["avgR"], rnd.get("se") or 0.0) if rnd else None,
-                                            "leg": (leg["avgR"], leg.get("se") or 0.0) if leg else None})
                 by_q = (controls[0] or {}).get("q") or {}
+                for name in into:
+                    segments[name].extend(r - ctrl for r in rs)
+                    raw_r[name].extend(rs)
+                    coin_ctrls[name].append({"n": len(rs), "random": (rnd["avgR"], rnd.get("se") or 0.0) if rnd else None,
+                                             "leg": (leg["avgR"], leg.get("se") or 0.0) if leg else None})
                 for t in picked:
                     q = rt.quarter_of(t["entry_t"])
                     mean, n = by_q.get((q, t["dir"]), (None, 0))
-                    cell = quarters[segment].setdefault(q, [0, 0.0, 0.0])
-                    cell[0] += 1
-                    cell[1] += t["r"]
-                    cell[2] += t["r"] - (mean if n >= rt.QUARTER_MIN_RANDOM else ctrl)
-                    # El azar del trimestre y el lado; con pocas entradas, el de la moneda (como rt.quarter_control)
-                    rows3[segment].append((t["r"], mean if n >= rt.QUARTER_MIN_RANDOM else (rnd["avgR"] if rnd else None), t["exit_t"]))
+                    for name in into:
+                        cell = quarters[name].setdefault(q, [0, 0.0, 0.0])
+                        cell[0] += 1
+                        cell[1] += t["r"]
+                        cell[2] += t["r"] - (mean if n >= rt.QUARTER_MIN_RANDOM else ctrl)
+                        # El azar del trimestre y el lado; con pocas entradas, el de la moneda (como rt.quarter_control)
+                        rows3[name].append((t["r"], mean if n >= rt.QUARTER_MIN_RANDOM else (rnd["avgR"] if rnd else None), t["exit_t"]))
+                    if detail:
+                        # El régimen que se sabía al cerrar la vela anterior a la de la entrada (la de la señal, a mercado)
+                        i = int(np.searchsorted(item["T"], t["entry_t"], side="right")) - 2
+                        trend, vol = item["regime"][i] if 0 <= i < len(item["regime"]) else (trade_regime.UNKNOWN, trade_regime.UNKNOWN)
+                        for name in into:
+                            regime_rows[name].append((trend, vol, t["r"], t["r"] - ctrl))
+            if self.funnel:
+                parts = [row[name] for name in PARTS if row[name]["n"]]
+                total = sum(p["n"] for p in parts)
+                if total:
+                    row["train"] = {"n": total, **{k: round(sum(p[k] * p["n"] for p in parts) / total, 4) for k in ("avgR", "control", "edge")}}
             coins.append(row)
         out = {"coins": coins}
         for segment, residuals in segments.items():
@@ -491,6 +576,12 @@ class Evaluator:
                     name = min(three, key=lambda k: three[k]["r"] - three[k]["se"])
                     seg = out[segment]
                     seg.update(edgeTwo=seg["edge"], seTwo=seg["se"], edge=three[name]["r"], se=three[name]["se"], against=name)
+        if self.funnel:
+            out["parts"] = {name: out[name] for name in PARTS}
+            if not gate:
+                out["hold"] = {"n": 0, "edge": None, "se": None, "pending": True}  # La puerta: todavía sin mirar
+        if detail:
+            out["regimes"] = {k: trade_regime.summarize(rows) for k, rows in regime_rows.items() if rows}
         return out
 
 
@@ -555,9 +646,18 @@ def _exit_at(rule, span):
 
 
 def fitness(record, cfg):
-    t = record["train"]
-    if not t["n"] or t["n"] < cfg["minTrades"]:
-        return round(-2.0 + (t["n"] or 0) / cfg["minTrades"], 4)
+    """Con el embudo, la del peor de los dos tramos de búsqueda (cada uno con la mitad de los trades mínimos): una regla
+    que gana en un tramo y no en el otro queda con la nota del malo. Sin él, la del tramo de búsqueda."""
+    parts = record.get("parts")
+    if cfg.get("funnel") and parts:
+        least = max(10, cfg["minTrades"] // 2)
+        return min(_fitness_of(parts[name], record, cfg, least) for name in PARTS)
+    return _fitness_of(record["train"], record, cfg, cfg["minTrades"])
+
+
+def _fitness_of(t, record, cfg, least):
+    if not t["n"] or t["n"] < least:
+        return round(-2.0 + (t["n"] or 0) / least, 4)
     if cfg.get("fitness") == "constancia":
         # La mediana de la ventaja por trimestre: no la mueven uno o dos trimestres excepcionales
         cons = t.get("consistency") or {}
@@ -579,10 +679,12 @@ def _evaluate_genome(state, evaluator, genome, origin="search"):
     key = rule_key(rule)
     found = state["evaluated"].get(key)
     if found is None:
-        result = evaluator.evaluate(rule)
+        result = evaluator.evaluate(rule, gate=not state["config"].get("funnel"))  # Con el embudo, sin mirar la puerta
         # origin: "search" la eligió el algoritmo; "neighbor", vecina de una finalista probada al terminar
         found = {"key": key, "origin": origin, "genome": dict(genome), "rule": rule, "complexity": complexity(rule),
                  "train": result["train"], "hold": result["hold"], "coins": result["coins"]}
+        if result.get("parts"):
+            found["parts"] = result["parts"]
         found["fitness"] = fitness(found, state["config"])
         state["evaluated"][key] = found
     return found
@@ -625,7 +727,7 @@ def _distance(a, b):
     codes = lambda r: {c for s in r["recipe"]["slots"] for c in s["codes"]}
     if codes(ra) != codes(rb) or ra["tf"] != rb["tf"] or ra["invert"] != rb["invert"]:
         return 99
-    return sum(1 for k in ("stop", "exit", "entry", "lines", "rv", "pat", "cc", "gc", "liq", "bx", "be", "cp", "fv", "sp", "im", "flow", "regime")
+    return sum(1 for k in ("stop", "exit", "entry", "lines", "rv", "pat", "cc", "gc", "liq", "bx", "be", "cp", "fv", "sp", "im", "flow", "regime", "market")
                if ra.get(k) != rb.get(k)) \
         + (ra["recipe"]["window"] != rb["recipe"]["window"]) + (ra["recipe"]["min"] != rb["recipe"]["min"])
 
@@ -659,8 +761,133 @@ def _spearman(xs, ys):
     return None if math.isnan(c) else round(float(c), 3)
 
 
+def _gate_z(looks):
+    """El margen que pide la puerta: cuantas más reglas la han mirado, más alto. Con una, 1.64 errores (5% de pasar por
+    suerte); con 10, 2.58; con 20, 2.81: el 5% repartido entre todas las miradas."""
+    return NormalDist().inv_cdf(1 - 0.05 / max(1, looks))
+
+
+def _before(cfg, skip):
+    """Lo ya gastado en otras búsquedas guardadas: reglas probadas en la fase 1 y, de las búsquedas con embudo y el mismo
+    corte de la puerta, cuántas reglas la miraron. El viaje de vuelta (otra búsqueda tras fallar) también cuenta."""
+    tested, looks = 0, 0
+    for path in search_dir().glob("*.json"):
+        try:
+            with open(path, encoding="utf-8") as fh:
+                other = json.load(fh)
+        except (OSError, ValueError):
+            continue
+        if other.get("id") == skip:
+            continue
+        tested += len(other.get("evaluated") or {})
+        config = other.get("config") or {}
+        if config.get("funnel") and config.get("split") == cfg["split"]:
+            looks += ((other.get("report") or {}).get("gate") or {}).get("looked", 0)
+    return tested, looks
+
+
+def _other_markets(cfg, out, job):
+    group = cfg.get("group", "base")
+    if cfg.get("checkNew", True) and group == "base" and rt.new_symbols():
+        # Las finalistas en las monedas nuevas, en toda su fase 1: datos que la búsqueda nunca vio. Solo informa
+        fresh = Evaluator(cfg, lambda text: job.update(stage=f"Monedas nuevas: {text}"), group="new")
+        for number, item in enumerate(out, 1):
+            job.update(stage=f"Monedas nuevas: finalista {number} de {len(out)}")
+            result = fresh.evaluate(item["rule"])
+            item["newCoins"] = {"train": result["train"], "hold": result["hold"], "coins": result["coins"],
+                                "all": _pooled(result)}
+    if cfg.get("checkNew", True) and group == "new":
+        # Buscando con las monedas nuevas, las que no eligieron nada son las de siempre
+        usual = Evaluator(cfg, lambda text: job.update(stage=f"Monedas de siempre: {text}"), group="base")
+        for number, item in enumerate(out, 1):
+            job.update(stage=f"Monedas de siempre: finalista {number} de {len(out)}")
+            result = usual.evaluate(item["rule"])
+            item["baseCoins"] = {"train": result["train"], "hold": result["hold"], "coins": result["coins"],
+                                 "all": _pooled(result)}
+    if cfg.get("checkStocks", True) and rt.stock_symbols():
+        stocks = Evaluator(cfg, lambda text: job.update(stage=f"Acciones: {text}"), group="stocks")
+        for number, item in enumerate(out, 1):
+            job.update(stage=f"Acciones: finalista {number} de {len(out)}")
+            result = stocks.evaluate(item["rule"])
+            item["stocks"] = {"train": result["train"], "hold": result["hold"], "coins": result["coins"], "all": _pooled(result)}
+
+
+def _luck(ses, count):
+    """El R que la mejor de `count` reglas sin ventaja mostraría por suerte: el error típico por raíz de 2·ln(count)."""
+    ses = sorted(x for x in ses if x)
+    return round(float(np.median(ses)) * math.sqrt(2 * math.log(count)), 3) if count > 1 and ses else None
+
+
+def _finish_funnel(state, evaluator, job):
+    """El cierre con el embudo: las mejores por el peor de sus dos tramos pasan, con cupo, a la puerta (el tercer tramo,
+    que nadie había mirado); las que la pasan, con otro cupo, quedan para la fase 2."""
+    cfg = state["config"]
+    ranked = sorted(state["evaluated"].values(), key=lambda r: r["fitness"], reverse=True)
+    # A la puerta solo llega la que ganó en sus dos tramos (aptitud sobre cero: su peor tramo, ya con el margen y los
+    # castigos). Una regla que no ganó buscando no gasta una mirada: si pasara la puerta, sería por suerte
+    qualified = [r for r in ranked if r.get("parts") and r["train"]["n"] >= cfg["minTrades"] and r["fitness"] > 0]
+    finalists = []
+    for record in qualified:
+        if len(finalists) >= cfg["gateQuota"]:
+            break
+        if all(_distance(record, f) >= 3 for f in finalists):
+            finalists.append(record)
+    tested_before, looks_before = _before(cfg, state.get("id"))
+    looks = looks_before + len(finalists)
+    z = _gate_z(looks)
+    out = []
+    for number, record in enumerate(finalists, 1):
+        job.update(stage=f"Vecinas de la finalista {number} de {len(finalists)}")
+        near = _neighbors(state, evaluator, record)
+        up = sum(1 for x in near if x["edge"] > 0)
+        stable = near and up / len(near) >= 0.6
+        job.update(stage=f"La puerta: finalista {number} de {len(finalists)}")
+        result = evaluator.evaluate(record["rule"], gate=True, detail=True)
+        hold = result["hold"]
+        record["hold"], record["coins"] = hold, result["coins"]
+        three = hold.get("three")
+        wins = bool(three) and len(three) == 3 and all(e["r"] > 0 for e in three.values())
+        strong = wins and all(e["r"] - z * e["se"] > 0 for e in three.values()) and (hold.get("avgR") or 0) > 0
+        if hold["n"] < MIN_HOLD_TRADES:
+            verdict = f"Pocos trades en la puerta ({hold['n']}): no se puede juzgar"
+        elif not wins:
+            verdict = "No les gana a los tres controles en la puerta: descartar"
+        elif cfg.get("holdMargin") and not strong:
+            verdict = f"Les gana a los tres controles en la puerta, pero no con el margen de {looks} miradas: descartar"
+        elif not stable:
+            verdict = "Pasa la puerta pero sus vecinas no aguantan: frágil"
+        else:
+            verdict = "Pasa la puerta"
+        out.append({"key": record["key"], "rule": record["rule"], "fitness": record["fitness"], "train": record["train"],
+                    "parts": record["parts"], "hold": hold, "coins": record["coins"], "regimes": result.get("regimes"),
+                    "neighbors": near, "neighborsUp": up, "stable": bool(stable), "passed": verdict == "Pasa la puerta",
+                    "strong": bool(strong), "candidate": False, "verdict": verdict})
+    # A la fase 2, con cupo: de las que pasan la puerta, las que más le sacan a su control más exigente
+    passed = sorted((item for item in out if item["passed"]),
+                    key=lambda item: min(e["r"] - e["se"] for e in item["hold"]["three"].values()), reverse=True)
+    for place, item in enumerate(passed):
+        item["candidate"] = place < cfg["phase2Quota"]
+        item["verdict"] = "Candidata a la fase 2" if item["candidate"] else "Pasa la puerta, fuera del cupo de la fase 2"
+    _other_markets(cfg, out, job)
+    every = [r for r in state["evaluated"].values() if r.get("parts") and r["train"]["n"] >= cfg["minTrades"]]
+    state["report"] = {
+        "funnel": True, "finalists": out, "tested": len(state["evaluated"]), "qualified": len(every),
+        "luckR": _luck([r["train"]["se"] for r in every], len(every)),
+        "luckParts": {name: _luck([r["parts"][name]["se"] for r in every], len(every)) for name in PARTS},
+        # Con todo lo probado antes en otras búsquedas: el umbral que de verdad corresponde
+        "testedBefore": tested_before,
+        "luckAllR": _luck([r["train"]["se"] for r in every], len(every) + tested_before),
+        "gate": {"quota": cfg["gateQuota"], "looked": len(finalists),
+                 "best": ranked[0]["fitness"] if ranked else None, "before": looks_before, "looks": looks, "z": round(z, 2),
+                 "passed": len(passed), "strong": sum(1 for item in out if item["strong"]), "phase2Quota": cfg["phase2Quota"]},
+        "spearman": None, "pairs": 0, "topHoldEdge": None, "topCount": 0, "allHoldEdge": None,
+    }
+
+
 def _finish(state, evaluator, job):
     cfg = state["config"]
+    if cfg.get("funnel"):
+        return _finish_funnel(state, evaluator, job)
     ranked = sorted(state["evaluated"].values(), key=lambda r: r["fitness"], reverse=True)
     qualified = [r for r in ranked if r["train"]["n"] >= cfg["minTrades"]]
     finalists = []
@@ -698,20 +925,7 @@ def _finish(state, evaluator, job):
         out.append({"key": record["key"], "rule": record["rule"], "fitness": record["fitness"], "train": record["train"],
                     "hold": hold, "coins": record["coins"], "neighbors": near, "neighborsUp": up, "stable": bool(stable),
                     "candidate": verdict == "Candidata a la fase 2", "verdict": verdict})
-    if cfg.get("checkNew", True) and rt.new_symbols():
-        # Las finalistas en las monedas nuevas, en toda su fase 1: datos que la búsqueda nunca vio. Solo informa
-        fresh = Evaluator(cfg, lambda text: job.update(stage=f"Monedas nuevas: {text}"), group="new")
-        for number, item in enumerate(out, 1):
-            job.update(stage=f"Monedas nuevas: finalista {number} de {len(out)}")
-            result = fresh.evaluate(item["rule"])
-            item["newCoins"] = {"train": result["train"], "hold": result["hold"], "coins": result["coins"],
-                                "all": _pooled(result)}
-    if cfg.get("checkStocks", True) and rt.stock_symbols():
-        stocks = Evaluator(cfg, lambda text: job.update(stage=f"Acciones: {text}"), group="stocks")
-        for number, item in enumerate(out, 1):
-            job.update(stage=f"Acciones: finalista {number} de {len(out)}")
-            result = stocks.evaluate(item["rule"])
-            item["stocks"] = {"train": result["train"], "hold": result["hold"], "coins": result["coins"], "all": _pooled(result)}
+    _other_markets(cfg, out, job)
     # El umbral de suerte cuenta todas las reglas probadas, vecinas incluidas; la comparación de la validación, solo las
     # que eligió la búsqueda: dice si elegir por aptitud sirvió de algo
     every = [r for r in state["evaluated"].values() if r["train"]["n"] >= cfg["minTrades"]]
@@ -745,7 +959,7 @@ def _pooled(result):
 def _work(state, job):
     cfg = state["config"]
     rng = random.Random(f"{cfg['seed']}-{state['generation']}")
-    evaluator = Evaluator(cfg, lambda text: job.update(stage=text))
+    evaluator = Evaluator(cfg, lambda text: job.update(stage=text), group=cfg.get("group", "base"))
     try:
         population = state.get("population") or []
         if not population:

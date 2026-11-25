@@ -21,6 +21,8 @@ import observer
 import measures
 import patterns
 import rule_tester
+import rule_frequency
+import signal_sweep
 import rule_search
 import regime_detectors
 import box_elements
@@ -4037,6 +4039,36 @@ async def search_summary(request: Request, search_id: str):
     return _json_response({"success": True, **found})
 
 
+@app.post("/api/sweep/start")
+@limiter.limit("30/minute")
+async def sweep_start(request: Request):
+    """Barrido de señales en la fase 1: qué elementos traen algo, sin entrada, stop ni objetivo (body: config)."""
+    body = await request.json()
+    return await run_in_threadpool(signal_sweep.start, body.get("config") or {})
+
+
+@app.get("/api/sweep/job/{job_id}")
+@limiter.limit("600/minute")
+async def sweep_job(request: Request, job_id: str):
+    job = signal_sweep.job_status(sanitize_filename(job_id))
+    return {"success": True, "job": job} if job else {"success": False, "message": "No se encontró ese barrido"}
+
+
+@app.get("/api/sweep/list")
+@limiter.limit("120/minute")
+async def sweep_list(request: Request):
+    return {"success": True, **(await run_in_threadpool(signal_sweep.history))}
+
+
+@app.get("/api/sweep/{sweep_id}")
+@limiter.limit("120/minute")
+async def sweep_result(request: Request, sweep_id: str):
+    found = await run_in_threadpool(signal_sweep.load, sanitize_filename(sweep_id))
+    if found is None:
+        return {"success": False, "message": "No se encontró ese barrido"}
+    return _json_response({"success": True, **found})
+
+
 @app.get("/api/review/report")
 @limiter.limit("120/minute")
 async def review_report(request: Request):
@@ -4109,6 +4141,15 @@ async def tester_sensitivity(request: Request, symbol: str):
     """Solo fase 1: la regla con valores vecinos de objetivo, ventana y margen del stop."""
     body = await request.json()
     return _json_response(await run_in_threadpool(rule_tester.sensitivity, sanitize_filename(symbol), body.get("rule") or {}))
+
+
+@app.post("/api/tester/frequency/{symbol}")
+@limiter.limit("30/minute")
+async def tester_frequency(request: Request, symbol: str):
+    """Solo fase 1: cuántas veces pasa algo en las velas que siguen a la señal de una regla, sin entrada ni salida."""
+    body = await request.json()
+    return _json_response(await run_in_threadpool(rule_frequency.report, sanitize_filename(symbol), body.get("rule") or {},
+                                                  body.get("question") or {}))
 
 
 @app.get("/api/orderflow/coverage/{symbol}")

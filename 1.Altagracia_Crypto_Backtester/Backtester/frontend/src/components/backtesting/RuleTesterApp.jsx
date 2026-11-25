@@ -8,7 +8,10 @@ import { withoutSubdivisions } from './marketData';
 import { cachedMarketData } from './SecondaryChartApp';
 import ChartIndicatorSettings, { WITH_SETTINGS } from './ChartIndicatorSettings';
 import RuleSearchTab from './RuleSearchTab';
+import SweepTab from './SweepTab';
 import RegimeTab from './RegimeTab';
+import RuleMonteCarlo from './RuleMonteCarlo';
+import RuleFrequency from './RuleFrequency';
 import StrategiesTab from './StrategiesTab';
 import { lastClosedIndex } from './replayClock';
 import { latestFreeBox } from './orderPlan.js';
@@ -18,6 +21,7 @@ import {
   CHART_TIMEFRAMES, MAX_ELEMENTS, MAX_FILTERS, MAX_WINDOW, VP_PERIODS, VP_SHAPES, CC_STRUCT_TFS, CC_OFFSETS, minuteOfDay, usesPatterns, usesResponse, sequenceParts, usesProfile, RULE_TIMEFRAMES, DAILY_TF, TF_LABEL, defaultRule, deleteRule, describeRule,
   accountStats, fmtPct, fmtR, TESTER_PARAM, fromBackendRule, loadSavedRules, saveRule, sortTrades, testerSymbol, toBackendRule, tradeBands, tradeBoxes,
   contextBands, skippedSignals, signalChecklist, checklistBand, targetInR, TP_TRAIL_UNITS, tpTrailText, usesVpa, VPA_EXITS,
+  MARKET_TRENDS, MARKET_VOLS, MARKET_COMBOS, marketAllowOf, marketText,
   chartTfOf, ruleIndicators, ruleWilliamsConfig, ruleSmcConfig, ruleVpaConfig, listText, DALE_CODES, VPA_FILTER_TFS, vpaFilterTf,
   ruleOrderFlowConfig, ruleOFElementsConfig, isRunOf
 } from './ruleTester.js';
@@ -61,6 +65,15 @@ const noop = () => {};
 const DRAW_TOOLS = [['select', 'Cursor'], ['trendline', 'Línea de tendencia'], ['horizontal', 'Línea horizontal'], ['vertical', 'Línea vertical'],
   ['rectangle', 'Rectángulo'], ['fibonacci', 'Fibonacci'], ['textbox', 'Texto'], ['tpsl', 'Caja TP/SL larga'], ['tpsl-short', 'Caja TP/SL corta']];
 const TF_MINUTES = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
+
+// Ancho del panel lateral (23/11/2026, pedido del usuario): se arrastra su borde derecho. El gráfico conserva 320 px
+const SIDE_DEFAULT = 420;
+const SIDE_MIN = 300;
+const clampSide = (width) => {
+  const room = typeof window === 'undefined' ? 1366 : window.innerWidth;
+  const value = Number(width);
+  return Math.round(Math.min(Math.max(SIDE_MIN, room - 320), Math.max(SIDE_MIN, Number.isFinite(value) ? value : SIDE_DEFAULT)));
+};
 
 const loadView = () => {
   try {
@@ -269,6 +282,10 @@ const RuleTesterApp = () => {
   useUiTheme();
   const symbol = useMemo(testerSymbol, []);
   const view = useMemo(loadView, []);
+  const [sideWidth, setSideWidth] = useState(() => clampSide(view.sideWidth ?? SIDE_DEFAULT));
+  const [sideDragging, setSideDragging] = useState(false);
+  const sideWidthRef = useRef(sideWidth);
+  sideWidthRef.current = sideWidth;
   const [info, setInfo] = useState(null);
   const [phase, setPhase] = useState(1);
   const [rule, setRule] = useState(() => ({ ...defaultRule(), ...(view.rule || {}) }));
@@ -366,11 +383,37 @@ const RuleTesterApp = () => {
 
   useEffect(() => {
     try {
-      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext, sections: openSections, planOpen }));
+      localStorage.setItem(VIEW_KEY, JSON.stringify({ rule, chartTf, indicators: indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext, sections: openSections, planOpen, sideWidth }));
     } catch {
       // Sin almacenamiento la vista dura hasta cerrar la ventana
     }
-  }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext, openSections, planOpen]);
+  }, [rule, chartTf, indicatorStates, vpConfig, statsMode, accountRisk, reviewWait, showContext, openSections, planOpen, sideWidth]);
+
+  // Arrastrar el borde del panel: el ancho sigue al mouse hasta soltarlo. Doble clic vuelve al de fábrica
+  const startSideDrag = useCallback((event) => {
+    event.preventDefault();
+    const origin = event.clientX;
+    const from = sideWidthRef.current;
+    const move = (e) => setSideWidth(clampSide(from + e.clientX - origin));
+    const stop = () => {
+      window.removeEventListener('mousemove', move);
+      window.removeEventListener('mouseup', stop);
+      document.body.style.userSelect = '';
+      document.body.style.cursor = '';
+      setSideDragging(false);
+    };
+    document.body.style.userSelect = 'none';
+    document.body.style.cursor = 'col-resize';
+    setSideDragging(true);
+    window.addEventListener('mousemove', move);
+    window.addEventListener('mouseup', stop);
+  }, []);
+  useEffect(() => {
+    // Si la ventana se achica, el panel no deja al gráfico sin lugar
+    const fit = () => setSideWidth(previous => clampSide(previous));
+    window.addEventListener('resize', fit);
+    return () => window.removeEventListener('resize', fit);
+  }, []);
 
   // Monedas nuevas y acciones no tienen caché de App 1: sus velas salen del probador (del disco). Pedirlas a
   // /api/backtesting/bulk-data las bajaría de Bybit y las guardaría en ese caché, que está en git y decide cuáles
@@ -1562,6 +1605,25 @@ const RuleTesterApp = () => {
             </select>
           </div>
         </Opt>
+        <Opt id="mercado" label="Mercado: tendencia y volatilidad de 4 horas" on={!!rule.marketOn} onToggle={(marketOn) => patch({ marketOn })} title="En qué condiciones del mercado puede entrar la regla, con velas de 4 horas ya cerradas al cerrar la vela de la señal. Tendencia: el cierre sobre la EMA 50 y la EMA subiendo más de 0.3 ATR en 10 velas es subida; el espejo, bajada; si no, rango. Volatilidad: el ATR sobre el precio contra su mediana de 30 días. Es del mercado, no del lado del trade. Las entradas al azar de los controles quedan en las mismas condiciones">
+          {MARKET_TRENDS.map(([trend, label]) => (
+            <div className="rt-row" key={trend}>
+              <span style={{ minWidth: 52 }}>{label}</span>
+              {MARKET_VOLS.map(([vol, text]) => {
+                const key = `${trend}-${vol}`;
+                const allow = rule.marketAllow || MARKET_COMBOS;
+                return (
+                  <Check key={key} checked={allow.includes(key)} onChange={(on) => patch({ marketAllow: on ? [...allow, key] : allow.filter(c => c !== key) })}>
+                    {text}
+                  </Check>
+                );
+              })}
+            </div>
+          ))}
+          <div className="rt-note">
+            {marketAllowOf(rule) ? `Entra ${marketText(marketAllowOf(rule))}.` : 'Con las seis marcadas, o ninguna, no filtra nada.'} Al comienzo de la fase, sin historia para medirlo, no entra.
+          </div>
+        </Opt>
         <Opt id="regimen" label="Régimen: rango o fuera de él" on={rule.regimeMode !== 'any'} onToggle={toggleMode('regimeMode', 'any', 'outside')} title="Régimen de la vela de la señal, con el detector de la pestaña Régimen (eficiencia con caja afinada), sin futuro. Las entradas al azar de los controles quedan en el mismo régimen">
           <div className="rt-row">
             <select value={rule.regimeMode} onChange={(e) => patch({ regimeMode: e.target.value })}>
@@ -2066,6 +2128,7 @@ const RuleTesterApp = () => {
             <div className="rt-card"><b>{s.avgBars}</b><span>Velas por trade</span></div>
           </div>
           <Equity points={result.equity} />
+          <RuleMonteCarlo trades={result.trades} />
           </>
           )}
           {result.baseline?.n > 0 && (
@@ -2174,6 +2237,7 @@ const RuleTesterApp = () => {
           <div className="rt-note">Una regla que solo gana con un valor exacto es frágil.</div>
         </div>
       )}
+      {result.phase === 1 && <RuleFrequency key={result.id} symbol={symbol} rule={result.rule} />}
     </>
   );
 
@@ -2371,6 +2435,7 @@ const RuleTesterApp = () => {
           </div>
           <Equity points={allReport.equity} />
           <div className="rt-note">Curva de todos los trades en orden de salida, con 1 R por trade. Las monedas operan a la vez: no es la curva de una sola cuenta (para eso, "Como cuenta").</div>
+          {allReport.trades && <RuleMonteCarlo trades={allReport.trades} many />}
           </>
           )}
           {allReport.baseline && (
@@ -2669,7 +2734,7 @@ const RuleTesterApp = () => {
     </>
   );
 
-  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['estrategias', 'Estrategias'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión'], ['busqueda', 'Búsqueda'], ['regimen', 'Régimen']];
+  const tabs = [['regla', 'Regla'], ['resumen', 'Resumen'], ['trades', `Trades${trades.length ? ` ${trades.length}` : ''}`], ['patrones', 'Patrones'], ['todas', 'Todas'], ['estrategias', 'Estrategias'], ['historial', 'Historial'], ['ordenes', 'Mis órdenes'], ['revision', 'Revisión'], ['barrido', 'Barrido'], ['busqueda', 'Búsqueda'], ['regimen', 'Régimen']];
   const enabledCount = Object.values(indicatorStates).filter(Boolean).length;
 
   return (
@@ -2745,7 +2810,7 @@ const RuleTesterApp = () => {
       </div>
 
       <div className="rt-body">
-        <div className="rt-side">
+        <div className="rt-side" style={{ width: sideWidth }}>
           <div className="rt-tabs">
             {tabs.map(([key, label]) => <button key={key} type="button" className={`rt-tab${tab === key ? ' on' : ''}`} onClick={() => setTab(key)}>{label}</button>)}
           </div>
@@ -2770,6 +2835,7 @@ const RuleTesterApp = () => {
                   loadAll(saved, phaseNumber);
                 }} />
             )}
+            {tab === 'barrido' && <SweepTab />}
             {tab === 'busqueda' && <RuleSearchTab onLoadRule={(saved) => { loadBackendRule(saved); setPhase(1); setTab('regla'); }} />}
           </div>
           <div style={{ padding: 8, borderTop: '1px solid var(--t-line, #ddd)', flexShrink: 0 }}>
@@ -2823,7 +2889,9 @@ const RuleTesterApp = () => {
           </div>
         </div>
 
-        <div className="rt-chart backtesting-main" onMouseDown={() => { setShowList(false); setShowDraw(false); }}>
+        <div className={`rt-split${sideDragging ? ' on' : ''}`} onMouseDown={startSideDrag} onDoubleClick={() => setSideWidth(clampSide(SIDE_DEFAULT))}
+          title="Arrastra para cambiar el ancho del panel. Doble clic: el ancho de fábrica" />
+        <div className="rt-chart backtesting-main" style={sideDragging ? { pointerEvents: 'none' } : undefined} onMouseDown={() => { setShowList(false); setShowDraw(false); }}>
           {status && <div className="rt-overlay">{status}</div>}
           {!status && phaseInfo && !chartOpen && !ordersView && (
             <div className="rt-overlay" style={{ zIndex: 5, background: 'var(--t-page, #fff)', opacity: 1, flexDirection: 'column', gap: 12 }}>

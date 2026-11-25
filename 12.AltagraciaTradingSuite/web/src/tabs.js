@@ -7,7 +7,7 @@ import { installOwnSettings } from '@app1/components/backtesting/secondaryStorag
 import { scannerTabNumber } from './tabChoice.js';
 
 export const MAX_TABS = 5;
-export const MODULES = ['chart', 'watchlist', 'journal', 'bot', 'mapa'];
+export const MODULES = ['chart', 'watchlist', 'journal', 'bot', 'mapa', 'monedas', 'seguimiento'];
 
 const params = (() => {
   try {

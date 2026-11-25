@@ -3,6 +3,8 @@
 .rt-head { height: 38px; display: flex; align-items: center; gap: 8px; padding: 0 10px; border-bottom: 1px solid var(--t-line, #ddd); flex-shrink: 0; background: var(--t-surface, #fff); }
 .rt-body { flex: 1; display: flex; min-height: 0; }
 .rt-side { width: 420px; flex-shrink: 0; display: flex; flex-direction: column; border-right: 1px solid var(--t-line, #ddd); background: var(--t-surface, #fff); min-height: 0; }
+.rt-split { width: 5px; margin: 0 -2px; flex-shrink: 0; cursor: col-resize; position: relative; z-index: 5; }
+.rt-split:hover, .rt-split.on { background: var(--t-accent, #2962FF); opacity: 0.45; }
 .rt-tabs { display: flex; flex-wrap: wrap; border-bottom: 1px solid var(--t-line, #ddd); flex-shrink: 0; }
 .rt-tab { flex: 1; padding: 7px 4px; border: none; background: transparent; color: var(--t-muted, #666); cursor: pointer; font-size: 12px; border-bottom: 2px solid transparent; }
 .rt-tab.on { color: var(--t-text, #222); border-bottom-color: var(--t-accent, #2962FF); font-weight: 600; }

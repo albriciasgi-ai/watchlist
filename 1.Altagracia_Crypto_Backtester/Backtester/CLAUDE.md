@@ -644,6 +644,11 @@ node tests/williams.test.mjs
 node tests/smc.test.mjs
 node tests/williamssmc.parity.test.mjs
 node tests/rulefacets.test.mjs
+node tests/montecarlo.test.mjs
+node tests/coach.test.mjs
+cd ../backend
+.venv\Scripts\python.exe -m pytest tests/test_search_funnel.py tests/test_market_filter.py tests/test_rule_frequency.py tests/test_signal_sweep.py
+cd ../frontend
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_observer.py tests/test_measures.py tests/test_patterns.py tests/test_footprint_rules.py tests/test_dtb_known.py tests/test_rejection_known.py tests/test_screenshots.py tests/test_bulk_data.py tests/test_liq_store.py
 ```
@@ -1100,6 +1105,7 @@ GET /api/tester/result/{id}  ·  /trade/{n} (medidas)  ·  /csv  ·  GET /api/te
 - El gráfico es `MiniChart` en modo backtesting con `currentTime` = final de la fase: no hay reloj. Las cajas van por `getTradeBoxes` y el trade elegido por `getTradeBoundaries` y `focusOn()`.
 - El marco del gráfico es aparte del de la regla (una regla de 30m se mira en 15m o 1h). Las velas salen del caché del navegador de la principal o, si faltan, se pide al backend solo ese marco.
 - Los indicadores usan los ajustes de la principal. Las reglas guardadas quedan en `tester_rules_v1` y la vista en `tester_view_v1`.
+- **Ancho del panel lateral (23/11, pedido del usuario):** se arrastra su borde derecho (`rt-split`, `startSideDrag`). De 300 px hasta dejarle 320 al gráfico; doble clic vuelve a 420. Queda en `tester_view_v1` (`sideWidth`) y se ajusta si la ventana se achica. Mientras se arrastra, el gráfico no recibe el mouse. No se vio en pantalla: la ventana compila.
 
 ### Lo que usó la regla en el trade elegido (20/11)
 
@@ -2358,7 +2364,7 @@ regime.py (referencia y velas de la fase 1) + regime_detectors.py (detectores, c
 - **Elementos BX y BE del probador** (19/11, `box_elements.py`, en `CANDLE_CODES`: valen en todas las monedas). Las cajas son las de la eficiencia con caja afinada, en el marco de la regla. **BX**: la vela que cierra fuera de una caja vigente y la termina, a favor de la ruptura; `bx.maxHeight` deja solo cajas de hasta tantos ATR. **BE**: dentro de una caja vigente, la vela que llega a su borde (`be.share`, 0.2), hacia el centro, con cuerpo de hasta `be.maxBody` ATR (1; 0 sin límite) y cierre a `be.rejection` o más del borde en su vela (0.6; 0 sin filtro); su zona va del borde a su quinto, y `exit.targetAt: "mid"` pone el objetivo en el centro de la caja (por `ctx["vp"]`). Cada trade guarda `box` y el gráfico dibuja la caja y su centro. Por el probador, fase 1, 4h, siete monedas: BX con stop de 1.5 ATR y 3R, +0.07 R antes de 2023 y +0.06 en 2023; a favor de la EMA 200, +0.19 y +0.13; además con cajas de hasta 5.5 ATR, +0.24 y +0.21 (controles, +0.01 a +0.02). BE con stop a 0.5 ATR tras el borde y objetivo al centro, +0.04 y −0.02; sin filtros de vela, −0.07 y −0.15.
 - **OI, CVD, confluencia, FVG, patrones y swing** (19/11, pedido del usuario: los indicadores que no se habían usado en estas fases). Primero medidos en las rupturas y los bordes del estudio (`regime_study.py`, con OI de 4 horas de Bybit alineado al cierre de cada vela) y después como piezas del probador.
   - *En el estudio*, con y sin cada uno, antes de 2023 y en 2023. En las rupturas, **CVD de 20 velas a favor**: +0.23 y +0.30 R, contra +0.04 y −0.30 sin él (solo monedas con almacén). La confluencia OI-volumen en contra resta (−0.07 y −0.26, con 35 y 20 casos). El OI que sube o baja, el FVG, el patrón y pasar el último swing no se repiten de un tramo al otro. En los bordes, el patrón a favor y la confluencia a favor dejan cerca de 0, contra −0.10 sin ellos; el patrón en contra, −0.25.
-  - **Filtros de flujo** (`flow_filters.py`, `flow` en la regla, solo si se pide): `cvd` = N velas (la delta de esas velas sobre su volumen, a favor del trade; real con almacén, estimada por el cierre en la vela sin él); `oi` = `rise` o `fall` (más de `oiPct` % en `oiBars` velas), `conf` (confluencia OI-volumen a favor: volumen con signo y cambio del OI, en z de 20 velas, los dos a favor) o `noconf` (no los dos en contra). El OI es el conocido al cierre de la vela: BTC con su serie de 5 minutos (`oi_store`), las demás con `OrderFlowData/oi/{moneda}_4h.json`, que baja `oi_update.py` (desde 2020 o desde que cotiza, hasta hoy); con la de 4 horas el filtro solo vale en 4h y 1D. Una vela sin OI no pasa. **Las entradas al azar de los dos controles solo entran donde el filtro deja entrar a ese lado.** Lo descartado va a `skipped` como "filtro de CVD u OI"; cada trade guarda `flow` (CVD y OI en la señal).
+  - **Filtros de flujo** (`flow_filters.py`, `flow` en la regla, solo si se pide): `cvd` = N velas (la delta de esas velas sobre su volumen, a favor del trade; real con almacén, estimada por el cierre en la vela sin él); `oi` = `rise` o `fall` (más de `oiPct` % en `oiBars` velas), `conf` (confluencia OI-volumen a favor: volumen con signo y cambio del OI, en z de 20 velas, los dos a favor) o `noconf` (no los dos en contra). El OI es el conocido al cierre de la vela: BTC con su serie de 5 minutos (`oi_store`), las demás con `OrderFlowData/oi/{moneda}_4h.json`, que baja `oi_update.py` (desde 2020 o desde que cotiza, hasta hoy); con la de 4 horas el filtro solo vale en 4h y 1D. Desde el 24/11/2026, donde termina la serie de 5 minutos de BTC (05/11/2026) sigue la de 4 horas (`flow_filters.source`): sin eso el OI de BTC quedaba sin dato en las fechas nuevas, y lo necesita el registro en vivo de la suite (`rule_watch.py`); lo anterior no cambia. Una vela sin OI no pasa. **Las entradas al azar de los dos controles solo entran donde el filtro deja entrar a ese lado.** Lo descartado va a `skipped` como "filtro de CVD u OI"; cada trade guarda `flow` (CVD y OI en la señal).
   - **BE con patrón** (`be.pattern`): además la vela es un martillo, envolvente o doji a favor con tendencia previa.
   - **FV y SP** (`fvg_swing.py`, en `CANDLE_CODES`). **FV**: la vela deja un hueco con la de dos antes (la regla del indicador FVG), de al menos `fv.minAtr` ATR (0.3); la zona es el hueco. **SP**: un mínimo o máximo único de `sp.bars` velas por lado (5), como el indicador Swing, con volumen z ≥ `sp.minZ` si se pide; se conoce al cerrar la última vela de su derecha, a favor del giro; la zona es su vela. Cada trade guarda `fs`.
   - *Por el probador*, fase 1, 4h, siete monedas (antes de 2023 · 2023 · azar y tramo de toda la fase):
@@ -2867,6 +2873,260 @@ OrderFlowData/alpaca/flow/<SIM>/<AAAA>/<SIM>_<día>.npz   delta dentro del minut
 - cierre temprano y feriado;
 - días casi vacíos;
 - `START`.
+
+## BARRIDO DE SEÑALES (23/11/2026)
+
+Pedido del usuario: antes de buscar con el algoritmo genético, un barrido ordenado que diga dónde puede haber algo. Su idea: no clasificar por un stop y un objetivo (sesgan hacia un estilo de salida), sino mirar en cada punto de entrada hasta dónde fue el precio a favor y hasta dónde se devolvió. En los cinco marcos de la app: 5m, 15m, 1h, 4h y 1D.
+
+### Qué mide
+
+```
+SweepTab.jsx (pestaña "Barrido")
+        │  POST /api/sweep/start { config } → trabajo   ·   GET /api/sweep/job/{id}   ·   /api/sweep/list   ·   /api/sweep/{id}
+        ▼
+backend/signal_sweep.py
+   element_signals()   las señales de cada elemento: sus eventos del probador con los ajustes de fábrica
+   fields()            lo que hizo el precio tras cada vela
+   Collector           por prueba y tramo, contra las velas de su trimestre y lado
+        ▼
+OrderFlowData/observer/tester/sweep/   {id}.json (cada barrido) y sweeps.jsonl (registro)
+```
+
+- **Las señales** de un elemento son las de una regla de un solo elemento, a mercado y sin filtros (lo comprueba una prueba contra `rule_frequency.signals_of`). Una vela con la señal hacia los dos lados (la compresión) no entra. El barrido de liquidaciones queda fuera: recalcula las zonas en cada vela.
+- **Desde la apertura de la vela siguiente**, en ATR de la vela de la señal y sin comisiones:
+  - **Excursiones:** lo máximo a favor y en contra a 6, 12, 24 y 48 velas. Cuenta su diferencia (la asimetría): una vela movida infla las dos por igual.
+  - **Llega a +X antes que a −X** (1, 2 y 3 ATR), con la misma distancia a los dos lados: sin ventaja es 50%, sea cual sea la volatilidad. Las dos metas en la misma vela, o ninguna en 48 velas, no cuentan. La lectura principal es X = 2.
+- **Contra el control:** cada valor menos el promedio de **todas** las velas del mismo trimestre y del mismo lado en esa moneda (`centered`). La unidad se cancela, y un elemento no gana por aparecer en un trimestre en que todo subía (prueba: en un mercado que solo sube, comprar al azar da 65% crudo y cero sobre su control).
+- **Margen** con las señales agrupadas por semana (`rt.clustered_se`), como el del motor 6.
+- **Tramos:** solo la fase 1 y solo los dos primeros tramos del embudo (hasta 2022-01-01, y de ahí más el hueco a 2023-01-01). La ventana de cada señal tiene que caber entera en su tramo. **La puerta no se mira aquí.**
+- **La nota** de cada prueba es el t del peor de sus dos tramos; si van en sentidos contrarios, cero. Una nota negativa y pareja dice que el elemento sirve al revés (de giro). Con menos de `minSignals` señales (50) en algún tramo, se muestra pero no se juzga.
+- **Umbral** (`gate`): sin ventaja, los dos tramos pasan de z a la vez con probabilidad (1 − Φ(z))² por sentido; se reparte el 5% entre las pruebas y sus dos sentidos. Con 49 pruebas son 2.0 errores en cada tramo; con 900, 2.6.
+- **El reparto, primero:** cuántas pruebas pasan de ±2 errores con los dos tramos juntos, contra el 4.6% que da el azar, y su histograma. Si se parecen, no hay nada, aunque la primera de la lista se vea bien.
+- **Parejas** (segundo paso): las dos señales del mismo lado dentro de 3 velas, en la vela de la que llega después. Tres formas de elegirlas, sobre la tabla de un barrido de elementos (`pair_list`):
+  - **a mano:** se marcan elementos y se barren todas sus parejas entre sí;
+  - **dentro de una familia:** un clic en la familia marca sus elementos juzgados, y el mismo botón barre sus parejas;
+  - **entre dos familias** (`pairsB`): cada elemento de una con cada uno de la otra, sin las parejas internas.
+- **Familias** (`FAMILIES`, pedido del usuario tras el primer barrido): Volumen y VPA, Delta del footprint, Desequilibrios y agresión, Valor y POC, Estructura y SMC, Williams, Patrones de vela, Cajas, impulso y canal, e Interés abierto. Cada elemento está en una sola (lo vigila una prueba). La pestaña las recibe con `/api/sweep/list` y muestra solo los elementos que ese barrido juzgó.
+- **Con el motor 7 (25/11, al unir el protocolo de pruebas con main):** las señales de los elementos salen con sus
+  definiciones del motor 7 (patrones en swing, rombo, ruptura y borde de caja, cambio de carácter y el Lector VPA). El
+  esfuerzo con resultado (QV) y el medidor que gira (QG) van en Volumen y VPA. Los barridos guardados antes y lo medido
+  abajo son del motor 6: un barrido nuevo de esos elementos da otras cifras.
+- **Tope:** 150 parejas por barrido (`MAX_PAIRS`) y 30 elementos por lista; `start()` no arranca con más y la pestaña dice cuántas van. Antes eran 12 elementos marcados.
+- **Monedas:** las 7 de siempre, las nuevas o todas. Los elementos de order flow solo existen en las monedas con almacén y hasta 4 horas.
+- Cada barrido queda anotado, y la pestaña dice cuántas pruebas suman entre todos.
+
+### Medido (fase 1, las 7 monedas de siempre)
+
+| Marco | Pruebas juzgadas | Pasan de ±2 (por azar) | Pasan el umbral | Tiempo |
+|---|---|---|---|---|
+| 4 horas | 48 | 2 (2.2) | ninguna | 92 s |
+| 1 día | 9 | 1 (0.4) | ninguna | 165 s |
+| 15 minutos | 61 | 15 (2.8) | ninguna | 42 min la primera vez |
+
+- **En 4 horas el reparto es el del azar.** El mejor, Acumulación o distribución: nota +1.43, llega a +2 ATR antes que a −2 el 54% de las veces.
+- **En 15 minutos el reparto no es el del azar** (15 contra 2.8), pero los efectos son mínimos. Con decenas de miles de señales se distingue un punto sobre 50%: el Barrido de niveles, +1.0 y +1.3 puntos; la Barra divergente, −2.2 y −1.4 (sirve al revés). En la asimetría a 24 velas hay notas altas y parejas (FVG nuevo +0.24 y +0.15 ATR, Open POC +0.43 y +0.38, Breaker +1.11 y +0.62), pero la comisión taker de ida y vuelta es del orden de 0.4 ATR de 15 minutos: casi todo queda por debajo del costo.
+- La primera vez en 15 minutos tarda por detectar los elementos de order flow de toda la fase (ETH 10 min, GALA 7, SOL 8), que quedan en el caché del probador. En 5 minutos no se corrió: será bastante más.
+
+### Lo que corrió el usuario y los marcos de 30 y 45 minutos (23/11)
+
+El usuario corrió en su app los marcos que faltaban, con las 7 monedas de siempre:
+
+| Marco | Pruebas juzgadas | Pasan de ±2 (por azar) | Pasan el umbral |
+|---|---|---|---|
+| 5 minutos | 64 | 9 (2.9) | 1: Ruptura con volumen, al revés (−1.3 puntos en los dos tramos, 41 mil señales) |
+| 1 hora | 59 | 4 (2.7) | ninguna (la mejor, Volumen decreciente, +1.66) |
+
+- En 5 minutos el efecto es real pero de un punto sobre 50%: la comisión taker de ida y vuelta ronda 1 ATR de 5 minutos.
+- Orden grande y Barrido real casi no tienen señales en el tramo 2: en 2022 Bybit publicó la hora en segundos y no se separan las órdenes.
+- Un cruce de dos familias en 4 horas (Volumen y VPA × Delta del footprint, 18 parejas): ninguna pasa de ±2. Con 60 a 200 señales por tramo, las parejas en 4 horas no distinguen nada.
+
+Después pidió **30 y 45 minutos**, por si hay algo entre 15 minutos y 1 hora:
+- 30 minutos ya existía en el probador; el barrido lo suma a `SWEEP_TFS`.
+- 45 minutos es nuevo (`rt.TFS`, `CANDLE_KEYS` y `EXTRA_KEYS`: tres velas de 15 minutos; en las monedas con almacén, del almacén de trades). Las velas se cuentan desde las 00:00 UTC (32 por día). Solo lo ofrece el barrido: el formulario de la regla sigue con sus marcos (`RULE_TIMEFRAMES`).
+- Los elementos de order flow usan en 30 y 45 el step de análisis de 15 minutos (`footprint_store.STEP_BY_INTERVAL` no los tiene).
+- Probado con datos reales en 45 minutos: sin order flow en BTC y TRX (31 pruebas, 176 s); con order flow en BTC (56 pruebas, 43 s), y el barrido completo de las 7 monedas con `run()`, sin anotarlo en el registro del usuario: **45 minutos**, 59 pruebas, 5 pasan de ±2 (por azar 2.7) y una pasa el umbral (±2.04), Martillo o estrella al revés (nota −2.75; −4.0 y −3.6 puntos; 1,640 y 1,929 señales), en 6 minutos; **30 minutos**, 60 pruebas, 16 pasan de ±2 (por azar 2.7) y ninguna pasa el umbral (±2.05) por poco: Breaker +2.01 (+6.0 y +6.6 puntos; 293 y 431 señales), en 11 minutos. Los patrones de giro fallan en todos los marcos (Martillo o estrella y Barra divergente negativos en 30m, 45m y 1h): el precio tiende a seguir. A ±2 ATR, 54% a 57% deja de 0.15 a 0.28 ATR antes de comisiones, del orden de la comisión taker en esos marcos.
+
+### La pista del martillo al revés, como regla (23/11)
+
+El usuario pidió llevar a una regla lo único que pasó el umbral en 45 minutos. Para eso el formulario de la regla suma el marco de 45 minutos (`RULE_TIMEFRAMES`); el gráfico no lo tiene, como 30m y 1D.
+
+Fijado antes de correr: Martillo o estrella con "invertir", 45 minutos, stop de 2 ATR, objetivo de 1R (los ±2 ATR del barrido) y cierre a las 48 velas; a mercado, y con limit en el borde lejano de la vela (válida 3 velas). Las 7 monedas de siempre, por los dos primeros tramos del embudo, con los tres controles. **La puerta no se miró.** Se corrió con `rule_search.Evaluator` (`gate=False`), sin guardar nada.
+
+| Entrada | Tramo 1 | Tramo 2 | Los dos | Nota del embudo |
+|---|---|---|---|---|
+| A mercado | 1,129 trades, −0.02 R, ventaja +0.01 (−0.06 a +0.08) | 1,349, +0.01 R, ventaja +0.08 (+0.02 a +0.15) | 2,478, 0.00 R, ventaja +0.05 (+0.01 a +0.10) | −0.07 |
+| Limit | 999, −0.02 R, ventaja 0.00 | 1,183, 0.00 R, ventaja +0.06 | 2,182, −0.01 R, ventaja +0.03 | −0.09 |
+
+- **No pasa:** el R por trade es cero. Le gana a los tres controles por unos 0.05 R (0.1 ATR, lo que decía el barrido), pero eso es lo que se lleva la comisión, y en el tramo 1 la ventaja no tiene margen.
+- **La limit no ayuda:** paga menos comisión, pero se llena cuando el precio va primero en contra, y su ventaja baja.
+- Con nota negativa no llega a la puerta: queda sin tocar. La dirección del efecto es real (el patrón de giro falla), pero no alcanza para operarlo solo.
+
+### Por contexto: la tendencia de 4 horas (23/11, estudio aparte)
+
+Última pregunta del barrido: si el contexto separa a los elementos. El usuario pidió correrlo sin construirlo en la app. Script y resultados en `OrderFlowData/research/barrido/2026-11-23/` (`ctx_sweep.py`); no guarda nada en el registro.
+
+- Cada señal, según su lado y la tendencia de 4 horas del filtro de mercado (`rt.market_labels`): a favor, en contra o en rango.
+- El control son las velas del mismo trimestre, lado **y contexto**: así no se cuenta la tendencia como mérito del elemento.
+- Lectura principal, fijada antes: la diferencia entre "a favor" y "en contra" por elemento, por el peor de los dos tramos. La puerta no se miró.
+
+| Marco | Diferencia a favor − en contra: pasan de ±2 (por azar) | Pasan el umbral | Cada contexto por separado: pasan de ±2 (por azar) | Pasan su umbral |
+|---|---|---|---|---|
+| 30 minutos | 0 de 58 (2.6) | ninguna | 22 de 176 (8.0) | 1: Desequilibrio repetido en rango, +2.39 (+3.2 y +4.0 puntos) |
+| 45 minutos | 2 de 53 (2.4) | ninguna | 14 de 171 (7.8) | ninguna |
+| 1 hora | 0 de 51 (2.3) | ninguna | 5 de 160 (7.3) | ninguna |
+
+- **La tendencia de 4 horas no separa a los elementos:** la diferencia entre ir a favor y en contra es la del azar en los tres marcos.
+- Lo poco que hay está **con 4 horas en rango**: ahí fallan los patrones de giro (Barra divergente, Envolvente, Martillo: −2 a −5 puntos) y suman los de continuación del order flow (Desequilibrio repetido, POC fuera de rango, FVG nuevo: +2 a +4). Siguen siendo 2 a 4 puntos, del orden de la comisión.
+- Con esto se cierra la pregunta de los elementos solos: ni por marco, ni por parejas, ni por contexto dan una ventaja de dirección que supere el costo.
+
+**La tendencia anterior al rango (idea del usuario, `prev_trend.py`).** Con 4 horas en rango, ¿rinde distinto una señal a favor de la tendencia que había antes del rango? Fijado antes de correr, para gastar pocas pruebas: la tendencia anterior es la última subida o bajada antes del rango actual, sin tope de antigüedad; dos grupos ya elegidos, continuación (Desequilibrio repetido, POC fuera de rango, FVG nuevo) y giro (Barra divergente, Envolvente, Martillo); una lectura, la diferencia a favor − en contra por el peor tramo; 6 pruebas, umbral ±1.52. El control son las velas en rango de su trimestre, lado y tendencia anterior.
+
+| Marco | Continuación: nota · diferencia de los dos tramos | Giro: nota · diferencia |
+|---|---|---|
+| 30 minutos | +0.31 · +1.0 ±3.0 puntos | 0.00 · −1.0 ±3.4 |
+| 45 minutos | 0.00 · 0.0 ±3.7 | +0.30 · +1.4 ±4.3 |
+| 1 hora | −0.17 · −1.1 ±4.0 | 0.00 · 0.0 ±4.9 |
+
+**No separa:** ninguna de las 6 se acerca al umbral y las diferencias son de un punto con márgenes de 3 a 5. El rango no se resuelve, en el plazo de estas señales, hacia donde venía el precio. Cerca del 29% de las velas está en rango, y de ellas la mitad viene de una subida.
+
+### Límites
+
+- Sin comisiones ni deslizamiento: una ventaja de excursión chica no sobrevive al costo.
+- La lectura principal es una sola (X = 2). La asimetría y las otras distancias se muestran, pero no entran al umbral: mirarlas todas y quedarse con la mejor sería otra forma de buscar.
+- Lo que salga es una pista para la búsqueda genética o para una regla a mano. Se eligió mirando los dos primeros tramos: se juzga después, en la puerta.
+
+### Pruebas
+
+`tests/test_signal_sweep.py` (11): las familias y las parejas dentro de una o entre dos, excursiones y quién llega primero, el control por trimestre, una señal con ventaja contra una al azar y una invertida, un mercado que solo sube, cada señal en su tramo y la puerta sin mirar, pocas señales y tramos opuestos, el umbral, las parejas, las señales iguales a las del probador, y la corrida guardada. La pestaña se vio en una página de prueba con un barrido real de 4 horas (reparto, tabla, detalle y parejas). El usuario la corrió después dentro del backtesting global en 4 horas, con el mismo resultado. Las familias no se vieron en pantalla: la pestaña compila.
+
+## EMBUDO DE LA BÚSQUEDA (23/11/2026)
+
+Pedido del usuario, del análisis de LuxAlgo Quant: su "bucle de backtest" prueba reglas hasta que una pasa y vuelve a usar los mismos datos reservados en cada intento. El usuario quiso lo contrario: que lo que se gasta probando quede en la fase 1 y las fases 2 y 3 lleguen limpias. Acordado el 23/11, sobre la búsqueda genética ("BÚSQUEDA GENÉTICA DE REGLAS").
+
+### Qué cambia
+
+- **Tres tramos de la fase 1**, seguidos en el tiempo (`Evaluator.bounds`): el primero hasta `split1` (2022-01-01), el segundo de ahí a `split` (2023-01-01) y el tercero desde `split` hasta el final de la fase 1.
+  - **Hueco** de `gapDays` días (30) tras cada corte: lo que miran hacia atrás las medidas. Un trade es de un tramo si entra desde su inicio y sale antes de su fin: los que cruzan un corte o caen en el hueco no son de ninguno.
+  - Los controles al azar de cada tramo entran solo en las velas de ese tramo.
+- **Aptitud por el peor tramo** (`fitness`): la búsqueda trabaja en los dos primeros y la nota de cada regla es la menor de las dos. Cada tramo pide la mitad de los trades mínimos. Una regla que gana en un tramo y no en el otro queda con la nota del malo. `train` sigue siendo los dos tramos juntos, y `parts` trae cada uno.
+- **La puerta** es el tercer tramo. Mientras se busca no se calcula para ninguna regla (`evaluate(..., gate=False)`: queda `hold.pending`). Antes, la validación se calculaba para todas, aunque no eligiera nada.
+  - Al terminar la miran solo las `gateQuota` mejores por aptitud (10; de 5 a 20), distintas entre sí, y solo si su aptitud pasa de cero: la que no ganó en sus dos tramos no gasta una mirada. Si ninguna ganó, nadie mira la puerta y el informe lo dice.
+  - **Pasa la puerta** la que ahí les gana a los tres controles del tablero, con al menos 30 trades y con vecinas que aguantan.
+  - **Con margen** (`strong`): les gana por más de `z` errores, donde `z` reparte el 5% entre todas las miradas a la puerta (`_gate_z`): 1.64 con una, 2.58 con 10, 2.81 con 20. Con "pedir también el margen" (`holdMargin`), sin él no pasa.
+  - **A la fase 2** quedan como candidatas a lo sumo `phase2Quota` (5; de 3 a 5): las que más le sacan a su control más exigente. Las demás quedan "fuera del cupo".
+- **Lo ya gastado cuenta** (`_before`): las miradas a la puerta de búsquedas anteriores con el mismo corte suben `z` (el viaje de vuelta, buscar otra vez tras fallar, también gasta). Y el umbral de suerte se da además con todas las reglas probadas en las búsquedas guardadas (`luckAllR`), y por tramo (`luckParts`).
+- **Régimen de cada trade** (`trade_regime.py`), solo en las finalistas: no filtra ni elige, describe en qué condiciones cayó cada trade.
+  - Con velas de 4 horas ya cerradas al entrar (las de la regla unidas en bloques de 4 horas; en 1D, las diarias).
+  - Tendencia: "subida" si el cierre está sobre la EMA 50 y la EMA subió más de 0.3 ATR en 10 velas; "bajada", el espejo; si no, "rango". Medido en BTC, ETH, SOL y TRX de 4 horas: sin mínimo, solo el 14% de las velas es rango; con 0.3 ATR, cerca de un tercio de cada una; con 1 ATR, el 78%.
+  - Volatilidad: "alta" si el ATR 14 sobre el precio pasa de su mediana de las 180 velas anteriores.
+  - El informe da, por régimen, trades, R medio y ventaja sobre el control de su moneda, en la búsqueda y en la puerta.
+- **Búsquedas guardadas:** una búsqueda anterior no trae `funnel` en su configuración y sigue con sus dos tramos, también al retomarla. "Embudo" se puede desmarcar en el formulario.
+
+### Ventana
+
+Pestaña "Búsqueda": casilla "Embudo: tres tramos y una puerta con cupo" (marcada de fábrica), primer corte, hueco, cupo de la puerta y cupo para la fase 2. El informe dice el umbral de suerte por tramo y con lo de antes, cuántas miraron la puerta y con qué margen. Cada finalista trae sus dos tramos, la puerta y la tabla por régimen. En "Mejores en el tramo de búsqueda", una regla que no fue finalista dice "sin mirar".
+
+### Filtro de mercado, grupo de monedas y la regla del VPA por tramos (23/11, después)
+
+Pedido del usuario: usar el embudo para buscar variaciones de la ruptura con volumen del VPA (QB, 4h, a mercado, stop 1.5 ATR con máximo 8, 3R), la regla que había pasado las tres fases en las monedas nuevas.
+
+- **La regla base, por los tramos del embudo** (fase 1, motor 6, solo lectura, sin guardar corridas):
+
+| Grupo | Tramo | Trades | R por trade | Sobre el azar | Sobre el azar de su trimestre y lado |
+|---|---|---|---|---|---|
+| De siempre (7) | 1 | 194 | +0.10 | +0.09 | −0.03 |
+| De siempre (7) | 2 | 241 | +0.08 | +0.10 | +0.01 |
+| De siempre (7) | Puerta | 332 | +0.19 | +0.14 | +0.05 |
+| Nuevas (43) | 1 | 542 | −0.01 | 0.00 | −0.02 |
+| Nuevas (43) | 2 | 1,868 | +0.05 | +0.06 | −0.02 |
+| Nuevas (43) | Puerta | 2,155 | −0.03 | +0.04 | −0.04 |
+
+  - Contra el azar simple gana algo; contra el azar de su trimestre y lado (B-07 del motor 6) queda en cero. Ningún margen deja de tocar el cero. Su nota en el embudo es −0.27 en las de siempre y −0.15 en las nuevas: no llegaría a la puerta.
+  - "Pasó las tres fases" valía con el criterio de antes del motor 6.
+  - Por régimen, lo único que se repite en los cuatro casos es que pierde en subida con volatilidad alta: −0.32 y −0.18 en las de siempre (búsqueda y puerta), −0.44 y −0.06 en las nuevas.
+- **Filtro de mercado en el probador** (`market` = `{allow: [...]}` en la regla, `rule_tester.market_mask`):
+  - las seis combinaciones de tendencia (subida, bajada, rango) y volatilidad (alta, baja) de `trade_regime.py`, con lo que se sabía al cerrar la vela de la señal. Es del mercado, no del lado del trade;
+  - solo entra a la regla si deja fuera alguna: sin él, o con las seis, la regla conserva su identidad;
+  - una señal en una vela no permitida, o sin historia para medirla, va a `skipped` como "filtro de mercado";
+  - los controles al azar del probador (`_allowed`) y los de la búsqueda entran solo en las velas permitidas;
+  - en el trade elegido tiene su fila bajo las velas, con la tendencia y la volatilidad de la señal;
+  - en la ventana: "Mercado: tendencia y volatilidad de 4 horas", en Filtros → Tendencia, con seis casillas; en «Vas a correr», su ficha.
+- **En la búsqueda:** el gen `market` (apagado de fábrica en cada genoma): sin subida con volatilidad alta, solo en rango, solo en tendencia, solo con volatilidad baja o solo con alta. Casilla "mercado" entre las piezas. Una búsqueda guardada antes no lo trae.
+- **Con qué monedas elige** (`group`): las 7 de siempre, las nuevas o todas. Con las nuevas, las que solo informan al final son las de siempre (`baseCoins`). "A favor en N monedas" llega hasta 50. La regla del VPA tarda 10 s en las 7 de siempre y unos 45 s en las 43 nuevas.
+- **Corregido:** una moneda con menos de 50 velas en un tramo (o menos de 50 que el filtro deje) no tiene control al azar ahí. Sus trades dejaban al tramo entero sin las tres ventajas, y la nota caía al cálculo viejo de dos controles: pasó en el primer tramo de las monedas nuevas. Ahora esa moneda no entra en ese tramo.
+- **La regla del VPA sin subida con volatilidad alta** (la hipótesis que salió de mirar el régimen):
+  - en las de siempre mejora el primer tramo y la puerta (+0.23 sobre su control más exigente en los dos) pero no el segundo (−0.02): nota −0.36, tampoco llega a la puerta;
+  - en las nuevas no cambia nada: +0.02, −0.02 y 0.00.
+
+  No se sostiene. Salió de datos ya vistos y no se repite en las monedas que no la sugirieron.
+- **Pruebas:** `tests/test_market_filter.py` (6) y una regla de prueba más completa en `rulefacets.test.mjs` (15).
+- **No se vio en pantalla:** la página compila y las pruebas de la página pasan.
+
+### Lo que no está hecho
+
+- **El tramo definido por régimen** (la otra mitad de las reglas especializadas): hoy el filtro de mercado deja buscar reglas que operan solo en un régimen, pero los tramos siguen siendo por fecha.
+- **La fase 2 con una sola mirada** para 3 a 5 finalistas y umbral ajustado por ese número: hoy la fase 2 se corre regla por regla desde la pestaña "Regla", y el tablero pide el margen.
+- La cuenta de lo gastado no incluye las reglas corridas a mano en la fase 1 (esas las cuenta el Historial) ni los informes de frecuencia.
+
+### Probado
+
+Una búsqueda corta con las 7 monedas reales en 4 horas (FVG nuevo, Impulso, Ruptura de caja y flecha; 14 reglas por 3 generaciones, cupo de 5), con el registro de búsquedas en una carpeta temporal:
+- 141 reglas probadas; 136 nunca miraron la puerta y 5 sí;
+- umbral de suerte de 0.24 R en el primer tramo y 0.19 R en el segundo; con 5 miradas la puerta pidió 2.33 errores;
+- ninguna de las 5 había ganado en sus dos tramos (la mejor aptitud fue −0.11), y aun así una pasó la puerta sin margen. Por eso desde entonces solo llega a la puerta la que tiene aptitud sobre cero: con esa regla, esta búsqueda no habría gastado ninguna mirada;
+- tardó 47 minutos, casi todo en las vecinas de las finalistas (dos de ellas, 10 y 21 minutos). Eso ya era así; con un cupo de 10 el cierre puede tardar el doble que con las 5 finalistas de antes.
+
+La pestaña compila, pero no se vio en pantalla. No se corrió una búsqueda larga ni se comparó con una búsqueda guardada de dos tramos.
+
+### Pruebas
+
+`tests/test_search_funnel.py` (9): configuración, cada trade en un solo tramo, que la búsqueda no mire la puerta y que lo posterior no cambie sus tramos, la aptitud del peor tramo, el margen según las miradas, el cupo de la puerta y de la fase 2, lo gastado en búsquedas anteriores y el régimen sin futuro. `tests/test_rule_search.py` (9) sigue probando los dos tramos.
+
+## MONTE CARLO, FRECUENCIA DE LA SEÑAL Y FIGURAS DEL ENTRENADOR (23/11/2026)
+
+Pedido del usuario tras el análisis de LuxAlgo Quant (17/11): de lo que ofrece esa app, quiso el Monte Carlo de trades, los informes de frecuencia dentro del probador y que Claude pueda señalar en el gráfico en `/entrenar`. Descartó el bucle de búsqueda tal cual, los avisos que despiertan a la IA (la central de confluencia de la suite va sin IA), Pine Script desde una frase y las prop firms. El embudo de búsqueda por tramos, también acordado, **no está hecho**.
+
+### Monte Carlo de trades
+
+Con los resultados de los trades ya hechos, entre qué valores pudo quedar la curva por el orden y la suerte.
+
+- **Cálculo** (`components/backtesting/dashboard/monteCarlo.js`, lógica pura): `monteCarlo(resultados, { runs, method, seed, groups })`.
+  - `resample` (de fábrica): cada corrida saca al azar, con repetición, tantos trades como hay. Cambian el resultado y la caída.
+  - `shuffle`: los mismos trades en otro orden. El resultado final no cambia; cambian la caída y las rachas.
+  - `groups`: el bloque de cada trade. Con él se remuestrean o barajan bloques enteros. El probador pasa la semana de la salida (`resultsByExit`): los trades que salen la misma semana se mueven juntos, y tratarlos como independientes daría bandas angostas, lo mismo que corrige el margen del motor 6 (B-08).
+  - 2,000 corridas, con semilla que sale de los propios trades: el widget no cambia al redibujar.
+  - Da las bandas del 5, 25, 50, 75 y 95% de la curva (hasta 120 puntos), del resultado final y de la mayor caída, la racha de pérdidas típica y mala, la parte de las corridas que termina en pérdida, lo real y en qué percentil cae la caída real. `small` con menos de 30 trades (o de 30 bloques).
+- **Dónde:**
+  - **Dashboard de App 1** y **dashboard del journal de la suite:** `MonteCarloCard.jsx`, una tarjeta con Chart.js bajo "Riesgo y Recompensa", con los trades seleccionados. App 1, en dólares; la suite, en dólares o en R (`modes`) y con el estilo elegido (`themed`). Usa las clases de `dashboard_styles.css`: no hay estilos nuevos.
+  - **Probador:** `RuleMonteCarlo.jsx`, "Monte Carlo de los trades" bajo la curva, en "Resumen" y en "Todas" (solo en "Por trade"). Plegado de fábrica: se calcula al abrirlo. En R, por semanas de salida (casilla "por semanas") y con el R medio del 5% al 95%.
+- **Lo que no dice:** si la ventaja es real. Eso lo dicen los controles al azar. Supone que los próximos trades se parecen a estos. En el probador no mira datos nuevos: usa los trades ya calculados de la fase a la vista, así que no gasta ninguna fase.
+- **Ojo con las props:** la tarjeta recibe `readValue`, no `valueOf`: un prop llamado `valueOf` nunca toma su valor de fábrica, porque todo objeto ya tiene uno.
+- **Pruebas:** `tests/montecarlo.test.mjs` (13): percentiles, caída y racha, semilla, que barajar conserve el final, que el ancho al remuestrear sea el de la teoría, y que con 5 trades iguales por semana las bandas por bloques sean raíz de 5 veces más anchas.
+- **Probado** en una página de prueba con trades inventados (las dos tarjetas y el panel del probador, a la vista). No se vio dentro de App 1, de la suite ni del probador con trades reales.
+
+### Frecuencia de la señal (probador)
+
+Una pregunta sin entrada ni salida: cuando aparece la señal de una regla, ¿cuántas veces el precio hace algo en las N velas siguientes?
+
+- **Backend** (`rule_frequency.py`, `POST /api/tester/frequency/{symbol}` con `{ rule, question }`):
+  - **La señal** es la de la regla: elementos, receta y filtros (líneas, flujo, régimen, horario, medidas…), con el mismo código del probador. `signals_of()` corre `rule_tester.run` con `trace` y la regla puesta a mercado, todas las señales, sin enfriamiento ni tope de comisión (`_signal_rule`), y toma las señales que no descartó ningún filtro. La entrada, el stop y la salida de la regla no cuentan.
+  - **Preguntas** (`clean_question`): `reach`, llega a `a` ATR a favor en `bars` velas; `first`, llega a `a` ATR a favor antes que a `b` ATR en contra; `close`, a las `bars` velas cierra más de `a` ATR a favor (0 = a favor). Se mide desde la apertura de la vela siguiente a la señal, en ATR de la vela de la señal, sin comisiones. En `first`, las dos metas en la misma vela cuentan como que no, y el informe dice cuántas fueron.
+  - **Informe** (`measure`): la tasa con su muestra y su intervalo de Wilson del 95%, por lado y por año; las **señales separadas** (tras contar una, las de las `bars` velas siguientes no cuentan: sus ventanas se pisan); la tasa de **una vela cualquiera** (todas las velas en que la regla podría dar señal por régimen y horario, con la misma parte de largos y cortos), y la diferencia con su margen, que se calcula con las separadas. "Se distingue" pide 30 señales separadas y pasar el margen.
+  - **Solo la fase 1.** Un informe de frecuencia también es una mirada a los datos: las fases 2 y 3 no se ofrecen.
+  - **Cada pregunta queda anotada** en `OrderFlowData/observer/tester/frequency.jsonl`, y el informe dice cuántas distintas van sobre esa señal y en esa moneda.
+- **Ventana** (`RuleFrequency.jsx`): "Frecuencia de la señal" en "Resumen", bajo la sensibilidad, solo con una corrida de la fase 1 a la vista. Usa la regla de esa corrida.
+- **Límites:** una moneda a la vez. La vela cualquiera no copia los filtros que miran el lado (líneas, flujo, medidas), solo el régimen y el horario. Las velas se miran enteras, sin el minuto a minuto.
+- **Pruebas:** `tests/test_rule_frequency.py` (9).
+- **Probado** con velas reales de TRX 4h (fase 1, registro en una carpeta temporal) y el Impulso de 2 ATR en 3 velas, 183 señales: llega a 2 ATR en 10 velas el 33.8% de las separadas contra 30.7% de una vela cualquiera (no se distingue); cierra a favor a las 6 velas el 41.1% contra 49.5% (se distingue, en contra). La primera pregunta tarda 9 s y las siguientes 0.1 s. El panel no se vio en pantalla.
+
+### Figuras del entrenador (`/entrenar`)
+
+- `window.__app1Coach` (versión 2) suma `draw(figuras, { sumar })` y `clearDrawings()`: lo único que no es lectura. Es una capa aparte (`coachNotes` en `coachState.js`): no son dibujos del usuario, no se guardan en la sesión, no salen en las imágenes de los trades (`captureDensityRef`), no entran al análisis de ninguna orden y se van al recargar.
+- **Figuras:** `linea` (precio), `zona` (desde, hasta) y `marca` (un aro en una vela), con texto de hasta 80 caracteres y `velasAtras` (0 = la última vela cerrada a la vista). Los precios son los que ve el usuario (con fecha oculta, el índice). No hay fechas: no se puede marcar nada después de la hora simulada ni revelar la época. Hasta 20; lo desconocido, lo lejano (a más de 3 veces el rango a la vista) o lo que no está a la vista se rechaza con su motivo (`normalizeNotes`).
+- **Dibujo:** `MiniChart` las pinta en verde azulado, punteadas y con la etiqueta "Claude · texto", en los gráficos de esa moneda en reproducción. La suite (modo en vivo) no las dibuja.
+- **Regla de uso**, en el skill (`.claude/skills/entrenar/SKILL.md`, "Señalar en el gráfico"): solo después de la predicción del usuario, nunca para sugerir entrada, stop u objetivo, y se borran antes de la repetición siguiente.
+- **Pruebas:** `tests/coach.test.mjs` suma 5 (12).
+- **No se vio en pantalla** ni se probó en una sesión de `/entrenar`.
 
 ## ESTADO PARA EL ENTRENADOR (17/11/2026)
 

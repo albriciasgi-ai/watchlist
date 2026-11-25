@@ -31,6 +31,7 @@ import { useUiTheme } from './useUiTheme.js';
 import { Icon } from './uiIcons.jsx';
 import './backtesting/Observer.css';
 import { isBlind, maskDate, maskPrice, maskVolume, priceText, pricesHidden, unmaskPrice } from './backtesting/blindClock';
+import { coachNotes } from './backtesting/coachState.js';
 import { drawPositionLines, hitPositionTarget, positionPrices } from './positionLines.js';
 import { applyKline, mergeHistory, withForming } from './liveCandles.js';
 import { createRedrawPacer } from './redrawPacer.js';
@@ -1780,6 +1781,69 @@ const MiniChart = forwardRef(({
         console.error(`[${symbol}] Error rendering drawings:`, error);
         // No propagar el error para evitar crash de la aplicación
       }
+    }
+
+    // Lo que dibuja el entrenador (/entrenar, 23/11): una capa aparte, que no sale en las imágenes de los trades
+    const coachItems = backtestingMode && captureDensityRef.current === null ? coachNotes(symbol) : [];
+    if (coachItems.length > 0 && scaleConverterRef.current && visibleCandles.length > 0) {
+      const { priceToY, timeToX } = scaleConverterRef.current;
+      const right = marginLeft + chartWidth;
+      const tone = '0, 137, 123';
+      const startX = (time) => Math.max(marginLeft, Math.min(right, timeToX(time)));
+      ctx.save();
+      ctx.beginPath();
+      ctx.rect(marginLeft, marginTop, chartWidth, priceChartHeight);
+      ctx.clip();
+      ctx.font = '11px "Segoe UI", Arial, sans-serif';
+      ctx.textBaseline = 'middle';
+      const tag = (text, x, y) => {
+        const label = text ? `Claude · ${text}` : 'Claude';
+        const width = ctx.measureText(label).width + 8;
+        const left = Math.max(marginLeft + 2, Math.min(right - width - 2, x));
+        const top = Math.max(marginTop + 2, Math.min(marginTop + priceChartHeight - 16, y - 7));
+        ctx.fillStyle = isNewTheme() ? THEME.labelBg : 'rgba(255, 255, 255, 0.9)';
+        ctx.fillRect(left, top, width, 14);
+        ctx.fillStyle = `rgb(${tone})`;
+        ctx.fillText(label, left + 4, top + 7);
+      };
+      for (const item of coachItems) {
+        if (item.kind === 'zone') {
+          const x = startX(item.time);
+          const yTop = priceToY(item.high);
+          const yBottom = priceToY(item.low);
+          ctx.fillStyle = `rgba(${tone}, 0.12)`;
+          ctx.fillRect(x, yTop, right - x, Math.max(1, yBottom - yTop));
+          ctx.strokeStyle = `rgba(${tone}, 0.8)`;
+          ctx.lineWidth = 1;
+          ctx.setLineDash([4, 3]);
+          ctx.strokeRect(x + 0.5, Math.round(yTop) + 0.5, right - x, Math.max(1, Math.round(yBottom - yTop)));
+          ctx.setLineDash([]);
+          tag(item.text, x + 4, yTop + 9);
+        } else if (item.kind === 'line') {
+          const x = startX(item.time);
+          const y = Math.round(priceToY(item.price)) + 0.5;
+          ctx.strokeStyle = `rgba(${tone}, 0.9)`;
+          ctx.lineWidth = 1.5;
+          ctx.setLineDash([6, 4]);
+          ctx.beginPath();
+          ctx.moveTo(x, y);
+          ctx.lineTo(right, y);
+          ctx.stroke();
+          ctx.setLineDash([]);
+          tag(item.text, x + 4, y - 9);
+        } else {
+          const x = timeToX(item.time);
+          if (x < marginLeft || x > right) continue;
+          const y = priceToY(item.price) - (item.above ? 12 : 0);
+          ctx.strokeStyle = `rgb(${tone})`;
+          ctx.lineWidth = 2;
+          ctx.beginPath();
+          ctx.arc(x, y, 7, 0, Math.PI * 2);
+          ctx.stroke();
+          tag(item.text, x + 11, y - (item.above ? 10 : 0));
+        }
+      }
+      ctx.restore();
     }
 
     // Lo que la regla vio en el trade elegido (probador de reglas): debajo de las cajas

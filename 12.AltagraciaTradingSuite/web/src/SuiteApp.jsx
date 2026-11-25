@@ -8,6 +8,8 @@ import BotConfig from './BotConfig.jsx';
 import JournalView from './JournalView.jsx';
 import TabsMenu from './TabsMenu.jsx';
 import LiquidityMapView from './LiquidityMapView.jsx';
+import CoinsView from './CoinsView.jsx';
+import FollowView from './FollowView.jsx';
 import { MODULE_PARAM, TAB, URL_CHART_TIMEFRAME, URL_SYMBOL, startTabHeartbeat, tabUrl } from './tabs.js';
 import { useBotNotifications } from './botNotifications.js';
 
@@ -45,6 +47,7 @@ export default function SuiteApp() {
   const [focusTrade, setFocusTrade] = useState(null); // "Ver en el gráfico" desde el journal
   const [journalFocus, setJournalFocus] = useState(null); // "Volver al journal" desde el gráfico: el trade que se miraba
   const [focusSymbol, setFocusSymbol] = useState(START_FOCUS); // una moneda de la Watchlist o del scanner
+  const [coinsFocus, setCoinsFocus] = useState(null); // "Agregar a la suite" del scanner: el módulo Monedas con esa moneda
   // La Watchlist se arma la primera vez que se abre y después queda armada: sus gráficos no se pausan
   const [watchlistOn, setWatchlistOn] = useState(START.module === 'watchlist');
   // El mapa de liquidez (13/11), igual: se arma la primera vez y queda armado
@@ -73,6 +76,10 @@ export default function SuiteApp() {
     setFocusSymbol({ symbol, tf, at: Date.now() });
     choose('chart');
   };
+  const openCoins = (symbol) => {
+    setCoinsFocus(symbol ? { symbol, at: Date.now() } : null);
+    choose('monedas');
+  };
 
   return (
     <>
@@ -97,6 +104,8 @@ export default function SuiteApp() {
             onBack={() => choose('chart')}
             onOpenTheme={() => setShowTheme(true)}
             onModule={openModule}
+            onOpenCoins={openCoins}
+            onOpenFollow={() => choose('seguimiento')}
           />
         </div>
       )}
@@ -109,6 +118,26 @@ export default function SuiteApp() {
             onModule={openModule}
           />
         </div>
+      )}
+      {module === 'monedas' && (
+        <CoinsView
+          active
+          focus={coinsFocus}
+          onFocusDone={() => setCoinsFocus(null)}
+          onBack={() => choose('chart')}
+          onWatchlist={() => choose('watchlist')}
+          onOpenTheme={() => setShowTheme(true)}
+          onModule={openModule}
+        />
+      )}
+      {module === 'seguimiento' && (
+        <FollowView
+          active
+          onBack={() => choose('chart')}
+          onWatchlist={() => choose('watchlist')}
+          onOpenTheme={() => setShowTheme(true)}
+          onModule={openModule}
+        />
       )}
       {module === 'bot' && (
         <div className="suite-root">

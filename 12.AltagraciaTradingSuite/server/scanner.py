@@ -18,7 +18,8 @@
 #
 # Datos en data/scanner: config.json; log/AAAA-MM-DD.jsonl.gz (cada 15 min, la foto de las candidatas, las listas y el
 # mercado, para juzgar el scanner despues); events/AAAA-MM-DD.jsonl (entradas y salidas de las listas); liquidity.json
-# (turnover diario de las monedas de la suite) y scanner.lock (un solo proceso mira por carpeta de datos).
+# (turnover diario de las monedas de la suite); state.json (las listas con su hora de entrada y los libros recientes: un
+# reinicio las retoma sin anotar entradas de las que ya estaban, 23/11) y scanner.lock (un solo proceso mira por carpeta).
 # SUITE_SCANNER=0 lo apaga; sin esa variable vale SUITE_SWING, que las pruebas ponen en 0. Las rutas siguen.
 import asyncio
 import bisect
@@ -57,8 +58,11 @@ INCREMENTAL = 8                  # velas que se vuelven a pedir en cada vuelta d
 TICKER_EVERY_MS = 30_000
 CYCLE_DELAY_MS = 20_000          # la vuelta de 15 min empieza 20 s despues del cierre: Bybit ya cerro la vela
 BOOK_EVERY_MS = 300_000
-BOOK_TOP = 40
+BOOK_TOP = 40                    # libros por vuelta si las listas y las que cumplen una regla dejan lugar (esas van todas)
+BOOK_MAX = 200                   # tope de libros por vuelta
+BOOK_RECENT_MS = 60_000          # un libro de hace menos de un minuto no se vuelve a pedir
 BOOK_STALE_MS = 15 * 60_000
+STATE_SAVE_MS = 5 * 60_000       # las listas y los libros se guardan al entrar o salir una moneda, y si no, cada 5 min
 META_EVERY_MS = 6 * HOUR_MS      # instrumentos (grupo, etiquetas, alta, funding) y anuncios de cierre
 BTC_DAILY_EVERY_MS = 6 * HOUR_MS
 START_DELAY_S = 30               # al arrancar, deja pasar primero los pedidos de las grabaciones y del grafico
@@ -813,11 +817,16 @@ class Scanner:
         self.compute_seconds = None
         self.evaluated_at = None
         self.book_round = None
+        self.book_extra = None         # los libros medidos en la vuelta de 15 min (las que acaban de cumplir una regla)
         self.errors = deque(maxlen=20)
         self.coin_errors = {}
         self.started_ms = self._now()
         self.liq_days = self._load_liq()
         self._liq_saved = 0
+        self.restored = None           # lo retomado de state.json al tomar el candado (para el estado)
+        self._restored = False
+        self._state_dirty = False
+        self._state_saved = 0
         self._lock_fh = None
         self._tasks = []
         self._wake = None
@@ -892,6 +901,14 @@ class Scanner:
         self._lock_fh = fh
         return True
 
+    def _hold_lock(self) -> bool:
+        """El candado y, la primera vez que se toma, las listas y los libros que guardo la vuelta anterior."""
+        if not self._take_lock():
+            return False
+        if not self._restored:
+            self._restore_state()
+        return True
+
     def _release_lock(self):
         if self._lock_fh is not None:
             try:
@@ -914,7 +931,7 @@ class Scanner:
         if _env_off() or self._tasks:
             return
         self._wake = asyncio.Event()
-        self.other_process = not self._take_lock()
+        self.other_process = not self._hold_lock()
         self._tasks = [asyncio.create_task(self._ticker_loop()), asyncio.create_task(self._work_loop())]
 
     async def stop(self):
@@ -927,10 +944,11 @@ class Scanner:
                 pass
         self._tasks = []
         self._save_liq(force=True)
+        self._save_state(self._now(), force=True)
         self._release_lock()
 
     def _ready(self) -> bool:
-        if not self._take_lock():
+        if not self._hold_lock():
             self.other_process = True
             return False
         self.other_process = False
@@ -1148,6 +1166,9 @@ class Scanner:
         await self.compute(now)
         self.cycle_close = close
         self._evaluate(now)
+        missing = [s for s in self.wanting if not self._fresh_book(s, now)]
+        if missing:   # sin libro medido no se entra: las que acaban de cumplir una regla entran en esta misma vuelta
+            await self.refresh_books(missing)
         self.cycle = {"at": now, "seconds": round(time.time() - began, 1), "coins": len(cands),
                       "loaded": sum(1 for s in cands if s in self.bars), "requests": STATS["requests"] - requests,
                       "errors": len(self.coin_errors), "compute_seconds": self.compute_seconds}
@@ -1184,15 +1205,30 @@ class Scanner:
         self.compute_seconds = round(seconds, 2)
         self.market = market_state(metrics, None, self.btc_daily, now, cfg)
 
-    async def refresh_books(self):
-        """El libro de las 40 candidatas que mas importan ahora (las de las listas y las de mas volumen relativo)."""
+    def _fresh_book(self, sym: str, now: int) -> bool:
+        """Si hay un libro que cuenta para el costo (el mismo criterio de apply_costs)."""
+        book = self.books.get(sym)
+        return bool(book) and now - book.get("at", 0) <= BOOK_STALE_MS and book.get("size") == self.config["size_usdt"]
+
+    async def refresh_books(self, only: list = None):
+        """Los libros de todas las monedas de las listas y de todas las que cumplen la regla de una lista, y si queda lugar
+        hasta 40, los de las de mas volumen relativo. Para entrar a una lista hace falta el libro medido: con un tope de 40
+        libros para todo, las listas llenas no dejaban medir a las que llegaban (el 23/11, ACE con volumen x147 quedo
+        fuera). Con `only`, solo esas: las que acaban de cumplir una regla en la vuelta de 15 min."""
         now = self._now()
         cfg = self.config
-        rv = lambda s: -((self.metrics.get(s) or {}).get("rvol_24h") or 0)   # noqa: E731
-        listed = [s for name in ("enjuego", "tendencia", "rapidos") for s in self.order.get(name, [])]
-        wanting = sorted((s for s in self.wanting if s in self.metrics and s not in listed), key=rv)
-        rest = sorted((s for s in self.metrics if s not in listed and s not in self.wanting and self._allowed(s, cfg)), key=rv)
-        pick = list(dict.fromkeys(listed + wanting + rest))[:BOOK_TOP]
+        if only is None:
+            rv = lambda s: -((self.metrics.get(s) or {}).get("rvol_24h") or 0)   # noqa: E731
+            listed = [s for name in ("enjuego", "tendencia", "rapidos") for s in self.order.get(name, [])]
+            wanting = sorted((s for s in self.wanting if s in self.metrics and s not in listed), key=rv)
+            rest = sorted((s for s in self.metrics if s not in listed and s not in self.wanting and self._allowed(s, cfg)), key=rv)
+            must = list(dict.fromkeys(listed + wanting))
+            pick = must + rest[:max(0, BOOK_TOP - len(must))]
+            recent = lambda s: (self._fresh_book(s, now)   # noqa: E731
+                                and now - self.books[s].get("at", 0) < BOOK_RECENT_MS)
+            pick = [s for s in pick if not recent(s)][:BOOK_MAX]
+        else:
+            pick = list(dict.fromkeys(only))[:BOOK_MAX]
         gate = asyncio.Semaphore(MAX_PARALLEL)
         began = time.time()
 
@@ -1204,8 +1240,11 @@ class Scanner:
                     self.coin_errors[sym] = f"libro: {type(e).__name__}: {e}"[:200]
 
         await asyncio.gather(*(one(s) for s in pick))
-        self.book_at = now
-        self.book_round = {"at": now, "coins": len(pick), "seconds": round(time.time() - began, 1)}
+        if only is None:
+            self.book_at = now
+            self.book_round = {"at": now, "coins": len(pick), "seconds": round(time.time() - began, 1)}
+        else:
+            self.book_extra = {"at": now, "coins": len(pick), "seconds": round(time.time() - began, 1)}
         for sym, m in self.metrics.items():
             apply_costs(m, self.books.get(sym), cfg, now)
         self._evaluate(now)
@@ -1238,36 +1277,52 @@ class Scanner:
             if cur is None:
                 members[sym] = {"since": now, "last_ok": now, **info}
                 self._event(now, name, sym, "entra")
+                self._state_dirty = True
             else:
                 cur.update({"last_ok": now, **info})
         for sym in list(members):
             if sym not in ok and (sym in blocked or now - members[sym]["last_ok"] >= hold_ms):
                 del members[sym]
                 self._event(now, name, sym, "sale")
+                self._state_dirty = True
 
     def _eligible(self, m: dict, cfg: dict) -> bool:
         return m.get("group") in cfg["groups"] and (cfg["allow_st"] or not m.get("st")) and bool(m.get("book_ok"))
 
+    def _could_enter(self, m: dict, cfg: dict) -> bool:
+        """Si vale la pena medir su libro: se puede operar, o el libro todavia no se midio y su spread no lo descarta. El
+        estimado pide un spread de la mitad del limite; el libro medido puede pasar con uno de hasta el limite entero (el
+        23/11, MMT, con volumen x32 y 10 bps de spread, solo entro porque sobro lugar en la vuelta de los libros)."""
+        if self._eligible(m, cfg):
+            return True
+        spread = m.get("spread_bps")
+        return (m.get("group") in cfg["groups"] and (cfg["allow_st"] or not m.get("st")) and bool(m.get("cost_estimated"))
+                and spread is not None and spread <= cfg["book_max_bps"])
+
     def _evaluate(self, now: int):
         cfg = self.config
-        self.evaluated_at = now   # "ya no cumple" se mide contra la ultima revision de las listas, no contra la hora del pedido
         hold = cfg["hold_min"] * 60_000
         metrics = self.metrics
         if metrics:
+            # "Ya no cumple" se mide contra la ultima revision de las listas, no contra la hora del pedido. Sin medidas
+            # (recien arrancado) no hay revision: lo retomado sigue como estaba al guardarse
+            self.evaluated_at = now
+            # Sale en el acto la que ya no se puede operar o dejo de ser candidata. Una candidata cuyas velas no llegaron
+            # (tras un reinicio no hay velas en memoria) no: sigue la hora de espera, como si no cumpliera
             blocked = {s for name in ("enjuego", "tendencia") for s in self.members[name]
-                       if s not in metrics or not self._eligible(metrics[s], cfg)}
+                       if (s not in metrics and s not in self.coin_errors) or (s in metrics and not self._eligible(metrics[s], cfg))}
             # Para entrar a una lista hace falta el libro medido (con el estimado entraban libros finos que salian al
             # medirse); para quedarse basta seguir siendo operable
             entering = lambda name, s, m: s in self.members[name] or not m.get("cost_estimated")   # noqa: E731
-            want = set()   # las que cumplen la regla de una lista: su libro se mide primero (refresh_books)
+            want = set()   # las que cumplen la regla de una lista y podrian entrar: su libro se mide en la vuelta
             ok = {}
             for sym, m in metrics.items():
-                if not self._eligible(m, cfg):
+                if not self._could_enter(m, cfg):
                     continue
                 r24, r1 = m.get("rvol_24h"), m.get("rvol_1h")
                 if (r24 is not None and r24 >= cfg["rvol24_min"]) or (r1 is not None and r1 >= cfg["rvol1h_min"]):
                     want.add(sym)
-                    if entering("enjuego", sym, m):
+                    if self._eligible(m, cfg) and entering("enjuego", sym, m):
                         move = m.get("resid_24h") if m.get("resid_24h") is not None else m.get("ret_24h")
                         ok[sym] = {"dir": (1 if move > 0 else -1) if move else 0}
             self._members("enjuego", ok, now, hold, blocked)
@@ -1277,30 +1332,109 @@ class Scanner:
             if cut is not None:
                 for sym, m in metrics.items():
                     d = m.get("break20", 0)
-                    if d and self._eligible(m, cfg) and (m.get("er_7d") or 0) >= cut and (m.get("resid_7d") or 0) * d > 0:
+                    if d and self._could_enter(m, cfg) and (m.get("er_7d") or 0) >= cut and (m.get("resid_7d") or 0) * d > 0:
                         want.add(sym)
-                        if entering("tendencia", sym, m):
+                        if self._eligible(m, cfg) and entering("tendencia", sym, m):
                             ok[sym] = {"dir": d, "er_cut": cut}
             self._members("tendencia", ok, now, hold, blocked)
             self.wanting = want
-        allowed = {s for s in self.tickers if self._allowed(s, cfg)}
-        self._members("rapidos", fast_hits(self.snaps, self.tickers, allowed, cfg, now), now, FAST_HOLD_MS,
-                      {s for s in self.members["rapidos"] if s not in allowed})
-        rv = lambda s: (metrics.get(s) or {}).get("rvol_24h") or 0   # noqa: E731
-        self.order["enjuego"] = sorted(self.members["enjuego"], key=lambda s: (
-            self.members["enjuego"][s]["last_ok"] < now, -rv(s)))
-        self.order["tendencia"] = sorted(self.members["tendencia"], key=lambda s: (
-            self.members["tendencia"][s]["last_ok"] < now, -abs((metrics.get(s) or {}).get("resid_7d") or 0)))
+        if self.tickers:   # sin tickers todavia (recien arrancado) no se sabe cuales se pueden operar
+            allowed = {s for s in self.tickers if self._allowed(s, cfg)}
+            self._members("rapidos", fast_hits(self.snaps, self.tickers, allowed, cfg, now), now, FAST_HOLD_MS,
+                          {s for s in self.members["rapidos"] if s not in allowed})
+        if metrics:
+            rv = lambda s: (metrics.get(s) or {}).get("rvol_24h") or 0   # noqa: E731
+            self.order["enjuego"] = sorted(self.members["enjuego"], key=lambda s: (
+                self.members["enjuego"][s]["last_ok"] < now, -rv(s)))
+            self.order["tendencia"] = sorted(self.members["tendencia"], key=lambda s: (
+                self.members["tendencia"][s]["last_ok"] < now, -abs((metrics.get(s) or {}).get("resid_7d") or 0)))
+        else:   # sin medidas todavia: el orden retomado
+            for name in ("enjuego", "tendencia"):
+                keep = [s for s in self.order.get(name, []) if s in self.members[name]]
+                self.order[name] = keep + [s for s in self.members[name] if s not in keep]
         self.order["rapidos"] = sorted(self.members["rapidos"], key=lambda s: -self.members["rapidos"][s]["last_ok"])
         suite = self.suite_symbols()
         self.order["mias"] = sorted(suite, key=lambda s: -((self.tickers.get(s) or {}).get("turnover24h") or 0))
+        self._save_state(now)
 
-    def _event(self, now: int, name: str, sym: str, kind: str):
+    # --- las listas y los libros sobreviven a un reinicio ---
+    def _state_path(self) -> Path:
+        return self.folder / "state.json"
+
+    def _save_state(self, now: int, force: bool = False):
+        """Las listas (con la hora de entrada y la ultima en que cumplieron su regla) y los libros recientes. Al entrar o
+        salir una moneda, y si no, cada 5 min. Solo el proceso que mira (el del candado) y despues de haber retomado lo
+        anterior: si no, un arranque pisaria las listas guardadas con unas vacias."""
+        if self._lock_fh is None or not self._restored:
+            return
+        if not (force or self._state_dirty or now - self._state_saved >= STATE_SAVE_MS):
+            return
+        data = {"v": 1, "at": now, "size": self.config["size_usdt"], "members": self.members,
+                "order": {name: list(self.order.get(name, [])) for name in self.members},
+                "books": {s: b for s, b in self.books.items() if now - (b.get("at") or 0) <= BOOK_STALE_MS}}
+        try:
+            swing_watch._write_atomic(self._state_path(), json.dumps(data, separators=(",", ":"), ensure_ascii=False, default=str))
+            self._state_saved, self._state_dirty = now, False
+        except OSError as e:
+            self._error("estado", e)
+
+    def _restore_state(self):
+        """Al tomar el candado, lo que guardo el proceso anterior. Una lista se retoma si el scanner dejo de mirar menos
+        tiempo que su espera (una hora En juego y Tendencia, 30 min Rapidos): sus monedas siguen con su hora de entrada,
+        sin anotar otra entrada. Si fue mas, no se sabe que paso mientras tanto: salen a la hora en que se las vio por
+        ultima vez, con "gap" en su evento, y las que cumplan su regla entran de nuevo. Los libros de menos de 15 min
+        vuelven a contar para el costo."""
+        self._restored = True
+        path = self._state_path()
+        if not path.exists():
+            return
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+            saved_at = int(data["at"])
+            saved_members = data.get("members") or {}
+            saved_order = data.get("order") or {}
+            saved_books = data.get("books") or {}
+            if not all(isinstance(x, dict) for x in (saved_members, saved_order, saved_books)):
+                raise ValueError("estado con otra forma")
+        except (OSError, ValueError, KeyError, TypeError) as e:
+            self._error("estado", e)
+            return
+        now = self._now()
+        gap = max(0, now - saved_at)
+        kept, closed = {}, 0
+        for name in self.members:
+            hold = FAST_HOLD_MS if name == "rapidos" else self.config["hold_min"] * 60_000
+            saved = {s: dict(m) for s, m in (saved_members.get(name) or {}).items()
+                     if SYMBOL_RE.match(str(s)) and isinstance(m, dict)
+                     and isinstance(m.get("since"), int) and isinstance(m.get("last_ok"), int)}
+            if gap < hold:
+                self.members[name] = saved
+                order = [s for s in (saved_order.get(name) or []) if s in saved]
+                self.order[name] = order + [s for s in saved if s not in order]
+                kept[name] = len(saved)
+            else:
+                for s in saved:
+                    self._event(saved_at, name, s, "sale", gap=True)
+                closed += len(saved)
+        books = 0
+        for s, b in saved_books.items():
+            if (SYMBOL_RE.match(str(s)) and isinstance(b, dict) and isinstance(b.get("at"), int)
+                    and now - b["at"] <= BOOK_STALE_MS and s not in self.books):
+                self.books[s] = b
+                books += 1
+        if kept:
+            self.evaluated_at = saved_at   # lo que estaba esperando sigue esperando, y lo demas no
+        self._state_dirty = bool(closed)
+        self.restored = {"saved_at": saved_at, "gap_s": round(gap / 1000), "kept": kept, "closed": closed, "books": books}
+
+    def _event(self, now: int, name: str, sym: str, kind: str, gap: bool = False):
         m = self.metrics.get(sym) or {}
         member = self.members.get(name, {}).get(sym)
         entry = {"at": now, "list": name, "symbol": sym, "type": kind,
                  "chips": [c["text"] for c in chips_of(m, name, member)] if m or member else [],
                  "price": (self.tickers.get(sym) or {}).get("price")}
+        if gap:
+            entry["gap"] = True   # salio por un corte: el scanner no miro en ese tiempo y esta es la ultima vez que la vio
         self.events.append(entry)
         path = self.folder / "events" / f"{_day(now)}.jsonl"
         try:
@@ -1489,7 +1623,8 @@ class Scanner:
                 "other_process": self.other_process, "started_at": self.started_ms, "universe": len(self.tickers),
                 "groups": groups, "candidates": len(self.candidates), "loaded": sum(1 for s in self.candidates if s in self.bars),
                 "building": self.building(), "tickers_at": self.tickers_at, "cycle": self.cycle, "books": self.book_round,
-                "meta_at": self.meta_at or None, "delistings": len(self.delistings), "errors": list(self.errors)[-5:],
+                "books_extra": self.book_extra, "restored": self.restored, "meta_at": self.meta_at or None,
+                "delistings": len(self.delistings), "errors": list(self.errors)[-5:],
                 "coin_errors": dict(list(self.coin_errors.items())[:10]), "config_error": self.config_error,
                 "lists": {k: len(v) for k, v in self.order.items()}}
 

@@ -80,7 +80,7 @@ lo que faltaba en el order flow («Sí, hazlo»).
 4. **Pruebas:** `ruletester.test.mjs` (17), `test_trade_context.py` (7) y `test_footprint_rules.py`, una más cada una.
 
 **IMPORTANTE:**
-- **Está en la rama del protocolo, sin commit,** como el motor 7.
+- **En main desde el 25/11,** junto con el motor 7 (lo pidió el usuario).
 - Reiniciar el backend de App 1 (9000) y recargar su página.
 - Sin `step_cap` el footprint queda como antes: la suite conserva su step parejo.
 - **Probado en pantalla** con la copia aislada y el Zero Print, trade 559. Antes, las 162 velas salían con celdas de 2.5 en
@@ -125,7 +125,7 @@ la lea igual.
    - con las velas reales de BTC 4h, el navegador y el backend dan los mismos 2,037 elementos.
 
 **IMPORTANTE:**
-- **Está en la rama del protocolo, sin commit,** como el resto del motor 7.
+- **En main desde el 25/11,** como el resto del motor 7.
 - **Corridas que quedan fuera:**
   - las que usan un elemento del lector, salvo la ruptura sin volumen;
   - las que usan el filtro del medidor, también el ripple de la ruptura con volumen;
@@ -181,7 +181,10 @@ elementos.
    - la paridad del indicador del Volumen de Respuesta con la investigación da 0 de diferencia.
 
 **IMPORTANTE:**
-- **Está en la rama del protocolo, sin commit.** Se une a main cuando el usuario termine las cinco galerías.
+- **En main desde el 25/11:** el usuario pidió unirlo antes de terminar las cinco galerías. Las galerías 3 a 5 siguen en
+  revisión, y lo que decida en ellas irá en otro cambio.
+- **El barrido de señales** de main lee los elementos con el motor 7, y el esfuerzo con resultado (QV) y el medidor que
+  gira (QG) entran a la familia Volumen y VPA. Los barridos guardados antes quedan con sus cifras.
 - **Corridas que quedan fuera con el motor 7:** solo las que usan algo que cambió (`_touched_by_engine7`): patrones, rombo,
   ruptura o borde de caja, cambio de carácter, el filtro "tras romper" sin rango mayor, o un filtro con "velas desde el
   último equilibrio".
@@ -196,6 +199,435 @@ elementos.
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Motor 7", y
 `pruebas_backtesting/revision_visual/G1_RESPUESTAS.md`
+
+---
+
+### App 1 + Scanner - 25 Noviembre 2026: Estudio del Pump (sin Cambios en las Apps)
+
+**Pedido:** probar en App 1 lo que el scanner muestra como moneda «en juego», pensado como una estrategia de pump, para refinarlo. El usuario pidió comparar el volumen también con las últimas N velas, dejar fuera las monedas muy pequeñas y empezar con trades de unos 2,500 USDT para crecer hasta 10,000.
+
+**Cambios:** ninguno en el código de las apps.
+1. **Plan fijado antes de correr:** `docs/PLAN_PUMP.md`, con la definición del pump, los datos, los controles y el criterio.
+2. **Datos:** velas de 1 hora de los 837 perpetuos USDT de Bybit (cripto e innovación), con los 321 cerrados, en `OrderFlowData/research/pump/2026-11-24/candles/` (240 MB).
+3. **Liquidez:** foto del libro de las 516 monedas en operación, con órdenes de 2,500, 5,000 y 10,000 USDT. De ahí salen tres escalones por el volumen diario de los 30 días anteriores: 5 M, 10 M y 32 M.
+4. **Estudio** (`estudio.py` de esa carpeta): solo los dos primeros tramos de la fase 1.
+5. **15 y 5 minutos** (pedido después: los pumps son cortos): velas de 5 minutos de las 124 monedas con historia, bajadas solo hasta 2022, y `estudio_fino.py`. Hipótesis fijada aparte en el mismo plan, con el umbral subido a 3.1 por ser 26 pruebas.
+
+**IMPORTANTE:**
+- **Ninguna de las 14 pruebas pasa.** La que más se acerca queda en 1.7 errores, y el umbral era 2.9.
+- **La subida con volumen no sigue: tiende a devolverse** (de 4 a 10 puntos bajo el azar con volumen de 5 a 10 veces, en los dos tramos). Es lo único con el mismo signo en los dos, pero no pasa el umbral.
+- **La regla del scanner sola no separa** (de −1.9 a +4.0 puntos, con el signo cambiando).
+- **La caída con volumen siguió cayendo en 2022** y no antes: es el año bajista.
+- **Liquidez:** 10,000 USDT a mercado con 10 bps o menos caben hoy en 15 monedas (desde 32 M por día); 2,500 USDT, con unos 11 bps, desde 5 M (unas 75 monedas). Las monedas en pleno pump tienen mucho volumen y libro fino: de 70 a 117 bps para 10,000 USDT.
+- **Muestra chica:** solo 124 monedas tienen historia suficiente antes de 2023.
+- **En 15 minutos no hay nada.**
+- **En 5 minutos las 12 pruebas salen al revés en los dos tramos:** tras una vela con volumen y avance, el precio tiende a volver, 3 a 6 puntos más que el azar. Una pasa el umbral (la caída con volumen de 3 veces). Pero ir al revés deja cerca de 0.15 ATR por trade y la comisión son 0.26 a 0.29 ATR: no alcanza.
+- **Cierre:** en 1 hora, 15 y 5 minutos, entrar a favor de un pump no gana, y entrar en contra gana menos que su costo. La moneda «en juego» sirve para elegir dónde mirar, no como señal.
+
+**Ver:** `docs/PLAN_PUMP.md` y `docs/RESULTADOS_PUMP.txt`
+
+---
+
+### Altagracia Trading Suite - 24 Noviembre 2026: Seguimiento de los Hallazgos del Scanner (partes 1 y 2 del concepto de compras)
+
+**Pedido:** ver, desde que el scanner encuentra una moneda, en qué punto ocurrió un movimiento importante y qué variables e indicadores se estaban encendiendo, para definir un procedimiento de compra. Se le dio un concepto en 4 partes: el seguimiento, la pantalla, la historia del scanner y el procedimiento. Pidió empezar por el seguimiento («Sí, empieza»).
+
+**Cambios:**
+1. **Plan:** `docs/PLAN_SEGUIMIENTO_SCANNER.md`, con las definiciones fijadas antes de registrar y lo medido el 24/11.
+2. **Servidor** (`server/scan_follow.py`): lee el registro del scanner sin cambiarlo.
+   - Un hallazgo es una moneda que entra a una lista sin estar en ninguna.
+   - Cada vuelta suma 2 controles.
+   - A las 24 h y 10 min mide, con la historia de Bybit:
+     - el movimiento importante (3 ATR de 1 h) y la carrera a 2 ATR;
+     - las variables al hallazgo;
+     - los 33 elementos de velas del probador de App 1.
+   - Nunca envía nada.
+3. **Página:** módulo "Seguimiento", desde el panel del scanner o "Pestañas". Tiene:
+   - la lista;
+   - el detalle con sus 48 h: un gráfico propio en ATR desde el hallazgo, con OI, cuentas en largo, BTC y una fila por elemento;
+   - el informe contra el control.
+4. **Pruebas:** `follow_checks.py` (98) y `follow.test.mjs` (11). Pasan las demás del servidor y de la página, y la página se arma.
+
+**IMPORTANTE:**
+- Llega a la suite del usuario al unir esta rama a main y poner al día su carpeta. La suite se reinicia sola al abrirla y arma la página nueva.
+- Al encenderse arma lo anotado desde el 23/11 (unos 170 hallazgos y 270 controles) en cerca de una hora, primero los hallazgos.
+- Ocupa unos 1.6 MB por día, comprimido.
+- Es para mirar y elegir hipótesis: una regla de compra se fija aparte y se juzga en datos que no se miraron.
+- **No está el order flow:** las monedas del scanner no se graban. Bajarlo de los archivos del día siguiente es un paso aparte.
+- **Probado en una copia aislada** con una copia del registro real del scanner y Bybit real, a 1366×768. No se probó en Electron.
+
+**Ver:** `docs/PLAN_SEGUIMIENTO_SCANNER.md` y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Seguimiento del scanner (24/11)"
+
+---
+
+### Altagracia Trading Suite - 24 Noviembre 2026: Panel Lateral de la Watchlist con Partes Plegables
+
+**Pedido:** con el panel de las reglas en vivo, el panel lateral de la Watchlist quedó muy largo y lo último queda muy abajo. El usuario pidió que cada parte sea desplegable.
+
+**Cambios** (`WatchlistView.jsx`, `suite.css`):
+1. **Cada parte se pliega con un clic en su título:** las 12 del panel (Swing, sus monedas y sus señales; sabios y SMC y sus últimas; DX, sus órdenes y sus últimas; reglas en vivo, sus posiciones y sus últimas).
+2. **Plegada, deja el título con una nota corta:** el estado y la cuenta («Registra en vivo · 0 trades · 2 abiertas», «65 trades · +0.013 R», «168 esperando»).
+3. **Se recuerda** en la pestaña (`suite_wl_folds`). De fábrica todo sigue desplegado.
+
+**IMPORTANTE:**
+- La suite se reinicia sola al abrirla y arma la página nueva.
+- No se vio en pantalla: el archivo compila.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Reglas en vivo (24/11)", "Panel"
+
+---
+
+### Altagracia Trading Suite + App 1 - 24 Noviembre 2026: Impulso, FVG Nuevo y B1 Registradas en Vivo
+
+**Pedido:** las tres reglas que quedaron cerca de la fase 2 con el motor 6 no tienen su fase 3 mirada. En lugar de gastarla, el usuario pidió grabarlas en vivo.
+
+**Cambios:**
+1. **Plan fijado antes de registrar:** `docs/PLAN_REGLAS_EN_VIVO.md`, con las reglas exactas, las monedas, los datos y el juicio.
+2. **Registro en vivo** (`12.AltagraciaTradingSuite/server/rule_watch.py`):
+   - tras el cierre de cada vela de 4 horas pide las velas a Bybit y corre `rule_tester.run` de App 1 con cada regla, en las 50 monedas del probador;
+   - anota la señal, la entrada, la salida con su R, las señales que no entran por tener una posición abierta y las que no se operan;
+   - si la suite estuvo cerrada, al abrirla se pone al día: las velas de Bybit están completas y el registro queda igual;
+   - lo anotado como final no se reescribe: una diferencia queda como revisión, una sola vez.
+3. **B1 y el OI:** el registro pone al día el OI y el funding de App 1 antes de evaluar. Si el dato de una moneda no llega al cierre de la vela, B1 de esa moneda espera; las otras dos reglas siguen.
+4. **App 1** (`flow_filters.py`): el OI de BTC salía solo de su serie de 5 minutos, que termina el 05/11/2026, así que sus filtros de OI no pasaban en las fechas nuevas. Desde ahí sigue con la de 4 horas, como las demás monedas. Lo anterior no cambia.
+5. **Panel:** en la Watchlist, debajo de DX: por regla, trades, R por trade con su margen y abiertas; las posiciones abiertas y las últimas entradas y salidas.
+6. **Pruebas:** `server/tests/rule_checks.py` (52). Pasan las de DX, el Swing, los sabios y `run_checks.py`, y las de flujo de App 1.
+
+**IMPORTANTE:**
+- **El registro empieza cuando la suite del usuario corra este código** (al unir la rama a main y poner al día su carpeta). Cada moneda arranca en el primer cierre de 4 horas que ve: lo anterior no cuenta.
+- **No envía nada al bot.** `SUITE_RULES=0` lo apaga; también el botón del panel.
+- **El juicio, por regla, con las 50 monedas juntas y el margen por semanas:** a los 3 y a los 6 meses se descarta si el margen queda entero bajo cero; a los 12 meses pasa si queda entero sobre cero.
+- **Lo que puede esperarse:** con unas 50 semanas en un año el margen ronda ±0.2 R. Sirve para descartar con claridad; confirma solo una ventaja grande.
+- **Diferencia con el probador:** sin minuto a minuto, también en las 7 monedas de siempre (una vela con el stop y el objetivo dentro sigue su recorrido supuesto).
+- **Probado con Bybit real,** en una carpeta temporal: BTC, SOL, DOGE y LINK, 30 días vela a vela, dieron el mismo registro que una corrida del probador, sin revisiones. El OI de BTC llegó al último cierre tras ponerlo al día. El panel compila; no se vio en pantalla ni se probó dentro de la suite.
+- Las pruebas hallaron un fallo antes de registrar nada: un hueco en medio de las velas que da Bybit no se detectaba. Corregido.
+
+**Ver:** `docs/PLAN_REGLAS_EN_VIVO.md` y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Reglas en vivo (24/11)"
+
+---
+
+### App 1 - 24 Noviembre 2026: Consolidado de Estrategias y las Abiertas Repetidas con el Motor 6
+
+**Pedido:** un informe consolidado de todo lo probado en las distintas sesiones, con los parámetros, los resultados y el análisis de cada estrategia que llegó a la fase 2 o a la 3 (incluida la del VPA), y qué se podría mejorar. Después, repetir con el motor 6 las fases ya vistas de las que habían quedado abiertas.
+
+**Cambios:** ninguno en el código.
+1. **`1.Altagracia_Crypto_Backtester/Backtester/CONSOLIDADO_ESTRATEGIAS.pdf`** (14 páginas): cuadro general, una ficha por estrategia, lo que no salió de la fase 1, lo que cambió la forma de medir, qué tienen en común las que fallaron y qué probar distinto.
+2. **Repetición con el motor 6,** por script, con las reglas exactas del registro, juntadas como el informe "Todas" y sin guardar corridas (`OrderFlowData/research/consolidado/2026-11-24/`).
+
+**IMPORTANTE:**
+- **Con el motor 6 ninguna estrategia pasa las tres fases, y solo la B5 pasa la fase 2** (en las 7 monedas de siempre; cae en la fase 3).
+- **Las que habían pasado la fase 2 con la medición anterior ya no la pasan,** aunque ganan lo mismo:
+
+| Regla | Fase 2, de siempre | Fase 2, nuevas | Lo que le falta |
+|---|---|---|---|
+| Impulso, 3R | 652 trades, +0.207 R | 3,539 trades, +0.197 R | Le gana al azar con margen; al tramo y a su trimestre y lado, +0.15 con el borde bajo en −0.02 |
+| FVG nuevo a mercado, 3R | 781, +0.184 R | 4,709, +0.100 R | Sin margen sobre el tramo ni su trimestre. Pasa solo la fase 1 de las de siempre |
+| B1 | 213, +0.271 R | 1,283, +0.141 R | Solo le gana al azar, y en las de siempre |
+| Ruptura con volumen (VPA) | 586, +0.166 R | 3,379, +0.205 R | Ningún control con margen. En la fase 3 queda bajo el azar de su trimestre y lado (−0.13 y −0.08) |
+
+- **Lo que cambió es el margen, no el R:** con los trades agrupados por semana, una fase de 18 meses da un margen de ±0.17 a ±0.20 R. Una ventaja real de +0.15 no se puede confirmar en una sola fase.
+- **Impulso es la que queda más cerca:** positiva en las dos fases y los dos grupos, 38 de 43 monedas nuevas.
+- **La fase 3 de Impulso, FVG nuevo y B1 no se corrió:** nunca se miró.
+- **La lectura de fondo:** casi todo lo que llegó lejos es la misma apuesta (momentum de 4 horas, stop de 1 a 2 ATR, 2 a 3R), que gana junta en las fases 1 y 2 y cae junta en la 3.
+- Hay dos B5 con el mismo nombre (stop en la vela del elemento o de 1.5 ATR): el informe dice de cuál es cada cifra.
+
+**Ver:** el PDF, y `OrderFlowData/research/consolidado/2026-11-24/motor6_abiertas.log`
+
+---
+
+### App 1 + Altagracia Trading Suite - 24 Noviembre 2026: DX no Pasa con el Motor 6, y el Registro en Vivo ya no Repite Revisiones
+
+**Pedido:** el usuario preguntó cómo se iba a probar DX. Al mirar su registro en vivo salieron las mismas 13 revisiones repetidas en cada vela, y pidió investigarlo.
+
+**Cambios:**
+1. **Suite** (`dx_watch.py`): una diferencia con lo anotado como final se avisa una sola vez. Antes se volvía a anotar en cada vela de 30 minutos: 534 revisiones en dos días.
+2. **Pruebas:** `dx_checks.py` suma 1 (49).
+3. **Las tres fases de DX repetidas con el motor 6,** por script y sin guardar corridas (`OrderFlowData/research/dale/2026-11-24/`).
+
+**IMPORTANTE:**
+- **La causa de las revisiones:** las 13 órdenes se armaron antes del 23/11 a las 15:18 UTC, cuando el motor 6 del probador entró a la carpeta del usuario. El motor nuevo corrige qué orden entra cuando dos se llenan en la misma vela, y da otro resultado para ellas.
+- **DX no pasa con el motor 6.** Es la regla que el 22/11 había pasado las fases 2 y 3 por poco:
+
+| Fase | Motor 4 (22/11), las 7 monedas | Motor 6 (24/11), las mismas 7 |
+|---|---|---|
+| 1 | 15,986 trades, +0.099 R | 20,882 trades, −0.075 R |
+| 2 | 10,747 trades, +0.056 R (de +0.028 a +0.084) | 14,651 trades, −0.077 R |
+| 3 | 11,416 trades, +0.030 R (de +0.003 a +0.057) | 15,128 trades, −0.123 R |
+
+- **Por qué:** DX va con limit y una posición a la vez, el caso exacto que el protocolo de pruebas corrigió (F-04 y H15). El motor anterior le daba a la regla la orden mejor ubicada y saltaba las que se llenaban en la vela de una salida.
+- **Comprobado:** GALA en la fase 2 da +0.142 R con el backend del motor 4, igual a lo del 22/11, y −0.114 R con el del motor 6.
+- **Con esto, ninguna regla de los PDF de Byko y Dale pasa.** Las entradas anteriores de DX en este historial (22/11) quedan superadas por esta.
+- **El registro en vivo sigue corriendo.** Sus 53 trades cerrados dan −0.02 R (−0.05 con la ejecución medida), ±0.39. Seguir o apagarlo queda por decidir.
+- La suite se reinicia sola al abrirla, cuando este cambio esté en la carpeta del usuario.
+
+**Ver:** `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, «DX con el motor 6: no pasa», y `12.AltagraciaTradingSuite/CLAUDE.md` sección "DX en vivo (22/11)"
+
+---
+
+### App 1 - 23 Noviembre 2026: Barrido por Contexto (Estudio, sin Cambios en la App)
+
+**Pedido:** ver si el contexto separa a los elementos. El usuario pidió correr las simulaciones aparte y ver el resultado, sin construirlo en la app.
+
+**Cambios:** ninguno en el código. Script y resultados en `OrderFlowData/research/barrido/2026-11-23/`.
+
+**IMPORTANTE:**
+- **Cómo se midió:** cada señal según la tendencia de 4 horas respecto a su lado (a favor, en contra o en rango), contra las velas de su trimestre, lado y contexto. En 30m, 45m y 1h, las 7 monedas, los dos primeros tramos. La puerta no se miró.
+- **La tendencia de 4 horas no separa:** la diferencia entre ir a favor y en contra es la del azar (0 de 58, 2 de 53 y 0 de 51 pasan de ±2).
+- **Lo poco que hay está con 4 horas en rango:** fallan los patrones de giro y suman los de continuación, con 2 a 4 puntos. Una sola celda pasa su umbral: Desequilibrio repetido en rango, en 30 minutos.
+- **Se cierra la pregunta de los elementos solos:** ni por marco, ni por parejas, ni por contexto superan la comisión.
+- **La tendencia anterior al rango (idea del usuario) tampoco separa:** con 4 horas en rango, ir a favor o en contra de la tendencia que había antes da lo mismo. Fueron 6 pruebas fijadas de antemano (continuación y giro, en 30m, 45m y 1h): diferencias de un punto con márgenes de 3 a 5.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BARRIDO DE SEÑALES (23/11/2026)", "Por contexto"
+
+---
+
+### App 1 - 23 Noviembre 2026: Marco de 45 Minutos en la Regla y el Martillo al Revés
+
+**Pedido:** el barrido de 45 minutos dio una sola prueba sobre el umbral: tras un Martillo o estrella, el precio sigue en contra del patrón. El usuario pidió sumar 45 minutos al formulario de la regla y armar esa regla.
+
+**Cambios:**
+1. **45 minutos** en el marco de la regla del backtesting global. El gráfico no tiene ese marco, como con 30m y 1D.
+2. **La regla,** fijada antes de correr: Martillo o estrella invertido, stop de 2 ATR, objetivo de 1R y cierre a las 48 velas; a mercado y con limit. Por los dos primeros tramos del embudo, con los tres controles, sin guardar nada en el registro del usuario.
+
+**IMPORTANTE:**
+- Basta recargar la página: el backend ya tenía el marco desde el barrido.
+- **No pasa:**
+  - a mercado, 2,478 trades y 0.00 R por trade; les gana a los tres controles por 0.05 R (de +0.01 a +0.10), que es lo que se lleva la comisión;
+  - en el tramo 1 la ventaja no tiene margen (+0.01);
+  - con limit es peor: se llena cuando el precio va primero en contra.
+- **La puerta del embudo no se miró:** con nota negativa (−0.07) la regla no llega a ella.
+- El botón de 45 minutos del formulario no se vio en pantalla: las pruebas de la página pasan.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BARRIDO DE SEÑALES (23/11/2026)", "La pista del martillo al revés, como regla"
+
+---
+
+### App 1 - 23 Noviembre 2026: Barrido en 30 y 45 Minutos
+
+**Pedido:** tras barrer 5m, 15m, 1h y 4h, el usuario cree que entre 15 minutos y 1 hora puede haber algo: montar el barrido en 30 y 45 minutos.
+
+**Cambios:**
+1. **30 minutos** en la pestaña "Barrido": el probador ya lo tenía.
+2. **45 minutos**, marco nuevo en el backend (`rule_tester.py`): tres velas de 15 minutos, contadas desde las 00:00 UTC. Solo lo ofrece el barrido; el formulario de la regla sigue con sus marcos.
+3. **Pruebas:** las del barrido, del probador, del embudo, de las monedas nuevas y de las acciones pasan (45).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar la página.
+- Los elementos de order flow de 30 y 45 minutos ya quedaron detectados y guardados (6 y 11 minutos la primera vez): en la app del usuario el barrido tarda poco.
+- **Lo que corrió el usuario antes:**
+  - 5 minutos: 9 de 64 pasan de ±2 (por azar 2.9) y una pasa el umbral, la Ruptura con volumen al revés, con un punto sobre 50%: muy bajo el costo;
+  - 1 hora: 4 de 59 (por azar 2.7), ninguna pasa el umbral.
+- Probado con datos reales en 45 minutos: sin order flow en BTC y TRX; con order flow en BTC (56 pruebas, 43 s), y el barrido completo de las 7 monedas con `run()`, sin anotarlo en el registro del usuario: **45 minutos**, 59 pruebas, 5 pasan de ±2 (por azar 2.7) y una pasa el umbral (±2.04), Martillo o estrella al revés (nota −2.75; −4.0 y −3.6 puntos; 1,640 y 1,929 señales), en 6 minutos; **30 minutos**, 60 pruebas, 16 pasan de ±2 (por azar 2.7) y ninguna pasa el umbral (±2.05) por poco: Breaker +2.01 (+6.0 y +6.6 puntos; 293 y 431 señales), en 11 minutos. Los patrones de giro fallan en todos los marcos (Martillo o estrella y Barra divergente negativos en 30m, 45m y 1h): el precio tiende a seguir. A ±2 ATR, 54% a 57% deja de 0.15 a 0.28 ATR antes de comisiones, del orden de la comisión taker en esos marcos.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BARRIDO DE SEÑALES (23/11/2026)"
+
+---
+
+### Altagracia Trading Suite - 23 Noviembre 2026: Módulo "Monedas", un Solo Registro de lo que se Guarda de Cada Moneda (fase 1)
+
+**Pedido:** al agregar RUNE desde el scanner, el usuario preguntó qué hacía falta para bajar de ella lo mismo que de las monedas guardadas. Después pidió centralizar la lista: elegir desde un menú de la suite, moneda por moneda, lo que se guarda en Northflank, el almacén de trades y lo demás. Aceptó el plan de tres fases: la 1 es el PC.
+
+**Cambios:**
+1. **Plan:** `docs/PLAN_MONEDAS.md`, con la lista de hoy de cada parte, las decisiones y las fases 2 (la nube, por una ruta con clave) y 3 (App 1, en un grupo aparte).
+2. **Registro** (`server/coins.py`, `data/coins.json`): solo lo elegido. Sin entrada, una moneda graba todo y su almacén se pone al día si ya tiene historia: el primer día no cambia nada.
+3. **Grabar en el PC:** trades, libro y Hyperliquid, cada uno aparte. Encender vale al instante; apagar, al reiniciar la suite (los grabadores del libro y de Hyperliquid son copias exactas de los del collector y no se tocan).
+4. **Almacén** (`server/coin_history.py`): baja la historia con `ingest.py` del panel, una moneda a la vez y aparte (sigue aunque se cierre la suite), con su avance. Al terminar una descarga, de quien sea, la arma con `build_store.py` si nadie la está armando. «Detener» como en el panel. `official.py` pone al día las que tienen el almacén encendido.
+5. **Página:** módulo "Monedas" desde "Pestañas" → "Monedas · Abrir aquí". «Agregar a la suite» del scanner lo abre con esa moneda. Por moneda: en la suite, las tres grabaciones, lo que escriben por día, lo que ocupa, el almacén con su botón, el Swing, y la nube, App 1, DX y el bot como información.
+6. **Pruebas:** `coins_checks.py` (94) y `coins.test.mjs` (9). Pasan las demás del servidor y de la página, y la página se arma.
+
+**IMPORTANTE:**
+- Llega a la suite del usuario al unir esta rama a main y poner al día su carpeta. La suite se reinicia sola al abrirla y arma la página nueva.
+- **La historia de RUNE se está bajando desde el panel** (el 23/11 desde las 15:53, 1,820 días). Con este código, la suite arma su almacén al terminar aunque el panel esté cerrado.
+- Las copias de prueba (`SUITE_RECORD=0`) solo miran: no bajan ni arman nada.
+- **Probado en dos copias aisladas** a 1366×768: una con el `OrderFlowData` real, solo mirando (sus 23 monedas, unos 204 MB por día entre todas y RUNE al 57 %), y otra con herramientas falsas (bajar, esperar, detener, seguir, armar y el scanner). No se probó en Electron ni con una descarga real de Bybit.
+- Un botón en la barra de la Watchlist la partía en dos líneas a 1366 px: no se puso.
+
+**Ver:** `docs/PLAN_MONEDAS.md` y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Monedas (23/11)"
+
+---
+
+### App 1 - 23 Noviembre 2026: Panel Lateral del Backtesting Global con Ancho Ajustable
+
+**Pedido:** poder ampliar o reducir hacia los lados el panel lateral donde están las reglas, arrastrando con el mouse: las tablas del barrido no cabían.
+
+**Cambios** (`RuleTesterApp.jsx`, `rule_tester.css`):
+1. **Borde arrastrable** entre el panel y el gráfico. El ancho va de 300 px hasta dejarle 320 al gráfico.
+2. **Doble clic** en el borde vuelve al ancho de fábrica (420 px).
+3. **Se guarda** con la vista de la ventana y se ajusta si la ventana se achica.
+
+**IMPORTANTE:**
+- Basta recargar la página: no cambió el backend.
+- No se vio en pantalla: la ventana compila.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Ventana"
+
+---
+
+### App 1 - 23 Noviembre 2026: Barrido por Familias
+
+**Pedido:** tras su primer barrido, el usuario preguntó si tomaba los elementos por parejas y pidió poder barrer por familias. Eligió dejar el modo actual y sumar los dos de familias.
+
+**Cambios** (pestaña "Barrido", `signal_sweep.py` y `SweepTab.jsx`):
+1. **Nueve familias** de elementos: Volumen y VPA, Delta del footprint, Desequilibrios y agresión, Valor y POC, Estructura y SMC, Williams, Patrones de vela, Cajas, impulso y canal, e Interés abierto.
+2. **Tres formas de barrer parejas**, sobre la tabla de un barrido de elementos:
+   - a mano, marcando elementos (lo de antes);
+   - dentro de una familia: un clic en la familia marca sus elementos;
+   - entre dos familias: cada elemento de una con cada uno de la otra.
+3. **Tope:** 150 parejas por barrido, en lugar de 12 elementos marcados. La pestaña dice cuántas van antes de correr.
+4. **Pruebas:** `test_signal_sweep.py` suma 1 (11).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar la página.
+- Las familias salen de un barrido de elementos ya hecho, con los que ese barrido juzgó.
+- "Barrer los elementos" sigue igual: cada elemento solo.
+- No se vio en pantalla: las pruebas pasan y la pestaña compila.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BARRIDO DE SEÑALES (23/11/2026)"
+
+---
+
+### App 1 - 23 Noviembre 2026: Barrido de Señales
+
+**Pedido:** un barrido ordenado para ver dónde puede haber algo antes de usar la búsqueda genética. La idea del usuario: no clasificar por stop y objetivo, sino mirar en cada punto de entrada hasta dónde fue el precio a favor y hasta dónde se devolvió, para ver las dos direcciones sin sesgarse por valores de ATR. En los marcos de la app: 5m, 15m, 1h, 4h y 1D.
+
+**Cambios:**
+1. **Pestaña "Barrido"** en el backtesting global (`signal_sweep.py`, `SweepTab.jsx`). Para cada elemento, en cada señal:
+   - si el precio llega a +2 ATR antes que a −2 ATR (sin ventaja es 50%);
+   - lo máximo a favor y en contra a 6, 12, 24 y 48 velas.
+2. **Contra el control:** las velas del mismo trimestre y lado en esa moneda. El margen agrupa las señales por semana.
+3. **Por los dos primeros tramos del embudo:** la nota es el peor de los dos. Negativa y pareja, el elemento sirve al revés. La puerta no se mira.
+4. **El reparto, primero:** cuántas pruebas pasan de ±2 errores contra lo que da el azar, y el umbral según el número de pruebas.
+5. **Parejas:** se marcan elementos y se barren sus parejas, como segundo paso.
+6. **Pruebas:** `test_signal_sweep.py` (10).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar la página.
+- **Medido en la fase 1, las 7 monedas de siempre:**
+  - 4 horas: 48 elementos, 2 pasan de ±2 y por azar se esperan 2.2. No hay nada;
+  - 15 minutos: 61 elementos, 15 pasan de ±2 contra 2.8 por azar. Hay estructura, pero los efectos son de un punto sobre 50%: quedan bajo la comisión;
+  - ninguno pasa el umbral en ningún marco.
+- La primera vez en 15 minutos tarda 42 minutos, por detectar los elementos de order flow; después queda guardado. En 5 minutos no se corrió.
+- Sin comisiones: dice dónde buscar, no qué operar.
+- La pestaña se vio en una página de prueba con un barrido real; no dentro del backtesting global.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "BARRIDO DE SEÑALES (23/11/2026)"
+
+---
+
+### App 1 - 23 Noviembre 2026: Filtro de Mercado, Búsqueda con las Monedas Nuevas y la Regla del VPA por Tramos
+
+**Pedido:** usar el embudo para buscar variaciones de la ruptura con volumen del VPA, la regla que había pasado las tres fases. Tras ver su resultado por tramos, el usuario pidió las dos cosas que faltaban: buscar con las monedas nuevas y un filtro de régimen para la regla.
+
+**Cambios:**
+1. **Filtro de mercado** en la regla del backtesting global (Filtros → Tendencia): seis casillas con la tendencia (subida, bajada, rango) y la volatilidad (alta, baja) de 4 horas al cerrar la vela de la señal. Los controles al azar entran solo donde él deja. Sin filtrar nada, la regla conserva su identidad.
+2. **Búsqueda:** el filtro de mercado como pieza (casilla "mercado") y "Elegir con": las 7 monedas de siempre, las nuevas o todas.
+3. **Corregido:** una moneda con muy pocas velas en un tramo dejaba al tramo entero sin las tres ventajas. Ahora esa moneda no entra en ese tramo.
+4. **Pruebas:** `test_market_filter.py` (6). Las demás del probador y de la búsqueda siguen pasando.
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar la página. Si algo nuevo no aparece, mirar si quedó un backend viejo vivo en el 9000.
+- **La regla del VPA no pasa con el criterio del motor 6.** En la fase 1 gana algo contra el azar simple, pero contra el azar de su trimestre y lado queda en cero, en las de siempre y en las nuevas. Su nota en el embudo es negativa: no llegaría a la puerta.
+- **Quitarle la subida con volatilidad alta no la arregla:** mejora dos de tres tramos en las de siempre y nada en las nuevas.
+- Buscar con las monedas nuevas tarda unas 5 veces más por regla (10 s contra 45 s en esta regla).
+- Probado con datos reales, solo leyendo. La ventana compila, pero no se vio en pantalla.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "EMBUDO DE LA BÚSQUEDA (23/11/2026)", "Filtro de mercado, grupo de monedas y la regla del VPA por tramos"
+
+---
+
+### Altagracia Trading Suite - 23 Noviembre 2026: El Registro del Servidor Deja de Crecer 20 MB por Día
+
+**Pedido:** al medir cuánto guarda el scanner por día, salió que lo que más crecía en la carpeta de datos de la suite era el registro del servidor: `data/servidor_desktop.log`, con 221 MB en 11 días, dentro de OneDrive. El usuario pidió arreglarlo.
+
+**Causa:** la app de escritorio le añade todo lo que escribe el servidor y nunca lo recorta, y uvicorn anota cada pedido. El 76% eran pedidos que salieron bien y el 24%, errores 503 del bot apagado, que la página pide cada pocos segundos.
+
+**Cambios:**
+1. **Servidor** (`server/quiet_log.py`, dos líneas en `main.py`):
+   - los pedidos que salen bien no se anotan;
+   - un mismo error se anota a lo sumo una vez cada 10 min, con una línea que dice cuántos no se anotaron;
+   - un pedido de 5 s o más se anota como lento;
+   - `SUITE_ACCESS_LOG=1` vuelve a anotarlo todo.
+2. **App de escritorio** (`desktop/main.cjs`): al lanzar el servidor, un registro de más de 20 MB pasa a `servidor_desktop.log.1` y empieza otro.
+3. **Pruebas:** `server/tests/log_checks.py` (22). Pasan las demás del servidor.
+
+**IMPORTANTE:**
+- Llega a la suite del usuario al unir esta rama a main y poner al día su carpeta. La suite se reinicia sola al abrirla, también la app de escritorio.
+- La primera vez, el registro de 221 MB queda entero en `servidor_desktop.log.1`. Se puede borrar a mano; si no, se reemplaza en la rotación siguiente.
+- Con lo medido, el registro crecería unos 0.1 a 0.2 MB por día.
+- **Probado en una copia aislada** del servidor: sin líneas de los pedidos que salieron bien, una sola de los errores repetidos y los pedidos lentos al abrir la página. La rotación, con un script aparte. No se probó dentro de Electron.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Escritorio (Electron)", "Registros"
+
+---
+
+### Altagracia Trading Suite - 23 Noviembre 2026: El Scanner Mide a Todas las que Llegan y Retoma sus Listas al Reiniciar
+
+**Pedido:** el usuario preguntó qué seguía en el plan del scanner. El registro de su suite de esa mañana mostró dos fallos del paso 1, y pidió corregirlos.
+
+**Cambios** (`12.AltagraciaTradingSuite/server/scanner.py`):
+1. **"En juego" se tapaba en las horas de más movimiento:**
+   - para entrar hace falta el libro medido, y se medían 40 libros cada 5 min, primero los de las listas;
+   - con las listas en más de 40 monedas, ninguna nueva se medía. A las 09:45 cumplían la regla 74 monedas y en la lista había 36;
+   - quedaron fuera ACE (volumen ×147) y ELSA (×34), y la duodécima de la lista tenía ×1.2.
+
+   Ahora se miden los libros de todas las de las listas y de todas las que cumplen una regla, y las nuevas entran en la misma vuelta de 15 min. También las de 10 a 20 bps de spread en el ticker, que el costo estimado descartaba sin medir (MMT, con ×32).
+2. **Un reinicio vaciaba las listas y repetía entradas:** los dos de esa mañana anotaron unas 40 entradas de monedas que ya estaban, de las 145 del día. Ahora las listas y los libros recientes se guardan en `data/scanner/state.json` y se retoman al arrancar. Tras un corte más largo que la espera de la lista, sus monedas salen marcadas ("· corte" en el panel).
+3. **Pruebas:** `scanner_checks.py` suma 20 (120). Pasan las demás del servidor y de la página, y la página se arma.
+
+**IMPORTANTE:**
+- Llega a la suite del usuario al unir esta rama a main y poner al día su carpeta. La suite se reinicia sola al abrirla y arma la página nueva.
+- **Probado en una copia aislada** con Bybit real (sin grabar ni bot):
+  - la primera vuelta trajo en el registro todas las que cumplían con libro suficiente;
+  - un reinicio retomó las 16 de En juego con su hora de entrada, sin entradas repetidas;
+  - un estado de hace 3 h dio las listas vacías y las salidas con "· corte".
+- La lista Rápidos ya se vio en vivo en la suite del usuario (hasta 8 a la vez). El registro ocupa cerca de 1 MB por día, el doble de lo calculado.
+- Una moneda con el libro justo en el límite entra y sale según cada medición: se vio y no se cambió.
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Scanner (22/11)", "Tras el primer día (23/11)"
+
+---
+
+### App 1 - 23 Noviembre 2026: Embudo de la Búsqueda
+
+**Pedido:** del análisis de LuxAlgo Quant, que lo que se gasta probando reglas quede en la fase 1 y las fases 2 y 3 lleguen limpias. Diseño acordado el 23/11.
+
+**Cambios** (búsqueda genética del backtesting global, `rule_search.py`):
+1. **Tres tramos de la fase 1**, con un hueco de 30 días tras cada corte (2022-01-01 y 2023-01-01). La búsqueda trabaja en los dos primeros y califica cada regla por el peor.
+2. **La puerta** es el tercer tramo: mientras se busca no se calcula para nadie. Al terminar la miran solo las mejores que ganaron en sus dos tramos, con un cupo de 10.
+3. **El margen sube con las miradas:** 1.64 errores con una, 2.58 con 10. Cuentan también las de búsquedas anteriores con el mismo corte. A la fase 2 quedan a lo sumo 5.
+4. **Lo ya gastado:** el umbral de suerte sale por tramo y con todas las reglas de las búsquedas guardadas.
+5. **Régimen de cada trade** (`trade_regime.py`): tendencia y volatilidad de 4 horas al entrar, en una tabla por finalista. Solo describe.
+6. **Pruebas:** `test_search_funnel.py` (9). Las demás de la búsqueda siguen pasando.
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar la página.
+- Una búsqueda guardada sigue con sus dos tramos, también al retomarla. "Embudo" se puede desmarcar.
+- **No está hecho:** buscar reglas especializadas dentro de un régimen, ni la fase 2 con una sola mirada para varias finalistas.
+- Probado con una búsqueda corta sobre las 7 monedas reales en 4h (141 reglas, 47 minutos, en una carpeta temporal). No se vio la pestaña en pantalla ni se corrió una búsqueda larga.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "EMBUDO DE LA BÚSQUEDA (23/11/2026)"
+
+---
+
+### App 1 + Altagracia Trading Suite + Entrenamiento - 23 Noviembre 2026: Monte Carlo de Trades, Frecuencia de la Señal y Figuras del Entrenador
+
+**Pedido:** del análisis de LuxAlgo Quant, construir lo que el usuario eligió: el Monte Carlo de trades, los informes de frecuencia dentro del probador y que Claude pueda señalar en el gráfico en `/entrenar`.
+
+**Cambios:**
+1. **Monte Carlo de trades** (`monteCarlo.js`): entre qué valores pudo quedar la curva por el orden y la suerte, remuestreando o barajando, con 2,000 corridas.
+   - Dashboard de App 1 y dashboard del journal de la suite: una tarjeta bajo "Riesgo y Recompensa", con los trades seleccionados. La suite, en dólares o en R.
+   - Probador: "Monte Carlo de los trades" en "Resumen" y en "Todas", por semanas de salida.
+2. **Frecuencia de la señal** (`rule_frequency.py`, en "Resumen" del probador): cuántas veces el precio llega a tantos ATR, llega a favor antes que en contra, o cierra a favor, en las N velas tras la señal de la regla. Sin entrada ni salida. Solo en la fase 1, contra una vela cualquiera, y cada pregunta queda anotada.
+3. **Figuras del entrenador:** `window.__app1Coach.draw()` y `clearDrawings()`: líneas, zonas y marcas en una capa aparte con la etiqueta "Claude". El skill las permite solo después de la predicción.
+4. **Pruebas:** `montecarlo.test.mjs` (13), `test_rule_frequency.py` (9) y `coach.test.mjs` (12).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) para la frecuencia y recargar su página. La suite se reinicia sola al abrirla.
+- El Monte Carlo no dice si la ventaja es real: eso lo dicen los controles al azar.
+- **No está hecho** el embudo de búsqueda por tramos, también acordado.
+- Probado: las tarjetas del Monte Carlo en una página de prueba con trades inventados, y la frecuencia con velas reales de TRX 4h. Nada se vio dentro de App 1, de la suite ni del probador, ni en una sesión de `/entrenar`.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "MONTE CARLO, FRECUENCIA DE LA SEÑAL Y FIGURAS DEL ENTRENADOR (23/11/2026)"
 
 ---
 

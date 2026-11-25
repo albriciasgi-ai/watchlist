@@ -27,8 +27,15 @@ const DEFAULT_CONFIG = {
   population: 60, generations: 25, maxElements: 2,
   minTrades: 150, minCoins: 4, split: '2023-01-01', lines: true, invert: true, mutation: 0.1,
   flow: true, regime: true, trailing: true, straddle: true, stopEntry: true, williams: true, vpa: true, chain: true, checkNew: true, checkStocks: true, fitness: 'promedio',
-  holdMargin: false
+  holdMargin: false,
+  // Embudo (23/11): la fase 1 en tres tramos con hueco; la búsqueda trabaja en dos y el tercero es la puerta, con cupo
+  funnel: true, split1: '2022-01-01', gapDays: 30, gateQuota: 10, phase2Quota: 5,
+  // Con qué monedas elige, y el filtro de mercado como pieza
+  group: 'base', market: true
 };
+const GROUPS = [['base', 'las 7 de siempre'], ['new', 'las nuevas'], ['all', 'todas (las de siempre y las nuevas)']];
+const day = (iso) => (iso ? iso.split('-').reverse().join('/') : '—');
+const REGIME_TITLES = [['trend', 'Tendencia de 4 horas'], ['vol', 'Volatilidad']];
 // Las tres ventajas del tablero, en el orden en que se muestran (desde el 23/11 la búsqueda elige con ellas)
 const THREE = [['edge', 'azar'], ['legEdge', 'tramo'], ['quarterEdge', 'su trimestre']];
 
@@ -208,6 +215,7 @@ export default function RuleSearchTab({ onLoadRule }) {
             <span>Puede usar</span>
             <Check checked={config.flow !== false} onChange={(flow) => patch({ flow })} title="Filtros de CVD de N velas a favor y de OI">filtros de CVD y OI</Check>
             <Check checked={config.regime !== false} onChange={(regime) => patch({ regime })} title="Solo dentro, solo fuera o solo tras romper un rango">régimen</Check>
+            <Check checked={config.market !== false} onChange={(market) => patch({ market })} title="El filtro de mercado de la pestaña Regla: sin subida con volatilidad alta, solo en rango, solo en tendencia, solo con volatilidad baja o solo con volatilidad alta, medido en velas de 4 horas">mercado</Check>
             <Check checked={config.trailing !== false} onChange={(trailing) => patch({ trailing })} title="Trailing a 3 o 4 ATR o al 5% del mejor precio, con arranque y stop a la entrada">trailing</Check>
             <Check checked={config.straddle !== false} onChange={(straddle) => patch({ straddle })} title="Dos órdenes stop, una arriba y otra abajo: entra la primera">dos órdenes stop</Check>
             <Check checked={config.stopEntry !== false} onChange={(stopEntry) => patch({ stopEntry })} title="Una orden stop a favor en el borde de la zona del elemento, como los sabios de Williams, y la salida bajo el mínimo de las últimas 3 o 5 velas (con el trailing)">orden stop a favor</Check>
@@ -225,7 +233,7 @@ export default function RuleSearchTab({ onLoadRule }) {
           <div className="rt-row">
             <Check checked={!!config.holdMargin} onChange={(holdMargin) => patch({ holdMargin })}
               title="Una finalista es candidata si en la validación les gana a los tres controles del tablero y sus vecinas aguantan. Marcado, además tiene que ganarles con margen y con R positivo, como «pasa» en el tablero. En la validación hay pocos trades: con el margen casi ninguna queda, y se descartan reglas que podrían mejorarse. El margen lo pide después el tablero, en la fase 2">
-              En la validación, pedir también el margen</Check>
+              {config.funnel !== false ? 'En la puerta, pedir también el margen (el de todas las miradas)' : 'En la validación, pedir también el margen'}</Check>
           </div>
           <div className="rt-row">
             <Check checked={config.checkNew !== false} onChange={(checkNew) => patch({ checkNew })}
@@ -234,8 +242,17 @@ export default function RuleSearchTab({ onLoadRule }) {
             <Check checked={config.checkStocks !== false} onChange={(checkStocks) => patch({ checkStocks })}
               title="Y en las acciones de Alpaca (otro mercado, desde 2016), en su fase 1 con los mismos dos tramos. Solo informa">y en las acciones</Check>
           </div>
+          <div className="rt-row">
+            <span title="Las monedas con que la búsqueda califica cada regla. Con las nuevas hay muchos más trades y los márgenes son más angostos, pero cada regla tarda unas 6 veces más. Al terminar, las finalistas se corren además en el otro grupo, que no eligió nada">Elegir con</span>
+            <select value={config.group || 'base'} onChange={(e) => patch({ group: e.target.value })}>
+              {GROUPS.map(([id, label]) => <option key={id} value={id}>{label}</option>)}
+            </select>
+          </div>
           <div className="rt-note">
-            La búsqueda elige siempre con las 7 monedas de siempre. Con más piezas hay más reglas posibles y más suerte: el umbral de suerte del informe lo tiene en cuenta.
+            {(config.group || 'base') === 'base'
+              ? 'La búsqueda elige con las 7 monedas de siempre.'
+              : 'Con las monedas nuevas cada regla tarda unas 6 veces más (15 a 25 s en 4h): conviene menos población o menos generaciones.'}
+            {' '}Con más piezas hay más reglas posibles y más suerte: el umbral de suerte del informe lo tiene en cuenta.
           </div>
           <div className="rt-row">
             <span>Población</span><Num value={config.population} min={10} max={300} onChange={(population) => patch({ population })} />
@@ -244,10 +261,31 @@ export default function RuleSearchTab({ onLoadRule }) {
           </div>
           <div className="rt-row">
             <span>Mínimo</span><Num value={config.minTrades} min={20} max={5000} onChange={(minTrades) => patch({ minTrades })} /><span>trades y a favor en</span>
-            <Num value={config.minCoins} min={1} max={10} onChange={(minCoins) => patch({ minCoins })} /><span>monedas</span>
+            <Num value={config.minCoins} min={1} max={50} onChange={(minCoins) => patch({ minCoins })} /><span>monedas</span>
           </div>
           <div className="rt-row">
-            <span>Validación desde</span>
+            <Check checked={config.funnel !== false} onChange={(funnel) => patch({ funnel })}
+              title="La fase 1 se parte en tres tramos seguidos, con un hueco entre ellos. La búsqueda trabaja en los dos primeros y califica cada regla por el peor de los dos. El tercero es la puerta: nadie lo mira mientras se busca, y al terminar solo lo ven las mejores, con cupo. Así lo que se gasta probando queda en la fase 1 y las fases 2 y 3 llegan limpias. Sin marcar: los dos tramos de antes, con la validación calculada para todas las reglas">
+              Embudo: tres tramos y una puerta con cupo</Check>
+          </div>
+          {config.funnel !== false && (
+            <>
+              <div className="rt-row">
+                <span title="Hasta aquí va el primer tramo de búsqueda; desde aquí (más el hueco), el segundo. Al menos 180 días antes de la puerta">Primer corte</span>
+                <input type="date" value={config.split1} min="2020-12-01" max="2023-04-01" onChange={(e) => patch({ split1: e.target.value })} />
+                <span title="Días sin usar tras cada corte: lo que miran hacia atrás las medidas, para que un tramo no herede nada del anterior">hueco</span>
+                <Num value={config.gapDays} min={0} max={60} onChange={(gapDays) => patch({ gapDays })} /><span>días</span>
+              </div>
+              <div className="rt-row">
+                <span title="Cuántas finalistas miran la puerta. Cada mirada sube el margen que la puerta pide: con 10, 2.6 errores en vez de 1.6">Cupo de la puerta</span>
+                <Num value={config.gateQuota} min={5} max={20} onChange={(gateQuota) => patch({ gateQuota })} />
+                <span title="De las que pasan la puerta, cuántas quedan como candidatas a la fase 2">y para la fase 2</span>
+                <Num value={config.phase2Quota} min={3} max={5} onChange={(phase2Quota) => patch({ phase2Quota })} />
+              </div>
+            </>
+          )}
+          <div className="rt-row">
+            <span>{config.funnel !== false ? 'Puerta desde' : 'Validación desde'}</span>
             <input type="date" value={config.split} min="2021-06-01" max="2023-10-01" onChange={(e) => patch({ split: e.target.value })} />
             <span className="rt-note">hasta el final de la fase 1 (31/12/2023)</span>
           </div>
@@ -268,8 +306,11 @@ export default function RuleSearchTab({ onLoadRule }) {
           <h4>Búsqueda {data.id} · {STATE[data.state] || data.state}</h4>
           <div className="rt-note">
             {cfg.tfs.map(tf => TF_LABEL[tf]).join(', ')} · {elementLabels(cfg.codes, ', ')} · hasta {cfg.maxElements} elementos · población {cfg.population} ·
-            {' '}{cfg.generations} generaciones · validación desde {cfg.split}
-            {cfg.controls === 'tres' ? ` · con los tres controles · candidatas ${cfg.holdMargin ? 'con' : 'sin'} margen en la validación` : ''}
+            {' '}{cfg.generations} generaciones · {cfg.group === 'new' ? 'elige con las monedas nuevas · ' : cfg.group === 'all' ? 'elige con todas las monedas · ' : ''}
+            {cfg.funnel
+              ? `embudo: tramos hasta el ${day(cfg.split1)} y del ${day(cfg.split1)} al ${day(cfg.split)}, puerta desde el ${day(cfg.split)}, hueco de ${cfg.gapDays} días, cupo ${cfg.gateQuota} y ${cfg.phase2Quota}`
+              : `validación desde ${cfg.split}`}
+            {cfg.controls === 'tres' ? ` · con los tres controles · candidatas ${cfg.holdMargin ? 'con' : 'sin'} margen en la ${cfg.funnel ? 'puerta' : 'validación'}` : ''}
             {' '}· semilla {cfg.seed} · empezada {date(data.startedAt)}
           </div>
           {running && job && (
@@ -306,14 +347,31 @@ export default function RuleSearchTab({ onLoadRule }) {
             De <b>{report.tested}</b> reglas probadas, {report.qualified} llegaron al mínimo de trades. Entre tantas, una regla sin ventaja puede
             verse hasta <b>{fmtR(report.luckR)}</b> R sobre los controles por pura suerte: una ventaja menor que eso en el tramo de búsqueda no dice nada.
           </div>
+          {report.funnel ? (
+            <>
+              <div className="rt-note" style={{ marginTop: 4 }}>
+                Por tramo, ese umbral de suerte es de {fmtR(report.luckParts?.a)} R en el primero y {fmtR(report.luckParts?.b)} R en el segundo.
+                {report.testedBefore > 0 && <> Contando las <b>{report.testedBefore.toLocaleString('es-CO')}</b> reglas de las búsquedas anteriores, sube a <b>{fmtR(report.luckAllR)}</b> R.</>}
+              </div>
+              <div className="rt-note" style={{ marginTop: 4 }}>
+                <b>La puerta</b> (el tercer tramo, que la búsqueda no miró): la vieron {report.gate.looked} finalistas de un cupo de {report.gate.quota} (solo las que ganaron en sus dos tramos)
+                {report.gate.before > 0 && <>, y antes {report.gate.before} de otras búsquedas con el mismo corte</>}. Con {report.gate.looks} miradas, ganar
+                con margen pide {report.gate.z} errores en vez de 1.64. Pasaron {report.gate.passed}, {report.gate.strong} de ellas con ese margen;
+                a la fase 2 van a lo sumo {report.gate.phase2Quota}.
+              </div>
+            </>
+          ) : (
           <div className="rt-note" style={{ marginTop: 4 }}>
             En la validación, el 10% con mejor aptitud ({report.topCount} reglas) dio <R value={report.topHoldEdge} /> R sobre los controles, contra
             {' '}<R value={report.allHoldEdge} /> R de todas. Si las mejores no superan al resto en la validación, la búsqueda eligió suerte.
             {report.spearman != null && <> Correlación por rangos entre búsqueda y validación: {report.spearman} ({report.pairs} reglas); alta no significa
               ventaja, porque las reglas que pierden suelen perder en los dos tramos.</>}
           </div>
+          )}
           <h4 style={{ marginTop: 8 }}>Finalistas</h4>
-          {!report.finalists.length && <div className="rt-note">Ninguna regla llegó al mínimo de trades.</div>}
+          {!report.finalists.length && (report.funnel
+            ? <div className="rt-note">Ninguna regla ganó en sus dos tramos{report.gate?.best != null ? <> (la mejor aptitud fue <R value={report.gate.best} />)</> : null}: nadie miró la puerta, y no se gastó.</div>
+            : <div className="rt-note">Ninguna regla llegó al mínimo de trades.</div>)}
           {report.finalists.map((f, i) => (
             <div key={f.key} style={{ borderTop: "1px solid var(--t-line, #ddd)", padding: "6px 0", marginBottom: 4 }}>
               <div><b>{i + 1}.</b> {describeRule(f.rule)}</div>
@@ -323,11 +381,17 @@ export default function RuleSearchTab({ onLoadRule }) {
                   <th title={f.train.three && cfg.controls === 'tres' ? 'Sobre el control que más le exige, de los tres del tablero, con su margen' : 'Sobre el mejor de los dos controles de cada moneda'}>Sobre controles</th>
                   <th>Monedas a favor</th></tr></thead>
                 <tbody>
-                  <tr><td>Búsqueda</td><td>{f.train.n}</td><td><R value={f.train.avgR} /></td><td><R value={f.train.edge} /> ±{f.train.se ? (1.96 * f.train.se).toFixed(2) : '—'}</td><td>{f.train.coinsUp} de {f.train.coinsWith}</td></tr>
-                  <tr><td>Validación</td><td>{f.hold.n}</td><td><R value={f.hold.avgR} /></td><td><R value={f.hold.edge} /> ±{f.hold.se ? (1.96 * f.hold.se).toFixed(2) : '—'}</td><td>{f.hold.coinsUp} de {f.hold.coinsWith}</td></tr>
+                  {f.parts && [['a', 'Tramo 1'], ['b', 'Tramo 2']].map(([name, label]) => (
+                    <tr key={name} title="Cada tramo de búsqueda por separado: la aptitud es la del peor de los dos">
+                      <td>{label}</td><td>{f.parts[name].n}</td><td><R value={f.parts[name].avgR} /></td>
+                      <td><R value={f.parts[name].edge} /> ±{f.parts[name].se ? (1.96 * f.parts[name].se).toFixed(2) : '—'}</td><td>{f.parts[name].coinsUp} de {f.parts[name].coinsWith}</td>
+                    </tr>
+                  ))}
+                  <tr><td>{f.parts ? 'Los dos tramos' : 'Búsqueda'}</td><td>{f.train.n}</td><td><R value={f.train.avgR} /></td><td><R value={f.train.edge} /> ±{f.train.se ? (1.96 * f.train.se).toFixed(2) : '—'}</td><td>{f.train.coinsUp} de {f.train.coinsWith}</td></tr>
+                  <tr><td>{f.parts ? 'Puerta' : 'Validación'}</td><td>{f.hold.n}</td><td><R value={f.hold.avgR} /></td><td><R value={f.hold.edge} /> ±{f.hold.se ? (1.96 * f.hold.se).toFixed(2) : '—'}</td><td>{f.hold.coinsUp} de {f.hold.coinsWith}</td></tr>
                   {['train', 'hold'].filter(seg => f[seg]?.three).map(seg => (
                     <tr key={`t${seg}`} title="Contra cada control del tablero, con el margen agrupado por semanas: el azar con el mismo stop y salida, seguir el tramo al azar y el azar del trimestre y el lado de cada trade">
-                      <td>{seg === 'train' ? 'Búsqueda' : 'Validación'}, cada control</td>
+                      <td>{seg === 'train' ? 'Búsqueda' : f.parts ? 'Puerta' : 'Validación'}, cada control</td>
                       <td colSpan={4} style={{ whiteSpace: 'normal', textAlign: 'left' }}>{THREE.filter(([k]) => f[seg].three[k]).map(([k, label], j) => (
                         <span key={k}>{j ? ' · ' : ''}{label} <R value={f[seg].three[k].r} /> ({fmtR(f[seg].three[k].low, 2)} a {fmtR(f[seg].three[k].high, 2)})</span>
                       ))}</td>
@@ -335,28 +399,58 @@ export default function RuleSearchTab({ onLoadRule }) {
                   ))}
                   {['train', 'hold'].filter(seg => f[seg]?.consistency?.total).map(seg => (
                     <tr key={`c${seg}`} title="Trimestres sobre el azar de su trimestre, y la mediana de la ventaja por trimestre">
-                      <td>{seg === 'train' ? 'Búsqueda' : 'Validación'}, constancia</td><td colSpan={2}>{f[seg].consistency.positive} de {f[seg].consistency.total} trimestres</td>
+                      <td>{seg === 'train' ? 'Búsqueda' : f.parts ? 'Puerta' : 'Validación'}, constancia</td><td colSpan={2}>{f[seg].consistency.positive} de {f[seg].consistency.total} trimestres</td>
                       <td><R value={f[seg].consistency.median} /> mediana</td>
                       <td>{f[seg].consistency.top4Share != null ? `4 mejores: ${Math.round(f[seg].consistency.top4Share * 100)}%` : '—'}</td>
                     </tr>
                   ))}
                   {f.stocks && ['train', 'hold'].map(seg => (
                     <tr key={`a${seg}`} title="Las acciones, otro mercado que la búsqueda nunca vio, en el mismo tramo de su fase 1">
-                      <td>Acciones, {seg === 'train' ? 'búsqueda' : 'validación'}</td><td>{f.stocks[seg].n}</td><td><R value={f.stocks[seg].avgR} /></td>
+                      <td>Acciones, {seg === 'train' ? 'búsqueda' : f.parts ? 'puerta' : 'validación'}</td><td>{f.stocks[seg].n}</td><td><R value={f.stocks[seg].avgR} /></td>
                       <td><R value={f.stocks[seg].edge} /> ±{f.stocks[seg].se ? (1.96 * f.stocks[seg].se).toFixed(2) : '—'}</td><td>{f.stocks[seg].coinsUp} de {f.stocks[seg].coinsWith}</td>
+                    </tr>
+                  ))}
+                  {f.baseCoins && ['train', 'hold'].map(seg => (
+                    <tr key={`b${seg}`} title="Las 7 monedas de siempre, que en esta búsqueda no eligieron nada, en el mismo tramo de su fase 1">
+                      <td>De siempre, {seg === 'train' ? 'búsqueda' : 'puerta'}</td><td>{f.baseCoins[seg].n}</td><td><R value={f.baseCoins[seg].avgR} /></td>
+                      <td><R value={f.baseCoins[seg].edge} /> ±{f.baseCoins[seg].se ? (1.96 * f.baseCoins[seg].se).toFixed(2) : '—'}</td><td>{f.baseCoins[seg].coinsUp} de {f.baseCoins[seg].coinsWith}</td>
                     </tr>
                   ))}
                   {f.newCoins && ['train', 'hold'].map(seg => (
                     <tr key={seg} title="Las monedas nuevas, que la búsqueda nunca vio, en el mismo tramo de su fase 1">
-                      <td>Nuevas, {seg === 'train' ? 'búsqueda' : 'validación'}</td><td>{f.newCoins[seg].n}</td><td><R value={f.newCoins[seg].avgR} /></td>
+                      <td>Nuevas, {seg === 'train' ? 'búsqueda' : f.parts ? 'puerta' : 'validación'}</td><td>{f.newCoins[seg].n}</td><td><R value={f.newCoins[seg].avgR} /></td>
                       <td><R value={f.newCoins[seg].edge} /> ±{f.newCoins[seg].se ? (1.96 * f.newCoins[seg].se).toFixed(2) : '—'}</td><td>{f.newCoins[seg].coinsUp} de {f.newCoins[seg].coinsWith}</td>
                     </tr>
                   ))}
                 </tbody>
               </table>
+              {f.regimes && (
+                <table className="rt-table" title="En qué condiciones cayó cada trade, con velas de 4 horas ya cerradas al entrar. Tendencia: el cierre sobre la EMA 50 y la EMA subiendo más de 0.3 ATR en 10 velas (o el espejo); si no, rango. Volatilidad: el ATR sobre el precio contra su mediana de 30 días. Solo describe: no filtra ni elige">
+                  <thead><tr><th>Régimen al entrar</th><th>Búsqueda</th><th>R medio</th><th>Sobre su control</th><th>Puerta</th><th>R medio</th><th>Sobre su control</th></tr></thead>
+                  <tbody>
+                    {REGIME_TITLES.flatMap(([kind]) => {
+                      const train = f.regimes.train?.[kind] || [];
+                      const hold = f.regimes.hold?.[kind] || [];
+                      const labels = [...new Set([...train, ...hold].map(r => r.label))];
+                      return labels.map(label => {
+                        const t = train.find(r => r.label === label);
+                        const h = hold.find(r => r.label === label);
+                        return (
+                          <tr key={`${kind}${label}`}>
+                            <td>{label}</td>
+                            <td>{t?.n ?? 0}</td><td>{t ? <R value={t.avgR} /> : '—'}</td><td>{t ? <R value={t.edge} /> : '—'}</td>
+                            <td>{h?.n ?? 0}</td><td>{h ? <R value={h.avgR} /> : '—'}</td><td>{h ? <R value={h.edge} /> : '—'}</td>
+                          </tr>
+                        );
+                      });
+                    })}
+                  </tbody>
+                </table>
+              )}
               <div className="rt-note" style={{ marginTop: 4 }}>
                 Vecinas (un valor movido al de al lado): {f.neighborsUp} de {f.neighbors.length} con ventaja en la búsqueda.
-                {' '}Por moneda en la validación: {f.coins.filter(c => c.hold?.n).map(c => `${c.symbol.replace('USDT', '')} ${fmtR(c.hold.edge, 2)} (${c.hold.n})`).join(' · ')}
+                {f.parts && f.passed && <> {f.strong ? 'Pasa la puerta con el margen de todas las miradas.' : 'Pasa la puerta sin ese margen: les gana a los tres controles, pero podría ser suerte.'}</>}
+                {' '}Por moneda en la {f.parts ? 'puerta' : 'validación'}: {f.coins.filter(c => c.hold?.n).map(c => `${c.symbol.replace('USDT', '')} ${fmtR(c.hold.edge, 2)} (${c.hold.n})`).join(' · ')}
               </div>
               <button type="button" className="rt-btn" style={{ marginTop: 4 }} onClick={() => onLoadRule(f.rule)}
                 title="Carga la regla en la pestaña Regla. Desde ahí se corre como cualquier otra, y la fase 2 pide confirmar como siempre">
@@ -376,13 +470,13 @@ export default function RuleSearchTab({ onLoadRule }) {
           <h4>Mejores en el tramo de búsqueda</h4>
           <div className="rt-note">Las que eligió el algoritmo, sin las vecinas que se prueban al terminar.</div>
           <table className="rt-table">
-            <thead><tr><th>Regla</th><th>Aptitud</th><th>Trades</th><th>Sobre controles</th>{report && <th>Validación</th>}<th></th></tr></thead>
+            <thead><tr><th>Regla</th><th>Aptitud</th><th>Trades</th><th>Sobre controles</th>{report && <th>{report.funnel ? 'Puerta' : 'Validación'}</th>}<th></th></tr></thead>
             <tbody>
               {data.best.map(b => (
                 <tr key={b.key}>
                   <td style={{ maxWidth: 260, whiteSpace: "normal", textAlign: "left" }}>{describeRule(b.rule)}</td>
                   <td><R value={b.fitness} /></td><td>{b.train.n}</td><td><R value={b.train.edge} /></td>
-                  {report && <td><R value={b.hold?.edge} /> ({b.hold?.n ?? 0})</td>}
+                  {report && <td>{b.hold?.pending ? <span title="No fue finalista: nunca miró la puerta">sin mirar</span> : <><R value={b.hold?.edge} /> ({b.hold?.n ?? 0})</>}</td>}
                   <td><button type="button" className="rt-btn" onClick={() => onLoadRule(b.rule)} title="Cargar en la pestaña Regla">Regla</button></td>
                 </tr>
               ))}

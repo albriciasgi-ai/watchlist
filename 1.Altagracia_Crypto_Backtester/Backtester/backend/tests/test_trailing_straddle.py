@@ -140,6 +140,7 @@ def test_sin_minutos_la_vela_dudosa_sigue_su_recorrido_supuesto_y_los_minutos_ma
     monkeypatch.setattr(rt, "simulate", spy)
     rt._baseline(rule, ctx, [seen], "TEST")
     rt._leg_baseline(rule, ctx, [seen], "TEST")
-    item = {"ctx": ctx, "span": {"bars": high_first}, "cut": 140, "n": len(high_first)}
-    rs.Evaluator(rs.clean_config({"tfs": [240]}))._control("TEST", 240, item, rule, [seen], "train", "random")
+    item = {"ctx": ctx, "span": {"bars": high_first}, "cut": 140, "n": len(high_first), "T": np.array(ctx["T"], dtype=np.int64)}
+    # Sin el embudo: el tramo de entrenamiento es uno solo ("train"; con el embudo son "a" y "b")
+    rs.Evaluator(rs.clean_config({"tfs": [240], "funnel": False}))._control("TEST", 240, item, rule, [seen], "train", "random")
     assert calls and all(m is reader for m in calls)

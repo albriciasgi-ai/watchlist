@@ -156,7 +156,7 @@ function CoinDetail({ symbol, data, error, config, inBot, inSuite, pinned, onTog
         <button type="button" className="suite-btn" onClick={() => onTogglePin(symbol)}>{pinned ? 'Soltar de la cuadrícula' : 'Fijar en la cuadrícula'}</button>
         {!inSuite && SUITE_SYMBOL.test(symbol) && (
           <button type="button" className="suite-btn" disabled={adding} onClick={() => onAdd(symbol)}
-                  title="La suma a las monedas de la suite: desde ahí se graban su libro, su cinta y Hyperliquid">
+                  title="Abre «Monedas» con ella: eliges qué se graba en el PC (libro, cinta y Hyperliquid) y si se baja su historia, y la agregas a la suite">
             Agregar a la suite
           </button>
         )}
@@ -245,7 +245,7 @@ function ConfigSection({ config, onSaved }) {
 
 export default function ScannerPanel({
   active, scan, panelList, onPanelList, source, onSource, gridList, onGridList, count, onCount, pins, onTogglePin,
-  suiteSymbols, onSymbolsAdded, onOpenChart, gridTf, onRefresh, onHide,
+  suiteSymbols, onSymbolsAdded, onOpenChart, gridTf, onRefresh, onHide, onAddCoin = null, onOpenFollow = null,
 }) {
   const [selected, setSelected] = useState(null);
   const [detail, setDetail] = useState({ symbol: null, data: null, error: null });
@@ -296,6 +296,11 @@ export default function ScannerPanel({
     }
   };
   const addToSuite = async (sym) => {
+    // Con el módulo Monedas (23/11), ahí se elige qué se guarda de ella (su grabación y su historia) antes de agregarla
+    if (onAddCoin) {
+      onAddCoin(sym);
+      return;
+    }
     if (!window.confirm(`¿Agregar ${short(sym)} a la suite?\n\nDesde ahí la suite graba su libro, su cinta y Hyperliquid mientras esté abierta: de 3 a 20 MB de libro por día. La nube no la graba.`)) return;
     setAdding(true);
     setAddError(null);
@@ -338,6 +343,10 @@ export default function ScannerPanel({
           <button type="button" className="suite-btn" disabled={toggling || !status} onClick={toggleScanner}>
             {(config?.enabled ?? status?.enabled) ? 'Apagar el scanner' : 'Encender el scanner'}
           </button>
+          {onOpenFollow && (
+            <button type="button" className="suite-btn" onClick={onOpenFollow}
+              title="Qué pasó después de cada hallazgo: el movimiento importante y lo que se estaba encendiendo">Seguimiento</button>
+          )}
         </div>
         {(status?.errors || []).slice(-1).map(e => <div key={e.at} className="suite-result bad">{e.text}</div>)}
         <div className="wl-row wl-muted">
@@ -428,10 +437,11 @@ export default function ScannerPanel({
             <tbody>
               {events.map(e => (
                 <tr key={`${e.at}-${e.list}-${e.symbol}-${e.type}`} className="wl-signal" onClick={() => setSelected(e.symbol)}
-                    title={`${e.type === 'entra' ? 'Entró' : 'Salió'} · ${(e.chips || []).join(' · ')}`}>
+                    title={e.gap ? 'Salió por un corte: el scanner no miró en ese tiempo, y esta es la última vez que la vio'
+                      : `${e.type === 'entra' ? 'Entró' : 'Salió'} · ${(e.chips || []).join(' · ')}`}>
                   <td>{colombiaTime(e.at)}</td>
                   <td>{short(e.symbol)}</td>
-                  <td className={e.type === 'entra' ? 'pos' : 'neg'}>{e.type === 'entra' ? 'entra a' : 'sale de'} {LIST_SHORT[e.list] || e.list}</td>
+                  <td className={e.type === 'entra' ? 'pos' : 'neg'}>{e.type === 'entra' ? 'entra a' : 'sale de'} {LIST_SHORT[e.list] || e.list}{e.gap ? ' · corte' : ''}</td>
                 </tr>
               ))}
             </tbody>

@@ -29,7 +29,7 @@ export default function TabsMenu({ onModule, buttonClass = 'suite-btn', children
         type="button"
         className={buttonClass}
         onClick={() => setOpen(v => !v)}
-        title="Abrir otra pestaña con el gráfico, la Watchlist, el journal, el bot o el mapa de liquidez"
+        title="Abrir otra pestaña con el gráfico, la Watchlist, el journal, el bot, el mapa de liquidez o las monedas"
       >
         {children || 'Pestañas'}
       </button>
@@ -45,6 +45,18 @@ export default function TabsMenu({ onModule, buttonClass = 'suite-btn', children
                 ))}
             </div>
           ))}
+          {/* El módulo "Monedas" (23/11): en una fila aparte, para no ensanchar las de arriba */}
+          <div className="tabs-menu-row">
+            <span className="tabs-menu-name">Monedas</span>
+            <button type="button" className="suite-btn" onClick={() => go(TAB, 'monedas')}
+              title="Qué se guarda de cada moneda: su grabación en el PC, su almacén y lo demás">Abrir aquí</button>
+          </div>
+          {/* El seguimiento de los hallazgos del scanner (24/11), igual: en su fila */}
+          <div className="tabs-menu-row">
+            <span className="tabs-menu-name">Seguimiento</span>
+            <button type="button" className="suite-btn" onClick={() => go(TAB, 'seguimiento')}
+              title="Qué pasó después de cada hallazgo del scanner y qué se estaba encendiendo">Abrir aquí</button>
+          </div>
           <div className="wl-muted tabs-menu-note">
             Cada pestaña tiene su moneda y sus marcos. Usa los indicadores de la 1 hasta que cambies uno en ella, y los
             dibujos son los mismos en todas. Solo la 1 toma las imágenes del journal y da los avisos de Windows.

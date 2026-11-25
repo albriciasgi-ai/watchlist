@@ -8,10 +8,10 @@ import { defaultSmcConfig } from '../indicators/smcStructure.js';
 import { OF_ELEMENTS } from '../indicators/ofElements.js';
 
 export const TESTER_PARAM = 'probador';
-export const RULE_TIMEFRAMES = [5, 15, 30, 60, 240, 1440];
+export const RULE_TIMEFRAMES = [5, 15, 30, 45, 60, 240, 1440];
 export const DAILY_TF = 1440; // En 1 día la regla corre sobre velas: solo valen los elementos que no necesitan el almacén de trades
 export const CHART_TIMEFRAMES = ['1m', '5m', '15m', '1h', '4h'];
-export const TF_LABEL = { 5: '5m', 15: '15m', 30: '30m', 60: '1h', 240: '4h', 1440: '1D' };
+export const TF_LABEL = { 5: '5m', 15: '15m', 30: '30m', 45: '45m', 60: '1h', 240: '4h', 1440: '1D' };
 export const MAX_ELEMENTS = 6;
 export const MAX_FILTERS = 3;
 
@@ -27,6 +27,27 @@ export function testerSymbol(location = window.location) {
 }
 
 /** Regla con la que abre la ventana: el ejemplo del pedido (VA abandonada, stop en el swing anterior, 2R) */
+// Filtro de mercado (23/11): la tendencia y la volatilidad de 4 horas al cerrar la vela de la señal (trade_regime.py del
+// backend), por combinación "tendencia-volatilidad". Solo entra a la regla si deja fuera alguna de las seis
+export const MARKET_TRENDS = [['subida', 'Subida'], ['bajada', 'Bajada'], ['rango', 'Rango']];
+export const MARKET_VOLS = [['alta', 'volatilidad alta'], ['baja', 'volatilidad baja']];
+export const MARKET_COMBOS = MARKET_TRENDS.flatMap(([trend]) => MARKET_VOLS.map(([vol]) => `${trend}-${vol}`));
+
+/** Las combinaciones que deja pasar el filtro del formulario, en el orden del backend; null si no filtra nada */
+export function marketAllowOf(rule) {
+  if (!rule.marketOn) return null;
+  const allow = MARKET_COMBOS.filter(c => (rule.marketAllow || []).includes(c)).sort();
+  return allow.length && allow.length < MARKET_COMBOS.length ? allow : null;
+}
+
+/** En palabras: por lo que deja si deja poco, por lo que quita si quita poco (como trade_regime.allow_text) */
+export function marketText(allow) {
+  const kept = MARKET_COMBOS.filter(c => (allow || []).includes(c));
+  const out = MARKET_COMBOS.filter(c => !kept.includes(c));
+  const said = (items) => items.map(c => c.replace('-', ' con volatilidad ')).join(', ');
+  return kept.length <= out.length ? `solo en ${said(kept)}` : `sin ${said(out)}`;
+}
+
 export function defaultRule() {
   return {
     name: 'VA abandonada', tf: 15, codes: ['VA'], mode: 'all', min: 1, window: 1, side: 'both', invert: false,
@@ -69,6 +90,7 @@ export function defaultRule() {
     // Flujos on-chain diarios de Coin Metrics (21/11): off, net (flujo neto de BTC o ETH a los exchanges) o stable (emisión de stablecoins)
     chainMetric: 'off', chainAsset: 'auto', chainDays: 7, chainZ: 0.5, chainMode: 'favor',
     regimeMode: 'any', regimeMajor: true, regimeMajorOut: 6, regimeAfter: 6, regimeDaily: false,
+    marketOn: false, marketAllow: [...MARKET_COMBOS],
     // Patrones de vela: tendencia previa, volumen mínimo (z-score) y mecha del martillo en cuerpos
     patTrend: true, patTrendBars: 5, patVolume: false, patMinZ: 1, patWick: 2,
     // Motor 7 (23/11/2026, decidido por el usuario): el patrón cuenta con tamaño y en un swing confirmado
@@ -241,6 +263,7 @@ export function toBackendRule(rule) {
         ...(rule.steadyOn ? { steady: true, steadyDays: number(rule.steadyDays, 14), steadyMin: number(rule.steadyMin, 0.52) } : {}),
         ...(CHAIN_METRICS.includes(rule.chainMetric) ? { chain: { metric: rule.chainMetric, days: number(rule.chainDays, 7), z: number(rule.chainZ, 0.5),
           mode: rule.chainMode === 'nocontra' ? 'nocontra' : 'favor', ...(rule.chainMetric === 'net' ? { asset: ['btc', 'eth'].includes(rule.chainAsset) ? rule.chainAsset : 'auto' } : {}) } } : {}) } } : {}),
+    ...(marketAllowOf(rule) ? { market: { allow: marketAllowOf(rule) } } : {}),
     ...(['inside', 'outside', 'breakout'].includes(rule.regimeMode)
       ? { regime: { mode: rule.regimeMode, major: !!rule.regimeMajor, majorOut: number(rule.regimeMajorOut, 6), after: number(rule.regimeAfter, 6),
         ...(rule.regimeDaily && number(rule.tf, 15) < DAILY_TF ? { tf: DAILY_TF } : {}) } } : {}),
@@ -402,6 +425,7 @@ export function fromBackendRule(saved) {
     crowdMode: saved.flow?.crowd || 'off', steadyOn: !!saved.flow?.steady, steadyDays: saved.flow?.steadyDays ?? 14, steadyMin: saved.flow?.steadyMin ?? 0.52,
     chainMetric: saved.flow?.chain?.metric || 'off', chainAsset: saved.flow?.chain?.asset || 'auto', chainDays: saved.flow?.chain?.days ?? 7,
     chainZ: saved.flow?.chain?.z ?? 0.5, chainMode: saved.flow?.chain?.mode || 'favor',
+    marketOn: !!saved.market?.allow?.length, marketAllow: saved.market?.allow?.length ? [...saved.market.allow] : [...MARKET_COMBOS],
     regimeMode: saved.regime?.mode || 'any', regimeMajor: saved.regime ? saved.regime.major !== false : true,
     regimeMajorOut: saved.regime?.majorOut ?? 6, regimeAfter: saved.regime?.after ?? 6, regimeDaily: saved.regime?.tf === DAILY_TF,
     vpShapes: saved.vp?.shapes || [], vpVeEntry: saved.vp?.veEntry || 'touch', vpHours: saved.vp?.hours ?? 24, vpAccept: saved.vp?.accept ?? 30, vpFailBars: saved.vp?.failBars ?? 3,
@@ -469,6 +493,7 @@ export function describeRule(saved) {
     + `${saved.flow?.chain ? ` · ${chainText(saved.flow.chain)}` : ''}`
     + `${saved.flow?.oi ? ` · ${{ rise: `OI sube > ${saved.flow.oiPct}% en ${saved.flow.oiBars}`, fall: `OI baja > ${saved.flow.oiPct}% en ${saved.flow.oiBars}`, conf: 'confluencia OI-vol a favor', noconf: 'sin confluencia OI-vol en contra' }[saved.flow.oi]}` : ''}`
     + `${saved.be?.pattern ? ' · borde con patrón' : ''}`
+    + `${saved.market?.allow?.length ? ` · mercado ${marketText(saved.market.allow)}` : ''}`
     + `${saved.regime ? ` · ${{ inside: 'solo en rango', outside: 'solo fuera de rango', breakout: `${saved.regime.after} velas tras romper` }[saved.regime.mode]}${saved.regime.major ? ' mayor' : ''}` : ''}`
     + `${saved.cc ? ` · estructura ${saved.cc.tf >= 60 ? `${saved.cc.tf / 60} h` : `${saved.cc.tf} m`}, swing ${saved.cc.swing}` : ''}`
     + `${saved.pat ? ` · patrón${saved.pat.trend ? ' tras tendencia' : ''}${saved.pat.minZ != null ? `, z ≥ ${saved.pat.minZ}` : ''}` : ''}`

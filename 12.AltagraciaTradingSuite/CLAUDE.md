@@ -29,6 +29,8 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 - **Puerta móvil (21/11):** fase 1 de la app Android: celulares emparejados, vigilante de eventos y avisos push, apagada de fábrica. Ver "Puerta móvil".
 - **DX en vivo (22/11):** el servidor registra la hipótesis de los apilados desplazados con la regla y el código del probador de App 1, y mide la ejecución con la cinta, sin enviar nada. Ver "DX en vivo".
 - **Scanner (22/11):** mira todos los perpetuos USDT de Bybit y arma listas para la Watchlist (En juego, Tendencia con fuerza, Rápidos y Mis monedas), con el costo de operar en R y el estado del mercado. Solo mira: no envía nada ni graba esas monedas. Ver "Scanner".
+- **Reglas en vivo (24/11):** Impulso, FVG nuevo y B1 del probador de App 1, registradas en 4 horas en las 50 monedas del probador, sin enviar nada. Ver "Reglas en vivo".
+- **Seguimiento del scanner (24/11):** cada hallazgo del scanner se mide a las 24 h con la historia de Bybit: cuándo y hacia dónde fue el movimiento importante, y qué variables y elementos del probador de App 1 se estaban encendiendo, contra un control. Módulo "Seguimiento". Ver "Seguimiento del scanner".
 - **Falta:**
   - la app Android (fases 2 a 4 de "Puerta móvil");
   - las alertas del Swing quedan para la central de alertas de confluencia;
@@ -73,23 +75,28 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── wise_smc_watch.py  Sabios de Williams y estructura SMC del servidor (williams.py y smc.py de App 1): anota en data/wsmc; nunca envía
 │   ├── wise_smc_measures.py   Medidas de Williams y SMC de cada trade del journal (grupo "Williams y SMC")
 │   ├── dx_watch.py        DX en vivo: la regla del probador de App 1 sobre el almacén en vivo; anota en data/dx y nunca envía
+│   ├── rule_watch.py      Reglas en vivo (24/11): Impulso, FVG nuevo y B1 del probador de App 1 en 4h; anota en data/rules y nunca envía
 │   ├── scanner.py         Scanner de monedas (22/11): todos los perpetuos USDT de Bybit, listas y estado del mercado; anota en data/scanner y nunca envía
+│   ├── scan_follow.py     Seguimiento de los hallazgos del scanner (24/11): los mide a las 24 h con la historia de Bybit (data/scanner/follow); nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
+│   ├── coins.py           Registro de monedas (23/11): qué se graba de cada una y lo que se muestra en el módulo "Monedas" (ver "Monedas")
+│   ├── coin_history.py    La historia del almacén de cada moneda: ingest.py y build_store.py del panel, una descarga a la vez
 │   ├── settings.py        Fábrica < config/suite.json < variables SUITE_*
 │   ├── alpaca_data.py     Acciones de EE. UU. desde Alpaca: trades con lado del agresor, footprints, velas y OI de opciones (ver "Alpaca")
 │   ├── mobile_devices.py  Celulares emparejados y pedidos firmados (ver "Puerta móvil")
 │   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
 │   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (48) y scanner_checks.py (100), sin conexión
+│   ├── quiet_log.py       El registro del servidor sin los pedidos que salen bien, sin repetir errores y con los lentos (23/11; ver "Escritorio", "Registros")
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (49), rule_checks.py (52), scanner_checks.py (120), log_checks.py (22), coins_checks.py (94) y follow_checks.py (98), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
-        ├── SuiteApp.jsx   Módulos (Gráfico, Watchlist, Bot) y modal "Estilo" de App 1; abre el módulo que pide una pestaña nueva
+        ├── SuiteApp.jsx   Módulos (Gráfico, Watchlist, Bot, Mapa, Monedas y Seguimiento) y modal "Estilo" de App 1; abre el módulo que pide una pestaña nueva
         ├── ChartView.jsx  Formato de la pestaña principal de App 1: barra de dibujo, encabezado, un MiniChart por marco, indicadores y sus ⚙️
         ├── TradingPanel.jsx   Panel de trading en vivo: caja TP/SL, tamaño fijo o por riesgo, orden al bot
         ├── tabs.js        Pestañas 1 a 5: ajustes propios, y dibujos y monedas compartidos (BroadcastChannel)
         ├── tabChoice.js   En qué pestaña se abre una moneda del scanner (sin tocar la página, para probarlo con node)
-        ├── TabsMenu.jsx   Menú "Pestañas": abre de la 2 a la 5 con el gráfico, la Watchlist, el journal o el bot
+        ├── TabsMenu.jsx   Menú "Pestañas": abre de la 2 a la 5 con el gráfico, la Watchlist, el journal o el bot; abajo, "Monedas" y "Seguimiento"
         ├── BotView.jsx    Estado, pausa, avisos críticos, posiciones, órdenes y alertas del bot
         ├── BotConfig.jsx  Configuración del bot como en App 10
         ├── BotAccounts.jsx    Cuentas de Bybit del bot: saldo, posiciones, agregar y cambiar la activa
@@ -103,8 +110,12 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── swingServer.js El Swing del gráfico con las señales y las reglas del servidor (lo usan el gráfico y la Watchlist)
         ├── WatchlistView.jsx  La Watchlist: todas las monedas en una cuadrícula y el panel del Swing; desde el 22/11, también las del scanner
         ├── ScannerPanel.jsx   Panel del scanner en la Watchlist: estado del mercado, listas con su porqué, detalle de cada moneda y ajustes
-        └── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
-    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5), tapelines.test.mjs (6) y tabchoice.test.mjs (6), con node
+        ├── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
+        ├── CoinsView.jsx  El módulo "Monedas" (23/11): qué se guarda de cada moneda, su almacén y las descargas
+        ├── coinsView.js   Los textos del módulo "Monedas" (sin React, para probarlo con node)
+        ├── FollowView.jsx El módulo "Seguimiento" (24/11): los hallazgos del scanner, su detalle con sus 48 h y el informe
+        └── followView.js  Los textos y las cuentas del gráfico del módulo "Seguimiento" (sin React, para probarlo con node)
+    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5), tapelines.test.mjs (6), tabchoice.test.mjs (6), coins.test.mjs (9) y follow.test.mjs (11), con node
 ```
 
 ## Puertos
@@ -380,6 +391,7 @@ Paso 4 (12/11): el journal será el Observador de App 1 con trades reales (requi
   - **Win Rate** y **Profit Factor** (ganancia promedio sobre pérdida promedio), como en App 1;
   - **Riesgo y Recompensa:** la mayor caída del P&L acumulado desde su pico y la mayor racha de ganadores seguidos, en dólares y en el R de esa misma caída o racha;
   - **Trades Detallados:** la tabla de App 1 con la moneda, el origen y el R. Ordena por número de trade y filtra por lado y resultado. Quitar un trade de la selección lo saca de los gráficos; uno que cierra después entra seleccionado. "Reason": TP o SL si la salida quedó cerca de ellos (a una décima de la distancia del SL inicial), liquidación si Bybit la marca, y si no "Manual": Bybit no dice qué orden cerró la posición;
+  - **Monte Carlo** (23/11, pedido del usuario): la tarjeta de App 1 (`MonteCarloCard.jsx`) bajo "Riesgo y Recompensa", con los trades seleccionados, en dólares o en R (un trade sin SL no entra en R). Entre qué valores pudo quedar el resultado y la caída por el orden y la suerte, remuestreando o barajando. Avisa con menos de 30 trades. No dice si la ventaja es real. Detalle en `Backtester/CLAUDE.md`, "MONTE CARLO, FRECUENCIA DE LA SEÑAL Y FIGURAS DEL ENTRENADOR". Visto en una página de prueba, no dentro de la suite;
   - **Filtros:** moneda, origen y cuenta (si hay más de una). Se guardan por pestaña con los modos;
   - **Estilo:** los gráficos, los medidores, las tarjetas y la tabla toman los colores y la letra del estilo elegido, y cambian al instante si se elige otro. Con el Clásico se ve como el de App 1;
   - solo trades cerrados. El journal se lee cada 15 s, y los gráficos cambian solo si cambiaron los trades (`signature`);
@@ -1105,7 +1117,28 @@ Hyperliquid es un exchange de perpetuos en su propia cadena: las posiciones de c
   - las posiciones y el mapa;
   - el grabador con un HTTP falso: anota por día, una cuenta caída no corta la vuelta, solo pide `info` y retoma al arrancar.
 
+## Reglas en vivo (24/11)
+
+Pedido del usuario: grabar en vivo Impulso, FVG nuevo y B1, las tres reglas que con el motor 6 quedaron cerca de la fase 2 y cuya fase 3 nunca se miró. El plan, fijado antes de registrar, está en `docs/PLAN_REGLAS_EN_VIVO.md`: las reglas exactas, los datos y el juicio. No se cambian: `POST /api/rules/config` solo enciende o apaga.
+
+- **Módulo** (`server/rule_watch.py`, datos en `data/rules`): 90 s después del cierre de cada vela de 4 horas (y 20 s después de arrancar), por cada una de las 50 monedas del probador (`rule_tester.candle_symbols("all")`):
+  - pide a Bybit las velas que faltan (la primera vez, 1,000) y suma las cerradas a lo visto (`span/{moneda}.json.gz`). La vela en curso no cuenta. Si entre lo visto y lo nuevo falta una vela, o falta una en medio, queda el error y no se anota nada hasta que estén todas;
+  - corre `rule_tester.run` de App 1 con cada regla sobre lo visto, desde `since` (el primer cierre que vio el registro en esa moneda), sin minuto a minuto;
+  - compara con lo anotado (`orders/{regla}/{moneda}.json`) y escribe lo nuevo en `log/AAAA-MM-DD.jsonl`: señal, entrada, salida con su R, "no entra" (había una posición abierta) y "no se opera".
+- **Por qué se recalcula desde `since`:** las velas cerradas de Bybit no cambian, así que la corrida da siempre lo mismo y la suite puede estar cerrada días sin perder nada. Lo anotado como final no se reescribe: si una corrida da otra cosa (por ejemplo, tras un cambio del motor del probador), queda una revisión, una sola vez.
+- **B1, el OI y el funding:** usa los archivos de App 1 (`OrderFlowData/oi/{moneda}_4h.json` y `OrderFlowData/funding`). Si no llegan al cierre de la última vela (`flow_ready`), los pone al día (`oi_update.update` y `funding_update.update`, a lo sumo cada 10 minutos por moneda) y, si siguen sin llegar, B1 de esa moneda espera y la vuelta se repite a los 10 minutos. Impulso y FVG no esperan. Una moneda sin serie de OI no da señales de B1, como en el probador.
+- **Rutas:** `GET /api/rules/status` (estado, por regla cerradas y abiertas, errores y monedas en espera), `/report` (R por trade con el margen por semanas, por lado y las lecturas a los 3, 6 y 12 meses), `/log?record&symbol&limit`, `GET/POST /api/rules/config` (`{"enabled": bool}`). `/api/suite/status` trae `rules`.
+- **Panel** (`WatchlistView.jsx`, `RuleSections`): debajo de DX. Estado y botón, una fila por regla (trades, R por trade con su margen, abiertas; la lectura vencida al pasar el mouse), las posiciones abiertas y las últimas 25 entradas, salidas y revisiones. Un clic abre la moneda en 4h. Se lee cada 60 s.
+- **Partes plegables (24/11):** cada parte del panel lateral de la Watchlist (las del Swing, los sabios, DX y las reglas) se pliega con un clic en su título (`Fold` en `WatchlistView.jsx`). Plegada, deja el título con una nota corta (estado y cuenta). Se recuerda en `suite_wl_folds`; de fábrica todo va desplegado. Una parte nueva del panel se arma con `Fold` y un `id` propio.
+- **Un solo proceso por carpeta** (`detector.lock`). `SUITE_RULES=0` lo apaga; sin esa variable vale `SUITE_SWING`, que las pruebas ponen en 0. Una configuración ilegible lo deja apagado y lo dice.
+- **Nunca envía nada,** ni al bot ni a otro lado.
+- **Peso:** una vuelta de las 50 monedas son 50 pedidos de velas a Bybit cada 4 horas, por el turno de `candles.bybit_turn()` como los demás. La primera vuelta baja 1,000 velas por moneda.
+- **Pruebas:** `server/tests/rule_checks.py` (52): el registro vela a vela igual a una corrida del probador, con cualquier ritmo; sin repetir al reiniciar; la vela en curso y los huecos; la espera de B1; la revisión una sola vez; el margen por semanas, las lecturas, la configuración y las rutas.
+- **Probado con Bybit real** (24/11, carpeta temporal, sin la suite): BTC, SOL, DOGE y LINK, 30 días vela a vela, 642 s: el registro quedó igual al del probador, sin revisiones ni errores. Después se comprobó que el OI de BTC llega al último cierre al ponerlo al día. No se probó dentro de la suite, en pantalla ni en Electron.
+
 ## DX en vivo (22/11)
+
+> **24/11:** repetida con el motor 6 del probador, DX no pasa ninguna fase (−0.075, −0.077 y −0.123 R por trade en las 7 monedas). Ver `docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, «DX con el motor 6: no pasa». El registro sigue corriendo hasta que el usuario decida. Desde ese día, una diferencia con lo anotado como final se avisa una sola vez (`_revise`): antes se repetía en cada vela.
 
 Paso 4 del plan de las estrategias de Byko y Dale (`docs/PLAN_ESTRATEGIAS_BYKO_DALE.md`, "DX en vivo"). DX, los apilados desplazados, es la única regla de esos PDF que pasó las fases 2 y 3 del probador, por poco y sensible a la ejecución. Se registra en vivo antes de creerla, y cómo se juzga quedó fijado en el plan antes de registrar nada. Nunca envía nada: ni al bot ni a otro lado.
 
@@ -1170,7 +1203,7 @@ Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el us
   - cada 30 s, un pedido: el ticker de todos los perpetuos USDT (831 el 22/11), con precio, turnover, OI, funding y mejor compra y venta;
   - candidatas: las de los grupos elegidos con 5 M USD o más en 24 h (hasta 150), más BTC y las de la suite;
   - de cada candidata, velas de 15 min de 31 días (3 pedidos la primera vez, después uno cada 15 min) y el OI de 15 min. Las velas se guardan en arreglos de números (`BarStore`) y se arman de a una moneda al calcular;
-  - el libro (50 niveles; 500 si no alcanza) de 40 candidatas cada 5 min: primero las de las listas, después las que cumplen la regla de una lista, después las de más volumen relativo. El detalle de una moneda trae el suyo al día;
+  - el libro (50 niveles; 500 si no alcanza) cada 5 min de todas las monedas de las listas y de todas las que cumplen la regla de una lista (hasta 200), y si queda lugar hasta 40, de las de más volumen relativo. Las que acaban de cumplir una regla en la vuelta de 15 min se miden en esa misma vuelta. Un libro de menos de 1 min no se vuelve a pedir, y el detalle de una moneda trae el suyo al día (hasta el 23/11, 40 libros para todo: ver "Tras el primer día");
   - cada 6 h, `instruments-info` (grupo con `symbolType`, etiqueta ST, alta, tick e intervalo del funding) y los anuncios de cierre (`/v5/announcements/index`, `type=delistings`);
   - todo pedido pasa por `candles.bybit_turn()`. Arranca 30 s después del servidor, para no sumarse a la carga inicial.
 - **Medidas** (solo velas cerradas):
@@ -1192,13 +1225,13 @@ Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el us
   - en Rápidos queda 30 min desde el último aviso;
   - cada entrada y salida queda en `data/scanner/events/AAAA-MM-DD.jsonl`, con su porqué.
 - **Estado del mercado:** BTC (24 h, 7 días, promedio de 20 días, eficiencia, ATR diario contra su año), amplitud, dispersión (rango intercuartil de los retornos de 24 h), correlación con BTC de 7 y 30 días, parte mejor que BTC, funding y cambio del OI ponderados por OI, volumen relativo mediano, sesión y fin de semana. La lectura (en bloque: correlación ≥ 0.70 y dispersión ≤ 3 puntos; cada una por su lado: correlación < 0.50 o dispersión ≥ 6) es una hipótesis del plan.
-- **Registro para juzgarlo:** cada 15 min, en `data/scanner/log/AAAA-MM-DD.jsonl.gz` (un miembro gzip por vuelta, `Scanner.read_log` lo lee y salta un final cortado), la configuración, el mercado, las listas y 34 medidas de cada candidata.
-- **Datos** en `data/scanner`: `config.json` (con temporal y reemplazo; uno dañado no se pisa y el scanner queda apagado), `log/`, `events/`, `liquidity.json` y `scanner.lock` (un solo proceso por carpeta). `SUITE_SCANNER=0` lo apaga; sin esa variable vale `SUITE_SWING`, que las pruebas ponen en 0.
+- **Registro para juzgarlo:** cada 15 min, en `data/scanner/log/AAAA-MM-DD.jsonl.gz` (un miembro gzip por vuelta, `Scanner.read_log` lo lee y salta un final cortado), la configuración, el mercado, las listas y 34 medidas de cada candidata. Ocupa cerca de 1 MB por día (medido el 23/11; el plan decía 0.5).
+- **Datos** en `data/scanner`: `config.json` (con temporal y reemplazo; uno dañado no se pisa y el scanner queda apagado), `log/`, `events/`, `liquidity.json`, `state.json` (las listas y los libros recientes, para los reinicios: ver "Tras el primer día") y `scanner.lock` (un solo proceso por carpeta). `SUITE_SCANNER=0` lo apaga; sin esa variable vale `SUITE_SWING`, que las pruebas ponen en 0.
 - **Rutas:**
 
 | Ruta | Qué hace |
 |---|---|
-| `GET /api/scanner/status` | Si mira, universo por grupo, candidatas y cargadas, última vuelta (`cycle`, con `compute_seconds`), libros (`books`), cuántas hay en cada lista y los errores. `sends: false`. `/api/suite/status` trae `scanner` |
+| `GET /api/scanner/status` | Si mira, universo por grupo, candidatas y cargadas, última vuelta (`cycle`, con `compute_seconds`), libros (`books`: la vuelta de 5 min; `books_extra`: los medidos en la vuelta de 15 min), lo retomado al arrancar (`restored`), cuántas hay en cada lista y los errores. `sends: false`. `/api/suite/status` trae `scanner` |
 | `GET /api/scanner/list?lista=enjuego\|tendencia\|rapidos\|mias&limit=` | Las filas de una lista con sus medidas, `chips` (el porqué), `flags` (los avisos) y `member` (desde cuándo, dirección y si está "saliendo"), su regla en palabras, el estado del mercado y la configuración |
 | `GET /api/scanner/coin/{símbolo}` | Todas las medidas de una moneda, en qué listas está y si es candidata. Si su libro tiene más de 5 min, lo pide antes |
 | `GET /api/scanner/market` | El estado del mercado |
@@ -1229,10 +1262,33 @@ Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el us
     - "Abrir en otra pestaña" del panel llevó PIEVERSE a la 5.
 
     Ese navegador abre las ventanas nuevas en la misma pestaña, así que el reuso se comprobó con la dirección pedida. No se probó en Electron: usa la misma ventana por pestaña que el botón "Mapa" (`openTabWindow` de `desktop/main.cjs`). Una pestaña cerrada cuenta como abierta hasta 90 s si no avisó al cerrarse, como con el mapa.
+- **Tras el primer día (23/11):** el usuario preguntó qué seguía en el plan. Antes de contestarle se leyó el registro de su suite de esa mañana (16 vueltas desde las 08:19), que mostró dos fallos, y pidió corregirlos.
+  - **"En juego" se tapaba en las horas de más movimiento:**
+    - para entrar hace falta el libro medido, y se medían 40 libros cada 5 min, primero los de las listas. Con las listas en más de 40 monedas (En juego, Tendencia y Rápidos juntas), ninguna moneda nueva se medía;
+    - entre las 09:30 y las 10:15 cumplían la regla de 52 a 74 monedas, y la lista se quedó en unas 37;
+    - a las 09:45 quedaron fuera ACE (volumen de 24 h ×147), ELSA (×34), ENSO (×28), BREV (×16) e IDOL (×12), mientras la duodécima de la lista tenía ×1.2.
+
+    Ahora, cada 5 min, se miden los libros de todas las de las listas y de todas las que cumplen una regla (`refresh_books`, hasta 200); si queda lugar hasta 40, los de más volumen relativo. Las que acaban de cumplir una regla se miden en la misma vuelta de 15 min (`books_extra`), así que entran en ella y el registro las trae. Un libro de menos de 1 min no se vuelve a pedir.
+  - **Las de 10 a 20 bps de spread en el ticker no se medían** (hallado en la copia aislada): el estimado pide la mitad del límite y descartaba sin medir monedas cuyo libro sí alcanza. Esa vez MMT (volumen ×32), H y MON entraron solo porque sobraba lugar en la vuelta de los libros. Ahora cuentan para medirse (`_could_enter`); para entrar sigue haciendo falta el libro medido y suficiente.
+  - **Un reinicio vaciaba las listas y repetía entradas:**
+    - vivían en memoria: los dos reinicios de esa mañana (10:24 y 10:30) las dejaron vacías un minuto o dos;
+    - anotaron unas 40 entradas de monedas que ya estaban, de las 145 del día;
+    - las que no volvieron se quedaron sin su salida. Para juzgar el scanner con el registro, esas entradas no son del mercado.
+
+    Ahora las listas (con su hora de entrada y la última en que cumplieron su regla), su orden y los libros de menos de 15 min se guardan en `data/scanner/state.json`: al entrar o salir una moneda, cada 5 min y al cerrar. Se retoman al tomar el candado, antes de la primera vuelta. Una lista se retoma si el scanner dejó de mirar menos que su espera (una hora En juego y Tendencia, 30 min Rápidos). Si fue más, no se sabe qué pasó: sus monedas salen a la hora en que se las vio por última vez, con `gap` en el evento ("· corte" en el panel), y las que cumplan entran de nuevo.
+    - Solo guarda el proceso del candado, después de retomar lo anterior: otro proceso no pisa el estado.
+    - Sin medidas todavía (recién arrancado), lo retomado conserva su orden y no aparece "(sale)".
+    - Una candidata cuyas velas no llegaron (tras un reinicio no hay velas en memoria) ya no sale en el acto: sigue la hora de espera.
+  - **Lo que anduvo:** la lista Rápidos se vio en vivo (hasta 8 monedas a la vez), y el registro ocupa cerca de 1 MB por día, el doble de lo calculado en el plan.
+  - **Probado** (23/11, copia aislada en 13300 con Bybit real y datos temporales, sin grabar ni bot):
+    - la primera vuelta cargó 92 candidatas en 42 s (389 pedidos, sin errores). Midió en la misma vuelta los libros de las 21 que cumplían una regla (2.3 s), y su registro trae En juego con las 13 que cumplían con libro suficiente: ninguna quedó fuera;
+    - reiniciada a los 2.6 min, retomó las 16 de En juego con su hora de entrada y los 40 libros antes de la primera vuelta. La vuelta siguiente no anotó ninguna entrada de una moneda que ya estaba: entraron SKY y BMT a En juego y DGAI a Tendencia, y salió H;
+    - con un estado guardado 3 h antes, las listas empezaron vacías y el panel mostró las cuatro salidas con "· corte" y su explicación al pasar el mouse;
+    - con el código anterior y los datos falsos de las pruebas, los mismos casos fallan: la primera vuelta deja fuera a la que cumple, con las listas llenas se pide un libro en vez de tres, y tras el reinicio las listas arrancan vacías y se anotan 4 entradas repetidas.
+  - **Visto y sin cambiar:** una moneda con el libro justo en el límite (H, SKY y BMT, con unos 20 bps de spread y deslizamiento de ida y vuelta) entra y sale según el libro de cada vuelta de 5 min, porque la que ya no se puede operar sale en el acto.
 - **Limitaciones:**
   - la suite no acepta monedas de una sola letra (H, A, B…; `symbols.py` pide 2 a 20): el scanner las mira y el panel lo dice en lugar de ofrecer "Agregar a la suite";
-  - mira solo con la suite abierta: el registro tiene huecos con el PC apagado;
-  - con más de 40 candidatas que cumplen una regla, las demás esperan su libro para entrar.
+  - mira solo con la suite abierta: el registro tiene huecos con el PC apagado. Tras un corte de más de una hora, las listas empiezan de nuevo (las salidas de ese corte llevan `gap`).
 - **Probado** (22/11, copia aislada en 13300 con datos temporales, sin grabar ni bot, Bybit real; la Watchlist a 1366×768, en Nítido y Oscuro):
   - 831 perpetuos (406 cripto, 110 innovación, 245 acciones, 62 ETF, 4 materias primas y 4 forex) y 77 a 78 candidatas;
   - la primera vuelta tardó de 40 a 74 s (unos 310 pedidos, ningún rechazo de Bybit), las medidas 1.3 s y los libros de 40 monedas de 4 a 17 s;
@@ -1240,14 +1296,114 @@ Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el us
   - En juego, de 16 a 17 monedas, con PIEVERSE (volumen de 24 h ×69, 261 M USD, costo 0.02 R) arriba; el oro tokenizado (XAUT, PAXG) entró con 0.26 R. Tendencia, entre 0 y 1: el mercado estaba entrecortado (eficiencias de 7 días de 0.02 a 0.15). Lectura: "mixto" (correlación 0.66, dispersión 3.9 puntos);
   - la cuadrícula con "Las del scanner" y "Las dos" (32 celdas), una fijada, ajustes guardados y uno inválido rechazado, "Agregar a la suite" (en la copia) y XVG abierta en el gráfico principal como "XVGUSDT · sin grabar".
 
-  No se vio la lista Rápidos en vivo (no hubo un movimiento así), ni en Electron, ni "Agregar a la suite" grabando de verdad.
+  No se vio la lista Rápidos en vivo (no hubo un movimiento así), ni en Electron, ni "Agregar a la suite" grabando de verdad. Rápidos se vio el 23/11 en el registro de la suite del usuario: hasta 8 monedas a la vez y 14 entradas en la mañana.
 - **Hallado al probar y corregido:**
   - toda moneda salía "(sale)" entre dos revisiones: se medía contra la hora del pedido (`evaluated_at`);
   - las monedas de una letra quedaban fuera del universo (13);
   - los libros finos entraban con el costo estimado y salían al medirse;
   - una moneda en tendencia sin volumen alto podía quedar sin libro y no entrar nunca.
-- **Pruebas:** `tests/scanner_checks.py` (100), sin conexión, con un Bybit falso: lectura de instrumentos, tickers, velas y anuncios; volumen relativo por tipo de día; ATR, eficiencia, correlación y beta; costo con un libro conocido y en R; candidatas, listas, entrar y salir, la lista rápida y el orden de los libros; registro con un final cortado, eventos, liquidez, candado, configuración y rutas.
+- **Pruebas:** `tests/scanner_checks.py` (120), sin conexión, con un Bybit falso: lectura de instrumentos, tickers, velas y anuncios; volumen relativo por tipo de día; ATR, eficiencia, correlación y beta; costo con un libro conocido y en R; candidatas, listas, entrar y salir, la lista rápida y el orden de los libros (también con las listas llenas, 23/11); registro con un final cortado, eventos, liquidez, candado, el estado al reiniciar (23/11), configuración y rutas.
 - **Falta** (pasos 2 a 4 del plan): posicionamiento (proporción de cuentas, liquidaciones, Hyperliquid de todas las monedas), las listas Compresión y Posicionamiento extremo, "candidata a quitar" más visible, el estudio en App 1 ("¿aporta elegir por volumen relativo?", con el universo sin sesgo de supervivencia) y, si lo confirma, los detectores y la central de alertas sobre las monedas del scanner.
+
+## Monedas (23/11): un solo registro de lo que se guarda de cada moneda
+
+**Pedido:** al agregar RUNE desde el scanner, el usuario preguntó qué hacía falta para bajar de ella lo mismo que de las monedas guardadas, y después pidió elegir desde un menú de la suite, moneda por moneda, lo que se guarda: la nube, el almacén de trades y lo demás. Plan en `docs/PLAN_MONEDAS.md`; esto es la fase 1 (el PC). La nube (fase 2) y App 1 (fase 3) se muestran como están.
+
+- **Registro** (`server/coins.py`, `data/coins.json`): solo lo elegido. Una moneda sin entrada graba todo, como antes, y su almacén se pone al día si ya tiene historia: el primer día no cambió nada. Un `coins.json` ilegible no se pisa: se graba todo y el módulo no deja cambiar nada hasta arreglarlo.
+- **Grabar en el PC** (trades, libro y Hyperliquid, cada uno aparte):
+  - al arrancar, cada grabador recibe las monedas de la suite que lo tienen encendido (`coins.recording_lists` en `_startup`);
+  - encender vale al instante, con los mismos `add_symbol` de agregar una moneda;
+  - apagar vale al reiniciar la suite: los grabadores del libro y de Hyperliquid son copias exactas de los del collector, y sacar una moneda en caliente sin dejar huecos mal anotados obligaría a cambiarlos en los dos lados. La fila dice "hasta reiniciar";
+  - `book_cloud.py` tapa los huecos del libro solo de las que lo tienen encendido;
+  - «+ Moneda» y el «+» del gráfico graban lo elegido antes para esa moneda o, si no, todo (`COINS.recording_options`).
+- **Almacén** (`server/coin_history.py`), con las herramientas del panel de Order Flow sin cambiarlas:
+  - `ingest.py MONEDA` se lanza aparte (como desde el panel): sigue aunque se cierre la suite, y al volver la suite la encuentra por su candado (`work/MONEDA.lock`). Su avance sale de `status_MONEDA.json`;
+  - una descarga a la vez, como en el panel: si baja otra (del panel, de su cola o de la suite), la pedida espera. Lo pedido queda en `coins.json` y se retoma al arrancar; un pedido que ya empezó y no sigue se da por cumplido;
+  - al terminar una descarga, de quien sea, `build_store.py` arma el almacén si le faltan días y lo tiene encendido. `build_store.py` no tiene candado: no se arma si alguien escribió en su `store/` o `flow/` en los últimos 90 s, si la descarga terminó hace menos de 3 min (el panel arma el suyo hasta 2 min después) ni mientras corre `official.py`. Un armado que no completa la moneda no se repite antes de 6 h;
+  - «Detener» escribe `stop` en `control.json`, como el panel: la descarga termina el día en curso, las que esperaban se cancelan y después `stop` vuelve a `false` (si no, la cola del panel y `official.py` quedarían detenidos);
+  - `official.py` pone al día las que tienen el almacén encendido, salvo las que se bajan o se arman en ese momento (`_official_symbols`);
+  - con `SUITE_RECORD=0` (pruebas y copias aisladas) solo mira: no baja ni arma nada. `SUITE_COIN_HISTORY=1` la enciende igual.
+- **Página:** el módulo "Monedas" (`CoinsView.jsx`), desde "Pestañas" → "Monedas · Abrir aquí". «Agregar a la suite» del scanner abre el módulo con esa moneda, para elegir antes de agregarla. Un botón en la barra de la Watchlist la partía en dos líneas a 1366 px: no se puso. Por moneda:
+  - quitar de la suite o agregar (con lo elegido antes);
+  - las tres grabaciones, lo que escriben por día (libro y cinta, promedio de los últimos 3 días UTC completos) y lo que ocupa en el disco;
+  - el almacén: en qué está (bajando, en espera, armando, sin historia, a medias, por armar o al día) con su botón, y la casilla de tenerlo al día;
+  - el Swing (con `/api/swing/config`, como su panel);
+  - como información: la nube (`/api/symbols` del collector), el grupo de App 1, DX y el bot.
+- **Rutas:** `GET /api/coins`, `POST /api/coins` (agregar con lo elegido y la historia), `POST /api/coins/{moneda}` (una opción), `POST` y `DELETE /api/coins/{moneda}/history` (pedirla o sacarla de la espera) y `POST /api/coins/history/stop`. Quitar de la suite sigue en `DELETE /api/suite/symbols/{moneda}`.
+- **Pruebas:** `tests/coins_checks.py` (94), con herramientas falsas en una carpeta temporal: el registro y su archivo dañado, las listas al arrancar, una descarga a la vez, la espera tras otra del panel o de su cola, el avance, armar al terminar y lo que lo impide, un armado que falla, «Detener», el reinicio, lo que ocupa y escribe por día, las rutas y que `main.py` usa el registro. `web/tests/coins.test.mjs` (9), los textos.
+- **Probado en dos copias aisladas** a 1366×768:
+  - con el `OrderFlowData` real, solo mirando (Oscuro): las 23 monedas del usuario, unos 204 MB por día entre todas y la descarga de RUNE desde el panel con su avance (57 %, 1,044 de 1,820 días); agregar, quitar, apagar el libro, el Swing y «Pestañas»;
+  - con herramientas falsas (Nítido): bajar la historia, la espera, «Detener», «Seguir bajando», el armado solo al terminar, apagar el almacén y «Agregar a la suite» del scanner.
+
+  No se probó en Electron ni con una descarga real de Bybit.
+
+## Seguimiento del scanner (24/11)
+
+**Pedido:** «poder ver desde el momento en que encuentra una moneda, en qué punto ocurrió un movimiento importante luego, qué variables y/o indicadores se estaban activando en ese momento y que podamos definir un procedimiento para tomar las decisiones de compra». Se le dio un concepto en 4 partes (el seguimiento, verlo en pantalla, la historia del scanner y el procedimiento) y pidió empezar por el seguimiento («Sí, empieza»). Esto son las partes 1 y 2. Las definiciones quedaron fijadas antes de registrar en `docs/PLAN_SEGUIMIENTO_SCANNER.md`, con lo medido antes en `OrderFlowData/research/scanner/2026-11-24/`.
+
+- **Servidor** (`server/scan_follow.py`). No cambia el scanner: cada minuto lee lo que ya anota (`data/scanner/events` y `log`) y arma:
+  - **un hallazgo** cada vez que una moneda entra a En juego, Tendencia o Rápidos sin estar en ninguna y sin haber salido de todas en las 2 h anteriores. Si estaba o volvió antes, es el mismo. Su foto: las 34 medidas de la última vuelta en o antes de la entrada, el mercado y los motivos;
+  - **su lado:** el de la lista en que entró (el movimiento propio de 24 h, la ruptura de 20 días o el cambio que la hizo entrar a Rápidos);
+  - **del arranque:** En juego y Tendencia, si el scanner no miró en los 30 min anteriores a la vuelta que la encontró (al abrir la suite o tras un corte). Ya venía moviéndose y su hora no es la del hallazgo: se cuenta aparte. Rápidos nunca;
+  - **el control:** 2 candidatas por vuelta, al azar pero siempre las mismas (por la hora y la moneda), fuera de las listas, sin BTC ni monedas de un hallazgo abierto;
+  - un evento de los últimos 3 min espera a que la vuelta escriba su registro.
+- **A las 24 h y 10 min** pide a Bybit la historia (unos 11 pedidos, con el límite de la suite):
+  - velas, OI, proporción de cuentas en largo y prima del funding, de 5 min, de t0 − 24 h a t0 + 24 h;
+  - las velas de 15 min de 35 días;
+  - BTC.
+
+  Con eso mide:
+  - el movimiento importante (la primera vez a 3 ATR de 1 h del precio del hallazgo), cuándo y si sigue o gira;
+  - la carrera a 2 ATR, y lo máximo a favor, en contra y el cierre a 1, 4, 12 y 24 h;
+  - lo que se movió antes, el OI, las cuentas en largo, la prima, el volumen de la última hora y BTC;
+  - los 33 elementos de velas del probador de App 1 (`signal_sweep.element_signals`, ajustes de fábrica), en 15 min y 1 h, cada uno en la vela en que se conoce.
+    Desde la unión con el motor 7 de App 1 (25/11) son 35 (suma el esfuerzo con resultado y el medidor que gira), con
+    las definiciones nuevas de los patrones, el rombo, las cajas, el cambio de carácter y el Lector VPA. Lo medido no
+    anota con qué motor: los hallazgos medidos antes conservan los del motor 6, y el informe junta los dos.
+
+  Todo sale de la historia pública: con la suite cerrada se mide al abrirla y da lo mismo. Lo anotado desde el 23/11 se arma al encenderse: unos 170 hallazgos y 270 controles, en cerca de una hora y primero los hallazgos. Si Bybit no da las 24 h, otra vez en 10 min; tras 12 intentos queda «sin datos». Nunca envía nada ni graba nada en vivo.
+- **Datos** (`data/scanner/follow`, un miembro gzip por línea, como el registro del scanner):
+  - `episodes/` (la foto al abrirse);
+  - `index/` (lo medido, en corto);
+  - `closed/` (lo medido completo de los hallazgos, con sus 48 h en velas de 15 min y sus elementos);
+  - `state.json` y `follow.lock`.
+
+  Medido en la copia: 7.3 KB por hallazgo medido, 1.4 KB por fila del índice y 0.8 KB por foto. Son unos 1.6 MB por día con unos 130 hallazgos y 192 controles. Sin comprimir y con la serie de 5 min eran 3.1. `SUITE_FOLLOW=0` lo apaga; sin esa variable vale `SUITE_SCANNER`.
+- **Memoria:** en memoria queda la lista de los últimos 14 días, sin lo que solo usan el informe y el detalle. El informe lee del disco (hasta 90 días) y queda 2 min en memoria.
+- **Rutas:**
+  - `GET /api/follow/status`;
+  - `/api/follow/episodes` (`?days` hasta 14, `kind`, `lista`, `startup`);
+  - `/api/follow/episode/{id}`: un hallazgo medido sale del disco; uno abierto o un control se mide al pedirlo, con lo que va;
+  - `/api/follow/report` (`?days` hasta 90, `?startup=1`).
+
+  `/api/suite/status` trae `follow`.
+- **Página:** el módulo "Seguimiento" (`FollowView.jsx`), desde "Seguimiento" en el panel del scanner o desde "Pestañas" → "Seguimiento · Abrir aquí".
+  - **Hallazgos:** la lista (días, lista, en vivo o del arranque, o el control) con qué pasó, la carrera, lo de 4 h y 24 h, los elementos al hallazgo, el volumen y el costo. Uno abierto dice hace cuánto y, con el scanner encendido, cuántos ATR va a favor.
+  - **El detalle** (un clic): sus 48 h en un gráfico propio, en ATR de 1 h desde el precio del hallazgo. Lleva:
+    - las líneas de ±2 y ±3 ATR, y los puntos de la carrera y del movimiento importante;
+    - el volumen, el OI, las cuentas en largo y BTC;
+    - una fila por elemento: primero los que se encendieron cerca del hallazgo o antes del movimiento, y de ellos los que menos se encienden.
+
+    Al pasar el mouse, cada vela. Debajo, las variables al hallazgo y los elementos de la hora antes a las 4 h después. "Abrir en el gráfico" abre la moneda en otra pestaña, como las del scanner.
+  - **Informe:**
+    - los bloques: en vivo por lista, del arranque y el control;
+    - los ocho cortes del plan;
+    - los elementos al hallazgo, con el reparto: cuántos pasan de ±2 errores contra lo que da el azar;
+    - lo que se enciende antes del movimiento importante.
+
+  El gráfico es del módulo (un canvas con los colores del estilo): no toca el gráfico de App 1.
+- **Pruebas:**
+  - `tests/follow_checks.py` (98), sin conexión, con un registro del scanner armado a mano y un Bybit falso. Cubre el lado, el hallazgo y lo que es el mismo, el arranque, el control, lo que espera, el reinicio, la medida a las 24 h, los reintentos, lo guardado, el informe y las rutas. Comprueba también que los elementos de App 1 no miran el futuro: lo conocido hasta una hora no cambia con las velas siguientes;
+  - `web/tests/follow.test.mjs` (11): los textos y las cuentas del gráfico.
+- **Probado en una copia aislada** (13300, sin scanner, sin grabar ni bot), con una copia del registro real del scanner y Bybit real, a 1366×768:
+  - la lista, el detalle de uno medido y de uno abierto, y el informe;
+  - el botón del panel del scanner y la fila de «Pestañas».
+
+  Con la copia midiendo, la lista respondió en 55 a 300 ms. No se probó en Electron.
+- **Falta** (pasos del plan):
+  - el order flow del día siguiente para los hallazgos (hay que decidir el disco);
+  - la historia del scanner de 2023 a 2026;
+  - el procedimiento de compra.
 
 ## Escritorio (Electron)
 
@@ -1268,6 +1424,16 @@ Pedido del usuario (12/11): que la app no se congele por inactividad (el navegad
 - **Una sola instancia:** abrirla otra vez muestra la ventana existente. Si el código cambió desde que arrancó (la página, el servidor, el backend de App 1, `local_tape.py`, `sync_nube.py` o `main.cjs`), se reinicia sola con la versión nueva (`newestCode()`, 51 ms). Antes, cerrar con la X y volver a abrir mostraba la versión vieja: el 12/11 el usuario probó así y ningún arreglo estaba corriendo. "Reiniciar" en la bandeja y en el menú Suite hace lo mismo a pedido. "Registro del servidor" abre `data/servidor_desktop.log`: en Electron el servidor corre sin ventana, mientras que `INICIAR.bat` sí abre su terminal. El servidor responde la página (`/` y `.html`) con `Cache-Control: no-cache`, para que Electron no muestre una página vieja de su caché.
 - **Menú:** Suite (nueva ventana, ocultar, salir) y Ver (recargar, recargar sin caché, herramientas de desarrollo, zoom y pantalla completa).
 - **Registros:** `data/desktop.log` (la app) y `data/servidor_desktop.log` (salida del servidor que lanzó), o en `SUITE_DATA_DIR`.
+  - **Sin crecer sin límite (23/11):** al medir los datos del scanner, el usuario vio que lo que más crecía era este registro: 221 MB en 11 días (2.3 millones de líneas y 63 arranques, unos 20 MB por día), dentro de la carpeta de OneDrive. Casi todo era la línea de acceso de uvicorn de cada pedido: el 76%, pedidos que salieron bien, y el 24%, 503 del bot apagado (`/api/bot/positions` y `/api/bot/orders/open`, sobre todo), que la página pide cada pocos segundos.
+  - **Servidor** (`server/quiet_log.py`, con dos líneas en `main.py`):
+    - los pedidos que salen bien (código menor que 400) no se anotan;
+    - de un error se anota el primero, y los iguales (mismo método, ruta sin la consulta y código) a lo sumo una vez cada 10 min, con una línea `[SUITE] N pedidos iguales sin anotar desde las HH:MM: GET /api/bot/positions 503`;
+    - un pedido que tarda 5 s o más se anota como `[SUITE] pedido lento: GET … 200 en 7.2 s`;
+    - los avisos, los errores del servidor y los arranques siguen como antes;
+    - `SUITE_ACCESS_LOG=1` vuelve a anotar todos los pedidos, para diagnosticar.
+  - **App de escritorio** (`rotateLog` en `desktop/main.cjs`): al lanzar el servidor, un registro de más de 20 MB pasa a `servidor_desktop.log.1` (reemplaza al anterior) y se empieza otro. La primera vez, el registro de antes queda entero en el `.1`; se borra solo en la rotación siguiente.
+  - **Medido:** con el registro del 23/11, lo que queda son los arranques, avisos y errores (0.9 MB en 11 días) más una línea por error repetido cada 10 min: unos 0.1 a 0.2 MB por día con el bot apagado todo el día.
+  - **Probado:** `tests/log_checks.py` (22), también con el registro que arma uvicorn al arrancar; la rotación con un script aparte que toma `rotateLog` de `main.cjs` (sin registro, del tamaño del tope, más grande y reemplazando el `.1`); y una copia aislada del servidor en 13300: 5 pedidos que salieron bien y ninguna línea, 6 al bot apagado y una, 3 a una ruta que no existe y una, y los historiales de SOL al abrir la página como lentos (de 6 a 10 s). No se probó dentro de Electron.
 
 Probado el 12/11 con un servidor de prueba en 13200 (`SUITE_DATA_DIR` y `SUITE_ORDERFLOW_DATA` en carpetas temporales, `SUITE_BOT_URL=http://127.0.0.1:9`) y perfil de Electron aparte:
 - lanzó el servidor, la ventana pidió `/`, los archivos de la página, velas y footprints;
@@ -1296,11 +1462,13 @@ C:\Python314\python.exe -B tests\book_defense_checks.py
 C:\Python314\python.exe -B tests\book_events_checks.py
 C:\Python314\python.exe -B tests\wise_smc_checks.py
 C:\Python314\python.exe -B tests\scanner_checks.py
+C:\Python314\python.exe -B tests\coins_checks.py
+C:\Python314\python.exe -B tests\follow_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
 
-Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5). Las líneas de la cinta: `node tests/tapelines.test.mjs` (6). La pestaña de las monedas del scanner: `node tests/tabchoice.test.mjs` (6).
+Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5). Las líneas de la cinta: `node tests/tapelines.test.mjs` (6). La pestaña de las monedas del scanner: `node tests/tabchoice.test.mjs` (6). Los textos del módulo "Monedas": `node tests/coins.test.mjs` (9). Los del módulo "Seguimiento" y las cuentas de su gráfico: `node tests/follow.test.mjs` (11).
 
 `journal_checks.py` pone `SUITE_ORDERFLOW_DATA` en una carpeta temporal y reemplaza el pedido de OI a Bybit por uno falso: la lectura de la regla y las medidas nunca leen el almacén real ni salen a la red.
 
