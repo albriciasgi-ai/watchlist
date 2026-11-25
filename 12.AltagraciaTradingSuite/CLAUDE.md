@@ -30,6 +30,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 - **DX en vivo (22/11):** el servidor registra la hipótesis de los apilados desplazados con la regla y el código del probador de App 1, y mide la ejecución con la cinta, sin enviar nada. Ver "DX en vivo".
 - **Scanner (22/11):** mira todos los perpetuos USDT de Bybit y arma listas para la Watchlist (En juego, Tendencia con fuerza, Rápidos y Mis monedas), con el costo de operar en R y el estado del mercado. Solo mira: no envía nada ni graba esas monedas. Ver "Scanner".
 - **Reglas en vivo (24/11):** Impulso, FVG nuevo y B1 del probador de App 1, registradas en 4 horas en las 50 monedas del probador, sin enviar nada. Ver "Reglas en vivo".
+- **Seguimiento del scanner (24/11):** cada hallazgo del scanner se mide a las 24 h con la historia de Bybit: cuándo y hacia dónde fue el movimiento importante, y qué variables y elementos del probador de App 1 se estaban encendiendo, contra un control. Módulo "Seguimiento". Ver "Seguimiento del scanner".
 - **Falta:**
   - la app Android (fases 2 a 4 de "Puerta móvil");
   - las alertas del Swing quedan para la central de alertas de confluencia;
@@ -76,6 +77,7 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── dx_watch.py        DX en vivo: la regla del probador de App 1 sobre el almacén en vivo; anota en data/dx y nunca envía
 │   ├── rule_watch.py      Reglas en vivo (24/11): Impulso, FVG nuevo y B1 del probador de App 1 en 4h; anota en data/rules y nunca envía
 │   ├── scanner.py         Scanner de monedas (22/11): todos los perpetuos USDT de Bybit, listas y estado del mercado; anota en data/scanner y nunca envía
+│   ├── scan_follow.py     Seguimiento de los hallazgos del scanner (24/11): los mide a las 24 h con la historia de Bybit (data/scanner/follow); nunca envía
 │   ├── symbols.py         Lista de monedas (data/symbols.json)
 │   ├── coins.py           Registro de monedas (23/11): qué se graba de cada una y lo que se muestra en el módulo "Monedas" (ver "Monedas")
 │   ├── coin_history.py    La historia del almacén de cada moneda: ingest.py y build_store.py del panel, una descarga a la vez
@@ -85,16 +87,16 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
 │   ├── mobile_events.py   Vigilante del bot para el celular y avisos push por Firebase
 │   ├── mobile_gate.py     Puerta móvil: otra aplicación en su puerto (13002), apagada de fábrica; tests/mobile_checks.py (90)
 │   ├── quiet_log.py       El registro del servidor sin los pedidos que salen bien, sin repetir errores y con los lentos (23/11; ver "Escritorio", "Registros")
-│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (49), rule_checks.py (52), scanner_checks.py (120), log_checks.py (22) y coins_checks.py (94), sin conexión
+│   └── tests/             alpaca_checks.py (54), run_checks.py (46), bot_checks.py (59), journal_checks.py (89), swing_checks.py (102), book_checks.py (69), book_cloud_checks.py (16), book_heatmap_checks.py (24), ladder_checks.py (24), book_levels_checks.py (16), book_defense_checks.py (21), book_events_checks.py (18), wise_smc_checks.py (40), hl_checks.py (34), hl_cloud_checks.py (16), dx_checks.py (49), rule_checks.py (52), scanner_checks.py (120), log_checks.py (22), coins_checks.py (94) y follow_checks.py (98), sin conexión
 └── web/                   React + Vite (desarrollo en 13001, con proxy de /api al 13000)
     ├── vite.config.js     Plugin app1Shared: el config.js de App 1 pasa a src/app1Config.js y los paquetes se resuelven aquí
     └── src/
-        ├── SuiteApp.jsx   Módulos (Gráfico, Watchlist, Bot, Mapa y Monedas) y modal "Estilo" de App 1; abre el módulo que pide una pestaña nueva
+        ├── SuiteApp.jsx   Módulos (Gráfico, Watchlist, Bot, Mapa, Monedas y Seguimiento) y modal "Estilo" de App 1; abre el módulo que pide una pestaña nueva
         ├── ChartView.jsx  Formato de la pestaña principal de App 1: barra de dibujo, encabezado, un MiniChart por marco, indicadores y sus ⚙️
         ├── TradingPanel.jsx   Panel de trading en vivo: caja TP/SL, tamaño fijo o por riesgo, orden al bot
         ├── tabs.js        Pestañas 1 a 5: ajustes propios, y dibujos y monedas compartidos (BroadcastChannel)
         ├── tabChoice.js   En qué pestaña se abre una moneda del scanner (sin tocar la página, para probarlo con node)
-        ├── TabsMenu.jsx   Menú "Pestañas": abre de la 2 a la 5 con el gráfico, la Watchlist, el journal o el bot; abajo, "Monedas"
+        ├── TabsMenu.jsx   Menú "Pestañas": abre de la 2 a la 5 con el gráfico, la Watchlist, el journal o el bot; abajo, "Monedas" y "Seguimiento"
         ├── BotView.jsx    Estado, pausa, avisos críticos, posiciones, órdenes y alertas del bot
         ├── BotConfig.jsx  Configuración del bot como en App 10
         ├── BotAccounts.jsx    Cuentas de Bybit del bot: saldo, posiciones, agregar y cambiar la activa
@@ -110,8 +112,10 @@ El conjunto nuevo que pidió el usuario el 10/11/2026: **dos apps**. Una es el B
         ├── ScannerPanel.jsx   Panel del scanner en la Watchlist: estado del mercado, listas con su porqué, detalle de cada moneda y ajustes
         ├── LiquidityMapView.jsx   La pestaña "Mapa": el mapa de liquidez del libro grabado, en un gráfico aparte
         ├── CoinsView.jsx  El módulo "Monedas" (23/11): qué se guarda de cada moneda, su almacén y las descargas
-        └── coinsView.js   Los textos del módulo "Monedas" (sin React, para probarlo con node)
-    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5), tapelines.test.mjs (6), tabchoice.test.mjs (6) y coins.test.mjs (9), con node
+        ├── coinsView.js   Los textos del módulo "Monedas" (sin React, para probarlo con node)
+        ├── FollowView.jsx El módulo "Seguimiento" (24/11): los hallazgos del scanner, su detalle con sus 48 h y el informe
+        └── followView.js  Los textos y las cuentas del gráfico del módulo "Seguimiento" (sin React, para probarlo con node)
+    └── tests/             journalStats.test.mjs (9), journalExcel.test.mjs (12), openDecision.test.mjs (5) y ladder.test.mjs (12), ladderplan.test.mjs (5), tapelines.test.mjs (6), tabchoice.test.mjs (6), coins.test.mjs (9) y follow.test.mjs (11), con node
 ```
 
 ## Puertos
@@ -1332,6 +1336,71 @@ Paso 1 del plan `docs/PLAN_SCANNER.md` (raíz del repositorio), pedido por el us
 
   No se probó en Electron ni con una descarga real de Bybit.
 
+## Seguimiento del scanner (24/11)
+
+**Pedido:** «poder ver desde el momento en que encuentra una moneda, en qué punto ocurrió un movimiento importante luego, qué variables y/o indicadores se estaban activando en ese momento y que podamos definir un procedimiento para tomar las decisiones de compra». Se le dio un concepto en 4 partes (el seguimiento, verlo en pantalla, la historia del scanner y el procedimiento) y pidió empezar por el seguimiento («Sí, empieza»). Esto son las partes 1 y 2. Las definiciones quedaron fijadas antes de registrar en `docs/PLAN_SEGUIMIENTO_SCANNER.md`, con lo medido antes en `OrderFlowData/research/scanner/2026-11-24/`.
+
+- **Servidor** (`server/scan_follow.py`). No cambia el scanner: cada minuto lee lo que ya anota (`data/scanner/events` y `log`) y arma:
+  - **un hallazgo** cada vez que una moneda entra a En juego, Tendencia o Rápidos sin estar en ninguna y sin haber salido de todas en las 2 h anteriores. Si estaba o volvió antes, es el mismo. Su foto: las 34 medidas de la última vuelta en o antes de la entrada, el mercado y los motivos;
+  - **su lado:** el de la lista en que entró (el movimiento propio de 24 h, la ruptura de 20 días o el cambio que la hizo entrar a Rápidos);
+  - **del arranque:** En juego y Tendencia, si el scanner no miró en los 30 min anteriores a la vuelta que la encontró (al abrir la suite o tras un corte). Ya venía moviéndose y su hora no es la del hallazgo: se cuenta aparte. Rápidos nunca;
+  - **el control:** 2 candidatas por vuelta, al azar pero siempre las mismas (por la hora y la moneda), fuera de las listas, sin BTC ni monedas de un hallazgo abierto;
+  - un evento de los últimos 3 min espera a que la vuelta escriba su registro.
+- **A las 24 h y 10 min** pide a Bybit la historia (unos 11 pedidos, con el límite de la suite):
+  - velas, OI, proporción de cuentas en largo y prima del funding, de 5 min, de t0 − 24 h a t0 + 24 h;
+  - las velas de 15 min de 35 días;
+  - BTC.
+
+  Con eso mide:
+  - el movimiento importante (la primera vez a 3 ATR de 1 h del precio del hallazgo), cuándo y si sigue o gira;
+  - la carrera a 2 ATR, y lo máximo a favor, en contra y el cierre a 1, 4, 12 y 24 h;
+  - lo que se movió antes, el OI, las cuentas en largo, la prima, el volumen de la última hora y BTC;
+  - los 33 elementos de velas del probador de App 1 (`signal_sweep.element_signals`, ajustes de fábrica), en 15 min y 1 h, cada uno en la vela en que se conoce.
+
+  Todo sale de la historia pública: con la suite cerrada se mide al abrirla y da lo mismo. Lo anotado desde el 23/11 se arma al encenderse: unos 170 hallazgos y 270 controles, en cerca de una hora y primero los hallazgos. Si Bybit no da las 24 h, otra vez en 10 min; tras 12 intentos queda «sin datos». Nunca envía nada ni graba nada en vivo.
+- **Datos** (`data/scanner/follow`, un miembro gzip por línea, como el registro del scanner):
+  - `episodes/` (la foto al abrirse);
+  - `index/` (lo medido, en corto);
+  - `closed/` (lo medido completo de los hallazgos, con sus 48 h en velas de 15 min y sus elementos);
+  - `state.json` y `follow.lock`.
+
+  Medido en la copia: 7.3 KB por hallazgo medido, 1.4 KB por fila del índice y 0.8 KB por foto. Son unos 1.6 MB por día con unos 130 hallazgos y 192 controles. Sin comprimir y con la serie de 5 min eran 3.1. `SUITE_FOLLOW=0` lo apaga; sin esa variable vale `SUITE_SCANNER`.
+- **Memoria:** en memoria queda la lista de los últimos 14 días, sin lo que solo usan el informe y el detalle. El informe lee del disco (hasta 90 días) y queda 2 min en memoria.
+- **Rutas:**
+  - `GET /api/follow/status`;
+  - `/api/follow/episodes` (`?days` hasta 14, `kind`, `lista`, `startup`);
+  - `/api/follow/episode/{id}`: un hallazgo medido sale del disco; uno abierto o un control se mide al pedirlo, con lo que va;
+  - `/api/follow/report` (`?days` hasta 90, `?startup=1`).
+
+  `/api/suite/status` trae `follow`.
+- **Página:** el módulo "Seguimiento" (`FollowView.jsx`), desde "Seguimiento" en el panel del scanner o desde "Pestañas" → "Seguimiento · Abrir aquí".
+  - **Hallazgos:** la lista (días, lista, en vivo o del arranque, o el control) con qué pasó, la carrera, lo de 4 h y 24 h, los elementos al hallazgo, el volumen y el costo. Uno abierto dice hace cuánto y, con el scanner encendido, cuántos ATR va a favor.
+  - **El detalle** (un clic): sus 48 h en un gráfico propio, en ATR de 1 h desde el precio del hallazgo. Lleva:
+    - las líneas de ±2 y ±3 ATR, y los puntos de la carrera y del movimiento importante;
+    - el volumen, el OI, las cuentas en largo y BTC;
+    - una fila por elemento: primero los que se encendieron cerca del hallazgo o antes del movimiento, y de ellos los que menos se encienden.
+
+    Al pasar el mouse, cada vela. Debajo, las variables al hallazgo y los elementos de la hora antes a las 4 h después. "Abrir en el gráfico" abre la moneda en otra pestaña, como las del scanner.
+  - **Informe:**
+    - los bloques: en vivo por lista, del arranque y el control;
+    - los ocho cortes del plan;
+    - los elementos al hallazgo, con el reparto: cuántos pasan de ±2 errores contra lo que da el azar;
+    - lo que se enciende antes del movimiento importante.
+
+  El gráfico es del módulo (un canvas con los colores del estilo): no toca el gráfico de App 1.
+- **Pruebas:**
+  - `tests/follow_checks.py` (98), sin conexión, con un registro del scanner armado a mano y un Bybit falso. Cubre el lado, el hallazgo y lo que es el mismo, el arranque, el control, lo que espera, el reinicio, la medida a las 24 h, los reintentos, lo guardado, el informe y las rutas. Comprueba también que los elementos de App 1 no miran el futuro: lo conocido hasta una hora no cambia con las velas siguientes;
+  - `web/tests/follow.test.mjs` (11): los textos y las cuentas del gráfico.
+- **Probado en una copia aislada** (13300, sin scanner, sin grabar ni bot), con una copia del registro real del scanner y Bybit real, a 1366×768:
+  - la lista, el detalle de uno medido y de uno abierto, y el informe;
+  - el botón del panel del scanner y la fila de «Pestañas».
+
+  Con la copia midiendo, la lista respondió en 55 a 300 ms. No se probó en Electron.
+- **Falta** (pasos del plan):
+  - el order flow del día siguiente para los hallazgos (hay que decidir el disco);
+  - la historia del scanner de 2023 a 2026;
+  - el procedimiento de compra.
+
 ## Escritorio (Electron)
 
 Pedido del usuario (12/11): que la app no se congele por inactividad (el navegador frena las pestañas en segundo plano) y no pierda datos ni alertas. La página es la misma que sirve el servidor; Electron solo la muestra sin ese freno.
@@ -1390,11 +1459,12 @@ C:\Python314\python.exe -B tests\book_events_checks.py
 C:\Python314\python.exe -B tests\wise_smc_checks.py
 C:\Python314\python.exe -B tests\scanner_checks.py
 C:\Python314\python.exe -B tests\coins_checks.py
+C:\Python314\python.exe -B tests\follow_checks.py
 ```
 
 `swing_checks.py` necesita node: corre el indicador Swing de App 1 para compararlo con el servidor.
 
-Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5). Las líneas de la cinta: `node tests/tapelines.test.mjs` (6). La pestaña de las monedas del scanner: `node tests/tabchoice.test.mjs` (6). Los textos del módulo "Monedas": `node tests/coins.test.mjs` (9).
+Los cálculos del dashboard del journal: `cd web` y `node tests/journalStats.test.mjs` (9). Su Excel: `node tests/journalExcel.test.mjs` (12), que arma el libro con exceljs, lo escribe y lo vuelve a leer. Lo elegido en la imagen de apertura: `node tests/openDecision.test.mjs` (5). Las cuentas del ladder: `node tests/ladder.test.mjs` (12) y `node tests/ladderplan.test.mjs` (5). Las líneas de la cinta: `node tests/tapelines.test.mjs` (6). La pestaña de las monedas del scanner: `node tests/tabchoice.test.mjs` (6). Los textos del módulo "Monedas": `node tests/coins.test.mjs` (9). Los del módulo "Seguimiento" y las cuentas de su gráfico: `node tests/follow.test.mjs` (11).
 
 `journal_checks.py` pone `SUITE_ORDERFLOW_DATA` en una carpeta temporal y reemplaza el pedido de OI a Bybit por uno falso: la lectura de la regla y las medidas nunca leen el almacén real ni salen a la red.
 

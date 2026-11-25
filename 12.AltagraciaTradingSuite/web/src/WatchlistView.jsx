@@ -596,7 +596,7 @@ function SwingPanel({ swing, symbols, gridTf, onChange, onOpenChart, onHide, ext
   );
 }
 
-export default function WatchlistView({ active = true, onOpenChart, onBack, onOpenTheme, onModule = null, onOpenCoins = null }) {
+export default function WatchlistView({ active = true, onOpenChart, onBack, onOpenTheme, onModule = null, onOpenCoins = null, onOpenFollow = null }) {
   const saved = useMemo(loadSettings, []);
   const [symbols, setSymbols] = useState([]);
   const [tf, setTf] = useState(TIMEFRAMES.includes(saved.tf) ? saved.tf : '15m');
@@ -1139,6 +1139,7 @@ export default function WatchlistView({ active = true, onOpenChart, onBack, onOp
               suiteSymbols={symbols}
               onSymbolsAdded={(list) => { setSymbols(list); symbolsChanged(list); }}
               onAddCoin={onOpenCoins}
+              onOpenFollow={onOpenFollow}
               onOpenChart={openScanCoin}
               gridTf={tf}
               onRefresh={readScan}
