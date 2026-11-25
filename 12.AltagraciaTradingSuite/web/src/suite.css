@@ -166,6 +166,10 @@
 .wl-menu-note { margin-top: 6px; line-height: 1.35; }
 .wl-panel-title { display: flex; align-items: center; justify-content: space-between; gap: 6px; margin-bottom: 4px; }
 .wl-panel-title h3 { margin: 0; }
+/* Partes plegables del panel lateral (24/11) */
+.wl-fold-title { cursor: pointer; user-select: none; }
+.wl-fold-mark { display: inline-block; width: 12px; opacity: 0.6; }
+.wl-fold-note { font-weight: normal; opacity: 0.65; }
 
 /* Scanner (22/11): el porqué de cada moneda, su panel y su detalle */
 .wl-chip { display: inline-block; font-size: 10px; line-height: 15px; padding: 0 5px; margin: 1px 3px 1px 0; border-radius: 8px; border: 1px solid var(--t-line, #ccc); white-space: nowrap; }
