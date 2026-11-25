@@ -6,7 +6,7 @@
 # t0 - 24 h a t0 + 24 h (velas, OI, cuentas en largo y prima del funding, de 5 min, y las velas de 15 min de 35 dias) y mide:
 #   - el movimiento importante (la primera vez a 3 ATR de 1 h del precio del hallazgo) y si sigue o gira;
 #   - la carrera a 2 ATR y lo maximo a favor y en contra a 1, 4, 12 y 24 h;
-#   - las variables al hallazgo y los 33 elementos de velas del probador de App 1, en 15 min y 1 h.
+#   - las variables al hallazgo y los elementos de velas del probador de App 1 (35 desde su motor 7), en 15 min y 1 h.
 # Todo sale de la historia publica de Bybit: si la suite estuvo cerrada, se mide al abrirla y da lo mismo. Lo que anoto el
 # scanner antes de encenderse esto (desde el 23/11) se arma igual. Nunca envia nada ni graba nada en vivo.
 #

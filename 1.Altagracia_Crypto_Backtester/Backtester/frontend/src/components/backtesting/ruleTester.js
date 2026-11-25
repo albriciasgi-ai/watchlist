@@ -5,6 +5,7 @@
 import { elementLabel, elementLabels } from './elementLabels.js';
 import { defaultWilliamsConfig } from '../indicators/williams.js';
 import { defaultSmcConfig } from '../indicators/smcStructure.js';
+import { OF_ELEMENTS } from '../indicators/ofElements.js';
 
 export const TESTER_PARAM = 'probador';
 export const RULE_TIMEFRAMES = [5, 15, 30, 45, 60, 240, 1440];
@@ -73,7 +74,7 @@ export function defaultRule() {
     ccTf: 0, ccOffset: 0, ccSwing: 3, ccLegs: 2,
     // Horario: solo señales que se conocen entre esas horas UTC
     useHours: false, hoursFrom: '17:30', hoursTo: '21:30', hoursWeekdays: true,
-    bxMaxHeightOn: false, bxMaxHeight: 5.5, beShare: 0.2, beMaxBody: 1, beRejection: 0.6, bePattern: false,
+    bxMaxHeightOn: false, bxMaxHeight: 5.5, beShare: 0.05, beMaxBody: 1, beRejection: 0.6, bePattern: false,
     // FVG nuevo (hueco mínimo en ATR) y swing del detector (velas por lado y volumen mínimo)
     fvMinAtr: 0.3, spBars: 5, spVolume: false, spMinZ: 1,
     // Elementos de Byko (21/11): las cifras fijadas en docs/PLAN_ESTRATEGIAS_BYKO_DALE.md antes de correrlos
@@ -92,6 +93,8 @@ export function defaultRule() {
     marketOn: false, marketAllow: [...MARKET_COMBOS],
     // Patrones de vela: tendencia previa, volumen mínimo (z-score) y mecha del martillo en cuerpos
     patTrend: true, patTrendBars: 5, patVolume: false, patMinZ: 1, patWick: 2,
+    // Motor 7 (23/11/2026, decidido por el usuario): el patrón cuenta con tamaño y en un swing confirmado
+    patSizeOn: true, patMinPart: 0.5, patSwingOn: true, patSwingBefore: 5, patSwingAfter: 2,
     // Filtros de línea: off, side (cierra del lado a favor) o touch (además la mecha la toca)
     vwapMode: 'off', vwapPeriod: 200, vwapSlope: false, vwapMaxDevOn: false, vwapMaxDev: 1, emaMode: 'off', emaPeriod: 14, emaSlope: false,
     // emaTf (22/11): la EMA leída en un marco mayor (0 = el de la regla), con su cierre, en su última vela cerrada
@@ -150,7 +153,7 @@ export const PATTERN_CODES = ['HM', 'EN', 'DJ'];
 export const WISE_CODES = ['WD', 'WA', 'WF'];
 export const SMC_CODES = ['BS', 'OB', 'BK', 'EQ'];
 export const DALE_CODES = ['DS', 'DN', 'DG', 'DA', 'DC', 'DX'];  // Zonas de Trader Dale con el primer regreso (21/11); DX, hipótesis del 22/11
-export const VPA_CODES = ['QA', 'QB', 'QF', 'QR', 'QT', 'QS', 'QC', 'QE'];
+export const VPA_CODES = ['QA', 'QV', 'QB', 'QF', 'QR', 'QT', 'QS', 'QC', 'QE', 'QG'];
 export const usesVpa = (rule) => (rule.codes || []).some(code => VPA_CODES.includes(code));
 /** El filtro del medidor VPA en palabras (el mismo de rule_tester en el backend) */
 export const VPA_FILTER_TEXT = { favor: 'medidor VPA a favor', notAgainst: 'medidor VPA que no esté en contra', notFavor: 'medidor VPA que no esté fuerte a favor' };
@@ -218,7 +221,9 @@ export function toBackendRule(rule) {
       liq: { what: rule.liqWhat === 'swing' ? 'swing' : 'zone', variant: rule.liqVariant === 'reclaim' ? 'reclaim' : 'pierce', swingBars: number(rule.liqSwingBars, 5), reclaimBars: number(rule.liqReclaimBars, 3) }
     } : {}),
     ...(usesPatterns(rule) ? {
-      pat: { trend: rule.patTrend !== false, trendBars: number(rule.patTrendBars, 5), minZ: rule.patVolume ? number(rule.patMinZ, 1) : null, wick: number(rule.patWick, 2) }
+      pat: { trend: rule.patTrend !== false, trendBars: number(rule.patTrendBars, 5), minZ: rule.patVolume ? number(rule.patMinZ, 1) : null, wick: number(rule.patWick, 2),
+             minPart: rule.patSizeOn === false ? 0 : number(rule.patMinPart, 0.5),
+             swingBefore: rule.patSwingOn === false ? 0 : number(rule.patSwingBefore, 5), swingAfter: rule.patSwingOn === false ? 0 : number(rule.patSwingAfter, 2) }
     } : {}),
     ...(codes.includes('GC') ? {
       gc: { period: number(rule.gcPeriod, 144), poles: number(rule.gcPoles, 4), mult: number(rule.gcMult, 1.414), trend: rule.gcTrend !== false, exit: ['band', 'mid', 'none'].includes(rule.gcExit) ? rule.gcExit : 'band' }
@@ -237,7 +242,7 @@ export function toBackendRule(rule) {
     ...(rule.useHours && minuteOfDay(rule.hoursFrom) !== null && minuteOfDay(rule.hoursTo) !== null
       ? { hours: { on: true, from: minuteOfDay(rule.hoursFrom), to: minuteOfDay(rule.hoursTo), weekdays: !!rule.hoursWeekdays } } : {}),
     ...(codes.includes('BX') ? { bx: { maxHeight: rule.bxMaxHeightOn ? number(rule.bxMaxHeight, 5.5) : null } } : {}),
-    ...(codes.includes('BE') ? { be: { share: number(rule.beShare, 0.2), maxBody: number(rule.beMaxBody, 1), rejection: number(rule.beRejection, 0.6), ...(rule.bePattern ? { pattern: true } : {}) } } : {}),
+    ...(codes.includes('BE') ? { be: { share: number(rule.beShare, 0.05), maxBody: number(rule.beMaxBody, 1), rejection: number(rule.beRejection, 0.6), ...(rule.bePattern ? { pattern: true } : {}) } } : {}),
     ...(codes.includes('CP') ? { cp: { maxHeight: rule.cpMaxHeightOn ? number(rule.cpMaxHeight, 5.5) : null } } : {}),
     ...(codes.includes('IM') ? { im: { bars: number(rule.imBars, 3), atr: number(rule.imAtr, 2), range: rule.imRangeOn ? number(rule.imRange, 1.5) : null } } : {}),
     ...(codes.includes('FV') ? { fv: { minAtr: number(rule.fvMinAtr, 0.3) } } : {}),
@@ -394,6 +399,10 @@ export function fromBackendRule(saved) {
     rvLeg: saved.rv?.leg ?? 2, rvSpike: saved.rv?.spike ?? 2, rvArrow: saved.rv?.arrow || 'with', rvRombo: saved.rv?.rombo || 'turn',
     gcPeriod: saved.gc?.period ?? 144, gcPoles: saved.gc?.poles ?? 4, gcMult: saved.gc?.mult ?? 1.414, gcTrend: saved.gc ? saved.gc.trend !== false : true, gcExit: saved.gc?.exit || 'band',
     patVolume: saved.pat?.minZ != null, patMinZ: saved.pat?.minZ ?? 1, patWick: saved.pat?.wick ?? 2,
+    // Una regla guardada antes del motor 7 no trae estos campos: el backend le pone los de fábrica
+    patSizeOn: (saved.pat?.minPart ?? 0.5) > 0, patMinPart: saved.pat?.minPart || 0.5,
+    patSwingOn: (saved.pat?.swingBefore ?? 5) > 0 || (saved.pat?.swingAfter ?? 2) > 0,
+    patSwingBefore: saved.pat?.swingBefore || 5, patSwingAfter: saved.pat?.swingAfter ?? 2,
     vwapMode: (saved.lines || []).find(l => l.type === 'vwap')?.mode || 'off', vwapPeriod: (saved.lines || []).find(l => l.type === 'vwap')?.period ?? 200,
     vwapSlope: !!(saved.lines || []).find(l => l.type === 'vwap')?.slope,
     vwapMaxDevOn: (saved.lines || []).find(l => l.type === 'vwap')?.maxDev != null, vwapMaxDev: (saved.lines || []).find(l => l.type === 'vwap')?.maxDev ?? 1,
@@ -402,7 +411,7 @@ export function fromBackendRule(saved) {
     useHours: !!saved.hours, hoursFrom: saved.hours ? clock(saved.hours.from) : '17:30', hoursTo: saved.hours ? clock(saved.hours.to) : '21:30',
     hoursWeekdays: saved.hours ? !!saved.hours.weekdays : true,
     bxMaxHeightOn: saved.bx?.maxHeight != null, bxMaxHeight: saved.bx?.maxHeight ?? 5.5,
-    beShare: saved.be?.share ?? 0.2, beMaxBody: saved.be?.maxBody ?? 1, beRejection: saved.be?.rejection ?? 0.6, bePattern: !!saved.be?.pattern,
+    beShare: saved.be?.share ?? 0.05, beMaxBody: saved.be?.maxBody ?? 1, beRejection: saved.be?.rejection ?? 0.6, bePattern: !!saved.be?.pattern,
     fvMinAtr: saved.fv?.minAtr ?? 0.3, spBars: saved.sp?.bars ?? 5, spVolume: saved.sp?.minZ != null, spMinZ: saved.sp?.minZ ?? 1,
     fbBack: saved.fb?.back ?? 3, fbApproachBars: saved.fb?.approachBars ?? 4, fbApproachAtr: saved.fb?.approachAtr ?? 2, fbVol: saved.fb?.vol ?? 3,
     baBars: saved.ba?.bars ?? 6, baNear: saved.ba?.near ?? 1,
@@ -619,7 +628,8 @@ export function tradeBands(trade, tfMinutes = 15, names = {}) {
   if (cc && Number.isFinite(cc.level)) {
     // El swing que se rompió, desde su vela, y el extremo de la tendencia
     bands.push({ kind: 'level', price: cc.level, start: cc.levelT, end, label: 'Swing roto' });
-    bands.push({ kind: 'level', price: cc.extreme, start: cc.levelT, end, label: 'Extremo de la tendencia' });
+    // Desde el motor 7 el extremo trae su vela (extremeT) y la línea empieza ahí; antes empezaba en la del swing (F-20)
+    bands.push({ kind: 'level', price: cc.extreme, start: cc.extremeT ?? cc.levelT, end, label: 'Extremo de la tendencia' });
     bands.push({ kind: 'mark', time: trade.signal, price: cc.level, label: 'Ruptura' });
   }
   for (const mark of trade.marks || []) {
@@ -752,11 +762,26 @@ export function checklistBand(check, context, title, trade = null) {
 // el contexto del trade
 
 // En el orden de la lista de indicadores del gráfico (WISE_CODES y SMC_CODES, arriba)
-const RULE_INDICATOR_ORDER = ['CVD', 'Open Interest', 'OI-Volume Confluence', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios',
-  'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI', 'Lector VPA'];
+const RULE_INDICATOR_ORDER = ['CVD', 'Open Interest', 'OI-Volume Confluence', 'Order Flow', 'Estructura SMC', 'Alligator', 'Fractales',
+  'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI', 'Lector VPA', 'Elementos OF'];
+// Los elementos de order flow (backend/of_elements.py): con ellos, el footprint con las celdas con que se calculan y los
+// Elementos OF de la regla (O-39 del protocolo de pruebas, 25/11/2026). Los de desequilibrios se leen con los del
+// elemento (diagonales de 4 a 1, apilados de 3), y los de la tabla, con la tabla de la vela
+const OF_CODES = Object.keys(OF_ELEMENTS);
+const OF_IMBALANCE_CODES = ['ST', 'VI', 'IR', 'RD', 'IV'];
+const OF_TABLE_CODES = OF_CODES.filter(code => OF_ELEMENTS[code].shape === 'table');
 const CHART_TF_MINUTES = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
 
 const ruleCodes = (rule) => new Set((rule?.recipe?.slots || []).flatMap(slot => slot.codes || []));
+
+/**
+ * Si un id es el de una corrida de esa moneda (el &run= de la dirección, con que "Todas" abre otra moneda con su corrida).
+ * Desde el motor 6 el id termina en los milisegundos y 4 cifras hexadecimales (O-28): pidiendo solo dígitos al final, la
+ * corrida no se abría (O-41 del protocolo de pruebas, 25/11/2026)
+ */
+export function isRunOf(runId, symbol) {
+  return typeof runId === 'string' && /^[A-Za-z0-9.-]+_\d+_f\d_[0-9a-f]+_\d+[0-9a-f]*$/.test(runId) && runId.startsWith(`${symbol}_`);
+}
 
 /** El marco del gráfico con las velas de la regla ('4h' para una de 240 minutos), o null si el gráfico no lo tiene (30m, 1D) */
 export function chartTfOf(ruleTf) {
@@ -765,7 +790,8 @@ export function chartTfOf(ruleTf) {
 
 /**
  * Los indicadores del gráfico que usa una regla (en la forma del backend): los de Williams y la estructura SMC de sus
- * elementos y filtros, y los paneles de los datos que leen sus filtros de flujo (CVD e interés abierto)
+ * elementos y filtros, los paneles de los datos que leen sus filtros de flujo (CVD e interés abierto), el Lector VPA y,
+ * con elementos de order flow, el footprint y los Elementos OF
  */
 export function ruleIndicators(rule) {
   if (!rule?.recipe) return [];
@@ -789,7 +815,47 @@ export function ruleIndicators(rule) {
   if (['conf', 'noconf'].includes(flow.oi)) names.add('OI-Volume Confluence');
   // El Lector VPA, con sus elementos, el filtro del medidor o la salida VPA (O-23 del protocolo de pruebas, 22/11/2026)
   if (VPA_CODES.some(code => codes.has(code)) || rule.vpaf || rule.exit?.vpa) names.add('Lector VPA');
+  // El footprint y los Elementos OF, con los elementos de order flow (O-39)
+  if (OF_CODES.some(code => codes.has(code))) {
+    names.add('Order Flow');
+    names.add('Elementos OF');
+  }
   return RULE_INDICATOR_ORDER.filter(name => names.has(name));
+}
+
+/**
+ * El footprint con las celdas con que calculó la regla: el step de análisis de los elementos de order flow en el día de la
+ * señal (`ofStep`, que da el contexto del trade), en el marco de la regla, y los desequilibrios del elemento si la regla
+ * usa uno que los lee. El gráfico conserva lo que muestra (perfil, delta, colores). Sin el step (el contexto del trade
+ * todavía no llegó) no hay nada que cambiar: null (O-39 del protocolo de pruebas, 25/11/2026)
+ */
+export function ruleOrderFlowConfig(rule, current = {}, step = null) {
+  const tf = Number(rule?.tf);
+  if (!(Number(step) > 0) || !Number.isFinite(tf)) return null;
+  const codes = ruleCodes(rule);
+  return {
+    ...current,
+    stepByMinutes: { ...(current.stepByMinutes || {}), [tf]: Number(step) },
+    stepPerCandle: true, // Una vela ancha agrupa sus niveles sin cambiar las celdas de las demás
+
+    ...(OF_IMBALANCE_CODES.some(code => codes.has(code)) ? { imbalanceRatio: 4, imbalanceMode: 'diagonal', stackedMinLevels: 3 } : {})
+  };
+}
+
+/**
+ * Los Elementos OF de la regla: solo sus elementos, con sus umbrales (el % de velas que marca cada uno y el volumen de la
+ * vela, `target` y `volFilter` del backend), y la tabla de la vela si usa uno de la tabla. El gráfico conserva sus
+ * franjas, glifos, EMA y opacidad (O-39)
+ */
+export function ruleOFElementsConfig(rule, current = {}) {
+  const codes = ruleCodes(rule);
+  return {
+    ...current,
+    codes: Object.fromEntries(OF_CODES.map(code => [code, codes.has(code)])),
+    ...(Number.isFinite(rule?.target) ? { target: +(rule.target * 100).toFixed(4) } : {}),  // El backend en parte de las velas; el indicador, en %
+    ...(Number.isFinite(rule?.volFilter) ? { volFilter: rule.volFilter } : {}),
+    ...(OF_TABLE_CODES.some(code => codes.has(code)) ? { showTable: true } : {})
+  };
 }
 
 /**

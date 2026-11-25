@@ -626,6 +626,17 @@ elementos de la galería funcionen bien". Todo en la copia aislada (backend 9300
    - **802 casos** en 5 páginas por familia (velas y cajas 180, VPA 94, Williams y SMC 84, order flow 372 con el
      footprint encendido, perfil y liquidaciones 72). Cada elemento lleva cómo lo calcula la app y qué mirar; cada caso,
      "Sí, es lo que entiendo", "No" o "No sé" y una nota, con un botón que copia las marcas para el chat.
+   - **23/11, 4 casos por elemento:** el usuario tardaba mucho y la mayoría se parecían. Quedan 268 (60, 32, 28, 124 y
+     24 por página), repartidos en la fase y, si los hay, 2 largos y 2 cortos (`pick()` de `galeria_html.py`; su segundo
+     argumento dice cuántos, 0 = los 12). Cada caso conserva su clave entre los 12, así las marcas ya hechas siguen, y
+     «Copiar mis marcas» dice el trade de cada caso. Probado en el navegador con marcas de la versión de 12.
+   - **23/11, el volumen a la vista:** el usuario no podía juzgar el volumen alto, porque la captura se recortaba bajo
+     las velas. Los 48 casos a la vista de los 12 elementos de volumen (volumen alto, flecha, los dos rombos y los 8 del
+     VPA) se capturaron otra vez con los paneles (`trade_NNNN_paneles.jpg`, en 4h, 30 velas antes de la señal y 8
+     después): la barra de volumen y, en los del VPA, el Lector VPA; en la flecha y los rombos, el Volumen de Respuesta.
+     Cada caso lleva al pie cuánto volumen tuvo (`galeria_cifras.py`): el del volumen alto se calcula aparte, con las
+     velas de la corrida, y da de 2.0 a 9.3 veces el medio de su hora (ninguno bajo 2); la flecha y el VPA dicen lo que
+     guardó su trade (veces la mediana de su hora, rango, medidor y grado). Las 48, sin avisos de la comprobación.
    - Todas las capturas pasan la comprobación automática (la tabla de la señal en ✓, sin avisos). La compresión
      necesita la opción de las dos órdenes stop de la captura (`straddle`), como sus corridas de la etapa 6.
    - **Encuadre:** la primera versión iba de la señal a la salida. En 95 trades largos el elemento quedaba chico, y en
@@ -686,6 +697,175 @@ elementos de la galería funcionen bien". Todo en la copia aislada (backend 9300
    controles del tablero y el margen por semanas, y la validación pide el margen solo con la casilla "En la validación,
    pedir también el margen" (apagada de fábrica): el usuario prefirió no descartar reglas que podrían mejorarse.
    Pruebas: `test_rule_search.py` suma 3 (9).
+9. **Galería 1 revisada por el usuario (23/11):** Sí 38, No 20, No sé 1 y 1 sin marcar de 60
+   (`evidencia/etapa7/galeria_marcas_1.txt`). Cada caso se revisó con los datos de su corrida, repetida en la copia
+   aislada (`revision_visual/G1_RESPUESTAS.md`):
+   - dos fallos del motor: F-18 (ruptura tras una caja que termina por su eficiencia) y F-19 (rearme del borde de caja);
+   - uno de pantalla, O-34 (las cajas de los elementos tapan la mecha), y el extremo del cambio de carácter (F-20);
+   - O-35, O-36 y tres puntos a precisar (E-17 a E-19);
+   - lo demás son diferencias de concepto que decide el usuario: los patrones de velas (tamaño y swing), el rombo del
+     volumen de respuesta, el swing del cambio de carácter, el margen de la ruptura y el ancho del borde de caja.
+   Los fallos del motor van juntos en un motor nuevo al terminar las cinco galerías.
+   **Decidido la misma noche:** los patrones de velas, solo en un swing confirmado y con tamaño; el rombo, solo
+   cuando sube la respuesta; la ruptura de caja, con el primer cierre afuera; el borde de caja, con el 5% de la caja
+   (todo al motor nuevo). El cambio de carácter se le explica otra vez. O-34 se corrigió y las cinco galerías se
+   capturaron otra vez (268 casos).
+10. **Motor 7 (24/11):** el cambio de carácter rompe el swing que originó el tramo, con la tendencia confirmada por
+    cierres (respuestas del usuario a la pregunta 3 y al trade 71), y el Gaussian Channel 42 quedó bien. Con lo decidido
+    antes, el motor 7 cambia los patrones de velas, el rombo (también en el indicador y en la investigación del Volumen
+    de Respuesta, con la paridad en 0), la ruptura y el borde de caja y el cambio de carácter, y corrige F-18, F-19 y
+    F-20. Solo deja fuera las corridas que usan algo de eso. Detalle en el CLAUDE.md de App 1, "Motor 7". Los 8
+    elementos se corrieron con el motor 7 en la copia aislada (`tests/audit/galeria_corridas_m7.py`) y volvieron a la
+    galería 1 con casos nuevos.
+11. **Galería 2 (Lector VPA) revisada por el usuario (24/11):** Sí 16, No 12 y No sé 4 de 32
+    (`evidencia/etapa7/galeria_marcas_2.txt`). Cada caso se revisó con los datos de su corrida
+    (`revision_visual/G2_RESPUESTAS.md`):
+    - sin fallos del motor;
+    - la causa de casi todos los "No": el volumen alto se mide contra su hora, y el usuario lo compara con las velas de al
+      lado. Una vela de una hora tranquila puede tener mucho volumen para su hora y menos que casi todas sus vecinas;
+    - en la prueba de poco volumen falta el contexto: el usuario la espera después de una consolidación, y las cuatro
+      caen en tramos fuertes;
+    - dos lecturas: en la ruptura con volumen la regla sí entró donde el usuario quería (trades 102 y 143), y el medidor
+      75 sí cruzó el umbral;
+    - O-37: el panel del lector, muy bajo en las capturas, y la caja del elemento sobre la mecha.
+
+    Siete propuestas, medidas en BTC 4h fase 1 con una copia del lector que tiene cada una como opción (sin ellas da las
+    mismas 1,420 señales):
+    - volumen alto también frente a las 20 velas anteriores;
+    - el esfuerzo sin resultado, no después de una vela ancha;
+    - la prueba, dentro de una consolidación y después de un clímax o un frenado de su lado;
+    - el frenado, con mecha de media vela;
+    - el retroceso, con una vela que vuelve;
+    - dos elementos nuevos: el medidor que gira y el esfuerzo con resultado.
+
+    **Decidido el mismo día: "Sí, todas".** Van al motor 7, en `vpa.py` y `vpa.js`, iguales al bit:
+    - cada propuesta es un parámetro, y con los valores de antes salen los mismos 1,488 elementos del motor 6;
+    - el medidor no cambia;
+    - en BTC 4h fase 1: el esfuerzo sin resultado pasa de 197 a 29, la prueba de 430 a 10, el frenado de 75 a 30 y el
+      clímax de 44 a 18; el esfuerzo con resultado da 650 y el medidor que gira, 174.
+
+    Los 8 elementos se corrieron otra vez en la copia aislada y vuelven a la página 2 con casos nuevos, el panel alto y
+    sus cifras al pie (O-37). Los 4 casos del cruce del medidor se capturaron otra vez. Detalle en
+    `revision_visual/G2_RESPUESTAS.md`, "Lo que decidió el usuario y lo que se hizo".
+
+    **Pruebas:**
+    - `test_motor7.py` suma 7 (16) y su prueba de las corridas que quedan fuera;
+    - `test_vpa.py` (11), al día;
+    - la paridad `vpa.parity.test.mjs` (12) compara el lector nuevo y el de antes. Además se comparó con las velas
+      reales de BTC 4h: 1,601 elementos y todas las lecturas, iguales.
+
+    Todas las del backend: 940 pasan. Fallan las 2 de siempre y las 11 diferencias ya explicadas del oráculo A con los
+    casos de B (`test_oraculo_a_casos.py`).
+
+    **Después, el caso 2 del esfuerzo sin resultado (24/11).** El usuario dijo que la vela del 17/04/21 sí tuvo
+    resultado: 10 veces su rango normal y 20 veces su volumen, con cuerpo grande. Es esfuerzo con resultado. Va al
+    motor 7 con el parámetro `wideResult`:
+    - el esfuerzo sin resultado no cuenta en una vela ancha, contra su hora y contra las 20 anteriores, la misma medida
+      de `skipAfterWide`;
+    - el esfuerzo con resultado es la vela ancha con volumen alto, sin pedir que el rango siga al volumen;
+    - el medidor no cambia.
+
+    En BTC 4h fase 1, el esfuerzo sin resultado pasa de 29 a 25 y el esfuerzo con resultado, de 650 a 1,066.
+
+    Las dos corridas de la galería se repitieron (21 y 305 trades):
+    - las velas que ya eran caso conservan su clave y, con ella, la marca del usuario (`keys` en
+      `galeria_corridas_m7.json`);
+    - los casos nuevos llevan claves nuevas;
+    - la vela del 17/04/21 es ahora un caso del esfuerzo con resultado.
+
+    Detalle en `revision_visual/G2_RESPUESTAS.md`, "El caso 2 del esfuerzo sin resultado".
+
+    **Pruebas:**
+    - `test_motor7.py` suma 1 (17);
+    - la paridad `vpa.parity.test.mjs` (12) mira también que ningún esfuerzo sin resultado caiga en una vela ancha;
+    - con las velas reales, el navegador y el backend dan los mismos 2,027 elementos;
+    - todas las del backend: 941 pasan y fallan las mismas 13. La del oráculo con la salida VPA ya fallaba con el valor
+      de antes.
+
+    **Y el medidor (24/11).** El usuario pidió que el medidor lea igual la vela ancha con volumen alto: «Sí, también el
+    medidor». Va con el parámetro `wideMeter`:
+    - en esa vela, el medidor ya no suma el esfuerzo sin resultado, contra su color;
+    - le suma como esfuerzo con resultado, a favor, con el grado del elemento;
+    - en las demás velas no cambia.
+
+    En BTC 4h fase 1:
+    - suma distinto en 529 de 8,076 velas y cambia de lado (±0.3) en el 6.4%;
+    - el cruce del umbral pasa de 244 a 247 (76 salen y 79 entran) y el giro, de 174 a 183;
+    - la vela del 17/04/21 ya no sube el medidor: lo baja de +0.28 a −0.29;
+    - el caso 75 del cruce, un «No» del usuario, ya no es un cruce.
+
+    Quedan fuera, además, las corridas con el cruce del umbral, el filtro del medidor (también leído en un marco mayor)
+    o la salida por el medidor.
+
+    La galería:
+    - el cruce y el giro se corrieron de nuevo, con las claves de sus casos de antes (el cruce, con las de su página
+      anterior: `QE_BEFORE` en `galeria_corridas_m7.py`);
+    - todos los casos del lector se capturaron otra vez con el medidor nuevo. Las capturas de antes quedan en
+      `antes_medidor`.
+
+    Detalle en `revision_visual/G2_RESPUESTAS.md`, "El medidor también lee así la vela ancha".
+
+    **Pruebas:**
+    - `test_motor7.py` (17) y la paridad (12), al día;
+    - con todos los valores de antes, el medidor es el del motor 6;
+    - con las velas reales, el navegador y el backend dan los mismos 2,037 elementos;
+    - `test_vpa.py`, `test_observer.py` y `observer.test.mjs` pasan;
+    - todas las del backend: 941 pasan y fallan las mismas 13.
+12. **Galerías 3 a 5: lo que faltaba en las capturas (25/11).** En la galería 3 el usuario vio que el 2.º sabio no traía
+    el AO: «Revisa también si hay otras imágenes que les haga falta los indicadores que se necesitan para el análisis y
+    corrígelos de una vez». Se revisaron los 31 + 7 + 6 elementos de las tres páginas (O-38 en `DEFECTOS.md`):
+    - **Williams y SMC:** el AO quedaba fuera del recorte en el 1.º y el 2.º sabio (la barra divergente también lo pide,
+      en rojo o en verde). Sus 8 casos se capturaron otra vez con los paneles y el AO alto. La ruptura de fractal y los
+      cuatro del SMC ya mostraban lo suyo sobre las velas.
+    - **Order flow:** faltaba casi todo. El footprint iba con unos 10 niveles por vela y sin cifras, y los elementos se
+      calculan con el step de análisis (`of_elements.analysis_step`: de 1 a 10 USD en BTC 15m, según el precio), así que
+      la celda que nombra el elemento no se veía. La tabla de la vela y el volumen quedaban fuera del recorte, y no se
+      sabía cuánto daba el elemento contra su umbral relativo. Los 124 casos se capturaron otra vez
+      (`tests/audit/galeria_of.py cola`, `capa_bc.js` con `opts.of`):
+      - el footprint, con el step de análisis de la vela de la señal, y los desequilibrios del elemento (diagonal de 4 a 1)
+        solo en los que los usan;
+      - los Elementos OF, solo con el código del elemento;
+      - abajo, el volumen y la tabla de la vela;
+      - en los 16 elementos de celdas, una imagen de cerca: la zona del elemento ampliada, con las cifras de cada celda y
+        un marco azul en las suyas;
+      - al pie (`galeria_of.py cifras`), el valor contra su umbral, o el volumen contra la mediana de las 20 anteriores en
+        los de vela de mucho volumen.
+
+      En 8 de los 124 casos el servidor dibujó las celdas más grandes: alguna vela de lo pedido pasaba de 200 niveles
+      (`footprint_store.MAX_LEVELS_PER_CANDLE`). Dos son de elementos de celdas: el apilado 773 y el Thin Print 3823,
+      también de cerca.
+
+      Después de O-39 se capturaron otra vez los 28 casos de esos 7 elementos con el tope por vela (`stepPerCandle` en
+      `capa_bc.js`). Quedan 4 con las celdas agrupadas en múltiplos redondos: el hueco 526, el apilado 773 y el Volume
+      Imbalance 843 y 1264. En ellos la vela misma de la señal pasaría de 200 niveles con las celdas del elemento, y el
+      pie lo dice. Los demás, con el Thin Print 3823 y el barrido real 157, van con las celdas del elemento.
+
+      De cerca, el ayudante vuelve a poner esas celdas después de desmarcar la casilla del contexto: desde O-39,
+      desmarcarla devolvía el footprint a sus celdas automáticas.
+    - **Perfil y liquidaciones:** el regreso al valor, el fallo y el extremo del valor se encuadran con el área de valor
+      entera (`opts.fit`; el fallo, con el borde que pasa y el POC). En el regreso al valor se cortaban su objetivo, el
+      borde contrario, y el POC. Las capturas de antes quedan en `antes_valor/`. Las liquidaciones ya mostraban sus
+      zonas.
+    - **Hallado en el ayudante de las capturas:**
+      - el Historial lista solo las 200 corridas más recientes de la moneda, y las de la galería del 22/11 ya habían
+        quedado fuera (O-40). `openRun` las abre ahora con el `loadRun` de la ventana;
+      - con el panel del navegador oculto, `drawChart` deja a `requestAnimationFrame` un cuadro pedido a menos de 33 ms,
+        y la escala se leía del dibujo anterior: una imagen de cerca salió ampliada en otro precio. `drawn()` pide dos
+        dibujos separados antes de leerla;
+      - de cerca, la etiqueta de la zona del trade elegido tapaba las cifras de su celda. Esa imagen va sin las franjas
+        del trade, sin lo que dibuja la regla y sin la marca de los Elementos OF.
+    - **O-39, corregido el mismo día** (el usuario dijo «Sí, hazlo»): en la app, el trade elegido de una regla de order
+      flow no encendía el footprint ni los Elementos OF, y el footprint no usaba las celdas del elemento. Ahora:
+      - los enciende;
+      - el footprint va con el step de análisis del día de la señal, que da el contexto del trade;
+      - el tope de 200 niveles es por vela (`step_cap=candle`). Antes una vela ancha subía el step de todas: en el
+        trade 559 del Zero Print, las 162 velas salían con 2.5 en vez de 2. Ahora 161 van con 2 y la ancha, con 4;
+      - los Elementos OF van solo con los de la regla.
+
+      Detalle en el CLAUDE.md de App 1, «Los de order flow (25/11, O-39…)».
+    - **Hallado al probarlo, O-41:** desde el motor 6 la ventana no abría la corrida de la dirección (`&run=`): el id
+      termina en 4 cifras hexadecimales (O-28) y se pedían solo dígitos. Corregido (`isRunOf`).
+    - Cada caso conserva su clave: las marcas del usuario siguen.
 
 ### Etapa 3 · R02, R03 y R06 a R15 (capa C, ARB salvo R02, R03 y R12)
 

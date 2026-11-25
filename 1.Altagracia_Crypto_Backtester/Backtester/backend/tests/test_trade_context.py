@@ -175,3 +175,29 @@ def test_sin_corrida_o_sin_trade_no_hay_contexto(saved):
     run_id, _ = saved
     assert rt.trade_context(run_id, 99) is None
     assert rt.trade_context("NO_EXISTE_15_f1_x_1", 1) is None
+
+
+def test_con_elementos_de_order_flow_da_el_step_de_analisis_del_dia(saved, monkeypatch):
+    """O-39 del protocolo de pruebas (25/11/2026): el gráfico dibuja el footprint del trade elegido con las celdas de los
+    elementos. El contexto da el step de análisis del día de la señal, el de of_elements._compute_day: la apertura del
+    primer minuto del día y la celda del almacén"""
+    run_id, _ = saved
+    trade = rt.load_run(run_id)["trades"][0]
+    assert "ofStep" not in rt.trade_context(run_id, trade["n"]), "sin almacén de trades no hay footprint"
+    monkeypatch.setattr(rt, "has_store", lambda symbol: True)
+    days = []
+
+    def load_day(symbol, day):
+        days.append(day)
+        # Precios en centésimas y celda de 0.5 USD: la primera apertura del día, 20,000 USD
+        return {"info": np.array([100, 1000, 50]), "o": np.array([2_000_000, 2_600_000])}
+    monkeypatch.setattr(rt.oe.fs, "_load_day", load_day)
+    ctx = rt.trade_context(run_id, trade["n"])
+    assert ctx["ofStep"] == 2.0, "15m con BTC en 20,000: 2.5 USD, que queda en 2"
+    assert days == ["1970-01-01"], "el día UTC de la vela de la señal"
+    assert rt.oe.day_step("TEST", 15, trade["signal"]) == rt.oe.analysis_step(20000.0, 15, 0.5)
+    monkeypatch.setattr(rt.oe.fs, "_load_day", lambda symbol, day: {"info": np.array([100, 1000, 50]), "o": np.array([6_000_000])})
+    assert rt.oe.day_step("TEST", 15, trade["signal"]) == 5.0, "con 60,000, 7.5 USD queda en 5"
+    assert rt.oe.day_step("TEST", 240, trade["signal"]) == 50.0, "en 4h, 36 USD queda en 50"
+    monkeypatch.setattr(rt.oe.fs, "_load_day", lambda symbol, day: None)
+    assert rt.oe.day_step("TEST", 15, trade["signal"]) is None, "un día sin almacén"

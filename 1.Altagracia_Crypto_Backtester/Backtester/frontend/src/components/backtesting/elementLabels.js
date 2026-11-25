@@ -25,6 +25,7 @@ export const ELEMENT_LABELS = {
   // Lector VPA de Coulling (21/11)
   QA: 'Esfuerzo sin resultado', QB: 'Ruptura con volumen', QF: 'Ruptura sin volumen', QR: 'Retroceso sin volumen',
   QT: 'Prueba de poco volumen', QS: 'Frenado o techo', QC: 'Clímax de volumen', QE: 'Medidor VPA',
+  QV: 'Esfuerzo con resultado', QG: 'Giro del medidor',  // Motor 7 (24/11, galería 2)
   // Byko, de Bikotrading (21/11)
   FB: 'Falso rompimiento', BA: 'Ruptura tras acumulación', TA: 'Trampa de absorción', PO: 'Purga de OI',
   // Trader Dale: la zona y el primer regreso (21/11)

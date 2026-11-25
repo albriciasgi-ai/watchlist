@@ -66,6 +66,48 @@ function chart() {
   };
 }
 
+function indicatorManager() {
+  // El IndicatorManager del gráfico (un ref de MiniChart): sus indicadores, con su configuración en vivo
+  const got = chartFiber();
+  const ref = got && got.refs.find(r => r.current && Array.isArray(r.current.indicators) && typeof r.current.renderIndicators === 'function');
+  return ref ? ref.current : null;
+}
+
+function setOrderFlow(of = {}) {
+  // Galería 4 (25/11/2026): el footprint con el step de análisis de los elementos (of_elements.analysis_step), así sus
+  // celdas son las del elemento, con los desequilibrios del elemento (diagonal de 4 a 1, apilados de 3); y los Elementos
+  // OF con solo el código del elemento y la tabla de la vela. No guarda nada: vale hasta recargar la página
+  const im = indicatorManager();
+  if (!im) return '⚠ sin IndicatorManager';
+  const out = [];
+  const flow = im.indicators.find(x => x.name === 'Order Flow');
+  if (flow && of.step) {
+    // stepPerCandle (25/11, O-39): el tope de 200 niveles es de cada vela. Sin él, una vela ancha de lo encuadrado
+    // agrandaba las celdas de todas (8 casos de la galería 4 salieron así y se repitieron)
+    flow.updateConfig({ stepByMinutes: { [flow.tfMinutes]: of.step }, stepPerCandle: true, imbalanceRatio: 4,
+                        imbalanceMode: 'diagonal', stackedMinLevels: 3, showImbalances: of.imbalances !== false });
+    out.push(`footprint con celdas de ${of.step}` + (flow.enabled ? '' : ' ⚠ apagado'));
+  }
+  const elements = im.indicators.find(x => x.name === 'Elementos OF');
+  if (elements && of.codes) {
+    const codes = Object.fromEntries(Object.keys(elements.config.codes).map(code => [code, of.codes.includes(code)]));
+    elements.updateConfig({ codes, showTable: true, showBands: true, showGlyphs: true, showEMA: false });
+    out.push(`Elementos OF: ${of.codes.join(', ')}` + (elements.enabled ? '' : ' ⚠ apagado'));
+  }
+  return out.join(' · ');
+}
+
+function footprintCheck(t, want) {
+  // Las celdas con que el footprint dibujó la vela t: el servidor las agranda si alguna vela de lo pedido pasaría de
+  // 200 niveles (footprint_store.MAX_LEVELS_PER_CANDLE)
+  const im = indicatorManager();
+  const flow = im && im.indicators.find(x => x.name === 'Order Flow');
+  const fp = flow && flow.footprintMap.get(t);
+  if (!fp) return '⚠ sin el footprint de la vela de la señal';
+  const step = Number(fp.step_size);
+  return Math.abs(step - want) < 1e-9 ? `celdas de ${step}` : `⚠ el footprint dibuja celdas de ${step} (pedidas ${want})`;
+}
+
 const rows = () => [...document.querySelectorAll('table tr')].filter(r => /^\d+$/.test((r.cells[0]?.textContent || '').trim()));
 
 function detailText() {
@@ -203,6 +245,7 @@ async function prepare(n, tfMinutes, opts = {}) {
   const txt = detailText() || '';
   const times = parseTimes(txt);
   const tfMs = tfMinutes * 60000;
+  let of = opts.of ? setOrderFlow({ ...opts.of, step: (opts.of.steps || {})[n] }) : null;
   if (times.length >= 3) {
     const [signal, , exit] = times;
     const until = opts.until === 'signal' ? signal + (opts.after ?? 5) * tfMs : exit + (opts.after ?? 5) * tfMs;
@@ -211,9 +254,108 @@ async function prepare(n, tfMinutes, opts = {}) {
     // opts.settle: ms de espera antes de copiar el lienzo; opts.until 'signal': encuadra alrededor de la señal y no
     // hasta la salida, para ver el elemento con velas anchas
     if (opts.settle) { await sleep(opts.settle); c.handle.forceRedraw(); await sleep(300); }
+    if (of && (opts.of.steps || {})[n]) of += ' · ' + footprintCheck(signal, opts.of.steps[n]);
+    // Galería 5 (25/11/2026): opts.fit[n] = [bajo, alto] que tiene que verse entero, además de las velas (el área de
+    // valor de la sesión anterior, que quedaba cortada)
+    const fit = (opts.fit || {})[n];
+    if (fit) {
+      const d = await drawn();
+      const lo = Math.min(fit[0], d.ps.minPrice), hi = Math.max(fit[1], d.ps.maxPrice), room = (hi - lo) * 0.04;
+      if (showPrices(d, lo - room, hi + room)) await drawn();
+    }
     overlay(c, captionOf(txt), !!opts.panels);
   }
-  return { n, ready: ok, detail: txt, table: signalTable(), times };
+  return { n, ready: ok, detail: txt, table: signalTable(), times, ...(of ? { of } : {}) };
+}
+
+function showPrices(c, lo, hi) {
+  // La escala de precios justo en [lo, hi] (zoom y desplazamiento verticales, como Ctrl + rueda). Galería (25/11/2026)
+  const ps = c && c.ps;
+  if (!ps || !(hi > lo) || !(ps.maxPrice > ps.minPrice)) return false;
+  const H = ps.priceChartHeight;
+  c.view.verticalZoom = (ps.maxPrice - ps.minPrice) / (hi - lo);
+  c.view.verticalOffset = (hi - ps.minPrice) * (H / (hi - lo)) - H;
+  c.handle.forceRedraw();
+  return true;
+}
+
+async function closeUp(folder, name, n, info, tf, of) {
+  // Galería 4 (25/11/2026): la imagen de cerca de un elemento de order flow. Pocas velas alrededor de la señal, anchas,
+  // y el precio ampliado en la zona del elemento (of.zones[n], las celdas que dio of_elements) con unos `levels` niveles
+  // de alto, para que el footprint muestre las cifras de cada celda. Solo el área de precios
+  const tfMs = tf * 60000;
+  const [signal] = info.times || [];
+  if (!signal) return false;
+  const before = of.closeBefore ?? 2, after = of.closeAfter ?? 1;
+  // De cerca va sin lo que dibuja la regla ni la marca de los Elementos OF: sus rellenos y la etiqueta de la franja del
+  // elemento tapaban las cifras de su celda. Las celdas del elemento las señala un marco fino, sobre la copia
+  const context = await contextShown(false);
+  // Desde O-39 (25/11), desmarcar la casilla devuelve el footprint y los Elementos OF a lo guardado (celdas automáticas
+  // y todos los códigos): las celdas del elemento y los Elementos OF sin marcas se ponen después
+  setOrderFlow({ codes: [], step: (of.steps || {})[n], imbalances: of.imbalances });
+  // Las franjas del trade elegido (la zona de cada elemento, con su nombre encima de las celdas) salen solo de esta copia:
+  // el arreglo de getTradeBands se vacía y se devuelve al terminar
+  const props = (chartFiber() || {}).f?.memoizedProps || {};
+  const bands = typeof props.getTradeBands === 'function' ? props.getTradeBands() : null;
+  const kept = Array.isArray(bands) ? bands.splice(0) : null;
+  await frame(signal - before * tfMs, signal + after * tfMs, tfMs, of.closeWidth || 400, before + after + 1);
+  let c = await drawn();
+  const zone = (of.zones || {})[n], step = (of.steps || {})[n];
+  if (zone && step && c && c.ps) {
+    const pad = Math.max(3, ((of.levels || 26) - (zone[1] - zone[0]) / step) / 2) * step;
+    const lo = zone[0] - pad, hi = zone[1] + pad;
+    if (c.ps.maxPrice - c.ps.minPrice > hi - lo) showPrices(c, lo, hi);
+  }
+  await sleep(of.closeSettle ?? 1500);
+  c = await drawn();
+  const check = step ? footprintCheck(signal, step) : '';
+  overlay(c, captionOf(info.detail, 'de cerca') + ' · el marco azul son las celdas del elemento', false);
+  const marked = zone ? outline(c, signal, zone) : false;
+  const cv = document.querySelector('#__audit_overlay canvas');
+  const saved = cv ? await post('img', folder, name + '_cerca', cv.toDataURL('image/jpeg', 0.86)) : false;
+  if (kept && bands.length === 0) bands.push(...kept);
+  if (context) await contextShown(true);
+  return (saved ? 'de cerca' : '⚠ de cerca sin guardar') + (check ? ': ' + check : '') + (zone && !marked ? ' ⚠ sin el marco' : '')
+    + (context ? '' : ' ⚠ sin la casilla de lo que usó la regla');
+}
+
+async function contextShown(on) {
+  // La casilla «Ver en el gráfico lo que usó la regla» del detalle del trade elegido
+  const label = [...document.querySelectorAll('label')].find(l => /lo que usó la regla/.test(l.innerText || ''));
+  const box = label && label.querySelector('input[type=checkbox]');
+  if (!box) return false;
+  if (box.checked !== on) { box.click(); await sleep(600); }
+  return true;
+}
+
+async function drawn() {
+  // Un dibujo seguro antes de leer la escala: drawChart salta el cuadro si el anterior fue hace menos de 33 ms y lo deja
+  // a requestAnimationFrame, que con el panel del navegador oculto no corre. Dos pedidos separados dibujan, y la escala
+  // (ps) queda al día (una imagen de cerca salió ampliada con la escala de la vista anterior)
+  chart().handle.forceRedraw();
+  await sleep(80);
+  chart().handle.forceRedraw();
+  await sleep(80);
+  return chart();
+}
+
+function outline(c, signal, zone) {
+  // Un marco fino en las celdas del elemento (zona de precios en la vela de la señal), sobre la copia del lienzo
+  const cv = document.querySelector('#__audit_overlay canvas');
+  const s = c && c.scale;
+  if (!cv || !s) return false;
+  const x = s.timeToX(signal);
+  if (x === null || x === undefined) return false;
+  const bar = s.chartWidth / s.visibleCandles.length;
+  const ratio = c.canvas.width / c.canvas.getBoundingClientRect().width;  // píxeles del lienzo por píxel CSS
+  const k = cv.width / c.canvas.width;
+  const px = (v) => v * ratio * k;
+  const top = px(s.priceToY(zone[1])), bottom = px(s.priceToY(zone[0]));
+  const ctx = cv.getContext('2d');
+  ctx.strokeStyle = '#1E5BFF';
+  ctx.lineWidth = Math.max(2, Math.round(2 * k));
+  ctx.strokeRect(px(x - bar / 2) + 1, top - 1, px(bar) - 2, bottom - top + 2);
+  return true;
 }
 
 async function shoot(folder, n, tf, opts = {}) {
@@ -222,6 +364,7 @@ async function shoot(folder, n, tf, opts = {}) {
   let saved = false;
   let cv = document.querySelector('#__audit_overlay canvas');
   if (cv) saved = await post('img', folder, name + (opts.panels ? '_paneles' : ''), cv.toDataURL('image/jpeg', 0.86));
+  if (opts.of && opts.of.closeUp) info.closeUp = await closeUp(folder, name, n, info, tf, opts.of);
   const tfMs = tf * 60000;
   const [signal, , exit] = info.times || [];
   const long = !!(signal && exit && (exit - signal) / tfMs > (opts.longBars ?? 60));
@@ -236,7 +379,8 @@ async function shoot(folder, n, tf, opts = {}) {
     overlay(c, captionOf(info.detail, 'completo'), false);
   }
   await post('json', folder, name, info);
-  return { n, ready: info.ready, saved, long, head: (info.detail || '').split('\n').slice(0, 3).join(' | '), table: info.table, times: info.times };
+  return { n, ready: info.ready, saved, long, head: (info.detail || '').split('\n').slice(0, 3).join(' | '), table: info.table, times: info.times,
+           of: [info.of, info.closeUp].filter(Boolean).join(' · ') };
 }
 
 function levelsOf(txt) {
@@ -443,6 +587,7 @@ async function shot(folder, n, tf, opts = {}) {
   const t = (r.table || []).map(x => x[0]).join('');
   let chk = '';
   try { chk = autocheck(detailText(), r.times, tf, { ...(opts.straddle || opts.stopOrder ? { stopEntry: true } : {}), ...(opts.tp ? { noTarget: true } : {}) }); if (opts.straddle) chk += '; ' + await straddleCheck(detailText(), r.times, { tf, ...opts.straddle }); if (opts.stopOrder) chk += '; ' + await stopOrderCheck(detailText(), r.times, { tf, ...opts.stopOrder }); if (opts.exit) chk += '; ' + exitCheck(detailText(), r.times, { tf, ...opts.exit }); if (opts.tp) chk += '; ' + tpCheck(detailText(), r.times, { tf, ...opts.tp }); if (opts.swing) chk += '; ' + swingCheck(detailText(), r.times, opts.swing); if (opts.source) chk += '; ' + stopSourceCheck(detailText(), r.times, opts.source); if (opts.fvg) chk += '; ' + fvgCheck(detailText(), r.times, { tf, ...opts.fvg }); if (opts.trail) chk += '; ' + trailCheck(detailText(), r.times, { tf, ...opts.trail }); } catch (e) { chk = 'error de la comprobación: ' + e.message; }
+  if (r.of) chk += '; ' + r.of;
   return `${r.ready ? '' : 'NO LISTO '}${r.saved ? '' : 'SIN GUARDAR '}${r.long ? 'LARGO (3 capturas) ' : ''}${r.head} [tabla ${t}] {${chk}}`;
 }
 
@@ -732,6 +877,21 @@ async function batch(name, from, to, tf, opts = {}) {
   return out.join('\n');
 }
 
+function appLoadRun() {
+  // El loadRun de la ventana (un useCallback de RuleTesterApp): abre una corrida por su id, como "Ver" en el Historial o
+  // el &run= de la dirección. Galería (25/11): el Historial lista solo las 200 corridas más recientes de la moneda, y las
+  // de la galería del 22/11 ya quedaron fuera
+  for (let f = fiberOf(document.querySelector('button')); f; f = f.return) {
+    if (typeof f.type !== 'function') continue;
+    for (let h = f.memoizedState; h && typeof h === 'object' && 'next' in h; h = h.next) {
+      const s = h.memoizedState;
+      const src = Array.isArray(s) && typeof s[0] === 'function' ? String(s[0]) : '';
+      if (/tester\/result\/\$\{id\}/.test(src) && /setResults/.test(src) && /setTab\(['"]resumen['"]\)/.test(src)) return s[0];
+    }
+  }
+  return null;
+}
+
 async function openRun(run) {
   // Abre una corrida guardada como el botón "Ver" de su fila en el Historial (la clave React de la fila es su id) y
   // espera a que la lista de trades sea la suya: el trade 1 de la página tiene la vela de la señal del trade 1 guardado.
@@ -744,8 +904,12 @@ async function openRun(run) {
     await sleep(250);
     row = [...document.querySelectorAll('tr')].find(tr => { const f = fiberOf(tr); return f && f.key === run; });
   }
-  if (!row) throw new Error('No está la corrida ' + run + ' en el Historial');
-  [...row.querySelectorAll('button')].find(b => b.innerText.trim() === 'Ver').click();
+  if (row) [...row.querySelectorAll('button')].find(b => b.innerText.trim() === 'Ver').click();
+  else {
+    const load = appLoadRun();
+    if (!load) throw new Error('No está la corrida ' + run + ' en el Historial');
+    await load(run);
+  }
   await sleep(1500);
   await ready();
   // Fases 2 y 3 (etapa 5): el gráfico queda tapado hasta pedirlo, y sin él no se dibujan las cajas ni se va al trade

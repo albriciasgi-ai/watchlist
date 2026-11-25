@@ -48,7 +48,8 @@ MAX_PAIRS = 150        # Parejas por barrido: con más, el umbral sube y el azar
 # Familias (23/11/2026, pedido del usuario): elementos que miden lo mismo, para marcarlos juntos y barrer sus parejas
 # dentro de una familia o entre dos. Cada elemento está en una sola
 FAMILIES = (
-    ("volume", "Volumen y VPA", ("VH", "RF", "RB", "QA", "QB", "QF", "QR", "QT", "QS", "QC", "QE")),
+    # QV y QG: los elementos nuevos del Lector VPA del motor 7 (esfuerzo con resultado y el medidor que gira, 24/11)
+    ("volume", "Volumen y VPA", ("VH", "RF", "RB", "QA", "QV", "QB", "QF", "QR", "QT", "QS", "QC", "QE", "QG")),
     ("delta", "Delta del footprint", ("DT", "DD", "PD", "DB", "DV", "XD", "SM", "VD", "AD")),
     ("imbalance", "Desequilibrios y agresión", ("IV", "ST", "VI", "IR", "RD", "SW", "VL", "SQ", "BR", "GR", "TP", "ZP", "EX", "RS", "RL", "RX")),
     ("value", "Valor y POC", ("VA", "OG", "AP", "SL", "PW", "OP", "DA", "DC")),

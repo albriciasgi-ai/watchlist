@@ -60,7 +60,8 @@ def test_la_regla_opera_el_cambio_de_caracter_y_respeta_el_horario(monkeypatch):
     raw = {"name": "C", "tf": TF, "recipe": {"slots": [{"codes": ["CC"]}]}, "cc": {"swing": 2, "legs": 2},
            "stop": {"type": "zone", "buffer": 0.1, "maxAtr": 100}, "exit": {"targetR": None, "horizon": 5}, "cooldown": 0}
     rule = rt.clean_rule(raw)
-    assert rule["cc"] == {"tf": TF, "offset": 0, "swing": 2, "legs": 2} and "hours" not in rule
+    # ref y closes, de fábrica desde el motor 7: en esta escalera el swing que originó el último tramo es el último mínimo
+    assert rule["cc"] == {"tf": TF, "offset": 0, "swing": 2, "legs": 2, "ref": "origin", "closes": True} and "hours" not in rule
     trade = rt.run("X", rule, {"bars": bars, "events": []}, PHASE, None, base=False)["trades"][0]
     assert trade["dir"] == -1 and trade["stop"] > 108.1 and trade["cc"]["level"] == pytest.approx(104.4) and trade["votes"] == ["CC"]
     known = trade["signal"] + MS
@@ -117,14 +118,17 @@ def hammer_day():
 def test_patron_de_rechazo_como_elemento_con_tendencia_y_volumen(monkeypatch):
     monkeypatch.setattr(rt.fs, "minutes", lambda *a: None)
     bars = hammer_day()
+    # El martillo como hasta el motor 6 (sin tamaño ni swing): esta prueba es de la tendencia previa y del volumen. Con
+    # el tamaño y el swing, test_motor7.py
     raw = {"name": "P", "tf": TF, "recipe": {"slots": [{"codes": ["HM"]}]}, "stop": {"type": "candle", "buffer": 0.1, "maxAtr": 100},
-           "exit": {"targetR": None, "horizon": 5}, "cooldown": 0}
+           "exit": {"targetR": None, "horizon": 5}, "cooldown": 0, "pat": {"minPart": 0, "swingBefore": 0, "swingAfter": 0}}
     rule = rt.clean_rule(raw)
-    assert rule["pat"] == {"trend": True, "trendBars": 5, "minZ": None, "wick": 2.0} and "lines" not in rule
+    assert rule["pat"] == {"trend": True, "trendBars": 5, "minZ": None, "wick": 2.0, "minPart": 0.0, "swingBefore": 0, "swingAfter": 0}
+    assert "lines" not in rule
     result = rt.run("X", rule, {"bars": bars, "events": []}, PHASE, None, base=False)
     trade = result["trades"][0]
     assert trade["signal"] == bars[45]["t"] and trade["dir"] == 1 and trade["pat"]["type"] == "HAMMER" and trade["stop"] < 106.0
-    loud = rt.clean_rule({**raw, "pat": {"minZ": 2}})
+    loud = rt.clean_rule({**raw, "pat": {**raw["pat"], "minZ": 2}})
     assert [t["signal"] for t in rt.run("X", loud, {"bars": list(bars), "events": []}, PHASE, None, base=False)["trades"]] == [bars[45]["t"]]
     quiet = [dict(b) for b in bars]
     quiet[45]["vol"] = 10.0
@@ -133,7 +137,7 @@ def test_patron_de_rechazo_como_elemento_con_tendencia_y_volumen(monkeypatch):
     rising = path([100 + k * 0.5 for k in range(60)] + [130] * 60)
     rising[45].update(o=122.9, c=123.0, h=123.05, l=121.5)
     assert rt.run("X", rule, {"bars": rising, "events": []}, PHASE, None, base=False)["trades"] == []
-    free = rt.clean_rule({**raw, "pat": {"trend": False}})
+    free = rt.clean_rule({**raw, "pat": {**raw["pat"], "trend": False}})
     assert len(rt.run("X", free, {"bars": list(rising), "events": []}, PHASE, None, base=False)["trades"]) == 1
 
 

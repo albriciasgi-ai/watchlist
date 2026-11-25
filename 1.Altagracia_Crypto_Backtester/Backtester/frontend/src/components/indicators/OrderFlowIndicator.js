@@ -153,6 +153,9 @@ class OrderFlowIndicator extends IndicatorBase {
       showDeltaMarks: true,
       deltaMarkMinShare: 0.2, // Parte del volumen de la vela que debe ir contra su color
       stepByMinutes: {}, // Step elegido por marco, en minutos. Sin valor es automático
+      // Con step elegido, el tope de 200 niveles es de cada vela: una vela ancha agrupa los suyos y las demás quedan con el
+      // step. Lo usa el trade elegido del probador con el step de los elementos de order flow (O-39, 25/11/2026)
+      stepPerCandle: false,
       maxLevels: 10, // Con step automático, niveles que puede tener una vela
       imbalanceRatio: 3,
       imbalanceMode: 'level', // 'level': mismo nivel. 'diagonal': compra contra la venta del nivel inferior
@@ -168,8 +171,8 @@ class OrderFlowIndicator extends IndicatorBase {
 
   // Lo que cambia la respuesta del backend: si cambia, lo cargado ya no sirve
   _dataRules() {
-    const { imbalanceRatio, imbalanceMode, imbalanceCandleVolumePct, imbalanceCandleVolumeBars, imbalanceCellSharePct, imbalanceCountZero, stackedMinLevels, maxLevels } = this.config;
-    return JSON.stringify([this._stepOverride(), imbalanceRatio, imbalanceMode, imbalanceCandleVolumePct, imbalanceCandleVolumeBars, imbalanceCellSharePct, imbalanceCountZero, stackedMinLevels, maxLevels]);
+    const { imbalanceRatio, imbalanceMode, imbalanceCandleVolumePct, imbalanceCandleVolumeBars, imbalanceCellSharePct, imbalanceCountZero, stackedMinLevels, maxLevels, stepPerCandle } = this.config;
+    return JSON.stringify([this._stepOverride(), imbalanceRatio, imbalanceMode, imbalanceCandleVolumePct, imbalanceCandleVolumeBars, imbalanceCellSharePct, imbalanceCountZero, stackedMinLevels, maxLevels, !!stepPerCandle]);
   }
 
   _stepOverride() {
@@ -305,6 +308,8 @@ class OrderFlowIndicator extends IndicatorBase {
       params.append('step_mode', 'uniform');
     } else if (!this._stepOverride()) {
       params.append('max_levels', String(this.config.maxLevels));
+    } else if (this.config.stepPerCandle) {
+      params.append('step_cap', 'candle');
     }
     params.append('imbalance_ratio', String(this.config.imbalanceRatio));
     params.append('imbalance_mode', this.config.imbalanceMode);

@@ -150,7 +150,11 @@ export function ruleFacets(rule, labels = {}) {
   }
   if (rule.pat && codes.some(code => ['HM', 'EN', 'DJ'].includes(code))) {
     const pat = rule.pat;
-    add('pat', `${pat.trend !== false ? `tras ${pat.trendBars} velas en contra` : 'sin tendencia previa'}${pat.minZ !== null && pat.minZ !== undefined ? `, volumen z ≥ ${n(pat.minZ)}` : ''}, mecha ≥ ${n(pat.wick)} cuerpos`);
+    const minPart = pat.minPart ?? 0.5;
+    const before = pat.swingBefore ?? 5;
+    const after = pat.swingAfter ?? 2;
+    add('pat', `${pat.trend !== false ? `tras ${pat.trendBars} velas en contra` : 'sin tendencia previa'}${pat.minZ !== null && pat.minZ !== undefined ? `, volumen z ≥ ${n(pat.minZ)}` : ''}, mecha ≥ ${n(pat.wick)} cuerpos`
+      + `${minPart > 0 ? `, mide ≥ ${n(minPart)} ATR` : ''}${before || after ? `, en un swing (${before} velas antes, confirmado con ${after})` : ''}`);
   }
   if (rule.rv && (has('RF') || has('RB'))) {
     const rv = rule.rv;
@@ -174,7 +178,7 @@ export function ruleFacets(rule, labels = {}) {
   if (rule.vpa && codes.some(code => code.length === 2 && code[0] === 'Q')) {
     const q = rule.vpa;
     const parts = [`cuenta desde ${Math.round(Number(q.fire) * 100)}%`, `tramo de ${n(q.legAtr)} ATR`];
-    if (has('QE')) parts.push(`medidor ±${n(q.meter)}, memoria ${n(q.decay)}`);
+    if (has('QE') || has('QG')) parts.push(`medidor ±${n(q.meter)}, memoria ${n(q.decay)}`);
     if (has('QB') || has('QF') || has('QR')) parts.push(`rango de ${q.rangeBars} velas de hasta ${n(q.maxRangeAtr)} ATR`);
     if (has('QR')) parts.push(`retroceso en ${q.pullBars} velas`);
     add('vpa', parts.join(', '));

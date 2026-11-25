@@ -381,7 +381,7 @@ def profile(symbol, start_ms, end_ms, known_until_ms, low, high, rows, live=None
 
 
 def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, step=None, imbalance=None, max_levels=None,
-               live=None):
+               live=None, cap_per_candle=False):
     """
     Footprints de las velas que empiezan entre start_ms y end_ms.
     known_until_ms corta la informacion: un minuto solo cuenta si ya termino en ese instante.
@@ -393,6 +393,11 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
     max_levels es el tope por vela con step automatico: una vela ancha sube su propio step.
     live: tambien dias de la nube donde falta el oficial (ver arriba). Sus velas llevan
     source "live", y gap True si tocan un hueco de la grabacion (volumen incompleto).
+    cap_per_candle (con step): el tope de MAX_LEVELS_PER_CANDLE niveles es de cada vela. Una vela que pasaria del tope une
+    sus niveles en grupos redondos (2, 5, 10...) y las demas quedan con el step pedido; sin el, una sola vela ancha sube
+    el step de todas. Lo pide el trade elegido del probador, con el step de los elementos de order flow (O-39 del
+    protocolo de pruebas, 25/11/2026): asi las celdas de la vela de la senal son las del elemento, y las agrupadas, sumas
+    de ellas
     """
     live = _live(live)
     imbalance = imbalance or {}
@@ -429,8 +434,10 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
     # El step es multiplo de la celda guardada, para que todos los niveles midan lo mismo
     shown = candles["start"] >= start_min
     widest = float((candles["high"] - candles["low"])[shown].max()) if shown.any() else 0.0
-    least = 0 if max_levels else math.ceil(widest * ps / MAX_LEVELS_PER_CANDLE / ticks) * ticks
+    per_candle = bool(step) and cap_per_candle and not max_levels
+    least = 0 if max_levels or per_candle else math.ceil(widest * ps / MAX_LEVELS_PER_CANDLE / ticks) * ticks
     step_ticks = max(ticks, int(round(used_step * ps / ticks)) * ticks, least)
+    group_cap = MAX_LEVELS_PER_CANDLE if per_candle else max_levels
 
     cells = _cell_sums(wanted, tf, step_ticks)
     volumes = candles["buy"] + candles["sell"]
@@ -442,7 +449,7 @@ def footprints(symbol, interval_minutes, start_ms, end_ms, known_until_ms=None, 
         first, stop = np.searchsorted(cells["start"], [t, t + 1])
         if first == stop:
             continue
-        levels, level_step = _levels(cells, first, stop, step_ticks, ps, max_levels)
+        levels, level_step = _levels(cells, first, stop, step_ticks, ps, group_cap)
         poc = max(range(len(levels)), key=lambda i: levels[i]["total_volume"])
         past = volumes[max(0, index - ZSCORE_LOOKBACK):index]
         mean = float(past.mean()) if len(past) else 0.0

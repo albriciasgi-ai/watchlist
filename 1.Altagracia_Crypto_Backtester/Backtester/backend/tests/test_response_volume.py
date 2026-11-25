@@ -157,3 +157,24 @@ def test_los_elementos_en_memoria_no_pasan_de_unas_velas_a_otras():
     b = [dict(x, c=1.6) for x in a]
     assert rt._bars_key(a) == rt._bars_key(list(a)) and rt._bars_key(a) != rt._bars_key(b) and rt._bars_key(a) != rt._bars_key(a[:-1])
     assert "id(bars)" not in open(rt.__file__, encoding="utf-8").read().replace("`id(bars)`", "")
+
+
+def test_el_rombo_sale_solo_cuando_sube_la_respuesta():
+    # Motor 7 (23/11/2026, decidido por el usuario): la verde de 100 deja la ventana en la vela 4 y el balance cae. Con la
+    # regla de antes salía ahí el rombo; ahora sigue armado, la roja de 20 no sube la respuesta (30) y la de 50 sí
+    import numpy as np
+    import measures
+    rows = [(100, 101, 100), (101, 100.8, 30), (100.8, 101.2, 10), (101.2, 101.6, 10), (101.6, 102, 10), (102, 101.8, 20), (101.8, 101.5, 50)]
+    side = np.array([np.sign(c - o) for o, c, _ in rows], dtype=np.int8)
+    weight = np.array([v for _, _, v in rows], dtype=float)
+    direction, start = np.ones(len(rows), dtype=int), np.zeros(len(rows), dtype=int)
+    window, top = measures.RESPONSE_WINDOW, measures.RESPONSE_TOP
+    try:
+        measures.RESPONSE_WINDOW, measures.RESPONSE_TOP = 4, 1
+        values, answers = measures.balance(side, weight, direction, start, parts=True)
+    finally:
+        measures.RESPONSE_WINDOW, measures.RESPONSE_TOP = window, top
+    assert values[4] <= measures.BALANCE and values[5] <= measures.BALANCE
+    assert list(np.nonzero(measures.equilibrium(values, direction, start, answers, side))[0]) == [6]
+    assert list(np.nonzero(measures.equilibrium(values, direction, start))[0]) == [4], "sin answers, la regla de antes"
+    assert np.isnan(answers[0]) and answers[1] == 30 and answers[5] == 20 and answers[6] == 50
