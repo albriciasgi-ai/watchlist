@@ -55,6 +55,32 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Scanner - 25 Noviembre 2026: Estudio del Pump (sin Cambios en las Apps)
+
+**Pedido:** probar en App 1 lo que el scanner muestra como moneda «en juego», pensado como una estrategia de pump, para refinarlo. El usuario pidió comparar el volumen también con las últimas N velas, dejar fuera las monedas muy pequeñas y empezar con trades de unos 2,500 USDT para crecer hasta 10,000.
+
+**Cambios:** ninguno en el código de las apps.
+1. **Plan fijado antes de correr:** `docs/PLAN_PUMP.md`, con la definición del pump, los datos, los controles y el criterio.
+2. **Datos:** velas de 1 hora de los 837 perpetuos USDT de Bybit (cripto e innovación), con los 321 cerrados, en `OrderFlowData/research/pump/2026-11-24/candles/` (240 MB).
+3. **Liquidez:** foto del libro de las 516 monedas en operación, con órdenes de 2,500, 5,000 y 10,000 USDT. De ahí salen tres escalones por el volumen diario de los 30 días anteriores: 5 M, 10 M y 32 M.
+4. **Estudio** (`estudio.py` de esa carpeta): solo los dos primeros tramos de la fase 1.
+5. **15 y 5 minutos** (pedido después: los pumps son cortos): velas de 5 minutos de las 124 monedas con historia, bajadas solo hasta 2022, y `estudio_fino.py`. Hipótesis fijada aparte en el mismo plan, con el umbral subido a 3.1 por ser 26 pruebas.
+
+**IMPORTANTE:**
+- **Ninguna de las 14 pruebas pasa.** La que más se acerca queda en 1.7 errores, y el umbral era 2.9.
+- **La subida con volumen no sigue: tiende a devolverse** (de 4 a 10 puntos bajo el azar con volumen de 5 a 10 veces, en los dos tramos). Es lo único con el mismo signo en los dos, pero no pasa el umbral.
+- **La regla del scanner sola no separa** (de −1.9 a +4.0 puntos, con el signo cambiando).
+- **La caída con volumen siguió cayendo en 2022** y no antes: es el año bajista.
+- **Liquidez:** 10,000 USDT a mercado con 10 bps o menos caben hoy en 15 monedas (desde 32 M por día); 2,500 USDT, con unos 11 bps, desde 5 M (unas 75 monedas). Las monedas en pleno pump tienen mucho volumen y libro fino: de 70 a 117 bps para 10,000 USDT.
+- **Muestra chica:** solo 124 monedas tienen historia suficiente antes de 2023.
+- **En 15 minutos no hay nada.**
+- **En 5 minutos las 12 pruebas salen al revés en los dos tramos:** tras una vela con volumen y avance, el precio tiende a volver, 3 a 6 puntos más que el azar. Una pasa el umbral (la caída con volumen de 3 veces). Pero ir al revés deja cerca de 0.15 ATR por trade y la comisión son 0.26 a 0.29 ATR: no alcanza.
+- **Cierre:** en 1 hora, 15 y 5 minutos, entrar a favor de un pump no gana, y entrar en contra gana menos que su costo. La moneda «en juego» sirve para elegir dónde mirar, no como señal.
+
+**Ver:** `docs/PLAN_PUMP.md` y `docs/RESULTADOS_PUMP.txt`
+
+---
+
 ### Altagracia Trading Suite - 24 Noviembre 2026: Panel Lateral de la Watchlist con Partes Plegables
 
 **Pedido:** con el panel de las reglas en vivo, el panel lateral de la Watchlist quedó muy largo y lo último queda muy abajo. El usuario pidió que cada parte sea desplegable.
