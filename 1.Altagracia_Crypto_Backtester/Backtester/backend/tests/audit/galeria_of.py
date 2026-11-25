@@ -152,8 +152,9 @@ def text(code, f):
 
 
 def cells(f, line):
-    """Las celdas del footprint: las del elemento, o las que dibujó el servidor si alguna vela de lo pedido pasaba de 200
-    niveles (lo dice la línea de la captura: capa_bc.js, footprintCheck)."""
+    """Las celdas del footprint: las del elemento, o las que dibujó el servidor si la vela de la señal pasaba de 200
+    niveles con ellas (lo dice la línea de la captura: capa_bc.js, footprintCheck). Desde el 25/11 las capturas van con
+    el tope por vela (stepPerCandle): una vela ancha vecina ya no agranda las celdas de la señal."""
     step, line = f"{f['step']:g}", line or ""
     view = re.search(r"Elementos OF: [^·]*· ⚠ el footprint dibuja celdas de ([\d.]+)", line)
     close = re.search(r"de cerca: ⚠ el footprint dibuja celdas de ([\d.]+)", line)
@@ -161,8 +162,9 @@ def cells(f, line):
         return f"celdas de {step} USD, como el elemento"
     if close or "de cerca" not in line:
         shown = float((close or view).group(1))
-        return f"el elemento usa celdas de {step} USD; el footprint las dibuja de {shown:g}, porque alguna vela pasa de 200 celdas"
-    return f"de cerca, celdas de {step} USD, como el elemento; la vista las dibuja de {float(view.group(1)):g} (alguna vela pasa de 200 celdas)"
+        return (f"el elemento usa celdas de {step} USD; con ellas esta vela pasaría de 200 celdas, y el footprint la dibuja"
+                f" con celdas de {shown:g}")
+    return f"de cerca, celdas de {step} USD, como el elemento; la vista las dibuja de {float(view.group(1)):g} (la vela pasa de 200 celdas)"
 
 
 def figures(only):

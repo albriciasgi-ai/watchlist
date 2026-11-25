@@ -86,6 +86,9 @@ lo que faltaba en el order flow («Sí, hazlo»).
 - **Probado en pantalla** con la copia aislada y el Zero Print, trade 559. Antes, las 162 velas salían con celdas de 2.5 en
   vez de 2. Ahora 161 van con 2 y la única ancha, con 4.
 - Las marcas de las galerías siguen: cada caso conserva su clave.
+- **Después, con el tope por vela:** los 8 casos del order flow con las celdas agrandadas se capturaron otra vez. Quedan 4
+  agrupados en múltiplos redondos (hueco 526, apilado 773, Volume Imbalance 843 y 1264): la vela misma de la señal pasaría
+  de 200 niveles. El pie lo dice.
 - **Pendiente (O-40):** el Historial lista solo las 200 corridas más recientes de cada moneda.
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", «Los de order

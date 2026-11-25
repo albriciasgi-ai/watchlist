@@ -833,7 +833,15 @@ elementos de la galería funcionen bien". Todo en la copia aislada (backend 9300
 
       En 8 de los 124 casos el servidor dibujó las celdas más grandes: alguna vela de lo pedido pasaba de 200 niveles
       (`footprint_store.MAX_LEVELS_PER_CANDLE`). Dos son de elementos de celdas: el apilado 773 y el Thin Print 3823,
-      también de cerca. El pie lo dice.
+      también de cerca.
+
+      Después de O-39 se capturaron otra vez los 28 casos de esos 7 elementos con el tope por vela (`stepPerCandle` en
+      `capa_bc.js`). Quedan 4 con las celdas agrupadas en múltiplos redondos: el hueco 526, el apilado 773 y el Volume
+      Imbalance 843 y 1264. En ellos la vela misma de la señal pasaría de 200 niveles con las celdas del elemento, y el
+      pie lo dice. Los demás, con el Thin Print 3823 y el barrido real 157, van con las celdas del elemento.
+
+      De cerca, el ayudante vuelve a poner esas celdas después de desmarcar la casilla del contexto: desde O-39,
+      desmarcarla devolvía el footprint a sus celdas automáticas.
     - **Perfil y liquidaciones:** el regreso al valor, el fallo y el extremo del valor se encuadran con el área de valor
       entera (`opts.fit`; el fallo, con el borde que pasa y el POC). En el regreso al valor se cortaban su objetivo, el
       borde contrario, y el POC. Las capturas de antes quedan en `antes_valor/`. Las liquidaciones ya mostraban sus
