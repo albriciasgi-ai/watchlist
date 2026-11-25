@@ -64,6 +64,7 @@ import wise_smc_watch  # noqa: E402  Sabios de Williams y estructura SMC del ser
 import rule_watch  # noqa: E402  Reglas en vivo (Impulso, FVG nuevo y B1 del probador de App 1): registra y nunca envia
 import dx_watch  # noqa: E402  DX en vivo: la regla del probador de App 1 sobre el almacen en vivo, registra y nunca envia
 import scanner  # noqa: E402  scanner de monedas (22/11): mira todos los perpetuos USDT de Bybit; nunca envia ni graba
+import scan_follow  # noqa: E402  seguimiento de los hallazgos del scanner (24/11): mide cada uno a las 24 h; nunca envia
 import alpaca_data  # noqa: E402  acciones de EE. UU. desde Alpaca: footprints, velas y OI de opciones
 import mobile_devices  # noqa: E402  celulares emparejados y pedidos firmados
 import mobile_events  # noqa: E402  vigilante del bot para el celular y avisos push
@@ -103,6 +104,11 @@ RULES = rule_watch.RuleWatch(Path(CONFIG["data_dir"]) / "rules")   # docs/PLAN_R
 app.include_router(rule_watch.make_router(RULES))
 SCANNER = scanner.Scanner(Path(CONFIG["data_dir"]) / "scanner", symbols_source=lambda: SYMBOLS.load())
 app.include_router(scanner.make_router(SCANNER))
+# Seguimiento de los hallazgos del scanner (24/11, docs/PLAN_SEGUIMIENTO_SCANNER.md): lee su registro y mide cada hallazgo
+# a las 24 h con la historia de Bybit. Nunca envia nada
+FOLLOW = scan_follow.FollowTracker(Path(CONFIG["data_dir"]) / "scanner",
+                                   price_of=lambda s: (SCANNER.tickers.get(s) or {}).get("price"))
+app.include_router(scan_follow.make_router(FOLLOW))
 app.include_router(alpaca_data.make_router())
 
 
@@ -131,6 +137,7 @@ async def _startup():
     await DX.start()
     await RULES.start()
     await SCANNER.start()
+    await FOLLOW.start()
     COINS.start()
     if MOBILE_GATE.host and os.environ.get("SUITE_MOBILE", "1") != "0":
         MOBILE_EVENTS.start()
@@ -147,6 +154,7 @@ async def _shutdown():
     await WSMC.stop()
     await DX.stop()
     await RULES.stop()
+    await FOLLOW.stop()
     await SCANNER.stop()
     official.stop()
     await book_cloud.stop()
@@ -537,7 +545,7 @@ async def suite_status():
             "recorder": recorder.status(), "book": book_recorder.brief(), "book_cloud": book_cloud.brief(),
             "hyperliquid": hl_recorder.brief(), "hyperliquid_cloud": hl_cloud.brief(),
             "official": official.status(), "swing": SWING.brief(), "wsmc": WSMC.brief(), "dx": DX.brief(), "rules": RULES.brief(),
-            "scanner": SCANNER.brief()}
+            "scanner": SCANNER.brief(), "follow": FOLLOW.brief()}
 
 
 # Frontend ya armado (web/dist), servido desde aqui: una sola direccion para todo

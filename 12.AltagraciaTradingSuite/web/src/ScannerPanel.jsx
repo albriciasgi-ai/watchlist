@@ -245,7 +245,7 @@ function ConfigSection({ config, onSaved }) {
 
 export default function ScannerPanel({
   active, scan, panelList, onPanelList, source, onSource, gridList, onGridList, count, onCount, pins, onTogglePin,
-  suiteSymbols, onSymbolsAdded, onOpenChart, gridTf, onRefresh, onHide, onAddCoin = null,
+  suiteSymbols, onSymbolsAdded, onOpenChart, gridTf, onRefresh, onHide, onAddCoin = null, onOpenFollow = null,
 }) {
   const [selected, setSelected] = useState(null);
   const [detail, setDetail] = useState({ symbol: null, data: null, error: null });
@@ -343,6 +343,10 @@ export default function ScannerPanel({
           <button type="button" className="suite-btn" disabled={toggling || !status} onClick={toggleScanner}>
             {(config?.enabled ?? status?.enabled) ? 'Apagar el scanner' : 'Encender el scanner'}
           </button>
+          {onOpenFollow && (
+            <button type="button" className="suite-btn" onClick={onOpenFollow}
+              title="Qué pasó después de cada hallazgo: el movimiento importante y lo que se estaba encendiendo">Seguimiento</button>
+          )}
         </div>
         {(status?.errors || []).slice(-1).map(e => <div key={e.at} className="suite-result bad">{e.text}</div>)}
         <div className="wl-row wl-muted">
