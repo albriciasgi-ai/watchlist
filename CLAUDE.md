@@ -81,6 +81,38 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ---
 
+### Altagracia Trading Suite - 24 Noviembre 2026: Seguimiento de los Hallazgos del Scanner (partes 1 y 2 del concepto de compras)
+
+**Pedido:** ver, desde que el scanner encuentra una moneda, en qué punto ocurrió un movimiento importante y qué variables e indicadores se estaban encendiendo, para definir un procedimiento de compra. Se le dio un concepto en 4 partes: el seguimiento, la pantalla, la historia del scanner y el procedimiento. Pidió empezar por el seguimiento («Sí, empieza»).
+
+**Cambios:**
+1. **Plan:** `docs/PLAN_SEGUIMIENTO_SCANNER.md`, con las definiciones fijadas antes de registrar y lo medido el 24/11.
+2. **Servidor** (`server/scan_follow.py`): lee el registro del scanner sin cambiarlo.
+   - Un hallazgo es una moneda que entra a una lista sin estar en ninguna.
+   - Cada vuelta suma 2 controles.
+   - A las 24 h y 10 min mide, con la historia de Bybit:
+     - el movimiento importante (3 ATR de 1 h) y la carrera a 2 ATR;
+     - las variables al hallazgo;
+     - los 33 elementos de velas del probador de App 1.
+   - Nunca envía nada.
+3. **Página:** módulo "Seguimiento", desde el panel del scanner o "Pestañas". Tiene:
+   - la lista;
+   - el detalle con sus 48 h: un gráfico propio en ATR desde el hallazgo, con OI, cuentas en largo, BTC y una fila por elemento;
+   - el informe contra el control.
+4. **Pruebas:** `follow_checks.py` (98) y `follow.test.mjs` (11). Pasan las demás del servidor y de la página, y la página se arma.
+
+**IMPORTANTE:**
+- Llega a la suite del usuario al unir esta rama a main y poner al día su carpeta. La suite se reinicia sola al abrirla y arma la página nueva.
+- Al encenderse arma lo anotado desde el 23/11 (unos 170 hallazgos y 270 controles) en cerca de una hora, primero los hallazgos.
+- Ocupa unos 1.6 MB por día, comprimido.
+- Es para mirar y elegir hipótesis: una regla de compra se fija aparte y se juzga en datos que no se miraron.
+- **No está el order flow:** las monedas del scanner no se graban. Bajarlo de los archivos del día siguiente es un paso aparte.
+- **Probado en una copia aislada** con una copia del registro real del scanner y Bybit real, a 1366×768. No se probó en Electron.
+
+**Ver:** `docs/PLAN_SEGUIMIENTO_SCANNER.md` y `12.AltagraciaTradingSuite/CLAUDE.md` sección "Seguimiento del scanner (24/11)"
+
+---
+
 ### Altagracia Trading Suite - 24 Noviembre 2026: Panel Lateral de la Watchlist con Partes Plegables
 
 **Pedido:** con el panel de las reglas en vivo, el panel lateral de la Watchlist quedó muy largo y lo último queda muy abajo. El usuario pidió que cada parte sea desplegable.

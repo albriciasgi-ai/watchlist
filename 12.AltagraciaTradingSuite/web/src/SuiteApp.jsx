@@ -9,6 +9,7 @@ import JournalView from './JournalView.jsx';
 import TabsMenu from './TabsMenu.jsx';
 import LiquidityMapView from './LiquidityMapView.jsx';
 import CoinsView from './CoinsView.jsx';
+import FollowView from './FollowView.jsx';
 import { MODULE_PARAM, TAB, URL_CHART_TIMEFRAME, URL_SYMBOL, startTabHeartbeat, tabUrl } from './tabs.js';
 import { useBotNotifications } from './botNotifications.js';
 
@@ -104,6 +105,7 @@ export default function SuiteApp() {
             onOpenTheme={() => setShowTheme(true)}
             onModule={openModule}
             onOpenCoins={openCoins}
+            onOpenFollow={() => choose('seguimiento')}
           />
         </div>
       )}
@@ -122,6 +124,15 @@ export default function SuiteApp() {
           active
           focus={coinsFocus}
           onFocusDone={() => setCoinsFocus(null)}
+          onBack={() => choose('chart')}
+          onWatchlist={() => choose('watchlist')}
+          onOpenTheme={() => setShowTheme(true)}
+          onModule={openModule}
+        />
+      )}
+      {module === 'seguimiento' && (
+        <FollowView
+          active
           onBack={() => choose('chart')}
           onWatchlist={() => choose('watchlist')}
           onOpenTheme={() => setShowTheme(true)}
