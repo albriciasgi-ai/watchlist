@@ -4,6 +4,8 @@
 # Tu aplicacion local puede obtener el historico via API REST.
 
 import asyncio
+import ctypes
+import gc
 import json
 import logging
 import os
@@ -15,6 +17,7 @@ from typing import Dict, List, Optional
 from contextlib import asynccontextmanager
 
 import shutil
+import sys
 
 from fastapi import FastAPI, Query, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
@@ -71,6 +74,70 @@ HL_ON = os.environ.get("HL", "1") != "0"
 HL_SYMBOLS = [s.strip().upper() for s in os.environ.get("HL_SYMBOLS", ",".join(BOOK_SYMBOLS)).split(",") if s.strip()]
 HL_KEEP_DAYS = int(os.environ.get("HL_KEEP_DAYS", "14"))
 HL_ROOT = hl_recorder.root(DATA_DIR)
+
+# Memoria (23/11/2026): los objetos de Python del collector ocupan unos 50 MB y no crecen (medido con tracemalloc,
+# media hora con las 21 monedas), pero el proceso sube de unos 180 a 330-370 MB en un dia y se aplana: es memoria que
+# el asignador de glibc retiene tras liberarla (fragmentacion), no datos que se acumulen. Cada MEM_TRIM_SECONDS se le
+# pide que la devuelva al sistema (malloc_trim). MEM_TRIM_SECONDS=0 lo apaga. Fuera de Linux no hace nada.
+MEM_TRIM_SECONDS = int(os.environ.get("MEM_TRIM_SECONDS", "600"))
+mem_state: Dict[str, object] = {"trims": 0, "last": None, "freed_mb_total": 0.0}
+
+
+def _load_libc():
+    if not sys.platform.startswith("linux"):
+        return None
+    try:
+        libc = ctypes.CDLL("libc.so.6")
+        libc.malloc_trim.argtypes = [ctypes.c_size_t]
+        libc.malloc_trim.restype = ctypes.c_int
+        return libc
+    except (OSError, AttributeError):
+        return None
+
+
+_LIBC = _load_libc()
+
+
+def rss_mb() -> Optional[float]:
+    """Memoria residente del proceso, en MB (VmRSS de Linux). None fuera de Linux."""
+    try:
+        with open("/proc/self/status", encoding="ascii") as fh:
+            for line in fh:
+                if line.startswith("VmRSS:"):
+                    return round(int(line.split()[1]) / 1024, 1)
+    except OSError:
+        return None
+    return None
+
+
+def trim_memory() -> dict:
+    """Recolecta la basura de Python y devuelve al sistema lo que glibc tiene libre."""
+    before = rss_mb()
+    gc.collect()
+    released = bool(_LIBC.malloc_trim(0)) if _LIBC is not None else False
+    after = rss_mb()
+    freed = round(before - after, 1) if before is not None and after is not None else None
+    result = {"t": int(time.time() * 1000), "rss_before_mb": before, "rss_after_mb": after,
+              "freed_mb": freed, "released": released}
+    mem_state["trims"] = int(mem_state["trims"]) + 1
+    mem_state["last"] = result
+    if freed:
+        mem_state["freed_mb_total"] = round(float(mem_state["freed_mb_total"]) + max(freed, 0.0), 1)
+    return result
+
+
+async def mem_guard():
+    """Cada MEM_TRIM_SECONDS: devuelve al sistema la memoria libre (ver arriba)."""
+    while True:
+        try:
+            await asyncio.sleep(MEM_TRIM_SECONDS)
+            r = await asyncio.to_thread(trim_memory)
+            if r["freed_mb"] and r["freed_mb"] >= 5:
+                logger.info(f"Memoria: {r['rss_before_mb']} -> {r['rss_after_mb']} MB")
+        except asyncio.CancelledError:
+            break
+        except Exception as e:
+            logger.error(f"Memoria, malloc_trim: {e}")
 
 # Instancia del collector
 collector: Optional[FootprintCollector] = None
@@ -197,6 +264,8 @@ async def lifespan(app: FastAPI):
         except Exception as e:
             logger.error(f"No se pudo iniciar el libro: {e}")
 
+    mem_task = asyncio.create_task(mem_guard()) if MEM_TRIM_SECONDS > 0 else None
+
     # Hyperliquid: si falla, lo demas sigue
     global hl_http
     hl_task = None
@@ -219,6 +288,8 @@ async def lifespan(app: FastAPI):
         guard_task.cancel()
     if hl_task:
         hl_task.cancel()
+    if mem_task:
+        mem_task.cancel()
     await hl_recorder.stop()
     if hl_http:
         await hl_http.aclose()
@@ -296,6 +367,8 @@ async def health():
         "tape": tape.get_stats() if tape else None,
         "book": book_recorder.brief(),
         "hyperliquid": hl_recorder.brief(),
+        "memory": {"rss_mb": rss_mb(), "trim_seconds": MEM_TRIM_SECONDS, "trim_available": _LIBC is not None,
+                   **mem_state},
         "disk": {"total_mb": usage.total // (1024 * 1024), "free_mb": usage.free // (1024 * 1024)},
     }
 
