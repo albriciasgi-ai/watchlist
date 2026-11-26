@@ -42,6 +42,7 @@ import FootprintSidebar from './FootprintSidebar'; // 🎯 Order Flow Footprints
 import SessionManager from './SessionManager';
 import SessionSaveModal from './SessionSaveModal';
 import ObserverPanel from './ObserverPanel';
+import KitchenPanel from '../kitchen/KitchenPanel.jsx';
 import PopupWindow, { openPopup } from './PopupWindow';
 import { HEARTBEAT_MS, SECONDARY_GONE_MS, openReplayChannel, secondaryChartUrl, stepTimeframes } from './replayChannel.js';
 import { ruleTesterUrl } from './ruleTester.js';
@@ -1433,6 +1434,17 @@ const BacktestingApp = () => {
     }
   };
 
+  // Una vela más: avanza hasta el cierre de la vela del marco a la vista y queda en pausa.
+  // El reloj avisa la hora nueva y handleTimeUpdate liquida las órdenes con las velas cerradas en el tramo
+  const handleStepCandle = () => {
+    const controller = timeControllerRef.current;
+    if (!controller) return;
+    captureHold.cancel();
+    lastScreenUpdateRef.current = 0;
+    controller.stepCandle(activeTimeframeRef.current);
+    setIsPlaying(false);
+  };
+
   const handleSpeedChange = (speed) => {
     if (timeControllerRef.current) {
       timeControllerRef.current.setSpeed(speed);
@@ -1542,6 +1554,18 @@ const BacktestingApp = () => {
     const now = timeControllerRef.current?.currentTime;
     return view?.box && Number.isFinite(now) && view.time <= now ? [view.box] : [];
   }, []);
+
+  // Cocina de estrategias (26/11/2026): la pestaña pinta en el gráfico dónde se cumple cada capa, y un clic en una vela
+  // le dice cuál mirar. Solo con la pestaña abierta: al cerrarla no queda nada en el gráfico
+  const kitchenBandsRef = useRef([]);
+  const [kitchenPick, setKitchenPick] = useState(null);
+  const getKitchenBands = useCallback(() => kitchenBandsRef.current, []);
+  const handleKitchenBands = useCallback((bands) => {
+    kitchenBandsRef.current = bands || [];
+    miniChartRefs.current[activeTimeframeRef.current]?.redraw?.();
+  }, []);
+  const handleKitchenPick = useCallback((time) => setKitchenPick({ time, nonce: Date.now() }), []);
+  const getKitchenCandles = useCallback(() => marketDataRef.current?.timeframes?.[activeTimeframeRef.current]?.main || [], []);
 
   const revealDate = useCallback(() => {
     setBlindAnchor(null);
@@ -2510,6 +2534,13 @@ const BacktestingApp = () => {
       >
         🔭 Observador{observerUnread > 0 ? ` (${observerUnread})` : ''}
       </button>
+      <button
+        className={`tab-btn ${activePanel === 'kitchen' ? 'active' : ''}`}
+        onClick={() => setActivePanel('kitchen')}
+        title="Cocina de estrategias: arma una estrategia con lo que ves en el gráfico y mira dónde se cumple"
+      >
+        🍳 Cocina
+      </button>
     </div>
 
     {/* Panel Content */}
@@ -2605,6 +2636,19 @@ const BacktestingApp = () => {
         </div>
       )}
 
+      {activePanel === 'kitchen' && (
+        <KitchenPanel
+          key={symbol}
+          symbol={symbol}
+          timeframe={activeTimeframe}
+          getCandles={getKitchenCandles}
+          currentTime={currentTime}
+          isPlaying={isPlaying}
+          picked={kitchenPick}
+          onBands={handleKitchenBands}
+        />
+      )}
+
     </div>
     </>
   );
@@ -2693,6 +2737,14 @@ const BacktestingApp = () => {
             title="Detener"
           >
             {isNewTheme() ? <Icon name="stop" size={15} /> : '⏹'}
+          </button>
+
+          <button
+            className="btn-control-compact"
+            onClick={handleStepCandle}
+            title="Una vela más: avanza hasta el cierre de la vela del marco a la vista y queda en pausa"
+          >
+            {isNewTheme() ? <Icon name="step" size={15} /> : '⏭'}
           </button>
 
           <select
@@ -3139,6 +3191,8 @@ const BacktestingApp = () => {
                   onToolChange={setCurrentTool}
                   getTradeBoundaries={() => [...tradeBoundaries(orderManagerRef.current?.orders), ...registryLines()]}
                   getTradeBoxes={getRegistryBoxes}
+                  getTradeBands={activePanel === 'kitchen' ? getKitchenBands : null}
+                  onPickCandle={activePanel === 'kitchen' && activeTimeframe === tf ? handleKitchenPick : null}
                   onRequestPause={handlePause}
                   onRequestTimeChange={(newTime) => {
                     // 🎯 FIX: Permitir navegación a cualquier timestamp del playback

@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Cocina de Estrategias y «Una vela más»
+
+Pestaña «Cocina» del panel derecho de la simulación manual: una estrategia en borrador por capas (contexto y gatillo por pasos) que se llena con un clic en una vela del gráfico, con los detectores del backtesting global y solo con velas ya cerradas. Pinta bajo las velas dónde se cumple cada capa, cuenta, dice si entra en la vela elegida y guarda por versiones. Cada capa tiene su ficha con imagen. Es el paso 1.1 de la central de estrategias: no avisa al reproducir ni abre órdenes. Además, el botón «Una vela más» del encabezado. Detalle en `Backtester/CLAUDE.md`, "COCINA DE ESTRATEGIAS (26/11/2026)".
+
 ### Noviembre 2026: Barrido de Señales
 
 Pestaña "Barrido" del backtesting global: para cada elemento, y después para las parejas de los que se marquen, lo que hizo el precio tras cada señal, sin entrada, stop ni objetivo: si llega a +2 ATR antes que a −2 ATR y cuánto fue a favor y en contra, contra las velas de su trimestre y lado. En 5m, 15m, 1h, 4h y 1D, por los dos primeros tramos del embudo y con el umbral según el número de pruebas. En 4 horas el reparto es el del azar; en 15 minutos no, pero los efectos quedan bajo el costo. Después, a pedido del usuario, las parejas se eligen también por familias: dentro de una familia o entre dos, con un tope de 150 parejas por barrido. Detalle en `Backtester/CLAUDE.md`, "BARRIDO DE SEÑALES (23/11/2026)".
