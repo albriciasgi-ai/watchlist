@@ -117,7 +117,8 @@ def table_dir():
 
 
 def _cache_path(symbol):
-    return Path("backtesting_cache") / f"{symbol}_backtesting_data.json.gz"
+    # Junto a este archivo, no relativa a la carpeta de trabajo: así la encuentra también quien lo importa desde otra
+    return Path(__file__).resolve().parent / "backtesting_cache" / f"{symbol}_backtesting_data.json.gz"
 
 
 # ==================== CALCULO ====================

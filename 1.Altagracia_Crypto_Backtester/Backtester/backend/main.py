@@ -32,6 +32,7 @@ import liq_sweeps
 import structure
 import gaussian_channel
 import candidate_review
+import kitchen
 import response_volume
 import vp_sessions
 from pathlib import Path
@@ -3856,6 +3857,27 @@ async def get_setup_validations(request: Request, symbol: str):
 def _json_response(data):
     return Response(content=json.dumps(data, allow_nan=False, separators=(",", ":")).encode("utf-8"),
                     media_type="application/json")
+
+
+@app.get("/api/kitchen/catalog")
+@limiter.limit("120/minute")
+async def kitchen_catalog(request: Request):
+    """Los bloques de la cocina de estrategias y los rangos de sus parámetros."""
+    return {"success": True, **kitchen.catalog()}
+
+
+@app.post("/api/kitchen/evaluate/{symbol}")
+@limiter.limit("600/minute")
+async def kitchen_evaluate(request: Request, symbol: str):
+    """La estrategia en borrador de la simulación manual sobre las velas que manda la página, todas ya cerradas en la
+    hora simulada (body: tf en minutos, candles, doc, view, pick, pickPrice, offers). Dónde se cumple cada bloque, cada
+    capa y la estrategia, y lo que hay en la vela elegida, con sus zonas y las que ofrece la página (los niveles de sus
+    VP fijos). No guarda nada. Con bloques de order flow responde `pending` mientras se detectan en segundo plano."""
+    body = await request.json()
+    result = await run_in_threadpool(kitchen.evaluate, sanitize_filename(symbol), body.get("tf") or 15, body.get("candles") or [],
+                                     body.get("doc"), body.get("view") or 1000, body.get("pick"), body.get("pickPrice"),
+                                     body.get("offers"))
+    return _json_response(result)
 
 
 @app.get("/api/tester/info/{symbol}")

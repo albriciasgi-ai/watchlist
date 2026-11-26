@@ -1,7 +1,7 @@
 // Reloj de la reproducción: mantiene la velocidad elegida aunque un tick llegue tarde.
 // Uso: node tests/clock.test.mjs
 import assert from 'node:assert/strict';
-import { candlesBetween, finestStep, tickAlreadySettled, timestampIndex } from '../src/components/backtesting/replayClock.js';
+import { candlesBetween, candlesToSettle, finestStep, tickAlreadySettled, timestampIndex } from '../src/components/backtesting/replayClock.js';
 
 const log = console.log;
 console.log = () => {};
@@ -300,6 +300,65 @@ test('pantalla: detenido y en la hora del reloj sí revisa órdenes', () => {
 
 test('pantalla: sin reloj todavía sí revisa órdenes', () => {
   assert.equal(tickAlreadySettled(null, START), false);
+});
+
+// «Una vela más» (26/11): avanza hasta el cierre de la vela del marco a la vista y queda en pausa
+const HOUR_MS = 60 * MINUTE;
+const BASE = 1000 * HOUR_MS; // Cae en un cierre de 15m, 1h y 4h
+
+test('una vela más: desde un cierre avanza una vela entera del marco pedido', () => {
+  const times = [];
+  const controller = new TimeController(BASE, BASE + 1000 * HOUR_MS, '15m', time => times.push(time), BASE);
+  assert.equal(controller.stepCandle('1h'), BASE + HOUR_MS, 'el marco pedido, no el del reloj');
+  assert.equal(controller.stepCandle('15m'), BASE + HOUR_MS + 15 * MINUTE);
+  assert.equal(controller.stepCandle('4h'), BASE + 4 * HOUR_MS, 'desde la mitad de una vela de 4h, su cierre');
+  assert.deepEqual(times, [BASE + HOUR_MS, BASE + HOUR_MS + 15 * MINUTE, BASE + 4 * HOUR_MS], 'avisa cada hora nueva, una vez');
+  assert.equal(controller.isPlaying, false);
+});
+
+test('una vela más: a mitad de una vela llega a su cierre, no a la vela siguiente', () => {
+  const controller = new TimeController(BASE, BASE + 1000 * HOUR_MS, '1h', () => {}, BASE + 7 * MINUTE);
+  assert.equal(controller.stepCandle('1h'), BASE + HOUR_MS);
+  assert.equal(controller.stepCandle(), BASE + 2 * HOUR_MS, 'sin marco usa el del reloj');
+  assert.equal(controller.stepCandle('2h'), BASE + 3 * HOUR_MS, 'un marco que no conoce: el del reloj');
+});
+
+test('una vela más: si está reproduciendo, pausa y avanza una sola vela', () => {
+  const { clock, controller, times } = playing(100);
+  clock.advance(clock.every());
+  const before = controller.currentTime;
+  times.length = 0;
+  controller.stepCandle('15m');
+  assert.equal(controller.isPlaying, false);
+  assert.equal(clock.running(), false, 'el temporizador queda detenido');
+  assert.equal(controller.currentTime, (Math.floor(before / (15 * MINUTE)) + 1) * 15 * MINUTE);
+  assert.deepEqual(times, [controller.currentTime], 'un solo aviso');
+  clock.advance(60000);
+  assert.deepEqual(times, [controller.currentTime], 'y el reloj no sigue solo');
+});
+
+test('una vela más: no pasa del final de los datos', () => {
+  const end = BASE + 20 * MINUTE;
+  const times = [];
+  const controller = new TimeController(BASE, end, '15m', time => times.push(time), BASE + 10 * MINUTE);
+  assert.equal(controller.stepCandle('15m'), BASE + 15 * MINUTE);
+  assert.equal(controller.stepCandle('15m'), end, 'la última vela llega hasta donde hay datos');
+  assert.equal(controller.stepCandle('15m'), end);
+  assert.deepEqual(times, [BASE + 15 * MINUTE, end], 'en el final no avisa de nuevo');
+});
+
+test('una vela más: las órdenes se revisan con todas las velas del tramo', () => {
+  // Lo que hace BacktestingApp con la hora nueva: liquidar con las velas más finas cerradas en el tramo
+  const candles = Array.from({ length: 300 }, (_, i) => ({ timestamp: BASE - 60 * MINUTE + i * MINUTE }));
+  const timeframes = { '1m': { main: candles } };
+  const controller = new TimeController(BASE, BASE + 200 * MINUTE, '1h', () => {}, BASE + 7 * MINUTE);
+  const from = controller.currentTime;
+  const to = controller.stepCandle('1h');
+  const { tf, candles: settled, settledTo } = candlesToSettle(timeframes, from, to);
+  assert.equal(tf, '1m');
+  assert.equal(settled.length, 53, 'los 53 minutos que faltaban de la vela de 1h, ninguno saltado');
+  assert.equal(settled[0].timestamp, from);
+  assert.equal(settledTo, to);
 });
 
 let failed = 0;

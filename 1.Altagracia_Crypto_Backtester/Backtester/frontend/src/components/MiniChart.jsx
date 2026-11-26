@@ -227,6 +227,7 @@ const MiniChart = forwardRef(({
   drawingsSource = null, // Otra capa de dibujos en lugar de los de la moneda (suite, 13/11: el análisis post-trade de un trade): { key, load(), save(shapes) }. Sin ella, /api/drawings/{símbolo} como siempre
   indicatorOverrides = null, // Ajustes de cálculo que reemplazan por un rato los guardados (probador, 21/11: los de la regla del trade elegido): { williams, smc, vpa, orderflow, elements }, configuraciones completas. Al quitarlos vuelven los guardados. Nadie más lo pasa
   hideLastPrice = false, // Sin la línea ni la etiqueta del último precio (probador, 22/11, O-17: su hora es el final de la fase y se leía como un nivel del trade). Nadie más lo pasa
+  onPickCandle = null, // Cocina de estrategias (26/11): un clic sin arrastrar sobre una vela avisa su hora y el precio del clic. Si el clic cae en un nivel, se abre su menú, que ofrece la vela. Solo lo pasa la simulación manual con la pestaña Cocina abierta
   onOpenVpSettings,
   onOpenRangeDetectionSettings,
   onOpenRejectionPatternSettings,
@@ -1852,7 +1853,8 @@ const MiniChart = forwardRef(({
       const { priceToY, timeToX } = scaleConverterRef.current;
       const viewStart = visibleCandles[0].timestamp;
       const viewEnd = visibleCandles[visibleCandles.length - 1].timestamp + TF_MS[interval];
-      const colors = { liqLong: '233, 30, 99', liqShort: '3, 155, 229', element: '41, 98, 255', value: '255, 152, 0', regime: '123, 31, 162' };
+      // kzone: una zona de la cocina de estrategias (26/11), del color de su fila
+      const colors = { liqLong: '233, 30, 99', liqShort: '3, 155, 229', element: '41, 98, 255', value: '255, 152, 0', regime: '123, 31, 162', kzone: '0, 121, 107' };
       const lineTones = { ema: '41, 98, 255', vwap: '245, 124, 0', channel: '123, 31, 162' };
       const ink = isNewTheme() ? THEME.text : '#222';
       // Borde izquierdo de la vela de este gráfico que abre en t: las velas de la regla pueden ser de otro marco
@@ -1914,7 +1916,10 @@ const MiniChart = forwardRef(({
               const x1 = Math.max(marginLeft, edge(t));
               const x2 = Math.min(marginLeft + chartWidth, edge(t + tf));
               if (!(x2 > x1)) continue;
-              ctx.fillStyle = state === 1 ? 'rgba(8, 153, 129, 0.6)' : state === 0 ? 'rgba(242, 54, 69, 0.45)' : 'rgba(128, 128, 128, 0.18)';
+              // Con tono (cocina de estrategias, 26/11): la fila se pinta de ese color donde se cumple (1) y más claro en el
+              // estado 2. Sin tono, como siempre: verde pasa, rojo no pasa, gris sin dato
+              ctx.fillStyle = band.tone && (state === 1 || state === 2) ? `rgba(${band.tone}, ${state === 1 ? 0.85 : 0.3})`
+                : state === 1 ? 'rgba(8, 153, 129, 0.6)' : state === 0 ? 'rgba(242, 54, 69, 0.45)' : 'rgba(128, 128, 128, 0.18)';
               ctx.fillRect(x1, y + 1, Math.max(1, x2 - x1 - (x2 - x1 > 3 ? 1 : 0)), ROW - 3);
             }
             const width = ctx.measureText(band.label).width;
@@ -1922,6 +1927,26 @@ const MiniChart = forwardRef(({
             ctx.fillRect(marginLeft + 2, y, width + 8, ROW - 1);
             ctx.fillStyle = ink;
             ctx.fillText(band.label, marginLeft + 6, y + ROW / 2);
+            continue;
+          }
+          if (band.kind === 'column') {
+            // Una vela resaltada de arriba abajo, con su casilla en las filas (cocina de estrategias, 26/11: la vela elegida)
+            const tf = band.tf || TF_MS[interval];
+            if (band.time + tf < viewStart || band.time > viewEnd) continue;
+            const x1 = edge(band.time);
+            const x2 = edge(band.time + tf);
+            ctx.fillStyle = 'rgba(41, 98, 255, 0.08)';
+            ctx.fillRect(x1, marginTop, x2 - x1, priceChartHeight);
+            ctx.strokeStyle = 'rgba(41, 98, 255, 0.7)';
+            ctx.lineWidth = 1;
+            ctx.setLineDash([4, 3]);
+            ctx.beginPath();
+            ctx.moveTo(Math.round(x1) + 0.5, marginTop);
+            ctx.lineTo(Math.round(x1) + 0.5, marginTop + priceChartHeight);
+            ctx.moveTo(Math.round(x2) + 0.5, marginTop);
+            ctx.lineTo(Math.round(x2) + 0.5, marginTop + priceChartHeight);
+            ctx.stroke();
+            ctx.setLineDash([]);
             continue;
           }
           if (band.kind === 'steps') {
@@ -3107,13 +3132,21 @@ const MiniChart = forwardRef(({
     const y = e.clientY - rect.top;
     if (Math.hypot(x - drag.startX, y - drag.startY) > 4) return;
 
-    openLevelMenu(x, y, rect);
+    // Cocina de estrategias: sin un nivel bajo el clic, se elige la vela. Va también el precio del clic: la cocina pone
+    // primero la zona que quedó debajo
+    if (!openLevelMenu(x, y, rect) && onPickCandle) {
+      const time = scaleConverterRef.current?.xToTime?.(x);
+      if (Number.isFinite(time)) onPickCandle(time, scaleConverterRef.current?.yToPrice?.(y));
+    }
   };
 
   const openLevelMenu = (x, y, rect) => {
     const levels = levelsNear(levelTargetsRef.current, x, y);
     const menuHeight = 40 + levels.length * 30 + 90; // Con un elegido abierto, su papel y su nota
-    setLevelMenu(levels.length ? { x: Math.min(x + 10, rect.width - 290), y: Math.max(0, Math.min(y + 10, rect.height - menuHeight)), levels } : null);
+    const time = onPickCandle ? scaleConverterRef.current?.xToTime?.(x) : null; // La vela bajo el clic, para la cocina
+    const price = onPickCandle ? scaleConverterRef.current?.yToPrice?.(y) : null;
+    setLevelMenu(levels.length ? { x: Math.min(x + 10, rect.width - 290), y: Math.max(0, Math.min(y + 10, rect.height - menuHeight)), levels, time, price } : null);
+    return levels.length > 0;
   };
 
   // Una línea de la cinta en firme (suite, 14/11/2026) es un dibujo y un nivel del análisis a la vez: el clic sin
@@ -4564,6 +4597,15 @@ const MiniChart = forwardRef(({
                 </div>
               );
             })}
+            {onPickCandle && Number.isFinite(levelMenu.time) && (
+              <div className="level-menu-item">
+                <button type="button" className="btn-quick" style={{ width: '100%' }}
+                  title="Cocina de estrategias: lista lo que se cumple en la vela de este clic y las zonas que hay en ese precio, para sumarlo a la estrategia"
+                  onClick={() => { onPickCandle(levelMenu.time, levelMenu.price); setLevelMenu(null); }}>
+                  Usar en la estrategia: ¿qué hay en esta vela?
+                </button>
+              </div>
+            )}
           </div>
         )}
 

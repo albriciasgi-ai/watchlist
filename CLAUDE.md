@@ -72,7 +72,8 @@ dices, pero que se pueda ver en hasta 50 velas y que sea configurable por el usu
    - **absorción en varios intentos** (la idea del usuario): un segundo intento en el mismo nivel, con mucho volumen
      agresivo y sin un cierre más allá, en las N velas siguientes al primero; la señal va en contra. N es 10 de fábrica y
      se elige de 1 a 50 en el modal de Elementos OF y en el probador;
-   - la recarga, una franja por celda; el ratio de extremos, fuera de las listas.
+   - la recarga, una franja por celda; el ratio de extremos, fuera de las listas (también de la cocina de estrategias,
+     que llegó a main el mismo día y queda con 30 Elementos OF).
 2. **Imágenes de la galería (O-42):** el barrido real y la orden grande con su imagen de cerca, y el Thin Print y la
    recarga con un marco por celda.
 3. **Galería 4:** los nueve elementos que cambiaron, corridos y capturados otra vez con el motor 8 (en la absorción, un
@@ -94,6 +95,270 @@ dices, pero que se pueda ver en hasta 50 velas y que sea configurable por el usu
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Motor 8", y
 `pruebas_backtesting/revision_visual/G4_RESPUESTAS.md`
+
+---
+
+### App 1 - 26 Noviembre 2026: Zonas y Order Flow en la Cocina de Estrategias (paso 1.2 de la central)
+
+**Pedido:** el paso 1.2 de la central: que la capa de zona de la cocina funcione, con las zonas elegidas en el gráfico de las dos maneras ya decididas, y los bloques de order flow.
+
+**Cambios:**
+1. **Capa 2 · Zona:** un clic en una vela lista las zonas que cuentan en ella, la del clic primero:
+   - soportes y resistencias, FVG abiertos, order blocks y zonas de liquidaciones;
+   - cada una se suma como «Todas» (todas las de su tipo: una regla, que después se puede probar) o «Solo esta» (esa franja fija, para la simulación manual);
+   - un rectángulo o una línea horizontal dibujados aparecen en «Tus dibujos» y se suman como zona fija;
+   - un perfil de rango fijo del gráfico aparece en «Tus VP fijos» (pedido después, el mismo día): su POC, su VAH, su VAL y su área de valor se suman como zona fija, desde esa lista o con un clic sobre su línea.
+2. **Lo que pide la capa:** que el precio quede a 0.5 ATR o menos de alguna de sus zonas, o que la toque, mirado mientras se junta el paso 1 o en la señal.
+3. **Dos eventos para los pasos:** «el precio llega a la zona» y «rechazo en la zona» (la toca y cierra fuera, del lado del trade).
+4. **Order flow:** los 31 Elementos OF como eventos y dos estados, «Delta de la vela» y «CVD de N velas», en las monedas con almacén de trades. Se detectan en segundo plano: la pantalla dice «leyendo los trades de este tramo» y sigue respondiendo.
+5. **En el gráfico:** la fila «Zona» bajo las velas, la zona fija siempre dibujada y las de un tipo resaltadas mientras su elección está abierta.
+6. **Ficha de la zona** con su imagen nueva, y la ficha general con las tres capas.
+7. **Pruebas:** `test_kitchen.py` (35), `kitchen.test.mjs` (25) y dos más en `levels.test.mjs` (56). Todas las del backend de App 1: 1,014 pasan y fallan 13, las mismas que en main sin este cambio (11 de `tests/audit/test_oraculo_a_casos.py` y las 2 de siempre).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página. Llega a la app del usuario al unir esta rama a main.
+- **Un solo motor:** cada zona sale de la función del probador (el swing y el FVG, `smc.py`, `liq_sweeps.py`), y el order flow, de `of_elements.detect` con sus valores de fábrica.
+- **Los soportes y resistencias son los de S&R v2:** una prueba corre el indicador del navegador y compara nivel por nivel. La cocina cuenta todos los niveles vigentes; el indicador dibuja los 5 más cercanos por lado.
+- **Sin futuro:** una zona cuenta desde la vela que abre cuando ya se conoce y deja de contar en la vela que la termina. Un dibujo cuenta desde que se suma, no hacia atrás. Dos pruebas comparan las zonas y el order flow con 900 velas y con 1,200.
+- **Un nivel de un VP fijo:**
+  - es el que tiene calculado el indicador a la hora simulada, solo con las velas ya ocurridas;
+  - como un dibujo, cuenta desde que se suma y con el precio de ese momento: si el perfil cambia después, la zona no;
+  - la lista muestra los perfiles que dibuja el gráfico del marco a la vista.
+- **La cocina conoce las zonas nacidas en las velas que recibe:** unos 45 días en 15m, 76 en 1h y 216 en 4h. Un nivel más viejo que eso no entra.
+- **El order flow queda en memoria:** al reiniciar el backend se detecta otra vez. En BTC tarda unos 2.5 s la primera vez en 15m y 1h, y 14 s en 1m.
+- **Probado en pantalla** en una copia aislada con BTC desde el 01/01/2023, en 15m, 5m y 1h: las dos maneras de sumar una zona, el rechazo como paso, un Elemento OF como paso (30 señales en 5m), el aviso de order flow, un rectángulo dibujado, el menú de S&R v2 y la fecha oculta. El VP fijo, en 15m: la lista, el POC y el área de valor sumados (pasan a «vigente» al avanzar una vela) y el clic sobre la línea del POC.
+- **Sin ver en pantalla:** el panel en ventana aparte, los estilos Oscuro, Personalizado y Muhammad, 1m y 4h, una moneda sin almacén, una línea horizontal dibujada y un VP fijo con la fecha oculta.
+- **Lo que todavía no hace** (pasos 1.3 y 1.4): no avisa al reproducir, no dibuja la caja de la señal, no abre órdenes y no pasa la estrategia al backtesting global.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)", "Zonas" y "Order flow", y `docs/PLAN_CENTRAL_ESTRATEGIAS.md`
+
+---
+
+### App 1 - 26 Noviembre 2026: Cocina de Estrategias en la Simulación Manual (paso 1.1 de la central)
+
+**Pedido:** tras aprobar el prototipo 4, el usuario preguntó si el aspecto del prototipo era el definitivo y dijo que le gusta más el de App 1, «más rico» y con gráficos «más agradables». Después pidió fichas con imágenes claras de cómo funcionan el contexto, los pasos y el gatillo, desplegables con un clic, y construir la cocina.
+
+**Cambios:**
+1. **Pestaña «Cocina»** en el panel derecho de la simulación manual, junto al Observador. Abre en blanco. El gráfico es el de App 1, con sus indicadores y el estilo elegido.
+2. **Se llena desde el gráfico:** un clic en una vela lista lo que se cumple ahí (los eventos de esa vela y los estados vigentes), cada uno con su botón.
+   - Lo de una misma vela va al mismo paso; lo de una vela posterior, a un paso después, con su plazo.
+   - Un clic sobre un nivel abre el menú de siempre, que suma «Usar en la estrategia».
+3. **Capas:** contexto (lo que ya venía pasando) y gatillo por pasos, hasta 4. Cada paso pide «todos», «al menos N» o «cualquiera», en N velas.
+4. **Responde enseguida:** cada bloque dice cuántas veces se cumple en las últimas 1,000 velas cerradas. Bajo las velas va una fila por capa, pintada donde se cumple, con un triángulo en cada señal. En la vela elegida dice si la estrategia entra, si está a punto y qué falta.
+5. **Fichas con imagen,** una por capa, que se despliegan con «¿Cómo funciona?»: cómo se arma una estrategia, cómo se llena, contexto, zona, gatillo y qué es un paso.
+6. **Además:** la frase que se arma sola, el buscador de bloques y el guardado por versiones.
+7. **Motor** (`backend/kitchen.py`): 42 bloques. Cada evento sale de la misma función del probador de reglas, con sus valores de fábrica: un bloque de la cocina y un elemento del backtesting global son el mismo cálculo.
+8. **Pruebas:** `test_kitchen.py` (16) y `kitchen.test.mjs` (15).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página. Llega a la app del usuario al unir esta rama a main.
+- **Sin futuro:** la página manda solo velas ya cerradas en la hora simulada, y cada evento cuenta en la vela con que se conoce. Una prueba compara cada bloque con 900 velas y con 1,200.
+- **Lo que todavía no hace** (pasos 1.3 y 1.4): no avisa al reproducir, no dibuja la caja de la señal, no abre órdenes y no pasa la estrategia al backtesting global. Las zonas y los bloques de order flow llegaron después, el mismo día (entrada de arriba).
+- Solo con la pestaña abierta: al cambiar de pestaña el borrador se conserva, pero las filas salen del gráfico.
+- `MiniChart` suma el clic en una vela, el tono de las filas y la vela resaltada, todo opcional: sin la cocina nada cambia.
+- **Probado en pantalla** en una copia aislada con BTC desde el 01/01/2023, en 15m y 1h: las fichas, una estrategia de dos pasos (7 señales en 15m), el guardado, «Una vela más», el cambio de marco y de pestaña. Sin errores en la consola.
+- **Sin ver en pantalla:** la fecha oculta, el panel en ventana aparte y los estilos Oscuro, Personalizado y Muhammad.
+- La cocina sirve para armar y mirar. Lo que valida una estrategia es el backtesting global.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)" y `docs/PLAN_CENTRAL_ESTRATEGIAS.md`
+
+---
+
+### App 1 - 26 Noviembre 2026: Botón «Una vela más» en la Simulación Manual
+
+**Pedido:** al probar el prototipo de la central de estrategias, el usuario usó su botón «Una vela más» y pidió tenerlo en App 1, que no tenía cómo avanzar de a una vela.
+
+**Cambios:**
+1. **Botón** en el encabezado de la simulación manual, después de "Detener": avanza hasta el cierre de la vela del marco a la vista y queda en pausa. Si estaba reproduciendo, pausa primero.
+2. **Reloj** (`TimeController.stepCandle`): con la hora justo en un cierre avanza una vela entera; no pasa del final de los datos.
+3. **Órdenes:** se revisan con todas las velas cerradas en el tramo, como en un tick. Ninguna se salta.
+4. **Pruebas:** `clock.test.mjs` suma 5 (33).
+
+**IMPORTANTE:**
+- Basta recargar la página de App 1: no cambió el backend.
+- Usa la clase de los botones de reproducir y detener: no hay CSS nuevo.
+- Sin atajo de teclado.
+- **Visto en pantalla** el mismo día, en la copia aislada de la cocina: en 15m avanzó de 12:00 a 12:15 y a 12:30, y quedó en pausa.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "REPRODUCCIÓN LIGERA", "«Una vela más» (26/11)"
+
+---
+
+### Central de Estrategias - 25 y 26 Noviembre 2026: Concepto y Cuatro Prototipos (sin Código en las Apps)
+
+**Pedido:** una central para armar estrategias de forma visual, con bloques y capas, a partir de los indicadores que ya existen. Primero el concepto, sin codificar; después, prototipos para decidir. El usuario decidió empezar en la simulación manual de App 1, como una «cocina» en blanco donde se diseñan las estrategias nuevas que después pasan al backtesting global.
+
+**Cambios:** ninguno en el código de las apps.
+1. **Plan:** `docs/PLAN_CENTRAL_ESTRATEGIAS.md`, con el pedido, lo decidido, los principios, los prototipos, las etapas y las decisiones pendientes.
+2. **Cuatro prototipos** en un lienzo privado del usuario (https://claude.ai/artifact/9g6JfDANvRWKeP2XWEGDAL), con velas reales de BTC de 1 hora y los detectores de App 1, solo leyendo:
+   - 1 y 2: el editor por carriles con bloques tipados (estado, evento, zona) y las zonas elegidas en el gráfico;
+   - 3: la cocina dentro de la simulación manual, con reproducción, «¿qué hay en esta vela?», pasos, avisos y «¿entra aquí?»;
+   - 4: la misma cocina con todo elegible sobre el gráfico: zonas como bandas con borde, marcas de dos letras sobre las velas, líneas y volumen.
+3. **Fuentes y pruebas** de los prototipos 3 y 4: `OrderFlowData/research/central_estrategias/2026-11-25/`.
+
+**IMPORTANTE:**
+- **Decidido por el usuario:** carriles en vez de cables; pasos que no son solo secuencia; todo se elige sobre el gráfico; la distribución con el gráfico grande y el panel a la derecha (tres columnas, no).
+- **Lo que su prueba mostró:** juntar en un solo paso lo visto en velas distintas no da señales. Por eso cada bloque va al paso de la vela de donde se tomó.
+- El motor de los prototipos es una versión simplificada dentro de la página, no el del probador.
+- **El paso 1.1 se construyó el 26/11,** con su visto bueno (entrada de arriba). En App 1 la cocina se ve como App 1: el aspecto de los prototipos es solo de los prototipos.
+
+**Ver:** `docs/PLAN_CENTRAL_ESTRATEGIAS.md`
+
+---
+
+### App 1 + Altagracia Trading Suite - 25 Noviembre 2026: Guías de Elementos con Imágenes Reales, el Consolidado con el Motor 7 y el Registro en Vivo en las 50 Monedas
+
+**Pedido:** tres cosas tras el consolidado:
+- corregir el registro en vivo, que vigilaba 43 de las 50 monedas («sí, corrígelo»);
+- correr con el motor 7 las estrategias que faltaban y poner sus cifras en el informe;
+- un PDF explicativo por familia de elementos, según lo que salió de las galerías, y rehacer los de order flow y VPA con
+  imágenes reales de cada elemento.
+
+**Cambios:**
+1. **El registro en vivo** (`rule_tester.py` y `measures.py` de App 1):
+   - la ruta del caché de velas va junto al archivo, no relativa a la carpeta de trabajo;
+   - desde la carpeta de la suite salen las 50 monedas;
+   - pruebas: una más en `test_new_coins.py` y en `rule_checks.py` (53).
+2. **El motor 7 en el consolidado:**
+   - la B5, la ruptura con volumen y la Ruptura de caja (también la de solo cortos), repetidas con el motor 7 en las
+     fases ya vistas;
+   - por script y sin guardar corridas (`OrderFlowData/research/consolidado/2026-11-25/motor7/`);
+   - el PDF del consolidado quedó al día.
+3. **Cinco guías de elementos** en `1.Altagracia_Crypto_Backtester/Backtester/` (152 páginas):
+   - `GUIA_ELEMENTOS_VELAS_PATRONES_CAJAS.pdf`, con 15 elementos;
+   - `GUIA_ELEMENTOS_VPA.pdf`, con 10;
+   - `GUIA_ELEMENTOS_WILLIAMS_SMC.pdf`, con 7;
+   - `GUIA_ELEMENTOS_ORDER_FLOW.pdf`, con 31;
+   - `GUIA_ELEMENTOS_PERFIL_LIQUIDACIONES.pdf`, con 6.
+
+   Cada ficha dice cómo lo calcula la app hoy, qué mirar, sus parámetros de fábrica, qué salió de la galería y lo medido.
+   Trae dos o tres casos reales de la galería del protocolo; en order flow, con el footprint en las celdas del elemento y
+   de cerca. Generador: `OrderFlowData/research/guias_elementos/2026-11-25/guias.py`.
+
+**IMPORTANTE:**
+- **El registro llega a la suite al unir esta rama a main** y poner al día su carpeta; la suite se reinicia sola al
+  abrirla. Las 7 de siempre empiezan en el primer cierre de 4 horas que vea, y lo registrado en las 43 vale.
+- **Con el motor 7 ningún veredicto cambia** (R por trade; las 7 de siempre · las 43 nuevas):
+
+| Regla | Fase 1 | Fase 2 | Fase 3 |
+|---|---|---|---|
+| B5 | +0.193 (pasa) · +0.048 | +0.205 (pasa) · +0.067 | −0.036 · −0.008 |
+| Ruptura con volumen | +0.194 · +0.065 | +0.216 · +0.208 | +0.007 · +0.028 |
+| Ruptura de caja | +0.300 · +0.139 | +0.264 · +0.133 | −0.069 · +0.048 |
+
+- La B5 sigue siendo la única que pasa la fase 2, en las 7 de siempre, y cae en la 3.
+- **Las guías anteriores siguen en su lugar:** la de pruebas de order flow del 10/11, con los 91 setups y la lista de
+  chequeo, y la del VPA del 22/11, con el tutorial y el informe de reglas.
+- **Las galerías 3 a 5 siguen sin revisar:** sus fichas dicen lo que aclaró el protocolo de pruebas.
+- Las imágenes son de la galería (BTC, fase 1, copia aislada); los elementos que cambió el motor 7 traen casos del
+  motor 7.
+
+**Ver:** los PDF.
+
+---
+
+### App 1 + Altagracia Trading Suite - 25 Noviembre 2026: Nuevo Consolidado de Estrategias, con un Esquema de Cada Una
+
+**Pedido:** un consolidado nuevo de las estrategias probadas, en PDF. Debía traer imágenes claras de cómo funcionaría cada una, con énfasis en lo que sí funciona, y explicar:
+- los controles (azar, tramo);
+- por qué cada corrida sesga más los resultados;
+- las fases con sus partes y la puerta.
+
+**Cambios:** ninguno en el código de las apps.
+1. **`1.Altagracia_Crypto_Backtester/Backtester/CONSOLIDADO_ESTRATEGIAS_2026-11-25.pdf`** (26 páginas):
+   - el mapa de las 35 ideas probadas, con hasta qué fase llegó cada una;
+   - el método: las fases con sus tramos y la puerta, los tres controles con un esquema y cómo se lee la ventaja;
+   - un gráfico de cuánto gana la mejor regla por puro azar según cuántas se prueben;
+   - lo que sí funciona;
+   - una ficha con su esquema por estrategia, y las compras desde el scanner y el pump.
+2. **El generador:** `OrderFlowData/research/consolidado/2026-11-25/consolidado_v2.py`, con `graficos.py`. El consolidado del 24/11 sigue en su lugar.
+
+**IMPORTANTE:**
+- **Hallado al prepararlo: el registro en vivo de Impulso, FVG nuevo y B1 vigila 43 monedas y no las 50 del plan.**
+  - Le faltan las 7 de siempre: BTC, ETH, SOL, ARB, GALA, SUI y TRX.
+  - La causa: `rule_tester.base_symbols()` de App 1 busca `backtesting_cache` con una ruta relativa, y el servidor de la suite no corre desde la carpeta de App 1.
+  - Se corrigió después, el mismo día (entrada de arriba). Lo registrado en las 43 vale.
+- **Las cuentas del informe:**
+  - el registro del probador tiene 2,013 corridas, de 192 reglas distintas;
+  - las 8 búsquedas genéticas probaron 4,823 reglas, todas sobre la fase 1;
+  - con 300 trades por regla, la mejor de 192 reglas sin ventaja muestra +0.25 R por trade por puro azar, y la mejor de 4,823, +0.34 R. Es lo que mostraban las mejores.
+- **El motor 7 no se había repetido** en la B5, la ruptura con volumen ni la Ruptura de caja. Se repitió después, el
+  mismo día, y el PDF quedó con esas cifras (entrada de arriba).
+- **DX en vivo al 25/11:** 88 trades y −0.04 R por trade (de −0.34 a +0.26).
+
+**Ver:** el PDF.
+
+---
+
+### Altagracia Trading Suite + App 1 - 25 Noviembre 2026: Las Reglas de App 1 en las Monedas del Scanner (parte 4 del concepto de compras)
+
+**Pedido:** tras ver que H1 y H3 no pasan la fase 2, el usuario aceptó probar si las reglas del registro en vivo rinden más en las monedas del scanner («Sí, pruébalo»).
+
+**Cambios** (fuera del repositorio, en `OrderFlowData/research/scanner/historia/`):
+1. **Fijado antes de mirar** en `docs/PLAN_SEGUIMIENTO_SCANNER.md`, «Parte 4, primer paso»:
+   - las tres reglas exactas del registro (`rule_watch.RECORDS`), con el probador de App 1;
+   - cada trade según la moneda al decidir: en el scanner (En juego o Tendencia), candidata sin lista o fuera;
+   - el criterio, y que la fase 2 solo se mide para la regla que pase la 1.
+2. **El OI de 4 horas** de las 828 monedas, también de las cerradas (`oi_hist.py`), para B1. El probador lee el OI, el funding y su carpeta de trabajo de la historia: las carpetas de App 1 no se tocan.
+3. **`reglas.py`:** las reglas sobre las velas de 4 horas de la historia, y cada trade con el scanner reconstruido.
+
+**IMPORTANTE:**
+- **Comprobado:**
+  - sobre la historia dan los mismos trades que sobre las velas de App 1: 748 de 748 en 5 monedas, B1 incluida;
+  - el OI bajado es igual al de App 1.
+- **Fase 1 (2023), 31,757 trades: ninguna pasa.** R por trade después del costo:
+
+| Regla | En el scanner | Candidatas sin lista | Diferencia |
+|---|---|---|---|
+| Impulso | 4,270 trades, +0.05 ± 0.16 | 992, +0.04 ± 0.18 | +0.02 ± 0.18 |
+| FVG nuevo | 5,274, −0.01 ± 0.14 | 2,041, +0.03 ± 0.20 | −0.04 ± 0.16 |
+| B1 | 2,025, −0.08 ± 0.12 | 275, +0.04 ± 0.28 | −0.12 ± 0.23 |
+
+- **No hay fase 2:** esta prueba no la tocó.
+- **Lo que queda:** ni las hipótesis de la historia ni estas reglas sacan una compra del scanner. El scanner dice qué monedas se mueven, no hacia dónde.
+- No cambió el código de las apps.
+
+**Ver:** `OrderFlowData/research/scanner/historia/resumen.md` y `docs/PLAN_SEGUIMIENTO_SCANNER.md`, «Parte 4»
+
+---
+
+### Altagracia Trading Suite - 25 Noviembre 2026: La Historia del Scanner, Fases 1 y 2 (parte 3 del concepto de compras)
+
+**Pedido:** con el seguimiento en main, el usuario eligió «La historia»: reconstruir el scanner de 2023 a 2026, también con las monedas ya cerradas, para tener miles de hallazgos en mercados distintos. Tras la fase 1 eligió las hipótesis H1 y H3 para la fase 2 («H1 y H3»).
+
+**Cambios** (fuera del repositorio, en `OrderFlowData/research/scanner/historia/`):
+1. **Fijado antes de mirar** en `docs/PLAN_SEGUIMIENTO_SCANNER.md`, «Parte 3»:
+   - el universo, sin sesgo de supervivencia;
+   - los datos;
+   - lo que no se puede reconstruir: el libro, Rápidos y el OI;
+   - las fases de App 1.
+2. **Datos:** velas de 15 min y funding de las 828 monedas de cripto e innovación, también las 312 cerradas (`descarga.py`, en `OrderFlowData/scanner_history`).
+3. **El scanner reconstruido:** las medidas de `scanner.py` sobre toda la historia (`replay.py`) y las listas vuelta a vuelta, con los hallazgos y el control de la parte 1 (`fase.py`). También los elementos del probador de App 1 (`elementos.py`) y el informe (`informe.py`).
+4. **Las hipótesis, fijadas antes de reconstruir la fase 2** (plan, «Las hipótesis de la fase 2»; `hipotesis.py`):
+   - **H1:** ir en contra de los hallazgos con 10 ATR de 1 h o más a favor en 24 h;
+   - **H3:** seguirlos con un canal gaussiano de 15 min en contra en la hora anterior;
+   - **la apuesta:** objetivo y stop a 2 ATR de 1 h, 24 h como mucho y 14 bps de costo;
+   - **pasan** si son positivas con margen y le ganan con margen a la misma apuesta sin la condición. El margen agrupa los trades por semana.
+
+**IMPORTANTE:**
+- **Comprobado contra el scanner en vivo:**
+  - las medidas coinciden en el 99.3 % al 100 % de 1,260 filas;
+  - en las listas, encuentra el 98 % de En juego sin las monedas de la suite ni el libro. La historia incluye cerca de un tercio más de miembros: las de libro caro.
+- **Fase 1 (2023):** 25,192 hallazgos y 69,720 controles.
+  - Se mueven más y antes que el control, sin dirección: la carrera a 2 ATR sigue en el 49.6 % contra el 51.3 %.
+  - Los elementos dan estructura (32 de 127 pruebas, contra 5.8 del azar), pero de 2 a 6 puntos, del orden del costo.
+  - Con la regla exacta, H1 daba +0.32 ± 0.40 ATR por trade y H3 +0.03 ± 0.20: ya en la fase 1 el margen tocaba el cero. La cuenta rápida anterior (+0.53 ATR en H1) no tenía margen, y dejaba fuera los trades que tocan los dos niveles en la misma vela o ninguno.
+- **Fase 2 (2024 a mitad de 2025), medida una vez:** 50,545 hallazgos en 622 monedas. **Ninguna pasa, y no hay fase 3:**
+
+| | Trades | Acierto | Después del costo (ATR) | Contra sin la condición |
+|---|---|---|---|---|
+| H1 | 511 | 50.0 % | −0.11 ± 0.37 | +0.03 ± 0.37 |
+| H3 | 2,288 | 50.9 % | −0.07 ± 0.16 | −0.02 ± 0.17 |
+
+- **Lo que queda:** el scanner encuentra monedas que se mueven más y antes, pero no dice hacia dónde. Una compra basada en él necesita otra hipótesis, fijada con la fase 1 y medida en la 2.
+- No cambió el código de las apps.
+
+**Ver:** `OrderFlowData/research/scanner/historia/resumen.md` y `docs/PLAN_SEGUIMIENTO_SCANNER.md`, «Parte 3»
 
 ---
 

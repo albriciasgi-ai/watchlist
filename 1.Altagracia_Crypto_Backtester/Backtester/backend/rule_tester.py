@@ -105,7 +105,9 @@ def _iso(ms):
 # Solo BTC tiene el almacén de trades completo. Los elementos que salen de las velas (CC, VH) y el barrido de
 # liquidaciones (LIQ) no lo necesitan: en las demás monedas la regla corre sobre el caché de velas de App 1.
 
-CANDLE_DIR = pathlib.Path("backtesting_cache")   # Relativa: el backend corre en backend/
+# Junto a este archivo y no relativa a la carpeta de trabajo: la suite lo importa desde la suya, y con la relativa no
+# veía las 7 monedas de siempre (25/11). Para App 1 es la misma carpeta: su backend corre en backend/.
+CANDLE_DIR = pathlib.Path(__file__).resolve().parent / "backtesting_cache"
 CANDLE_CODES = ("CC", "VH", "LIQ", "HM", "EN", "DJ", "RF", "RB", "GC", "BX", "BE", "CP", "FV", "SP", "IM") + tuple(williams.CODES) + tuple(smc.CODES) + tuple(vpa.CODES) + tuple(byko.CODES) + ("DA", "DC")
 CANDLE_KEYS = {5: ("5m", 1), 15: ("15m", 1), 30: ("15m", 2), 45: ("15m", 3), 60: ("1h", 1), 240: ("4h", 1), 1440: ("4h", 6)}  # marco → (clave del caché, velas que se unen)
 MIN_STORE_DAYS = 60

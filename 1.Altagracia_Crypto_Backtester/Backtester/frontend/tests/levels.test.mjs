@@ -481,6 +481,47 @@ test('indicadores: un rango que no se dibuja por la hora simulada no ofrece nive
   assert.equal(manager.getSelectableLevels().length, 1);
 });
 
+test('indicadores: los rangos fijos que se dibujan dan sus niveles a la cocina; uno adelantado a la hora simulada, no', () => {
+  const manager = new IndicatorManager('X', '15', 30);
+  const profile = { poc: { price: 105 }, valueArea: { vahPrice: 107, valPrice: 103 }, isReal: true };
+  const range = (rangeId, more = {}) => ({ enabled: true, symbol: 'X', rangeId, startTimestamp: 100, endTimestamp: 900, profile, renderOverlay: () => {}, ...more });
+  manager.indicators = [];
+  manager.fixedRangeIndicators = [
+    range('a', { rangeLabel: 'A' }), range('b', { endTimestamp: 2000 }), range('c', { enabled: false }), range('d', { profile: null }), range('e', { symbol: 'Y' })
+  ];
+  manager.fixedRangeProfiles = [{ rangeId: 'b', isAutoDetected: true, endTimestamp: 2000, interval: '15' }];
+  const draw = (knownUntil) => manager.renderFixedRangeProfiles(null, {}, [], [], { knownCandles: [], knownUntil });
+
+  assert.deepEqual(manager.getFixedRangeLevels(), []);                 // Antes del primer dibujo no hay nada a la vista
+  draw(1000);
+  assert.deepEqual(manager.getFixedRangeLevels(), [{ id: 'a', label: 'A', start: 100, end: 900, poc: 105, vah: 107, val: 103, real: true }]);
+  draw(3000);                                                          // La hora simulada ya pasó el final del rango b
+  assert.deepEqual(manager.getFixedRangeLevels().map(item => item.id), ['a', 'b']);
+});
+
+test('indicadores: los niveles de un rango fijo que pide la cocina salen solo de las velas ya ocurridas', () => {
+  const manager = new IndicatorManager('X', '15', 30);
+  const range = new FixedRange('X', '15', 'r1');
+  range.loadFromData({ rangeId: 'r1', startTimestamp: HOUR, endTimestamp: 10 * HOUR, enabled: true });
+  range.loadRealVolumes = () => {};                                    // Sin backend: el reparto por velas
+  // Cinco velas cerca de 100 y, después, cinco con cien veces su volumen cerca de 200
+  const bar = (i, price, volume) => ({ timestamp: (i + 1) * HOUR, open: price, high: price + 1, low: price - 1, close: price, volume });
+  const all = [...Array.from({ length: 5 }, (_, i) => bar(i, 100, 10)), ...Array.from({ length: 5 }, (_, i) => bar(i + 5, 200, 1000))];
+  manager.indicators = [];
+  manager.fixedRangeIndicators = [range];
+  manager.fixedRangeProfiles = [{ rangeId: 'r1', symbol: 'X', startTimestamp: HOUR, endTimestamp: 10 * HOUR }];
+  const draw = (known) => manager.renderFixedRangeProfiles(
+    null, { x: 0, y: 0, width: 100, height: 100 }, [all[0]], all, { knownCandles: all.slice(0, known), knownUntil: all[known - 1].timestamp }
+  );
+
+  draw(5);                                                             // La hora simulada va por la vela 5
+  const early = manager.getFixedRangeLevels();
+  assert.equal(early.length, 1);
+  assert.ok(early[0].val >= 99 && early[0].poc <= 101 && early[0].vah <= 101, 'El perfil no puede traer nada de las velas de 200');
+  draw(10);                                                            // Al ocurrir esas velas, el perfil cambia
+  assert.ok(manager.getFixedRangeLevels()[0].poc >= 199);
+});
+
 test('indicadores: solo los encendidos y también los rangos fijos', () => {
   const manager = new IndicatorManager('X', '15', 30);
   const on = { enabled: true, selectableLevels: () => [level(1)] };

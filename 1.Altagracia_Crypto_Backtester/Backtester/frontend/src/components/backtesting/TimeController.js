@@ -311,6 +311,29 @@ class TimeController {
   }
 
   /**
+   * Una vela más: avanza hasta el cierre de la vela en curso del marco dado y queda en pausa.
+   * Con la hora justo en un cierre, avanza una vela entera. No pasa del final de los datos.
+   * Quien recibe la hora liquida las órdenes con todas las velas cerradas en el tramo, como en un tick
+   */
+  stepCandle(timeframe = this.timeframe) {
+    const minutes = this.timeframeMinutes[timeframe] || this.timeframeMinutes[this.timeframe];
+    const candleMs = minutes * 60 * 1000;
+
+    this.pause();
+    if (this.currentTime >= this.endTime) return this.currentTime;
+
+    this.currentTime = Math.min(this.endTime, (Math.floor(this.currentTime / candleMs) + 1) * candleMs);
+    this.currentSubdivision = 0;
+
+    if (this.onTimeUpdate) {
+      this.onTimeUpdate(this.currentTime);
+    }
+
+    this.broadcastState();
+    return this.currentTime;
+  }
+
+  /**
    * Cambia la velocidad de reproducción
    */
   setSpeed(speed) {

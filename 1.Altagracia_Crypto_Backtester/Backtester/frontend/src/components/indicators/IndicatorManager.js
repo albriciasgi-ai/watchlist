@@ -700,6 +700,8 @@ class IndicatorManager {
       }
     });
 
+    this.rangesShown = new Set(activeIndicators);   // Los que se dibujan en este cuadro (ver getFixedRangeLevels)
+
     // Renderizar cada uno con el contexto de precio (incluye verticalZoom)
     activeIndicators.forEach(indicator => {
       try {
@@ -720,6 +722,21 @@ class IndicatorManager {
       .filter(indicator => !(indicator.hideWhenFixedRanges && rangesActive))
       .flatMap(indicator => indicator.selectableLevels())
       .concat(this.panelTargets());
+  }
+
+  /**
+   * Los perfiles de rango fijo que se dibujaron en el último cuadro, con sus niveles como los tiene calculados el
+   * indicador: en reproducción, solo con las velas ya ocurridas. Los pide la cocina de estrategias, que los ofrece como
+   * zona (26/11/2026)
+   */
+  getFixedRangeLevels() {
+    return this.fixedRangeIndicators
+      .filter(indicator => this.rangesShown?.has(indicator) && indicator.profile?.poc && indicator.profile.valueArea)
+      .map(indicator => ({
+        id: indicator.rangeId, label: indicator.rangeLabel || '', start: indicator.startTimestamp, end: indicator.endTimestamp,
+        poc: indicator.profile.poc.price, vah: indicator.profile.valueArea.vahPrice, val: indicator.profile.valueArea.valPrice,
+        real: !!indicator.profile.isReal
+      }));
   }
 
   /**

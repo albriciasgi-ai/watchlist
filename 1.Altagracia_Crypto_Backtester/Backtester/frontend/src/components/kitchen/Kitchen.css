@@ -1,0 +1,443 @@
+/* La cocina de estrategias: pestaña del panel derecho de la simulación manual (26/11/2026).
+   Colores fijos, como los demás paneles: con el estilo Oscuro el panel entero se oscurece con su filtro. */
+
+.kt-panel {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  font-size: 12px;
+  color: #333;
+}
+
+.kt-head,
+.kt-layer-head,
+.kt-card-head,
+.kt-step-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.kt-head h3 {
+  margin: 0;
+  font-size: 15px;
+  color: #333;
+}
+
+.kt-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 6px;
+}
+
+.kt-row.small {
+  margin-top: 6px;
+  font-size: 11px;
+  color: #555;
+}
+
+.kt-label {
+  color: #666;
+}
+
+.kt-seg {
+  padding: 4px 9px;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 4px;
+  color: #555;
+  font-size: 11px;
+  cursor: pointer;
+}
+
+.kt-seg:hover {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.kt-seg.on {
+  background: #667eea;
+  border-color: #667eea;
+  color: #fff;
+}
+
+.kt-legend {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px 6px;
+  font-size: 11px;
+  color: #666;
+}
+
+.kt-phrase {
+  padding: 8px 10px;
+  background: #f8f9fa;
+  border-left: 3px solid #667eea;
+  border-radius: 0 4px 4px 0;
+  line-height: 1.45;
+  color: #333;
+}
+
+.kt-layer,
+.kt-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 10px;
+  background: #fff;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+}
+
+.kt-card.pick {
+  border-color: #2962ff;
+  box-shadow: 0 0 0 1px rgba(41, 98, 255, 0.25);
+}
+
+.kt-layer-head strong,
+.kt-card-head strong {
+  font-size: 13px;
+  font-weight: 600;
+  color: #333;
+}
+
+.kt-layer-head strong span {
+  font-weight: 400;
+  color: #777;
+}
+
+.kt-step {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding: 8px;
+  background: #fffaf2;
+  border: 1px solid #f3d9b1;
+  border-radius: 5px;
+}
+
+.kt-step-head strong {
+  flex: 1;
+  font-size: 12px;
+  color: #a85800;
+}
+
+.kt-link {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 5px;
+  padding-left: 10px;
+  font-size: 11px;
+  color: #a85800;
+}
+
+.kt-panel select,
+.kt-panel input[type="number"],
+.kt-panel input[type="text"],
+.kt-panel input[type="search"] {
+  padding: 3px 5px;
+  background: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 4px;
+  color: #333;
+  font-size: 11px;
+  font-family: inherit;
+}
+
+.kt-panel input[type="number"] {
+  width: 54px;
+}
+
+.kt-name,
+.kt-search {
+  flex: 1;
+  min-width: 120px;
+}
+
+.kt-empty {
+  padding: 6px 8px;
+  border: 1px dashed #ced4da;
+  border-radius: 4px;
+  color: #888;
+  font-size: 11px;
+}
+
+.kt-chip-box {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.kt-chip-box.open {
+  padding: 6px;
+  background: #f8f9fa;
+  border-radius: 5px;
+}
+
+.kt-chip-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 6px;
+}
+
+.kt-chip {
+  min-width: 0;
+  padding: 3px 9px;
+  border: 1px solid;
+  font-size: 11.5px;
+  font-family: inherit;
+  line-height: 1.35;
+  text-align: left;
+  cursor: pointer;
+}
+
+/* Estado: píldora azul. Evento: etiqueta naranja de esquinas rectas con una marca a la izquierda */
+.kt-chip.state {
+  background: #eaf0ff;
+  border-color: #b9caff;
+  border-radius: 11px;
+  color: #1c3fa8;
+}
+
+.kt-chip.event {
+  background: #fff3e0;
+  border-color: #f5c98a;
+  border-left: 3px solid #f57c00;
+  border-radius: 3px;
+  color: #8a4b00;
+}
+
+/* Zona: franja verde azulada de borde punteado, como un área de precio */
+.kt-chip.zone {
+  background: #e0f2f1;
+  border-color: #4db6ac;
+  border-style: dashed;
+  border-radius: 3px;
+  color: #00594f;
+}
+
+.kt-chip.flat {
+  cursor: default;
+}
+
+button.kt-chip:hover {
+  filter: brightness(0.96);
+}
+
+.kt-count {
+  color: #777;
+  font-size: 11px;
+}
+
+.kt-x {
+  flex: none;
+  width: 20px;
+  height: 20px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  border-radius: 4px;
+  color: #888;
+  font-size: 15px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.kt-x:hover {
+  background: #f1f3f5;
+  color: #d32f2f;
+}
+
+.kt-chip-row .kt-count {
+  flex: 1 0 auto;
+  padding-top: 4px;
+  text-align: right;
+  white-space: nowrap;
+}
+
+.kt-chip-edit {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.kt-field {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  font-size: 11px;
+  color: #555;
+}
+
+.kt-note,
+.kt-hint {
+  color: #666;
+  font-size: 11px;
+  line-height: 1.4;
+}
+
+.kt-hint {
+  padding: 7px 9px;
+  background: #eef3ff;
+  border-radius: 4px;
+  color: #1c3fa8;
+}
+
+.kt-error {
+  padding: 7px 9px;
+  background: #fdecea;
+  border: 1px solid #f5c2c0;
+  border-radius: 4px;
+  color: #b3261e;
+}
+
+.kt-sub {
+  margin-top: 4px;
+  font-size: 11px;
+  font-weight: 600;
+  color: #555;
+}
+
+.kt-offer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 3px 0;
+  border-top: 1px solid #f1f3f5;
+}
+
+.kt-offer-text {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 2px;
+  min-width: 0;
+}
+
+.kt-offer-actions {
+  display: flex;
+  flex: none;
+  align-items: center;
+  gap: 4px;
+}
+
+/* Un perfil de rango fijo del gráfico: su rango y un botón por nivel */
+.kt-vp {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+  border-top: 1px solid #f1f3f5;
+}
+
+.kt-panel .btn-quick.kt-main {
+  border-color: #667eea;
+  color: #4453c4;
+  font-weight: 600;
+}
+
+.kt-panel .btn-quick:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.kt-verdict {
+  padding: 6px 8px;
+  background: #f8f9fa;
+  border-left: 3px solid #adb5bd;
+  border-radius: 0 4px 4px 0;
+  line-height: 1.5;
+}
+
+.kt-verdict.yes {
+  background: #e7f6f2;
+  border-left-color: #089981;
+}
+
+.kt-verdict.near {
+  background: #fff8e6;
+  border-left-color: #f5a623;
+}
+
+.kt-verdict .ok {
+  color: #06705f;
+}
+
+.kt-verdict .no {
+  color: #777;
+}
+
+.kt-total {
+  padding: 8px 10px;
+  background: #f8f9fa;
+  border: 1px solid #dee2e6;
+  border-radius: 6px;
+  line-height: 1.45;
+}
+
+.kt-total.yes {
+  background: #e7f6f2;
+  border-color: #a9dccf;
+}
+
+.kt-saved {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 6px;
+  padding: 5px 0;
+  border-top: 1px solid #f1f3f5;
+}
+
+.kt-help-toggle {
+  flex: none;
+  padding: 2px 7px;
+  background: #fff;
+  border: 1px solid #ced4da;
+  border-radius: 10px;
+  color: #555;
+  font-size: 10.5px;
+  cursor: pointer;
+}
+
+.kt-help-toggle:hover,
+.kt-help-toggle.open {
+  border-color: #667eea;
+  color: #667eea;
+}
+
+.kt-help-card {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px;
+  background: #f8f9fa;
+  border: 1px solid #e3e6ea;
+  border-radius: 5px;
+}
+
+.kt-help-title {
+  font-size: 12px;
+  font-weight: 600;
+  color: #333;
+}
+
+.kt-help-img {
+  display: block;
+  width: 100%;
+  height: auto;
+  max-width: 420px;
+}
+
+.kt-help-card p {
+  margin: 0;
+  font-size: 11.5px;
+  line-height: 1.45;
+  color: #444;
+}
