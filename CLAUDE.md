@@ -70,7 +70,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 4. **Order flow:** los 31 Elementos OF como eventos y dos estados, «Delta de la vela» y «CVD de N velas», en las monedas con almacén de trades. Se detectan en segundo plano: la pantalla dice «leyendo los trades de este tramo» y sigue respondiendo.
 5. **En el gráfico:** la fila «Zona» bajo las velas, la zona fija siempre dibujada y las de un tipo resaltadas mientras su elección está abierta.
 6. **Ficha de la zona** con su imagen nueva, y la ficha general con las tres capas.
-7. **Pruebas:** `test_kitchen.py` (35), `kitchen.test.mjs` (25) y dos más en `levels.test.mjs` (56). Todas las del backend de App 1, corridas antes de sumar el VP fijo: 1,012 pasan y fallan 13, las mismas que en main sin este cambio (11 de `tests/audit/test_oraculo_a_casos.py` y las 2 de siempre).
+7. **Pruebas:** `test_kitchen.py` (35), `kitchen.test.mjs` (25) y dos más en `levels.test.mjs` (56). Todas las del backend de App 1: 1,014 pasan y fallan 13, las mismas que en main sin este cambio (11 de `tests/audit/test_oraculo_a_casos.py` y las 2 de siempre).
 
 **IMPORTANTE:**
 - Reiniciar el backend de App 1 (9000) y recargar su página. Llega a la app del usuario al unir esta rama a main.

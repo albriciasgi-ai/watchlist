@@ -1090,7 +1090,7 @@ Lo que vigilan del paso 1.2:
   - en la página, cada perfil da sus cuatro zonas con su nombre, y el mismo nivel no entra dos veces;
   - en `levels.test.mjs`, con el indicador de verdad: los niveles salen solo de las velas ya ocurridas, y un rango adelantado a la hora simulada no se ofrece.
 
-Con el paso 1.2, todas las del backend: 1,012 pasan y fallan 13, las mismas que en main sin este cambio (11 de `tests/audit/test_oraculo_a_casos.py` y las 2 de siempre). En la página solo falla `liquidations.test.mjs`, como desde el 13/11.
+Con el paso 1.2 y los VP fijos, todas las del backend: 1,014 pasan y fallan 13, las mismas que en main sin este cambio (11 de `tests/audit/test_oraculo_a_casos.py` y las 2 de siempre). En la página, de 48 archivos solo falla `liquidations.test.mjs`, como desde el 13/11.
 
 **Probado en pantalla** el 26/11, en una copia aislada (backend 9300, página 9301) con BTC desde el 01/01/2023, en 15m y 1h:
 - la pestaña y sus seis fichas con imagen;
@@ -1115,14 +1115,25 @@ Con el paso 1.2, todas las del backend: 1,012 pasan y fallan 13, las mismas que 
 - la fecha oculta: «Día 0 00:45», los precios de las zonas como índice, también en la frase y en una zona fija;
 - las fichas «Cómo se arma una estrategia» y «Capa 2 · Zona» a tamaño real, y el borrador, que sigue ahí al recargar.
 
-**Sin ver en pantalla:** el panel en ventana aparte y los estilos Oscuro, Personalizado y Muhammad. Tampoco 1m ni 4h (el motor sí los corre en sus pruebas), una moneda sin almacén de trades (solo con las pruebas), ni una línea horizontal dibujada (el rectángulo sí).
+**Los VP fijos, probados en pantalla** el 26/11, en la misma copia aislada montada otra vez, con BTC en 15m y un perfil de rango fijo creado desde «VP fijo» del gráfico (31/12/2022, de 06:00 a 15:00):
+- «Tus VP fijos · 1», con el rango del perfil, «volumen real» y sus cuatro botones. El POC de la lista es el del rótulo del gráfico (16593.4);
+- el POC sumado desde la lista: queda como «Solo esta: POC del VP fijo 16593.4», su botón pasa a «✓ POC» y la frase lo dice;
+- pasa de «cuenta desde la próxima vela» a «vigente» al avanzar con «Una vela más»;
+- el clic sobre la línea del POC en el gráfico: el menú de siempre ofrece el POC y el VAL del perfil, y «Usar en la estrategia» abre la tarjeta de esa vela con el POC, el VAL y el área de valor primero («bajo tu clic · cuenta desde ahora»), antes que las zonas del motor;
+- el área de valor sumada desde la tarjeta, que queda dibujada como «Zona fija»;
+- al pasar a 1h la lista queda en 0, porque ese gráfico no dibuja el perfil creado en 15m; al volver a 15m, vuelve.
+
+**Sin ver en pantalla:** el panel en ventana aparte y los estilos Oscuro, Personalizado y Muhammad. Tampoco 1m ni 4h (el motor sí los corre en sus pruebas), una moneda sin almacén de trades (solo con las pruebas), ni una línea horizontal dibujada (el rectángulo sí). De los VP fijos, sin ver: con la fecha oculta (sus textos pasan por `when` y `price`, como los de las demás zonas), un perfil creado desde un rectángulo, uno automático de Range Detection y uno con el rango todavía abierto.
 
 **Hallado al probar el paso 1.2 y corregido:**
 - un soporte salía como una franja ancha entre todos sus toques (83 USD en BTC de 5m) y el indicador lo dibuja como una línea: ahora la zona es esa línea;
 - con varias zonas bajo el clic, la línea que se tocó quedaba detrás de las franjas anchas que la contienen: ahora va primero la más angosta;
 - el aviso «falta el order flow» salía también sin bloques de order flow, solo por haber elegido una vela;
 - una zona fija traída de otra fecha decía «cuenta desde la próxima vela»: ahora dice «todavía no cuenta»;
-- en la ficha de la zona, un rótulo caía encima de unas velas.
+- en la ficha de la zona, un rótulo caía encima de unas velas;
+- una zona fija de FVG se leía «Solo esta: fVG alcista»: una sigla ya no pierde su mayúscula (hallado al sumar los VP fijos).
+
+**Aparte, sin tocar:** con la fecha oculta, el rótulo «Range …» que el gráfico pone a un rango automático de Range Detection lleva la hora real de su inicio, en milisegundos (`range_${startTimestamp}`). La cocina no muestra ese rótulo.
 
 **Para montar la copia aislada:**
 - un enlace (junction) de `frontend/node_modules` al de la copia principal;

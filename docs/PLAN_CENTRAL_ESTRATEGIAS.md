@@ -2,7 +2,7 @@
 
 Estado al 26/11/2026: concepto, cuatro prototipos y **los pasos 1.1 y 1.2 construidos en App 1**:
 - el 1.1, la pestaña «Cocina» de la simulación manual, con sus fichas con imágenes (sección 5, «El paso 1.1, construido»), y el botón «Una vela más». Está en main desde el PR #77 (9b136091);
-- el 1.2, las zonas y los bloques de order flow (sección 5, «El paso 1.2, construido»). Está en su rama, sin commit.
+- el 1.2, las zonas (también los niveles de un VP fijo) y los bloques de order flow (sección 5, «El paso 1.2, construido»). Está en su rama, `claude/eager-shannon-a07487` (commit c0f32017), sin unir a main.
 
 Siguen el 1.3 y el 1.4: los avisos al reproducir y el paso al backtesting global.
 
@@ -244,7 +244,7 @@ En dos columnas se vio la pantalla quieta (el texto cabe en sus dos líneas y la
 | Paso | Qué queda funcionando |
 |---|---|
 | 1.1 (hecho el 26/11) | La cocina en blanco con los bloques de velas, líneas y volumen; «¿Qué hay en esta vela?»; las marcas y la cuenta en lo recorrido; la frase; guardar con versiones. Entraron también los pasos y «¿entra aquí?» |
-| 1.2 (hecho el 26/11) | Las zonas elegidas en el gráfico (también las dibujadas) y los bloques de order flow |
+| 1.2 (hecho el 26/11) | Las zonas elegidas en el gráfico (también las dibujadas y los niveles de un VP fijo) y los bloques de order flow |
 | 1.3 | «Mis casos»; los avisos al reproducir, con la caja fantasma y la pausa; la unión con el Observador |
 | 1.4 | «Pasar al backtesting global» y «Abrir una regla ya probada» |
 
@@ -277,6 +277,7 @@ Lo pidió el usuario: «Incluye esto y construye la cocina», tras pedir fichas 
 **Qué quedó en App 1:**
 - **la capa de zona:** un clic en una vela lista las zonas que cuentan en ella (soportes y resistencias, FVG abiertos, order blocks y zonas de liquidaciones), la del clic primero. Cada una se suma como «Todas» (todas las de su tipo: una regla) o «Solo esta» (esa franja fija);
 - **los dibujos:** un rectángulo o una línea horizontal del gráfico se suma como zona fija, desde «Tus dibujos»;
+- **los VP fijos** (lo pidió el usuario el mismo día, antes del commit: «que los volume profile fixed también se incluyan en las zonas»): cada perfil de rango fijo del gráfico ofrece su POC, su VAH, su VAL y su área de valor como zona fija, desde «Tus VP fijos» o con un clic sobre su línea;
 - **lo que pide la capa:** que el precio quede a 0.5 ATR o menos de alguna de sus zonas, o que la toque, mirado mientras se junta el paso 1 o en la señal;
 - **dos eventos para los pasos:** «el precio llega a la zona» y «rechazo en la zona»;
 - **order flow:** los 31 Elementos OF como eventos y los estados «Delta de la vela» y «CVD de N velas», en las monedas con almacén de trades;
@@ -288,6 +289,7 @@ Lo pidió el usuario: «Incluye esto y construye la cocina», tras pedir fichas 
 - **llegar a la zona** pide una vela anterior con la zona ya a la vista y sin tocarla: una zona que aparece con el precio adentro no es una llegada;
 - **«solo esta»** es una franja fija de precio que termina como las de su tipo; no una referencia a la zona detectada. Así vale en cualquier marco;
 - **un dibujo cuenta desde que se suma a la estrategia,** no desde que se dibujó ni hacia atrás: se trazó viendo lo que ya pasó (principio 6). Por eso no tiene llegadas en lo recorrido hasta que avanza la simulación;
+- **un nivel de un VP fijo, igual que un dibujo:** cuenta desde que se suma, con el precio que el indicador tiene calculado en ese momento, solo con las velas ya ocurridas. No termina, y si el perfil cambia después, la zona de la estrategia no cambia. Los niveles los calcula la página (el indicador); el motor solo los ordena con sus zonas en la vela elegida;
 - **el order flow se detecta en segundo plano,** por bloques de días: la pantalla lo dice y sigue respondiendo. Tarda segundos, no minutos, salvo en 1 minuto;
 - **las zonas se ven como las dibuja su indicador.** La cocina suma la fila «Zona» bajo las velas, dibuja siempre una zona fija y resalta las de un tipo mientras su elección está abierta.
 
@@ -296,9 +298,10 @@ Lo pidió el usuario: «Incluye esto y construye la cocina», tras pedir fichas 
 - cuenta todos los niveles vigentes de S&R; el indicador dibuja los 5 más cercanos por lado. Y si el usuario cambió los parámetros de un indicador, la cocina sigue con los de fábrica;
 - las zonas de liquidaciones se rearman con lo liquidado después: duran pocas velas (3, en la mediana) y sirven más como «el precio está cerca» que como llegada;
 - lo detectado de order flow queda en memoria y se pierde al reiniciar el backend;
-- no están el valor del día anterior ni el VP fijo, que sí tenían los prototipos. Tampoco el stop y el objetivo (la caja TP/SL).
+- no está el valor del día anterior, que sí tenían los prototipos. Tampoco el stop y el objetivo (la caja TP/SL);
+- el VP fijo entró como zona, no para el objetivo (punto 14 de la sección 2). La cocina lista los perfiles que dibuja el gráfico del marco a la vista: uno creado en 15m no aparece en 1h.
 
-**Probado:** 33 pruebas del motor y 24 de la página. En pantalla, en una copia aislada con BTC desde el 01/01/2023, en 15m, 5m y 1h: las dos maneras de sumar una zona, el rechazo como paso, un Elemento OF como paso (30 señales en 5m), el aviso de order flow, un rectángulo dibujado, el menú de S&R v2 y la fecha oculta. No se vio el panel en ventana aparte, los estilos oscuros, 1m, 4h, una moneda sin almacén ni una línea horizontal dibujada.
+**Probado:** 35 pruebas del motor, 25 de la página y dos más con el indicador de los VP fijos. En pantalla, en una copia aislada con BTC desde el 01/01/2023, en 15m, 5m y 1h: las dos maneras de sumar una zona, el rechazo como paso, un Elemento OF como paso (30 señales en 5m), el aviso de order flow, un rectángulo dibujado, el menú de S&R v2 y la fecha oculta. Y un VP fijo en 15m: su lista, el POC y el área de valor sumados, y el clic sobre la línea del POC. No se vio el panel en ventana aparte, los estilos oscuros, 1m, 4h, una moneda sin almacén, una línea horizontal dibujada ni un VP fijo con la fecha oculta.
 
 **Lo que falta de la etapa 1:** «mis casos», los avisos al reproducir con su caja y la unión con el Observador (1.3); pasar la estrategia al backtesting global y abrir una regla ya probada (1.4). Para el 1.4, la composición por pasos y la capa de zona tienen que alimentar el simulador del probador.
 
@@ -349,7 +352,8 @@ Reglas:
 9. Del paso 1.2, por decidir cuando el usuario lo pruebe:
    - si las zonas de la cocina siguen con los valores de fábrica de cada detector, o toman los que el usuario cambió en el modal de su indicador (S&R v2, FVG, Estructura SMC);
    - si un dibujo puede contar hacia atrás mientras se cocina (hoy cuenta desde que se suma, y por eso no tiene llegadas en lo recorrido);
-   - si entran como zonas el valor del día anterior y el VP fijo, que estaban en los prototipos;
+   - si entra como zona el valor del día anterior, que estaba en los prototipos (el VP fijo entró el 26/11, a pedido del usuario);
+   - si un nivel de un VP fijo debe seguir al perfil cuando cambia (hoy queda con el precio del momento en que se sumó), y si un perfil debe verse en todos los marcos;
    - qué hacer con los niveles más viejos que las velas que recibe la cocina (un máximo de hace meses, visto desde 15m).
 
 ---
