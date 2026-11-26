@@ -1001,7 +1001,7 @@ Pasos 1.1 y 1.2 de la central de estrategias (`docs/PLAN_CENTRAL_ESTRATEGIAS.md`
 
 ### Order flow (paso 1.2)
 
-- **Bloques:** los 31 Elementos OF de `of_elements.py` como eventos, y dos estados: «Delta de la vela» y «CVD de N velas» (el filtro de CVD del probador, con el delta real).
+- **Bloques:** los 30 Elementos OF de `of_elements.py` como eventos (31 hasta el motor 8, que sacó de las listas el ratio de extremos; `kitchen.OF_CODES` deja fuera `of_elements.RETIRED`), y dos estados: «Delta de la vela» y «CVD de N velas» (el filtro de CVD del probador, con el delta real).
 - **Dónde:** en las monedas con almacén de trades (la condición del probador) y en 1m, 5m, 15m, 1h y 4h.
 - **En segundo plano:** un pedido espera el order flow a lo sumo 0.6 s. Pasado eso responde `pending`, la pantalla dice «leyendo los trades de este tramo (2 de 5 partes)» y vuelve a preguntar cada 0.9 s. Lo demás ya cuenta.
 - **Por bloques de días** en memoria (1 día en 1m y 5m, 2 en 15m, 5 en 1h y 20 en 4h). Un bloque cerrado no cambia; el que tiene la última vela se detecta otra vez con cada vela nueva.

@@ -414,7 +414,8 @@ test('los bloques nuevos: con trades reales y de la capa de zona', () => {
   assert.deepEqual(FLOW_STATES, ['delta', 'cvd']);
   for (const id of FLOW_STATES) assert.ok(blockDef(id).flow && blockDef(id).kind === STATE && blockDef(id).fam === 'of', id);
   const flow = allBlocks().filter(def => def.flow && def.kind === EVENT);
-  assert.equal(flow.length, 31);
+  assert.equal(flow.length, 30);  // sin el ratio de extremos (motor 8)
+  assert.ok(!flow.some(def => def.id === 'RX'));
   assert.ok(flow.every(def => def.fam === 'of' && def.shown === 'Elementos OF' && /almacén de trades/.test(def.help)));
   assert.equal(blockText(protoOf('ST'), 'short'), 'Desequilibrios apilados, bajista');
   assert.equal(blockText(protoOf('delta'), 'long'), 'Delta de la vela comprador');

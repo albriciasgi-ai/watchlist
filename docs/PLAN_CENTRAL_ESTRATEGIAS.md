@@ -280,7 +280,7 @@ Lo pidió el usuario: «Incluye esto y construye la cocina», tras pedir fichas 
 - **los VP fijos** (lo pidió el usuario el mismo día, antes del commit: «que los volume profile fixed también se incluyan en las zonas»): cada perfil de rango fijo del gráfico ofrece su POC, su VAH, su VAL y su área de valor como zona fija, desde «Tus VP fijos» o con un clic sobre su línea;
 - **lo que pide la capa:** que el precio quede a 0.5 ATR o menos de alguna de sus zonas, o que la toque, mirado mientras se junta el paso 1 o en la señal;
 - **dos eventos para los pasos:** «el precio llega a la zona» y «rechazo en la zona»;
-- **order flow:** los 31 Elementos OF como eventos y los estados «Delta de la vela» y «CVD de N velas», en las monedas con almacén de trades;
+- **order flow:** los 30 Elementos OF como eventos (sin el ratio de extremos, que el motor 8 sacó de las listas) y los estados «Delta de la vela» y «CVD de N velas», en las monedas con almacén de trades;
 - la ficha de la zona con su imagen, y la ficha general con las tres capas.
 
 **Cómo quedó hecho,** frente al prototipo 4:
