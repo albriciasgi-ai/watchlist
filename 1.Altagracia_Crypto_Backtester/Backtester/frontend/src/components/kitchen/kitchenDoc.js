@@ -2,10 +2,12 @@
 // frase que la resume, las versiones guardadas, las velas que se mandan al motor y lo que se pinta en el gráfico.
 // Lógica pura: se prueba con node tests/kitchen.test.mjs. El cálculo de lo que se cumple está en backend/kitchen.py.
 import { TF_MS, lastClosedIndex } from '../backtesting/replayClock.js';
-import { STATE, blockDef, blockText, lineLabel } from './kitchenCatalog.js';
+import { STATE, ZONE_KINDS, ZONE_TYPES, blockDef, blockText, lineLabel, pickText, zoneName } from './kitchenCatalog.js';
 
 export const MAX_STEPS = 4;
 export const MAX_BLOCKS = 8;
+export const MAX_PICKS = 6;                    // Zonas elegidas en la capa de zona
+export const ZONE_NEAR = { default: 0.5, min: 0.1, max: 3 };   // «Cerca de la zona», en ATR
 export const VIEW_BARS = 1000;                 // Lo recorrido: las velas en que se pinta y se cuenta
 // Velas anteriores que calientan los indicadores: como el probador (35 días o 300 velas), con tope en los marcos finos
 export const LEAD_BARS = { '1m': 8000, '5m': 8000, '15m': 3360, '1h': 840, '4h': 300 };
@@ -17,12 +19,48 @@ const MAX_VERSIONS = 30;
 
 const newStep = (src = null) => ({ mode: 'all', min: 1, win: 5, blocks: [], src });
 
-/** La cocina en blanco */
-export const blankDoc = () => ({ side: 'short', ctx: [], ctxWhen: 'first', gat: [newStep()], links: [] });
+/** La capa de zona vacía: sin zonas elegidas no pide nada */
+export const blankZone = () => ({ picks: [], rel: 'near', atr: ZONE_NEAR.default, when: 'first' });
 
-export const isBlank = (doc) => !doc.ctx.length && !doc.gat.some(step => step.blocks.length);
+/** La cocina en blanco */
+export const blankDoc = () => ({ side: 'short', ctx: [], ctxWhen: 'first', zone: blankZone(), gat: [newStep()], links: [] });
+
+export const isBlank = (doc) => !doc.ctx.length && !doc.zone?.picks?.length && !doc.gat.some(step => step.blocks.length);
 export const allBlocksOf = (doc) => [...doc.ctx, ...doc.gat.flatMap(step => step.blocks)];
 export const makeUid = () => `u${Date.now().toString(36)}${Math.floor(Math.random() * 46656).toString(36)}`;
+
+const finite = (value) => typeof value === 'number' && Number.isFinite(value);
+
+/** Una zona elegida bien formada, o null. Ver clean_pick en kitchen.py */
+function normalizePick(raw) {
+  if (!raw || typeof raw !== 'object') return null;
+  const uid = raw.uid || makeUid();
+  if (raw.type === 'one') {
+    if (!ZONE_TYPES[raw.kind] || !finite(raw.lo) || !finite(raw.hi) || !finite(raw.from) || Math.min(raw.lo, raw.hi) <= 0) return null;
+    return {
+      uid, type: 'one', kind: raw.kind, lo: Math.min(raw.lo, raw.hi), hi: Math.max(raw.lo, raw.hi), from: raw.from,
+      way: raw.way === 1 || raw.way === -1 ? raw.way : 0,
+      // Qué es dentro de su tipo: un dibujo, rect o line; un nivel de un VP fijo, poc, vah, val o va (su área de valor)
+      ...(raw.shape ? { shape: String(raw.shape) } : {}),
+      // Un nivel de S&R: el toque más lejano, que es el que un cierre tiene que pasar para terminarlo
+      ...(raw.kind === 'sr' && finite(raw.edge) && raw.edge > 0 ? { edge: raw.edge } : {})
+    };
+  }
+  if (!ZONE_KINDS.includes(raw.kind)) return null;
+  return { uid, type: 'kind', kind: raw.kind, dir: raw.kind !== 'liq' && ['favor', 'contra'].includes(raw.dir) ? raw.dir : 'any' };
+}
+
+function normalizeZone(raw) {
+  const base = blankZone();
+  if (!raw || typeof raw !== 'object') return base;
+  const atr = Number(raw.atr);
+  return {
+    picks: (Array.isArray(raw.picks) ? raw.picks : []).map(normalizePick).filter(Boolean).slice(0, MAX_PICKS),
+    rel: raw.rel === 'in' ? 'in' : 'near',
+    atr: Number.isFinite(atr) ? Math.max(ZONE_NEAR.min, Math.min(ZONE_NEAR.max, atr)) : base.atr,
+    when: raw.when === 'last' ? 'last' : 'first'
+  };
+}
 
 /** Un documento guardado o a medio escribir, con todo lo que la pantalla espera */
 export function normalizeDoc(raw) {
@@ -42,17 +80,105 @@ export function normalizeDoc(raw) {
   }
   return {
     side: ['long', 'short', 'both'].includes(raw.side) ? raw.side : 'short',
-    ctx: (raw.ctx || []).map(block).filter(Boolean).slice(0, MAX_BLOCKS), ctxWhen: raw.ctxWhen === 'last' ? 'last' : 'first', gat, links
+    ctx: (raw.ctx || []).map(block).filter(Boolean).slice(0, MAX_BLOCKS), ctxWhen: raw.ctxWhen === 'last' ? 'last' : 'first',
+    zone: normalizeZone(raw.zone), gat, links
   };
 }
 
 /** Lo que se manda al motor: sin la vela de donde salió cada paso, que solo sirve para ubicar lo siguiente */
 export function docForEngine(doc) {
+  const zone = doc.zone || blankZone();
   return {
     side: doc.side, ctx: doc.ctx, ctxWhen: doc.ctxWhen, links: doc.links,
+    zone: {
+      rel: zone.rel, atr: zone.atr, when: zone.when,
+      picks: zone.picks.map(pick => (pick.type === 'one'
+        ? { uid: pick.uid, type: 'one', kind: pick.kind, lo: pick.lo, hi: pick.hi, from: pick.from, way: pick.way, ...(finite(pick.edge) ? { edge: pick.edge } : {}) }
+        : { uid: pick.uid, type: 'kind', kind: pick.kind, dir: pick.dir }))
+    },
     gat: doc.gat.map(step => ({ mode: step.mode, min: step.min, win: step.win, blocks: step.blocks }))
   };
 }
+
+// ==================== La capa de zona ====================
+
+/** Si dos elecciones son la misma zona: el mismo tipo con el mismo sentido, o la misma franja */
+export function samePick(a, b) {
+  if (!a || !b || a.type !== b.type || a.kind !== b.kind) return false;
+  return a.type === 'one' ? a.lo === b.lo && a.hi === b.hi && a.way === b.way : a.dir === b.dir;
+}
+
+/**
+ * La elección que sale de una zona del gráfico (la que ofrece el motor en la vela elegida: kind, way, lo, hi, from).
+ * mode 'kind': todas las de su tipo, con su sentido dicho frente al trade (una regla). mode 'one': solo esa franja.
+ */
+export function pickFromZone(zone, mode, side, viewSide = 'short') {
+  if (mode === 'one') {
+    return { type: 'one', kind: zone.kind, lo: zone.lo, hi: zone.hi, from: zone.from, way: zone.way || 0, ...(finite(zone.edge) ? { edge: zone.edge } : {}) };
+  }
+  return { type: 'kind', kind: zone.kind, dir: zone.kind === 'liq' || !zone.way ? 'any' : relativeDir(zone.way, side, viewSide) };
+}
+
+/**
+ * Los dibujos del gráfico que pueden ser una zona: rectángulos (su franja de precio) y líneas horizontales (un precio).
+ * Un dibujo se traza sabiendo lo que pasó, así que cuenta desde `now`, la hora simulada en que se suma a la estrategia,
+ * y nunca hacia atrás. Tampoco antes de la hora en que se dibujó (`createdAt`), si la simulación retrocedió después.
+ */
+export function drawnZones(shapes, now) {
+  const out = [];
+  for (const shape of shapes || []) {
+    const drawnAt = finite(shape?.createdAt) ? shape.createdAt : null;
+    const since = finite(now) ? Math.max(now, drawnAt ?? now) : drawnAt;
+    if (!finite(since)) continue;
+    if (shape.type === 'rectangle' && finite(shape.price1) && finite(shape.price2)) {
+      const [lo, hi] = [Math.min(shape.price1, shape.price2), Math.max(shape.price1, shape.price2)];
+      if (lo > 0) out.push({ id: shape.id, type: 'one', kind: 'draw', shape: 'rect', lo, hi, from: since, way: 0 });
+    } else if (shape.type === 'horizontal' && finite(shape.price) && shape.price > 0) {
+      out.push({ id: shape.id, type: 'one', kind: 'draw', shape: 'line', lo: shape.price, hi: shape.price, from: since, way: 0 });
+    }
+  }
+  return out;
+}
+
+/**
+ * Lo que ofrece como zona cada perfil de volumen de rango fijo del gráfico (VP Fixed Range): su POC, su VAH y su VAL
+ * (un precio cada uno) y su área de valor (del VAL al VAH).
+ * `profiles`: lo que el indicador tiene calculado a la hora simulada, solo con lo ya ocurrido
+ * ({ id, label, start, end, poc, vah, val, real }). Como con un dibujo, el rango lo eligió el usuario viendo lo que ya
+ * pasó: cada nivel cuenta desde `now`, la hora simulada en que se suma, con el precio que tiene en ese momento.
+ */
+export function profileZones(profiles, now) {
+  if (!finite(now)) return [];
+  const out = [];
+  for (const profile of profiles || []) {
+    const { poc, vah, val } = profile || {};
+    if (![poc, vah, val].every(value => finite(value) && value > 0)) continue;
+    const [low, high] = [Math.min(val, vah), Math.max(val, vah)];
+    const zone = (shape, lo, hi) => ({ id: `${profile.id}|${shape}`, type: 'one', kind: 'vp', shape, lo, hi, from: now, way: 0 });
+    out.push({
+      id: profile.id, label: profile.label || '', start: profile.start, end: profile.end, real: !!profile.real,
+      zones: [zone('poc', poc, poc), zone('vah', high, high), zone('val', low, low), ...(high > low ? [zone('va', low, high)] : [])]
+    });
+  }
+  return out;
+}
+
+/** Esas zonas como las pide el motor para ordenarlas en la vela elegida, junto a las suyas (kitchen.py, clean_offers) */
+export const offersForEngine = (groups) => (groups || []).flatMap(group => group.zones.map(zone => ({ ref: zone.id, kind: zone.kind, lo: zone.lo, hi: zone.hi })));
+
+/** La estrategia con una zona más. No repite una igual, y la capa admite hasta MAX_PICKS */
+export function addPick(doc, pick) {
+  const zone = doc.zone || blankZone();
+  const item = normalizePick({ ...pick, uid: makeUid() });
+  if (!item || zone.picks.length >= MAX_PICKS || zone.picks.some(other => samePick(other, item))) return doc;
+  return { ...doc, zone: { ...zone, picks: [...zone.picks, item] } };
+}
+
+export const removePick = (doc, uid) => ({ ...doc, zone: { ...(doc.zone || blankZone()), picks: (doc.zone?.picks || []).filter(pick => pick.uid !== uid) } });
+export const setZone = (doc, patch) => ({ ...doc, zone: normalizeZone({ ...(doc.zone || blankZone()), ...patch }) });
+
+/** Al espejar la estrategia, «todas las de este tipo» pasan a su contrario; una zona fija es la que es */
+const flipPick = (pick) => (pick.type === 'kind' && pick.dir !== 'any' ? { ...pick, dir: pick.dir === 'contra' ? 'favor' : 'contra' } : pick);
 
 /** El lado que se ve en el gráfico (1 alcista, −1 bajista) dicho frente al trade: a favor o en contra.
  * Con largos y cortos en espejo, frente al lado que se está mirando (`viewSide`). */
@@ -186,7 +312,11 @@ export function removeStep(doc, index) {
 /** Los mismos bloques, cada uno con su sentido al revés: para pasar una estrategia de cortos a largos */
 export function mirrored(doc) {
   const flip = (block) => (blockDef(block.id)?.sided ? { ...block, p: { ...block.p, dir: block.p.dir === 'contra' ? 'favor' : 'contra' } } : block);
-  return { ...doc, ctx: doc.ctx.map(flip), gat: doc.gat.map(step => ({ ...step, blocks: step.blocks.map(flip) })) };
+  const zone = doc.zone || blankZone();
+  return {
+    ...doc, ctx: doc.ctx.map(flip), zone: { ...zone, picks: zone.picks.map(flipPick) },
+    gat: doc.gat.map(step => ({ ...step, blocks: step.blocks.map(flip) }))
+  };
 }
 
 /** Al cambiar de lado, cada bloque sigue diciendo lo mismo en el gráfico (lo que era alcista sigue alcista) */
@@ -196,10 +326,28 @@ export function withSide(doc, side) {
   return { ...(turns ? mirrored(doc) : doc), side };
 }
 
-const lower = (text) => `${text.charAt(0).toLowerCase()}${text.slice(1)}`;
+// Una sigla (EMA, FVG, CVD) se queda como está
+const lower = (text) => (/^[A-ZÁÉÍÓÚÑ]{2}/.test(text) ? text : `${text.charAt(0).toLowerCase()}${text.slice(1)}`);
 const listAnd = (items) => (items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} y ${items[items.length - 1]}`);
 const listOr = (items) => (items.length < 2 ? items.join('') : `${items.slice(0, -1).join(', ')} o ${items[items.length - 1]}`);
 const candles = (n) => `${n} ${Number(n) === 1 ? 'vela' : 'velas'}`;
+const plain = (value) => String(Math.round(value * 1e8) / 1e8);
+
+/** El precio de una zona fija, escrito: un número o un rango. `price` escribe cada precio (con fecha oculta, el índice) */
+export const pickRange = (pick, price = plain) => (pick.lo === pick.hi ? price(pick.lo) : `${price(pick.lo)} a ${price(pick.hi)}`);
+
+/** La capa de zona en palabras, o '' si no hay zonas elegidas */
+export function zoneText(doc, price = plain) {
+  const zone = doc.zone;
+  if (!zone?.picks?.length) return '';
+  const names = zone.picks.map(pick => {
+    if (pick.type !== 'one') return lower(pickText(pick, doc.side));
+    const name = pick.kind === 'draw' ? `tu ${pick.lo === pick.hi ? 'línea dibujada' : 'zona dibujada'}` : `${/a$/.test(zoneName(pick).split(' ')[0]) ? 'esta' : 'este'} ${lower(zoneName(pick))}`;
+    return `${name} (${pickRange(pick, price)})`;
+  });
+  const ask = zone.rel === 'in' ? 'el precio toca ' : `el precio queda a ${plain(zone.atr)} ATR o menos de `;
+  return `Zona${zone.when === 'last' ? ', en la señal' : ''}: ${ask}${listOr(names)}.`;
+}
 
 /** Un paso en palabras */
 export function stepText(step, side) {
@@ -212,11 +360,13 @@ export function stepText(step, side) {
 
 export const linkText = (link) => `${link.type === 'any' ? 'en cualquier orden' : link.type === 'same' ? 'al tiempo o después' : 'después'}, hasta ${candles(link.max)}`;
 
-/** La estrategia en una frase */
-export function phrase(doc) {
+/** La estrategia en una frase. `price` escribe los precios de las zonas fijas (con fecha oculta, el índice) */
+export function phrase(doc, price = plain) {
   const parts = [];
   const context = doc.ctx.map(block => lower(blockText(block, doc.side)));
   if (context.length) parts.push(`Contexto${doc.ctxWhen === 'last' ? ', en la señal: ' : ': '}${listAnd(context)}.`);
+  const zone = zoneText(doc, price);
+  if (zone) parts.push(zone);
   const steps = [];
   doc.gat.forEach((step, i) => {
     const text = stepText(step, doc.side);
@@ -249,7 +399,7 @@ export function closedWindow(main, tf, now, view = VIEW_BARS) {
 
 // ==================== Lo que se pinta en el gráfico ====================
 
-export const TONES = { context: '41, 98, 255', step: '245, 124, 0', signal: '33, 37, 41', block: '123, 31, 162' };
+export const TONES = { context: '41, 98, 255', zone: '0, 121, 107', step: '245, 124, 0', signal: '33, 37, 41', block: '123, 31, 162' };
 
 const expand = (runs, times, state = 1) => {
   const items = [];
@@ -263,15 +413,26 @@ const expand = (runs, times, state = 1) => {
  * Las franjas para MiniChart (getTradeBands): una fila por capa bajo las velas, pintada donde se cumple; un triángulo
  * en cada señal; las líneas que miran los bloques; la vela elegida, y el bloque elegido en su propia fila.
  * En cada paso, el tono fuerte es el paso encadenado con lo anterior y el claro, el paso solo.
+ * Las zonas: una zona fija («solo esta») se dibuja siempre, porque es de la estrategia y no de un indicador; las de
+ * «todas las de este tipo», solo mientras su elección está abierta (`focusZone`), para no llenar el gráfico.
  */
-export function kitchenBands(result, { tf, pick = null, focus = null, focusText = '' } = {}) {
+export function kitchenBands(result, { tf, pick = null, focus = null, focusText = '', focusZone = null } = {}) {
   const tfMs = TF_MS[tf];
   if (!result?.success || !tfMs) return [];
   const { times } = result;
   const bands = [];
   const rows = [];
+  for (const chosen of result.doc?.zone?.picks || []) {
+    const info = result.zone?.picks?.[chosen.uid];
+    const open = focusZone === chosen.uid;
+    if (!info || (!open && chosen.type !== 'one')) continue;
+    for (const [start, end, low, high] of info.bands) {
+      bands.push({ kind: 'kzone', start, end, low, high, strong: open, label: chosen.type === 'one' ? 'Zona fija' : '' });
+    }
+  }
   if (focus && result.blocks?.[focus]) rows.push({ label: focusText || 'Bloque elegido', tone: TONES.block, items: expand(result.blocks[focus].runs, times) });
   if (result.context?.has) rows.push({ label: 'Contexto', tone: TONES.context, items: expand(result.context.runs, times) });
+  if (result.zone?.has) rows.push({ label: 'Zona', tone: TONES.zone, items: expand(result.zone.runs, times) });
   (result.steps || []).forEach((step, k) => {
     rows.push({ label: `Paso ${k + 1}`, tone: TONES.step,
       items: [...step.alone.map(i => [times[i], 2]), ...step.chained.map(i => [times[i], 1])].filter(item => item[0] !== undefined) });
@@ -311,6 +472,15 @@ export function candleVerdict(candle, doc) {
       else if (held) lines.push({ ok: true, text: `El contexto se cumplió mientras se juntaba el ${last ? 'último paso' : 'paso 1'}` });
       else lines.push({ ok: false, text: 'El contexto no se cumple en esta vela' });
     }
+    if (doc.zone?.picks?.length) {
+      // La zona, como el contexto, se mira en las velas en que se junta el paso 1 o el último
+      const last = doc.zone.when === 'last';
+      const held = last ? diag.signal : top >= 0 || passed >= 0;
+      const what = doc.zone.rel === 'in' ? 'toca la zona' : 'está cerca de la zona';
+      if (diag.zone) lines.push({ ok: true, text: `El precio ${what} en esta vela` });
+      else if (held) lines.push({ ok: true, text: `La zona se cumplió mientras se juntaba el ${last ? 'último paso' : 'paso 1'}` });
+      else lines.push({ ok: false, text: `El precio no ${what} en esta vela` });
+    }
     diag.steps.forEach((step, k) => {
       const name = `Paso ${k + 1}`;
       if (step.reached) lines.push({ ok: true, text: `${name}: se cumple aquí${k ? ', encadenado con el anterior' : ''}` });
@@ -318,7 +488,8 @@ export function candleVerdict(candle, doc) {
       else if (step.done) lines.push({ ok: false, text: `${name}: se cumple aquí, pero suelto: falta lo anterior` });
       else lines.push({ ok: false, text: `${name}: no se cumple en esta vela` });
     });
-    const title = !diag.steps.length ? `Todavía no hay gatillo: el contexto solo no da entradas (${side})`
+    const alone = doc.ctx.length && doc.zone?.picks?.length ? 'el contexto y la zona solos no dan' : doc.zone?.picks?.length ? 'la zona sola no da' : 'el contexto solo no da';
+    const title = !diag.steps.length ? `Todavía no hay gatillo: ${alone} entradas (${side})`
       : diag.signal ? `Aquí entra (${side}): da señal en esta vela`
         : diag.near ? `Aquí no entra (${side}), pero está a punto: falta el último paso`
           : `Aquí no entra (${side})`;

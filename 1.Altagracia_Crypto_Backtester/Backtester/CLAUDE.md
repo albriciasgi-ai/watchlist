@@ -951,31 +951,75 @@ Con el archivo compara Swing, VWAP y Rejection con velas reales, con y sin el fu
 
 ## COCINA DE ESTRATEGIAS (26/11/2026)
 
-Paso 1.1 de la central de estrategias (`docs/PLAN_CENTRAL_ESTRATEGIAS.md`, etapa 1). Pedido del usuario: una «cocina» en la simulación manual para diseñar estrategias nuevas, que abra en blanco y se llene con lo que se ve en el gráfico. Antes de construirla pidió fichas con imágenes de cómo funciona cada capa, desplegables con un clic.
+Pasos 1.1 y 1.2 de la central de estrategias (`docs/PLAN_CENTRAL_ESTRATEGIAS.md`, etapa 1). Pedido del usuario: una «cocina» en la simulación manual para diseñar estrategias nuevas, que abra en blanco y se llene con lo que se ve en el gráfico. Antes de construirla pidió fichas con imágenes de cómo funciona cada capa, desplegables con un clic. El paso 1.2 (el mismo día) sumó las zonas y los bloques de order flow.
 
 ### Qué hace
 
 - Pestaña **«Cocina»** del panel derecho de la simulación manual, junto al Observador.
-- **Capas:** contexto (estados: lo que ya venía pasando) y gatillo por pasos (hasta 4). La zona llega con el paso 1.2 y está anunciada, sin función.
-- **Se llena desde el gráfico:** un clic en una vela lista lo que se cumple ahí (los eventos de esa vela y los estados vigentes), cada uno con su botón. Lo de una misma vela, o de velas a 3 o menos, va al mismo paso; lo de una vela posterior, a un paso después, con un plazo que cubre la distancia más 3 velas. Un estado de la primera vela va al contexto.
+- **Capas:** contexto (estados: lo que ya venía pasando), zona (dónde) y gatillo por pasos (hasta 4).
+- **Se llena desde el gráfico:** un clic en una vela lista lo que se cumple ahí (las zonas cercanas, los eventos de esa vela y los estados vigentes), cada uno con su botón. Lo de una misma vela, o de velas a 3 o menos, va al mismo paso; lo de una vela posterior, a un paso después, con un plazo que cubre la distancia más 3 velas. Un estado de la primera vela va al contexto.
 - **Responde enseguida:** cada bloque dice cuántas veces se cumple en lo recorrido (las últimas 1,000 velas cerradas), y bajo las velas hay una fila por capa, pintada donde se cumple, con un triángulo en cada señal.
 - **«¿Entra aquí?»:** en la vela elegida dice si la estrategia da señal, si está a punto y qué paso falta.
 - **Frase:** la estrategia se lee en una frase que se arma sola.
 - **Versiones:** cada guardado suma una versión con su fecha; se abre cualquiera.
 - **Fichas:** «¿Cómo funciona?» en el encabezado y en cada capa despliega una ficha con su imagen (`KitchenHelp.jsx`). Todas parten del mismo dibujo y cada una resalta su parte.
 
-**Lo que no hace todavía:** no avisa al reproducir, no dibuja la caja de la señal, no abre órdenes y no pasa la estrategia al backtesting global. No tiene zonas ni bloques de order flow. Son los pasos 1.2 a 1.4.
+**Lo que no hace todavía:** no avisa al reproducir, no dibuja la caja de la señal, no abre órdenes y no pasa la estrategia al backtesting global. Son los pasos 1.3 y 1.4.
+
+### Zonas (paso 1.2)
+
+- **Tipos:** soportes y resistencias, FVG abiertos, order blocks y zonas de liquidaciones. Y, como zona fija, lo que pone el usuario en el gráfico: un rectángulo o una línea horizontal dibujados, o un nivel de un perfil de volumen de rango fijo (VP fijo).
+- **Cómo se eligen:** un clic en el gráfico. La tarjeta de la vela lista las zonas que cuentan en esa vela, a 3 ATR o menos de la vela o del clic. Primero van las que quedan bajo el clic, la más angosta antes. Si el clic cae en un nivel de un indicador, el menú de siempre ofrece «Usar en la estrategia» y lleva a la misma tarjeta.
+- **Dos maneras de sumarla:**
+  - «Todas»: todas las de ese tipo, con su sentido frente al trade. Es una regla: vale en cualquier fecha y después se puede probar;
+  - «Solo esta»: esa franja fija de precio, para la simulación manual.
+- **Tus dibujos:** la capa lista los rectángulos y las líneas horizontales del gráfico, con «Usar esta».
+- **Tus VP fijos** (pedido del usuario el 26/11, antes del commit): la capa lista los perfiles de rango fijo que dibuja el gráfico del marco a la vista, cada uno con su rango y un botón por nivel.
+  - Lo que ofrece cada perfil: su POC, su VAH y su VAL (un precio cada uno) y su área de valor (la franja del VAL al VAH).
+  - También desde el gráfico: un clic sobre la línea de un nivel abre el menú de siempre, y «Usar en la estrategia» lleva a la tarjeta de la vela con ese nivel primero («bajo tu clic»).
+  - Entra siempre como zona fija: el rango lo elige el usuario, así que no hay «Todas».
+- **Lo que pide la capa:** que el precio quede a N ATR o menos de alguna de sus zonas (0.5 de fábrica) o que la toque, mirado mientras se junta el paso 1 o en la señal. Hasta 6 zonas; cualquiera sirve.
+- **Dos eventos para los pasos:**
+  - «El precio llega a la zona»: la vela la toca y la anterior, con la zona ya a la vista, no;
+  - «Rechazo en la zona»: la toca y cierra fuera, del lado del trade (por debajo en un corto, por encima en un largo).
+- **En el gráfico:** las zonas las dibuja su indicador de App 1, si está encendido. La cocina suma la fila «Zona» bajo las velas, dibuja siempre una zona fija («Zona fija») y resalta las de un tipo mientras su elección está abierta.
+
+**Cuándo cuenta una zona:**
+- desde la vela que abre cuando ya se conoce, y deja de contar en la vela que la termina;
+- **soporte o resistencia:** los swings del probador (5 velas por lado) con la vida de S&R v2. La zona es la línea que dibuja el indicador, el promedio de sus toques. Termina con un cierre más allá de todos ellos;
+- **FVG:** el «FVG nuevo» del probador con hueco de 0.3 ATR o más. Cada vela que entra lo recorta y termina al llenarse, como el indicador en su modo de fábrica;
+- **order block:** los de `smc.compute`, de la estructura interna y de la mayor. Termina con un cierre más allá de su borde lejano;
+- **liquidaciones:** las que mostraría el indicador al abrir cada vela (`liq_sweeps.zones_at`). Cuenta mientras se muestra;
+- **zona fija:** termina como las de su tipo. Un dibujo o un nivel de un VP fijo no terminan: valen hasta que se quitan.
+
+**Un dibujo cuenta desde que se suma a la estrategia**, no desde antes: se trazó viendo lo que ya pasó. Si después se mueve, la zona de la estrategia no cambia.
+
+**Un nivel de un VP fijo, igual:**
+- cuenta desde que se suma, con el precio que tiene en ese momento. El rango se eligió viendo lo que ya pasó;
+- ese precio es el que tiene calculado el indicador a la hora simulada, solo con las velas ya ocurridas (y con el volumen real, si el almacén cubre el rango);
+- si el perfil cambia después (su rango sigue abierto, llega su volumen real o se mueve), la zona de la estrategia no cambia: se quita y se suma otra vez.
+
+### Order flow (paso 1.2)
+
+- **Bloques:** los 31 Elementos OF de `of_elements.py` como eventos, y dos estados: «Delta de la vela» y «CVD de N velas» (el filtro de CVD del probador, con el delta real).
+- **Dónde:** en las monedas con almacén de trades (la condición del probador) y en 1m, 5m, 15m, 1h y 4h.
+- **En segundo plano:** un pedido espera el order flow a lo sumo 0.6 s. Pasado eso responde `pending`, la pantalla dice «leyendo los trades de este tramo (2 de 5 partes)» y vuelve a preguntar cada 0.9 s. Lo demás ya cuenta.
+- **Por bloques de días** en memoria (1 día en 1m y 5m, 2 en 15m, 5 en 1h y 20 en 4h). Un bloque cerrado no cambia; el que tiene la última vela se detecta otra vez con cada vela nueva.
+- **Tiempos** en BTC, con el disco ya leído: unos 2.5 s la primera vez en 15m y 1h, y 0.1 a 0.2 s por vela nueva. En 1m, unos 14 s la primera vez y 1 a 2 s por vela.
+- **Sin almacén**, o donde el almacén no tiene velas, esos bloques no cuentan y la pantalla lo dice.
 
 ### Flujo
 
 ```
 KitchenPanel.jsx (pestaña)        kitchenDoc.js (documento, frase, versiones, franjas)   kitchenCatalog.js (textos de los bloques)
-        │  POST /api/kitchen/evaluate/{symbol}   { tf, candles, doc, view, pick }
+        │  POST /api/kitchen/evaluate/{symbol}   { tf, candles, doc, view, pick, pickPrice }
         ▼
 backend/kitchen.py     Facts: lo que se cumple en cada vela, con los detectores del probador
-                       side(): contexto y pasos → señales
+                       zones(): las zonas de cada tipo · zone_layer(): cerca, toca, llega y rechaza
+                       FlowBook: Elementos OF y delta real, por bloques, en un hilo aparte
+                       side(): contexto, zona y pasos → señales
         ▼
-MiniChart (getTradeBands)   filas bajo las velas, señales, líneas y la vela elegida
+MiniChart (getTradeBands)   filas bajo las velas, señales, líneas, zonas y la vela elegida
 ```
 
 ### Motor (`backend/kitchen.py`)
@@ -991,17 +1035,38 @@ MiniChart (getTradeBands)   filas bajo las velas, señales, líneas y la vela el
 - **Velas:** las últimas 1,000 cerradas son lo recorrido; delante van las que calientan los indicadores (35 días o 300 velas, como el probador, con tope de 8,000 en 1m y 5m).
 - **Tiempos** con velas al azar: la primera vez con unas velas, 0.35 s con 2,000, 0.7 s con 4,400 y 1.5 s con 9,000; con las mismas velas, 5 a 15 ms. Los cálculos de las últimas 4 quedan en memoria.
 - **1 minuto** no es un marco del probador: la regla se arma igual y lleva el marco de las velas.
+- **Zonas** (`Facts.zones`, `zone_layer`): cada tipo se arma una vez por juego de velas, con la función del probador (`rt._fs_events` para el swing y el FVG, `smc.compute`, `liq_sweeps.zones_at`).
+  - Los bordes que cambian en el camino (un FVG que se recorta, un nivel que suma un toque) van uno por vela.
+  - `zones_at` da las zonas de una vela con los bordes de esa vela y desde cuándo los tiene: elegida «solo esta», es la misma franja.
+  - Un nivel de S&R fijo lleva `edge`, su toque más lejano: es el que un cierre tiene que pasar para romperlo.
+  - La capa de zona tiene su propio momento (el paso 1 o la señal), aparte del contexto.
+- **Lo que solo conoce la página** (`USER_KINDS`: un dibujo, `draw`, y un nivel de un VP fijo, `vp`): entra como zona fija y no termina.
+  - Para la vela elegida, la página manda esas franjas en `offers` (`clean_offers`, hasta 40) y `zones_at` las ordena junto a las del motor, con la misma regla. Vuelven con su `ref`, sin fecha: desde cuándo cuentan lo pone la página.
+  - Hoy la página manda los niveles de los VP fijos; los dibujos siguen solo en su lista.
+- **Liquidaciones:** lo que se mostraba al abrir cada vela queda guardado por moneda y marco, así una vela nueva pide solo la suya. La primera vez en 1h tarda unos 2 s. Una zona que corre sus bordes con lo liquidado después sigue siendo la misma: la que se solapa con la de la vela anterior.
+- **Order flow** (`FlowBook`): un hilo por moneda y marco detecta los bloques que faltan con `of_elements.detect` y los valores de fábrica del probador.
+  - Un bloque detectado con más velas sirve para un pedido con menos (la simulación retrocedió): al leerlo se dejan fuera las velas y los eventos que ese pedido todavía no conoce.
+  - Un bloque al que le faltan velas se detecta otra vez pasados 5 minutos, por si el almacén se estaba armando.
+  - Todo queda en memoria: se pierde al reiniciar el backend.
 
 ### Página
 
 - **`kitchenDoc.js`** (lógica pura): el documento (`blankDoc`, `normalizeDoc`), dónde va cada bloque (`placeFor`, `addBlock`), la frase, las versiones (`kitchen_strategies_v1`), el borrador de cada moneda (`kitchen_draft_v1_{símbolo}`), las velas del pedido y las franjas del gráfico (`kitchenBands`).
 - **Al cambiar de lado** cada bloque sigue diciendo lo mismo en el gráfico (lo alcista sigue alcista); «Espejar los bloques» lo da vuelta. Con largos y cortos en espejo, lo elegido se lee frente al lado que se dice estar mirando.
 - **Pedidos:** con la reproducción en pausa, a los 120 ms de cada cambio; reproduciendo, a lo sumo uno cada 1.2 s. Con la cocina en blanco y sin vela elegida no pide nada.
-- **Fecha oculta:** las fechas y los precios de la tarjeta de la vela pasan por `maskDate` y `priceText`. El motor no devuelve textos con precios ni fechas.
-- **`MiniChart`** suma tres cosas opcionales; sin la cocina nada cambia:
-  - `onPickCandle`: un clic sin arrastrar sobre una vela avisa su hora. Si el clic cae en un nivel se abre el menú de siempre, que ofrece «Usar en la estrategia: ¿qué hay en esta vela?»;
+- **Fecha oculta:** las fechas y los precios de la tarjeta de la vela, de las zonas y de la frase pasan por `maskDate` y `priceText`. El motor no devuelve textos con precios ni fechas, y de las zonas de liquidaciones no se muestran montos ni fuente.
+- **Zonas:** `pickFromZone`, `addPick`, `drawnZones` y `zoneText` en `kitchenDoc.js`; los nombres de cada tipo en `ZONE_TYPES` y `pickText` de `kitchenCatalog.js`. La capa de zona recibe los dibujos del gráfico a la vista (`shapes`, `getShapes`).
+- **VP fijos:**
+  - `IndicatorManager.getFixedRangeLevels()` da los perfiles dibujados en el último cuadro (`rangesShown`) con sus niveles. Un rango automático que termina después de la hora simulada no se dibuja ni se ofrece;
+  - `profileZones` (`kitchenDoc.js`) arma las zonas de cada perfil y `offersForEngine`, lo que va al motor;
+  - cada zona guarda qué nivel es en `shape` (`poc`, `vah`, `val` o `va`), y de ahí sale su nombre (`VP_PARTS`);
+  - la pestaña mira los perfiles una vez por segundo (`getProfiles`): se crean, se mueven y se recalculan sin pasar por ella.
+- **Order flow:** mientras la respuesta trae `pending`, la pantalla vuelve a preguntar cada 0.9 s. Un bloque de order flow que todavía no cuenta lo dice en su cuenta («detectando…», «sin almacén de trades»).
+- **`MiniChart`** suma cuatro cosas opcionales; sin la cocina nada cambia:
+  - `onPickCandle`: un clic sin arrastrar sobre una vela avisa su hora y el precio del clic. Si el clic cae en un nivel se abre el menú de siempre, que ofrece «Usar en la estrategia: ¿qué hay en esta vela?»;
   - las filas (`ticks`) aceptan un tono: fuerte donde se cumple (1) y claro en el estado 2 (el paso suelto, o «a punto»);
-  - la franja `column`: una vela resaltada de arriba abajo.
+  - la franja `column`: una vela resaltada de arriba abajo;
+  - el color `kzone` de las franjas: una zona de la cocina, del color de su fila.
 - **Solo con la pestaña abierta:** al cambiar de pestaña el borrador se conserva, pero las filas salen del gráfico.
 - Los textos de los bloques están en `kitchenCatalog.js` y su cálculo en `kitchen.py`: una prueba vigila que las dos listas conozcan los mismos bloques.
 
@@ -1009,10 +1074,23 @@ MiniChart (getTradeBands)   filas bajo las velas, señales, líneas y la vela el
 
 ```bash
 cd backend
-.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 16
+.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 35
 cd ../frontend
-node tests/kitchen.test.mjs                                  # 15
+node tests/kitchen.test.mjs                                  # 25
+node tests/levels.test.mjs                                   # 56: dos son de los VP fijos de la cocina
 ```
+
+Lo que vigilan del paso 1.2:
+- las zonas ya cerradas no cambian con velas posteriores, tampoco el order flow;
+- cada tipo de zona nace, cambia y termina como se dijo arriba, con velas hechas a mano;
+- **paridad con S&R v2:** `tests/kitchen_levels_parity.mjs` corre `swingLevels.js` en node. En 45 velas de control, la cocina y el indicador tienen los mismos niveles vigentes, con el mismo precio y el mismo toque más lejano;
+- el order flow con un almacén de mentira: el pedido no espera, lo detectado no adelanta nada a un pedido con menos velas, y una vela nueva detecta solo el último bloque;
+- **los VP fijos:**
+  - en el motor, un nivel cuenta desde que se suma, no termina con un cierre más allá y se ordena con las zonas de la vela elegida (la línea antes que la franja que la contiene);
+  - en la página, cada perfil da sus cuatro zonas con su nombre, y el mismo nivel no entra dos veces;
+  - en `levels.test.mjs`, con el indicador de verdad: los niveles salen solo de las velas ya ocurridas, y un rango adelantado a la hora simulada no se ofrece.
+
+Con el paso 1.2, todas las del backend: 1,012 pasan y fallan 13, las mismas que en main sin este cambio (11 de `tests/audit/test_oraculo_a_casos.py` y las 2 de siempre). En la página solo falla `liquidations.test.mjs`, como desde el 13/11.
 
 **Probado en pantalla** el 26/11, en una copia aislada (backend 9300, página 9301) con BTC desde el 01/01/2023, en 15m y 1h:
 - la pestaña y sus seis fichas con imagen;
@@ -1021,14 +1099,38 @@ node tests/kitchen.test.mjs                                  # 15
 - «¿entra aquí?» en la vela de la señal, el bloque resaltado en su fila, el buscador, el guardado y el cambio de lado;
 - «Una vela más» (la cocina recalcula al cerrar la vela), el cambio de marco, la reproducción a 1000x y el cambio de pestaña, que quita las filas del gráfico. Sin errores en la consola.
 
-**Sin ver en pantalla:** la fecha oculta, el panel en ventana aparte y los estilos Oscuro, Personalizado y Muhammad. Tampoco 1m, 5m ni 4h (el motor sí los corre en sus pruebas).
-
 **Hallado al probar y corregido:**
 - la compresión, que no tiene lado, salía dos veces en la tarjeta de la vela;
 - en la vela de la entrada, lo ya cumplido antes (el contexto, el paso 1) salía con ✗: ahora dice «se cumplió antes, dentro de su plazo»;
 - la cuenta de un bloque se partía en tres líneas junto a un texto largo.
 
-**Para montar la copia aislada** hace falta un enlace (junction) de `frontend/node_modules` al de la copia principal, una configuración de Vite temporal con `/api` hacia el backend de prueba y `ORDERFLOW_OBSERVER` en una carpeta temporal. Al terminar se quita el enlace con `(Get-Item ...).Delete()`, nunca borrando la carpeta, y se restaura `backtesting_cache/BTCUSDT_backtesting_data.json.gz`, que `bulk-data` reescribe.
+**El paso 1.2, probado en pantalla** el 26/11, en otra copia aislada (backend 9310, página 9311) con BTC desde el 01/01/2023, en 15m, 5m y 1h, con el almacén de trades y las liquidaciones reales, solo leyendo:
+- la tarjeta de una vela con sus zonas (la del clic primero), sus Elementos OF y los estados de delta y CVD;
+- «Todas» (soportes: la fila «Zona», la cuenta y las zonas resaltadas) y «Solo esta» (un order block, que queda dibujado como «Zona fija» y dice «ya terminó» cuando un cierre lo rompe);
+- «la rechace» como paso, con sus señales; el cambio a largos y a largos y cortos, donde cada zona sigue siendo la misma;
+- un Elemento OF como paso 2: 30 señales en 5m, y «¿entra aquí?» con cada paso;
+- el aviso «leyendo los trades de este tramo (0 de 5 partes)» al pasar a 5m, que se quita solo al terminar;
+- un rectángulo dibujado, que aparece en «Tus dibujos», se suma con «Usar esta» y pasa de «cuenta desde la próxima vela» a «vigente» al avanzar con «Una vela más»;
+- el clic sobre la línea de S&R v2, que abre el menú de siempre y lleva a la tarjeta con ese soporte;
+- la fecha oculta: «Día 0 00:45», los precios de las zonas como índice, también en la frase y en una zona fija;
+- las fichas «Cómo se arma una estrategia» y «Capa 2 · Zona» a tamaño real, y el borrador, que sigue ahí al recargar.
+
+**Sin ver en pantalla:** el panel en ventana aparte y los estilos Oscuro, Personalizado y Muhammad. Tampoco 1m ni 4h (el motor sí los corre en sus pruebas), una moneda sin almacén de trades (solo con las pruebas), ni una línea horizontal dibujada (el rectángulo sí).
+
+**Hallado al probar el paso 1.2 y corregido:**
+- un soporte salía como una franja ancha entre todos sus toques (83 USD en BTC de 5m) y el indicador lo dibuja como una línea: ahora la zona es esa línea;
+- con varias zonas bajo el clic, la línea que se tocó quedaba detrás de las franjas anchas que la contienen: ahora va primero la más angosta;
+- el aviso «falta el order flow» salía también sin bloques de order flow, solo por haber elegido una vela;
+- una zona fija traída de otra fecha decía «cuenta desde la próxima vela»: ahora dice «todavía no cuenta»;
+- en la ficha de la zona, un rótulo caía encima de unas velas.
+
+**Para montar la copia aislada:**
+- un enlace (junction) de `frontend/node_modules` al de la copia principal;
+- una configuración de Vite temporal dentro de `frontend/`, que cambie `src/config.js` por `API_BASE_URL = ""`, mande `/api` al backend de prueba y lleve `cacheDir` a una carpeta temporal. Sin `cacheDir`, Vite escribe su caché en el `node_modules` de la copia principal, a través del enlace;
+- el backend con `ORDERFLOW_OBSERVER` en una carpeta temporal y `TESTER_AUTO_UPDATE=0`, para que no lance la actualización de velas, OI y funding;
+- los dos como configuraciones temporales de `.claude/launch.json`, que está en git: se quitan al terminar;
+- puertos libres: el 26/11 el 9300 y el 9301 los tenía la copia del protocolo de pruebas;
+- al terminar: se quita el enlace con `(Get-Item ...).Delete()`, nunca borrando la carpeta, y se restauran `backtesting_cache/BTCUSDT_backtesting_data.json.gz`, que `bulk-data` reescribe, y `drawings/BTCUSDT.json`, si se dibujó algo.
 
 ---
 

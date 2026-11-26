@@ -3866,11 +3866,13 @@ async def kitchen_catalog(request: Request):
 @limiter.limit("600/minute")
 async def kitchen_evaluate(request: Request, symbol: str):
     """La estrategia en borrador de la simulación manual sobre las velas que manda la página, todas ya cerradas en la
-    hora simulada (body: tf en minutos, candles, doc, view, pick). Dónde se cumple cada bloque, cada capa y la estrategia,
-    y lo que hay en la vela elegida. No guarda nada."""
+    hora simulada (body: tf en minutos, candles, doc, view, pick, pickPrice, offers). Dónde se cumple cada bloque, cada
+    capa y la estrategia, y lo que hay en la vela elegida, con sus zonas y las que ofrece la página (los niveles de sus
+    VP fijos). No guarda nada. Con bloques de order flow responde `pending` mientras se detectan en segundo plano."""
     body = await request.json()
     result = await run_in_threadpool(kitchen.evaluate, sanitize_filename(symbol), body.get("tf") or 15, body.get("candles") or [],
-                                     body.get("doc"), body.get("view") or 1000, body.get("pick"))
+                                     body.get("doc"), body.get("view") or 1000, body.get("pick"), body.get("pickPrice"),
+                                     body.get("offers"))
     return _json_response(result)
 
 

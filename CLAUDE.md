@@ -55,6 +55,42 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 26 Noviembre 2026: Zonas y Order Flow en la Cocina de Estrategias (paso 1.2 de la central)
+
+**Pedido:** el paso 1.2 de la central: que la capa de zona de la cocina funcione, con las zonas elegidas en el gráfico de las dos maneras ya decididas, y los bloques de order flow.
+
+**Cambios:**
+1. **Capa 2 · Zona:** un clic en una vela lista las zonas que cuentan en ella, la del clic primero:
+   - soportes y resistencias, FVG abiertos, order blocks y zonas de liquidaciones;
+   - cada una se suma como «Todas» (todas las de su tipo: una regla, que después se puede probar) o «Solo esta» (esa franja fija, para la simulación manual);
+   - un rectángulo o una línea horizontal dibujados aparecen en «Tus dibujos» y se suman como zona fija;
+   - un perfil de rango fijo del gráfico aparece en «Tus VP fijos» (pedido después, el mismo día): su POC, su VAH, su VAL y su área de valor se suman como zona fija, desde esa lista o con un clic sobre su línea.
+2. **Lo que pide la capa:** que el precio quede a 0.5 ATR o menos de alguna de sus zonas, o que la toque, mirado mientras se junta el paso 1 o en la señal.
+3. **Dos eventos para los pasos:** «el precio llega a la zona» y «rechazo en la zona» (la toca y cierra fuera, del lado del trade).
+4. **Order flow:** los 31 Elementos OF como eventos y dos estados, «Delta de la vela» y «CVD de N velas», en las monedas con almacén de trades. Se detectan en segundo plano: la pantalla dice «leyendo los trades de este tramo» y sigue respondiendo.
+5. **En el gráfico:** la fila «Zona» bajo las velas, la zona fija siempre dibujada y las de un tipo resaltadas mientras su elección está abierta.
+6. **Ficha de la zona** con su imagen nueva, y la ficha general con las tres capas.
+7. **Pruebas:** `test_kitchen.py` (35), `kitchen.test.mjs` (25) y dos más en `levels.test.mjs` (56). Todas las del backend de App 1, corridas antes de sumar el VP fijo: 1,012 pasan y fallan 13, las mismas que en main sin este cambio (11 de `tests/audit/test_oraculo_a_casos.py` y las 2 de siempre).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página. Llega a la app del usuario al unir esta rama a main.
+- **Un solo motor:** cada zona sale de la función del probador (el swing y el FVG, `smc.py`, `liq_sweeps.py`), y el order flow, de `of_elements.detect` con sus valores de fábrica.
+- **Los soportes y resistencias son los de S&R v2:** una prueba corre el indicador del navegador y compara nivel por nivel. La cocina cuenta todos los niveles vigentes; el indicador dibuja los 5 más cercanos por lado.
+- **Sin futuro:** una zona cuenta desde la vela que abre cuando ya se conoce y deja de contar en la vela que la termina. Un dibujo cuenta desde que se suma, no hacia atrás. Dos pruebas comparan las zonas y el order flow con 900 velas y con 1,200.
+- **Un nivel de un VP fijo:**
+  - es el que tiene calculado el indicador a la hora simulada, solo con las velas ya ocurridas;
+  - como un dibujo, cuenta desde que se suma y con el precio de ese momento: si el perfil cambia después, la zona no;
+  - la lista muestra los perfiles que dibuja el gráfico del marco a la vista.
+- **La cocina conoce las zonas nacidas en las velas que recibe:** unos 45 días en 15m, 76 en 1h y 216 en 4h. Un nivel más viejo que eso no entra.
+- **El order flow queda en memoria:** al reiniciar el backend se detecta otra vez. En BTC tarda unos 2.5 s la primera vez en 15m y 1h, y 14 s en 1m.
+- **Probado en pantalla** en una copia aislada con BTC desde el 01/01/2023, en 15m, 5m y 1h: las dos maneras de sumar una zona, el rechazo como paso, un Elemento OF como paso (30 señales en 5m), el aviso de order flow, un rectángulo dibujado, el menú de S&R v2 y la fecha oculta. El VP fijo, en 15m: la lista, el POC y el área de valor sumados (pasan a «vigente» al avanzar una vela) y el clic sobre la línea del POC.
+- **Sin ver en pantalla:** el panel en ventana aparte, los estilos Oscuro, Personalizado y Muhammad, 1m y 4h, una moneda sin almacén, una línea horizontal dibujada y un VP fijo con la fecha oculta.
+- **Lo que todavía no hace** (pasos 1.3 y 1.4): no avisa al reproducir, no dibuja la caja de la señal, no abre órdenes y no pasa la estrategia al backtesting global.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)", "Zonas" y "Order flow", y `docs/PLAN_CENTRAL_ESTRATEGIAS.md`
+
+---
+
 ### App 1 - 26 Noviembre 2026: Cocina de Estrategias en la Simulación Manual (paso 1.1 de la central)
 
 **Pedido:** tras aprobar el prototipo 4, el usuario preguntó si el aspecto del prototipo era el definitivo y dijo que le gusta más el de App 1, «más rico» y con gráficos «más agradables». Después pidió fichas con imágenes claras de cómo funcionan el contexto, los pasos y el gatillo, desplegables con un clic, y construir la cocina.
@@ -74,7 +110,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 **IMPORTANTE:**
 - Reiniciar el backend de App 1 (9000) y recargar su página. Llega a la app del usuario al unir esta rama a main.
 - **Sin futuro:** la página manda solo velas ya cerradas en la hora simulada, y cada evento cuenta en la vela con que se conoce. Una prueba compara cada bloque con 900 velas y con 1,200.
-- **Lo que todavía no hace** (pasos 1.2 a 1.4): no avisa al reproducir, no dibuja la caja de la señal, no abre órdenes y no pasa la estrategia al backtesting global. No tiene zonas ni bloques de order flow; la capa de zona está anunciada, sin función.
+- **Lo que todavía no hace** (pasos 1.3 y 1.4): no avisa al reproducir, no dibuja la caja de la señal, no abre órdenes y no pasa la estrategia al backtesting global. Las zonas y los bloques de order flow llegaron después, el mismo día (entrada de arriba).
 - Solo con la pestaña abierta: al cambiar de pestaña el borrador se conserva, pero las filas salen del gráfico.
 - `MiniChart` suma el clic en una vela, el tono de las filas y la vela resaltada, todo opcional: sin la cocina nada cambia.
 - **Probado en pantalla** en una copia aislada con BTC desde el 01/01/2023, en 15m y 1h: las fichas, una estrategia de dos pasos (7 señales en 15m), el guardado, «Una vela más», el cambio de marco y de pestaña. Sin errores en la consola.
