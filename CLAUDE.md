@@ -55,6 +55,48 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 + Altagracia Trading Suite - 26 Noviembre 2026: Motor 8, lo que Decidió el Usuario en la Galería de Order Flow
+
+**Pedido:** el usuario revisó la galería 4 del protocolo de pruebas (order flow): 96 Sí, 14 No y 14 No sé. Cada caso se
+revisó con las celdas de su vela (`pruebas_backtesting/revision_visual/G4_RESPUESTAS.md`): sin fallos del motor. Salieron
+once propuestas, medidas antes, y tres cosas de las imágenes. El usuario dijo «Todas pero Delta Tail B. Absorción como
+dices, pero que se pueda ver en hasta 50 velas y que sea configurable por el usuario».
+
+**Cambios:**
+1. **Motor 8 de los elementos de order flow** (`of_elements.py`; el indicador de App 1 y el de la suite piden al backend):
+   - Exhaustion Print y Volume Decline, en el extremo hacia donde fue el precio (máximo o mínimo de 5 velas);
+   - Delta Tail B: la mecha donde empieza la vela, la mitad de su rango o más, con el cuerpo a favor y la mecha en contra;
+   - Delta Divergence sin la vela que envuelve a las anteriores; Inverse Imbalance con el cierre de su lado;
+   - Sequencing y Vertical Liquidity con el agresor ganándole al otro lado; Acumulación/Distribución con el pasivo al
+     menos el doble;
+   - **absorción en varios intentos** (la idea del usuario): un segundo intento en el mismo nivel, con mucho volumen
+     agresivo y sin un cierre más allá, en las N velas siguientes al primero; la señal va en contra. N es 10 de fábrica y
+     se elige de 1 a 50 en el modal de Elementos OF y en el probador;
+   - la recarga, una franja por celda; el ratio de extremos, fuera de las listas.
+2. **Imágenes de la galería (O-42):** el barrido real y la orden grande con su imagen de cerca, y el Thin Print y la
+   recarga con un marco por celda.
+3. **Galería 4:** los nueve elementos que cambiaron, corridos y capturados otra vez con el motor 8 (en la absorción, un
+   marco en la celda de cada intento). Las velas que ya eran caso conservan la marca del usuario.
+4. **Pruebas:** `test_motor8.py` (13) y las que ya había, al día; en la página y en la suite, las suyas.
+
+**IMPORTANTE:**
+- **En main desde el 26/11.** Hay que reiniciar el backend de App 1 (9000) y recargar su página; la suite se reinicia
+  sola.
+- **Corridas que quedan fuera:** solo las que usan uno de los nueve elementos que cambiaron. El caché de los elementos de
+  cada fase se arma otra vez (BTC 15m, fase 1, unos 4 minutos).
+- **Delta Tail B, con su umbral medido:** sola marcaba un tercio de las velas, y un umbral relativo sacaba casos que el
+  usuario quiere. Con la mecha de la mitad de la vela: 14,540 señales (11%), y sus seis casos quedan como los ve.
+- **Medido en BTC 15m, fase 1:** Sequencing de 6,221 a 354; Delta Tail de 1,720 a 14,540; absorción 4,020 con 10 velas
+  (5,078 con 50); los demás cambian poco. Ningún otro elemento cambió.
+- **La recarga por celda** no cambia las señales ni la zona del probador, que ya juntaba las celdas de la vela.
+- **Falta:** que el usuario mire los casos nuevos de la galería 4 (y los 16 de las imágenes corregidas), y las galerías
+  3 y 5.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "PROBADOR DE REGLAS DEL OBSERVADOR", "Motor 8", y
+`pruebas_backtesting/revision_visual/G4_RESPUESTAS.md`
+
+---
+
 ### App 1 - 25 Noviembre 2026: El Trade Elegido de Order Flow con su Footprint, y las Galerías 3 a 5 con lo que Faltaba
 
 **Pedido:** en la galería 3 del protocolo de pruebas, al 2.º sabio le faltaba el AO. El usuario pidió revisar qué otras
@@ -736,8 +778,7 @@ corregir y repetir.
      (igual a la regresión), bien. La búsqueda genética corta corrió entera con el motor 6, sin candidatas.
 
 **IMPORTANTE:**
-- **Está en la rama del protocolo, sin commit.** La app del usuario lo tendrá al unirla a main; entonces hay que reiniciar
-  el backend de App 1 (9000) y recargar su página.
+- **En main desde el 23/11** (PR #53). Hay que reiniciar el backend de App 1 (9000) y recargar su página.
 - **Todas las corridas guardadas quedan fuera** y hay que volver a correrlas. La primera corrida de cada moneda con
   almacén vuelve a detectar los elementos de la fase (caché `_e2`; BTC 15m, unos minutos).
 - **Tus veredictos cambian:** de los 18, pasaban 11 y ahora pasan 2 (B5 en las fases 1 y 2 de las monedas de siempre).
@@ -1091,7 +1132,7 @@ Así se sabe si vale la pena seguir con C, la señal en el marco mayor y la entr
 4. **Pruebas:** `test_fill_order.py` (11; con el motor anterior fallan las de orden). `test_williams_smc.py` dice ahora qué corridas deja fuera cada versión.
 
 **IMPORTANTE:**
-- **Está en la rama del protocolo, sin commit:** la app del usuario lo tendrá al unirla a main. Entonces hay que reiniciar el backend de App 1 (9000) y recargar su página.
+- **En main desde el 23/11** (PR #53). Hay que reiniciar el backend de App 1 (9000) y recargar su página.
 - **Medido** en BTC 4h, fase 1, con limit en el FVG: en todas las velas con dos llenados entraba la que se llenó después. El R medio pasa:
   - borde cercano: de +0.241 a +0.200;
   - mitad: de +0.018 a +0.008;

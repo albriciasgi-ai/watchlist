@@ -1012,6 +1012,7 @@ const RuleTesterApp = () => {
   // «Una a la vez» y la detección solo salen cuando no son lo de fábrica
   const planChips = planFacets.filter(f => (f.key === 'deteccion'
     ? Number(rule.volFilter) !== detectionDefault.volFilter || Number(rule.target) !== detectionDefault.target
+      || (rule.codes.includes('RL') && Number(rule.absorbBars ?? 10) !== detectionDefault.absorbBars)
     : ['filtros', 'entrada', 'stop', 'salida'].includes(f.section) && !(f.key === 'unaAlaVez' && rule.oneAtATime)));
   const setFilter = (index, change) => patch({ filters: rule.filters.map((f, i) => (i === index ? { ...f, ...change } : f)) });
   const measureGroups = useMemo(() => {
@@ -2061,7 +2062,14 @@ const RuleTesterApp = () => {
           <span title="Parte de las velas que marca cada elemento relativo">Frecuencia</span>
           <Num value={rule.target} min={0.005} max={0.3} step={0.005} onChange={(target) => patch({ target })} />
         </div>
-        <div className="rt-note">Cambiar estos dos obliga a detectar de nuevo los elementos de toda la fase (varios minutos).</div>
+        {rule.codes.includes('RL') && (
+          <div className="rt-row">
+            <span title="La absorción marca la vela que vuelve a chocar con un nivel ya intentado, con mucho volumen agresivo en esa celda, sin que ninguna vela entre las dos cerrara más allá. La señal va en contra de los intentos">Absorción: segundo intento en</span>
+            <Num value={rule.absorbBars ?? 10} min={1} max={50} onChange={(absorbBars) => patch({ absorbBars })} />
+            <span>velas</span>
+          </div>
+        )}
+        <div className="rt-note">Cambiar estos ajustes obliga a detectar de nuevo los elementos de toda la fase (varios minutos).</div>
       </Section>
     </>
   );

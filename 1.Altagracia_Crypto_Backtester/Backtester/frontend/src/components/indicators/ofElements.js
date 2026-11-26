@@ -10,7 +10,8 @@ export const OF_ELEMENTS = {
   OG: { name: 'Orderflows Gap', shape: 'band', group: 'zones' },
   AP: { name: 'POC alineado', shape: 'band', group: 'zones' },
   SL: { name: 'POC Slingshot', shape: 'band', group: 'zones' },
-  RL: { name: 'Absorción (propuesta)', shape: 'band', group: 'zones' },
+  // Motor 8 (26/11/2026): una barrera que aguanta varios intentos, con la señal en contra de ellos (idea del usuario)
+  RL: { name: 'Absorción (varios intentos)', shape: 'band', group: 'zones' },
   EX: { name: 'Exhaustion Print', shape: 'band', group: 'turn' },
   ZP: { name: 'Zero Print', shape: 'mark', group: 'turn' },
   DT: { name: 'Delta Tail', shape: 'band', group: 'turn' },
@@ -29,7 +30,8 @@ export const OF_ELEMENTS = {
   OP: { name: 'Open POC', shape: 'band', group: 'zones', volume: true },
   IR: { name: 'Imbalance Reversal', shape: 'band', group: 'turn', volume: true },
   VD: { name: 'Volume Decline', shape: 'mark', group: 'turn', volume: true },
-  RX: { name: 'Ratio de extremos', shape: 'mark', group: 'turn', volume: true },
+  // Fuera de las listas desde el motor 8 (lo pidió el usuario): el nombre queda para las corridas guardadas
+  RX: { name: 'Ratio de extremos', shape: 'mark', group: 'turn', volume: true, retired: true },
   ST: { name: 'Stacked Imbalance', shape: 'band', group: 'trend', volume: true },
   VI: { name: 'Volume Imbalance (3 o más)', shape: 'box', group: 'trend', volume: true },
   RD: { name: 'Imbalance Reload', shape: 'band', group: 'trend', volume: true },
@@ -60,6 +62,7 @@ export function defaultOFElementsConfig() {
     codes: Object.fromEntries(Object.keys(OF_ELEMENTS).map(code => [code, DEFAULT_CODES.includes(code)])),
     target: 5, // % de las velas que marca cada elemento con umbral relativo
     volFilter: 2, // Volumen mínimo de la vela para los elementos con filtro, en veces la mediana de las 20 anteriores
+    absorbBars: 10, // Absorción: velas en que puede llegar el segundo intento al mismo nivel (de 1 a 50)
     showBands: true,
     showGlyphs: true,
     showTable: true,
@@ -69,7 +72,7 @@ export function defaultOFElementsConfig() {
   };
 }
 
-const LIMITS = { target: [1, 20], volFilter: [0, 10], maxBands: [0, 200], bandOpacity: [0.04, 0.5] };
+const LIMITS = { target: [1, 20], volFilter: [0, 10], absorbBars: [1, 50], maxBands: [0, 200], bandOpacity: [0.04, 0.5] };
 
 /** Parámetros listos para aplicar: números dentro de su rango y solo códigos conocidos */
 export function cleanOFElementsConfig(values = {}) {
@@ -80,7 +83,9 @@ export function cleanOFElementsConfig(values = {}) {
     clean[key] = Number.isFinite(number) ? Math.min(max, Math.max(min, number)) : defaults[key];
   }
   clean.maxBands = Math.round(clean.maxBands);
-  clean.codes = Object.fromEntries(Object.keys(OF_ELEMENTS).map(code => [code, !!(values.codes?.[code] ?? defaults.codes[code])]));
+  clean.absorbBars = Math.round(clean.absorbBars);
+  // Un retirado no se dibuja aunque estuviera encendido antes
+  clean.codes = Object.fromEntries(Object.keys(OF_ELEMENTS).map(code => [code, !OF_ELEMENTS[code].retired && !!(values.codes?.[code] ?? defaults.codes[code])]));
   for (const key of ['showBands', 'showGlyphs', 'showTable', 'showEMA']) clean[key] = !!clean[key];
   return clean;
 }

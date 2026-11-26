@@ -300,7 +300,8 @@ export function ruleFacets(rule, labels = {}) {
   add('unaAlaVez', rule.oneAtATime !== false ? `una a la vez${cooldown > 0 ? `, espera ${cooldown} velas tras cerrar` : ''}` : 'todas las señales');
   const costs = [n(rule.slippage) > 0 ? `deslizamiento ${n(rule.slippage)}% por lado` : null, rule.funding ? 'el funding' : null].filter(Boolean);
   if (costs.length) add('costos', costs.join(' y '));
-  add('deteccion', `volumen ${n(rule.volFilter)} · frecuencia ${n(rule.target)}`);
+  // La absorción (motor 8) solo entra a la regla con otras velas que las de fábrica (10)
+  add('deteccion', `volumen ${n(rule.volFilter)} · frecuencia ${n(rule.target)}${rule.absorbBars ? ` · absorción en ${n(rule.absorbBars)} velas` : ''}`);
   return out.sort((a, b) => ORDER.indexOf(a.key) - ORDER.indexOf(b.key));
 }
 

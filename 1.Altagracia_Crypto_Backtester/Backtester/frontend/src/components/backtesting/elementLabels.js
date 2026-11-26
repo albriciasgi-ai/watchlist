@@ -6,7 +6,7 @@
 export const ELEMENT_LABELS = {
   // Elementos OF (Orderflows Unlocked)
   VA: 'Área de valor abandonada', OG: 'Hueco entre áreas de valor', AP: 'POC alineado', SL: 'POC tirachinas',
-  RL: 'Absorción en un nivel', EX: 'Agotamiento en el extremo', ZP: 'Cero en el extremo', DT: 'Cola de delta',
+  RL: 'Absorción en varios intentos', EX: 'Agotamiento en el extremo', ZP: 'Cero en el extremo', DT: 'Cola de delta',
   RS: 'Pasivo que se retira', DD: 'Divergencia de delta', PD: 'Divergencia de precio', IV: 'Desequilibrio inverso',
   AD: 'Acumulación o distribución', SW: 'Barrido de niveles', VL: 'Liquidez vertical', SQ: 'Secuencia creciente',
   DB: 'Ruptura de delta', PW: 'Onda de POC', DV: 'Delta/volumen extremo', ST: 'Desequilibrios apilados',

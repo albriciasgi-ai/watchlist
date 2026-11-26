@@ -186,7 +186,7 @@ def test_el_motor_7_deja_fuera_solo_las_corridas_que_usan_lo_que_cambio():
     def record(engine, codes=("FV",), **rule):
         return {"engine": engine, "rule": {"recipe": {"slots": [{"codes": list(codes)}]}, **rule}}
 
-    assert rt.ENGINE == 7
+    assert rt.ENGINE >= 7  # El motor 8 (galería 4) deja fuera otras corridas: test_motor8.py
     assert rt._stale(record(5))
     assert not rt._stale(record(6)), "una regla con el FVG no cambia"
     for code in ("HM", "EN", "DJ", "RB", "BX", "BE", "CC", "QA", "QB", "QR", "QT", "QS", "QC", "QE"):

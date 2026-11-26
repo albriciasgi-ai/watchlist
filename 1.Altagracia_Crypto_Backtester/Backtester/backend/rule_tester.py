@@ -623,8 +623,17 @@ def clean_rule(raw):
         "filters": filters,
         "target": _num(raw.get("target"), oe.DEFAULT_TARGET, 0.005, 0.3),
         "volFilter": _num(raw.get("volFilter"), oe.DEFAULT_VOL_FILTER, 0.0, 10.0),
-        **_fee_cap(raw), **_costs(raw),
+        **_absorb(raw, recipe), **_fee_cap(raw), **_costs(raw),
     })
+
+
+def _absorb(raw, recipe):
+    """Las velas en que puede llegar el segundo intento de la absorción (RL, motor 8; el usuario las elige, hasta 50).
+    Solo entran a la regla si la usa y no son las de fábrica: así las demás reglas conservan su identidad."""
+    if not any("RL" in slot["codes"] for slot in recipe["slots"]):
+        return {}
+    bars = int(round(_num(raw.get("absorbBars"), oe.ABSORB_BARS, 1, oe.ABSORB_MAX_BARS)))
+    return {} if bars == oe.ABSORB_BARS else {"absorbBars": bars}
 
 
 def _canonical(rule):
@@ -839,11 +848,14 @@ def rule_hash(symbol, rule):
 
 # ==================== ELEMENTOS DEL TRAMO ====================
 
-SPAN_VERSION = 2  # 2 (22/11/2026): los bordes del área de valor y del POC sin el ruido de coma flotante (F-14)
+# 2 (22/11/2026): los bordes del área de valor y del POC sin el ruido de coma flotante (F-14). 3 (26/11/2026): los
+# elementos de order flow del motor 8 (galería 4) y las velas de la absorción en la clave
+SPAN_VERSION = 3
 
 
 def _span_path(symbol, tf, phase, rule):
-    key = f"{symbol}_{tf}_f{phase['phase']}_{phase['from']}_{phase['to']}_t{rule['target']}_v{rule['volFilter']}_e{SPAN_VERSION}"
+    key = (f"{symbol}_{tf}_f{phase['phase']}_{phase['from']}_{phase['to']}_t{rule['target']}_v{rule['volFilter']}"
+           f"_a{rule.get('absorbBars', oe.ABSORB_BARS)}_e{SPAN_VERSION}")
     return tester_dir() / "cache" / (key.replace(".", "p") + ".npz")
 
 
@@ -911,7 +923,8 @@ def detect_span(symbol, tf, phase, rule, progress=None):
             chunk_end = min(end, chunk_start + CHUNK_DAYS * oe.DAY_MS)
             # Se pide una vela de más para que la última del tramo vea a su siguiente (VA abandonada);
             # lo que pasa del tramo se descarta y llega con el tramo que sigue
-            part = oe.detect(symbol, tf, chunk_start, min(end, chunk_end + tf_ms) - 1, end, rule["target"], 0, rule["volFilter"])
+            part = oe.detect(symbol, tf, chunk_start, min(end, chunk_end + tf_ms) - 1, end, rule["target"], 0, rule["volFilter"],
+                             absorb_bars=rule.get("absorbBars", oe.ABSORB_BARS))
             bars.extend(b for b in part["bars"] if chunk_start <= b["t"] < chunk_end)
             events.extend(e for e in part["events"] if chunk_start <= e["t"] < chunk_end and e["known"] <= end)
             chunk_start = chunk_end
@@ -3230,7 +3243,7 @@ def _runs_path():
 # esperan (limit, orden stop, dos órdenes) y una posición a la vez, si dos se llenan en la misma vela entra la que se llenó
 # primero (_fill_time); antes, la de la señal más vieja, que con limit suele estar más adentro y llenarse después a mejor
 # precio (F-04 del protocolo de pruebas: en BTC 4h, fase 1, la limit en el borde cercano del FVG pasa de +0.241 a +0.200 R)
-ENGINE = 7
+ENGINE = 8
 
 
 def _stale(record):
@@ -3259,9 +3272,16 @@ def _stale(record):
       clímax, el frenado con mecha de media vela y el retroceso con una vela en contra (y con ellos los avisos de la salida
       VPA que los leen); y el medidor, que lee la vela ancha con volumen alto como los elementos (su cruce, su giro, su
       filtro y la salida por el medidor). Solo quedan fuera las corridas que usan alguno.
+    - 8 (26/11/2026, galería 4 del protocolo de pruebas, decidido por el usuario): los elementos de order flow
+      Exhaustion Print y Volume Decline en el extremo hacia donde fue el precio, el Delta Tail con mecha, el Delta
+      Divergence sin la vela que envuelve a las anteriores, el Inverse Imbalance con el cierre de su lado, el
+      Orderflows Sequencing y la Vertical Liquidity con el agresor ganando, la Acumulación/Distribución con el pasivo al
+      menos el doble y la absorción en varios intentos. Solo quedan fuera las corridas que usan alguno; la recarga
+      (una franja por celda) no cambia señales ni zonas.
     """
     engine = record.get("engine", 1)
-    return engine < 6 or (engine < 7 and _touched_by_engine7(record.get("rule") or {}))
+    rule = record.get("rule") or {}
+    return engine < 6 or (engine < 7 and _touched_by_engine7(rule)) or (engine < 8 and _touched_by_engine8(rule))
 
 
 # Lo que cambió con el motor 7: los patrones, el rombo, las cajas y el cambio de carácter (galería 1) y los elementos del
@@ -3284,6 +3304,15 @@ def _touched_by_engine7(rule):
     if reg.get("mode") == "breakout" and not reg.get("major"):
         return True
     return any(str(f.get("key", "")).startswith("since_signal_") for f in rule.get("filters") or [])
+
+
+# Lo que cambió con el motor 8 (galería 4): los elementos de order flow que leen otra cosa
+ENGINE8_CODES = {"EX", "VD", "DT", "DD", "IV", "SQ", "VL", "AD", "RL"}
+
+
+def _touched_by_engine8(rule):
+    """La regla usa algo que cambió con el motor 8 (ver _stale)."""
+    return bool({c for slot in (rule.get("recipe") or {}).get("slots", []) for c in slot.get("codes", [])} & ENGINE8_CODES)
 
 
 def _run_path(run_id):

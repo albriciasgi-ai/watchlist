@@ -212,7 +212,7 @@ def test_un_tramo_no_se_guarda_mientras_se_arma_su_almacen(tmp_path, monkeypatch
     monkeypatch.setattr(rt, "_spans", {})
     calls = []
 
-    def detect(symbol, tf, start, *rest):
+    def detect(symbol, tf, start, *rest, **options):  # options: las velas de la absorción (motor 8)
         calls.append(start)
         return {"bars": [{"t": start, "o": 1.0, "h": 2.0, "l": 0.5, "c": 1.5, "delta": 0.0, "vol": 10.0}], "events": []}
     monkeypatch.setattr(rt.oe, "detect", detect)
