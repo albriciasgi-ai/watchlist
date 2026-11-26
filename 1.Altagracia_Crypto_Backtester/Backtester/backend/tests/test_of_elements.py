@@ -234,6 +234,31 @@ def test_un_dia_sin_flujo_se_recalcula_cuando_el_flujo_aparece(store, tmp_path, 
     oe._cache.clear()
 
 
+def test_motor8_la_recarga_una_franja_por_celda_y_reglas_de_la_vela(store):
+    """Motor 8 (galería 4): la recarga va en una franja por celda compartida; el Delta Divergence no cuenta en una vela que
+    hace el máximo y el mínimo de 5 velas a la vez, y el Inverse Imbalance cierra en la mitad de su color."""
+    day = DAY0 + dt.timedelta(days=31)
+    start, end = _ms(day), _ms(day + dt.timedelta(days=2))
+    r = oe.detect(SYMBOL, 15, start, end, end, band_days=0, vol_filter=0)
+    bars = {b["t"]: b for b in r["bars"]}
+    times = sorted(bars)
+    reloads = [e for e in r["events"] if e["code"] == "RD"]
+    assert reloads
+    for e in reloads:
+        assert e["hi"] - e["lo"] == pytest.approx(bars[e["t"]]["step"])
+    for code in ("DD", "IV"):
+        assert any(e["code"] == code for e in r["events"]), code
+    for e in r["events"]:
+        b = bars[e["t"]]
+        if e["code"] == "IV":
+            position = (b["c"] - b["l"]) / (b["h"] - b["l"])
+            assert position >= 0.5 if b["c"] > b["o"] else position <= 0.5
+        k = times.index(e["t"])
+        if e["code"] == "DD" and k >= 4:
+            near = [bars[t] for t in times[k - 4:k + 1]]
+            assert not (b["h"] >= max(x["h"] for x in near) and b["l"] <= min(x["l"] for x in near))
+
+
 def test_sin_historia_avisa_y_no_marca_relativos(store):
     r = oe.detect(SYMBOL, 15, _ms(DAY0 + dt.timedelta(days=1)), _ms(DAY0 + dt.timedelta(days=2)), _ms(DAY0 + dt.timedelta(days=2)), band_days=0)
     assert r["warming"]

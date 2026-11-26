@@ -55,8 +55,9 @@ STATE_IDS = ("side", "lejos", "order", "awake", "sleep", "tramo", "pausa", "vpam
 LINE_EVENT_IDS = ("cross", "bounce", "xline")
 # Eventos de la capa de zona: el precio llega a una de sus zonas, o la toca y cierra de vuelta
 ZONE_EVENT_IDS = ("ztoca", "zrech")
-# Elementos OF (of_elements.py): salen del almacén de trades, no de una regla sobre las velas
-OF_CODES = tuple(oe.CATALOG)
+# Elementos OF (of_elements.py): salen del almacén de trades, no de una regla sobre las velas. Sin los retirados (el
+# ratio de extremos, motor 8: lo decidió el usuario en la galería 4)
+OF_CODES = tuple(code for code in oe.CATALOG if code not in oe.RETIRED)
 # Eventos del probador, por familia: los códigos de cada una salen del mismo cálculo
 FAMILIES = OrderedDict((
     ("pat", ("HM", "EN", "DJ")),

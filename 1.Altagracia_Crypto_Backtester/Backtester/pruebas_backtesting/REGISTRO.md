@@ -867,6 +867,62 @@ elementos de la galería funcionen bien". Todo en la copia aislada (backend 9300
       termina en 4 cifras hexadecimales (O-28) y se pedían solo dígitos. Corregido (`isRunOf`).
     - Cada caso conserva su clave: las marcas del usuario siguen.
 
+13. **Galería 4 (order flow) revisada por el usuario (26/11):** Sí 96, No 14 y No sé 14 de 124
+    (`evidencia/etapa7/galeria_marcas_4.txt`). Cada caso se revisó con las celdas de su vela
+    (`revision_visual/G4_RESPUESTAS.md`):
+    - sin fallos del motor: en los No, cada elemento hace lo que dice su regla;
+    - O-42, de las capturas: el barrido real y la orden grande sin imagen de cerca («no se ve el footprint»), y los
+      marcos del Thin Print y de la recarga sobre celdas que no son del elemento. Corregido: los 16 casos se capturaron
+      otra vez, con su clave. Pintar en el footprint los desequilibrios frente a una celda vacía llenaba el gráfico de
+      franjas de apilados, y se descartó;
+    - en la recarga 593 la app cuenta cinco celdas compartidas y el usuario vio dos. Las otras tres son desequilibrios de
+      muy poco volumen (el mínimo es el 5% del nivel medio de la vela), o el footprint marca el otro lado de la celda.
+      Pedir más volumen se midió (`tests/audit/medir_galeria4_imb.py`) y no se propone: saca casos que el usuario marcó
+      Sí;
+    - once propuestas para un motor 8, medidas en BTC 15m fase 1 (`tests/audit/medir_galeria4.py` y
+      `medir_galeria4_dt.py`), que decide el usuario:
+      - el Exhaustion Print y el Volume Decline, en el extremo hacia donde va el precio;
+      - el Delta Tail, con mecha y delta en la cola (dos opciones);
+      - el Delta Divergence, sin las velas que hacen el máximo y el mínimo de 5 a la vez;
+      - el Inverse Imbalance, con el cierre del lado de su señal;
+      - el Orderflows Sequencing y el Vertical Liquidity, con el agresor ganándole al otro lado;
+      - la Acumulación/Distribución, con el lado pasivo al menos el doble del agresor;
+      - la franja de la recarga, por celda;
+      - la absorción en varias velas, como la describe el usuario (la definición, por confirmar);
+      - quitar el Ratio de extremos de las listas;
+    - notas sin cambios: el Zero Print 2513, la idea del usuario para el Small Min/Max Delta, las respuestas sobre el
+      Orderflows Gap y cómo se distingue el inverso de los apilados.
+
+    **Decidido el mismo día: «Todas pero Delta Tail B. Absorción como dices, pero que se pueda ver en hasta 50 velas y
+    que sea configurable por el usuario».** Van al **motor 8**, en `of_elements.py`:
+    - el Delta Tail B con la mecha de la mitad de la vela o más: un umbral relativo sacaba casos que el usuario quiere
+      (`tests/audit/medir_galeria4_dtb.py`); con la mitad, 14,540 señales en BTC 15m fase 1 y sus seis casos como los ve;
+    - la absorción en varios intentos, con las velas del segundo intento de 1 a 50 (10 de fábrica) en el modal de
+      Elementos OF y en el probador. Cada intento más vuelve a dar la señal: así depende solo de las velas anteriores y
+      da lo mismo pedida de una vez o por tramos;
+    - la recarga por celda no cambia las corridas: el probador ya juntaba las celdas de la vela (se corrigió la
+      propuesta 9);
+    - quedan fuera solo las corridas que usan uno de los nueve elementos que cambiaron; el caché de la fase se arma otra
+      vez (`SPAN_VERSION` 3).
+
+    Medido en BTC 15m, fase 1 (`tests/audit/medir_motor8.py`): Sequencing de 6,221 a 354, Delta Tail de 1,720 a 14,540,
+    absorción 4,020 con 10 velas y 5,078 con 50; los demás cambian poco y ningún otro elemento cambió.
+
+    **Pruebas:** `test_motor8.py` (13) y las que ya había, al día. Todas las del backend: fallan solo las 13 de siempre.
+    En la página, `ofelements.test.mjs`, `ruletester.test.mjs` y `rulefacets.test.mjs`; en la suite, `run_checks.py`
+    (48), y pasan las demás de la página y del servidor.
+
+    **La galería:** los nueve se corrieron otra vez en la copia aislada (`tests/audit/galeria_corridas_m8.py`) y se
+    capturaron en `G8_<código>` (36 casos). Las velas que ya eran caso y siguen siendo trade conservan su clave y la
+    marca del usuario. El ratio de extremos sale de la página 4.
+    - **Página 4 rehecha:** 120 casos. De los 36, 14 conservan la marca del usuario y 22 son nuevos, sin marca. Las
+      páginas 1, 2, 3 y 5 quedan iguales, byte a byte.
+    - **Las capturas, dos veces:** la primera tanda siguió sola después del turno, y la ventana volvió a 1024 px. 27 casos
+      salieron más angostos: la vista general sin las velas de antes de la señal y la imagen de cerca sin cifras en las
+      celdas. Se repitieron los siete elementos a 1366×768, en un solo turno: 28 casos, todos bien.
+    - **Los pies:** el de Delta Divergence dice qué extremo de 5 velas hace la vela y su delta; el del Inverse Imbalance,
+      en qué mitad cierra.
+
 ### Etapa 3 · R02, R03 y R06 a R15 (capa C, ARB salvo R02, R03 y R12)
 
 | Regla | Qué prueba | Trades | Revisión | Hallado |

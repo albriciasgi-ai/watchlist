@@ -64,6 +64,8 @@ export function defaultRule() {
     chainTargetOn: false, chainTargetR: 5, chainTargetMetric: 'stable', chainTargetAsset: 'auto', chainTargetDays: 30, chainTargetZ: 0.5,
     cpMaxHeightOn: false, cpMaxHeight: 5.5, imBars: 3, imAtr: 2, imRangeOn: false, imRange: 1.5, useHorizon: true, horizon: 200, opposite: false,
     oneAtATime: true, cooldown: 8, vaGap: 0, filters: [], volFilter: 2, target: 0.05,
+    // Absorción (motor 8): velas en que puede llegar el segundo intento al mismo nivel. Solo cuenta con el elemento
+    absorbBars: 10,
     // Deslizamiento (% por lado, en los llenados a mercado) y funding (B-05 y B-06): apagados de fábrica
     slippage: 0, funding: false,
     // En secuencia: `first` son los elementos de contexto (el barrido) y el resto, el gatillo que llega después
@@ -345,6 +347,9 @@ export function toBackendRule(rule) {
     filters: (rule.filters || []).filter(f => f.key && f.value !== '' && Number.isFinite(Number(f.value))).slice(0, MAX_FILTERS)
       .map(f => ({ key: f.key, op: f.op === '<=' ? '<=' : '>=', value: Number(f.value) })),
     volFilter: number(rule.volFilter, 2), target: number(rule.target, 0.05),
+    // Solo con la absorción en la regla y si no es la de fábrica: así las demás reglas conservan su identidad (como el backend)
+    ...((rule.codes || []).includes('RL') && Math.round(number(rule.absorbBars, 10)) !== 10
+      ? { absorbBars: Math.min(50, Math.max(1, Math.round(number(rule.absorbBars, 10)))) } : {}),
     ...(number(rule.slippage, 0) > 0 ? { slippage: number(rule.slippage, 0) } : {}), ...(rule.funding ? { funding: true } : {})
   };
 }
@@ -432,7 +437,7 @@ export function fromBackendRule(saved) {
     trail: saved.exit?.trail === 'swing', trailBars: saved.exit?.trailBars ?? 5,
     useHorizon: saved.exit?.horizon != null, horizon: saved.exit?.horizon ?? 200, opposite: !!saved.exit?.opposite,
     oneAtATime: saved.oneAtATime !== false, cooldown: saved.cooldown ?? 0, vaGap: saved.vaGap ?? 0, filters: saved.filters || [],
-    volFilter: saved.volFilter ?? 2, target: saved.target ?? 0.05, slippage: saved.slippage ?? 0, funding: !!saved.funding
+    volFilter: saved.volFilter ?? 2, target: saved.target ?? 0.05, absorbBars: saved.absorbBars ?? 10, slippage: saved.slippage ?? 0, funding: !!saved.funding
   };
 }
 
@@ -854,6 +859,7 @@ export function ruleOFElementsConfig(rule, current = {}) {
     codes: Object.fromEntries(OF_CODES.map(code => [code, codes.has(code)])),
     ...(Number.isFinite(rule?.target) ? { target: +(rule.target * 100).toFixed(4) } : {}),  // El backend en parte de las velas; el indicador, en %
     ...(Number.isFinite(rule?.volFilter) ? { volFilter: rule.volFilter } : {}),
+    absorbBars: Number.isFinite(rule?.absorbBars) ? rule.absorbBars : 10,  // La absorción de la regla (sin él, la de fábrica)
     ...(OF_TABLE_CODES.some(code => codes.has(code)) ? { showTable: true } : {})
   };
 }

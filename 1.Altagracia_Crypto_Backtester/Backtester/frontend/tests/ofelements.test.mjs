@@ -75,6 +75,18 @@ test('la EMA 14 con pendiente positiva en una subida pareja', () => {
   assert.ok(slope[39] > 0.25);
 });
 
+test('motor 8: las velas de la absorción van de 1 a 50, enteras, y el ratio de extremos no se enciende', () => {
+  assert.equal(defaultOFElementsConfig().absorbBars, 10);
+  assert.equal(cleanOFElementsConfig({ absorbBars: 80 }).absorbBars, 50);
+  assert.equal(cleanOFElementsConfig({ absorbBars: 0 }).absorbBars, 1);
+  assert.equal(cleanOFElementsConfig({ absorbBars: '12.6' }).absorbBars, 13);
+  assert.equal(cleanOFElementsConfig({ absorbBars: 'x' }).absorbBars, 10);
+  // Un ajuste guardado antes con el ratio encendido ya no lo dibuja: salió de las listas
+  assert.ok(OF_ELEMENTS.RX.retired);
+  assert.equal(cleanOFElementsConfig({ codes: { RX: true, EX: true } }).codes.RX, false);
+  assert.equal(cleanOFElementsConfig({ codes: { RX: true, EX: true } }).codes.EX, true);
+});
+
 let failed = 0;
 for (const [name, run] of tests) {
   try {

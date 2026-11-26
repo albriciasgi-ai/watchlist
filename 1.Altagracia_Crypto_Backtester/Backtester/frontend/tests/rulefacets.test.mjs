@@ -43,6 +43,14 @@ test('lo que tiene la regla del usuario, por sección', () => {
   ]);
 });
 
+test('motor 8: las velas de la absorción en la detección y en las diferencias con la corrida', () => {
+  const absorb = { ...defaultRule(), codes: ['RL'] };
+  assert.equal(text(absorb, 'deteccion'), 'volumen 2 · frecuencia 0.05');
+  assert.equal(text({ ...absorb, absorbBars: 25 }, 'deteccion'), 'volumen 2 · frecuencia 0.05 · absorción en 25 velas');
+  const diffs = ruleDifferences(toBackendRule({ ...absorb, absorbBars: 25 }), toBackendRule(absorb));
+  assert.deepEqual(diffs.map(d => d.key), ['deteccion']);
+});
+
 test('el resumen de cada sección plegada y las frases de las fichas', () => {
   const facets = ruleFacets(toBackendRule(user()));
   assert.equal(sectionSummary(facets, 'filtros'), 'EMA 50 a favor · OI sube más de 2% en 6 velas');

@@ -95,9 +95,9 @@ class OrderFlowElementsIndicator extends IndicatorBase {
   }
 
   updateConfig(config) {
-    const before = [this.config.target, this.config.volFilter].join();
+    const before = [this.config.target, this.config.volFilter, this.config.absorbBars].join();
     this.config = cleanOFElementsConfig({ ...this.config, ...config, codes: { ...this.config.codes, ...(config.codes || {}) } });
-    if ([this.config.target, this.config.volFilter].join() !== before) {
+    if ([this.config.target, this.config.volFilter, this.config.absorbBars].join() !== before) {
       this._reset();
       this.setSetupsConfig(this.setupsConfig); // Los setups usan los mismos umbrales
     }
@@ -172,6 +172,7 @@ class OrderFlowElementsIndicator extends IndicatorBase {
       known_until: String(Math.round(knownUntil)),
       target: String(this.config.target / 100),
       vol_filter: String(this.config.volFilter),
+      absorb_bars: String(this.config.absorbBars ?? 10),
       band_days: String(bandDays)
     });
 

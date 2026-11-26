@@ -3754,9 +3754,10 @@ async def get_orderflow_profile(
     return {"success": True, **result}
 
 
-def _elements_body(symbol, interval, start, end, known_until, target, band_days, vol_filter):
+def _elements_body(symbol, interval, start, end, known_until, target, band_days, vol_filter, absorb_bars=of_elements.ABSORB_BARS):
     """Detecta y serializa en un hilo: la primera vez lee 30 días previos para calibrar."""
-    result = of_elements.detect(symbol, interval, start, end, known_until, target, band_days, vol_filter)
+    result = of_elements.detect(symbol, interval, start, end, known_until, target, band_days, vol_filter,
+                                absorb_bars=absorb_bars)
     return json.dumps({"success": True, "catalog": {k: v[:2] for k, v in of_elements.CATALOG.items()}, **result},
                       allow_nan=False, separators=(",", ":")).encode("utf-8")
 
@@ -3772,16 +3773,19 @@ async def get_orderflow_elements(
     known_until: Optional[int] = None,
     target: float = 0.05,
     band_days: int = 3,
-    vol_filter: float = 2.0
+    vol_filter: float = 2.0,
+    absorb_bars: int = 10
 ):
     """
     Elementos de Orderflows Unlocked de las velas cerradas entre start y end, cortados en known_until.
-    Los umbrales relativos salen de los 30 días anteriores a cada vela.
+    Los umbrales relativos salen de los 30 días anteriores a cada vela. absorb_bars: velas en que puede llegar el
+    segundo intento de la absorción (motor 8, de 1 a 50).
     """
     if not interval.isdigit() or int(interval) not in (1, 5, 15, 60, 240):
         return {"success": False, "message": f"Interval '{interval}' no soportado", "events": [], "bars": []}
     body = await run_in_threadpool(_elements_body, sanitize_filename(symbol), int(interval), start_timestamp,
-                                   end_timestamp, known_until, target, max(0, min(band_days, 14)), vol_filter)
+                                   end_timestamp, known_until, target, max(0, min(band_days, 14)), vol_filter,
+                                   max(1, min(absorb_bars, of_elements.ABSORB_MAX_BARS)))
     return Response(content=body, media_type="application/json")
 
 
@@ -3885,7 +3889,8 @@ async def tester_info(request: Request, symbol: str):
     return {"success": True, "phases": await run_in_threadpool(rule_tester.phases, safe),
             "timeframes": list(rule_tester.TFS),
             "elements": [{"code": code, "name": item[0], "volume": code in of_elements.VOLUME_FILTERED,
-                          "flow": code in of_elements.FLOW_CODES} for code, item in of_elements.CATALOG.items()]
+                          "flow": code in of_elements.FLOW_CODES} for code, item in of_elements.CATALOG.items()
+              if code not in of_elements.RETIRED]
             + [{"code": code, "name": liq_sweeps.CODES[code], "volume": False, "flow": False, "extra": True} for code in ("LIQ", "VH")]
             + [{"code": code, "name": vp_sessions.CODES[code], "volume": False, "flow": False, "extra": True, "vp": True} for code in rule_tester.VP_CODES]
             + [{"code": code, "name": name, "volume": False, "flow": False, "extra": True} for code, name in structure.CODES.items()]

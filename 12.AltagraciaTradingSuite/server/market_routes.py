@@ -430,8 +430,9 @@ def _tf(interval) -> int:
 @router.get("/api/orderflow/elements/{symbol}")
 async def orderflow_elements(symbol: str, interval: str, start_timestamp: int, end_timestamp: int,
                              known_until: Optional[int] = None, target: float = 0.05, band_days: int = 3,
-                             vol_filter: float = 2.0):
-    """Elementos OF (of_elements de App 1) con live=True: dias oficiales y, donde faltan, nube + PC."""
+                             vol_filter: float = 2.0, absorb_bars: int = 10):
+    """Elementos OF (of_elements de App 1) con live=True: dias oficiales y, donde faltan, nube + PC. absorb_bars: velas en
+    que puede llegar el segundo intento de la absorcion (motor 8 de App 1, de 1 a 50)."""
     symbol = candles.symbol_code(symbol)
     if str(interval).isdigit() and int(interval) in NO_FLOW:
         return _json({"success": True, "catalog": {}, "events": [], "bars": [], "known_until": _now_ms(), "warming": True,
@@ -449,7 +450,8 @@ async def orderflow_elements(symbol: str, interval: str, start_timestamp: int, e
     def body():
         cut = _live_cut(symbol, known_until)
         result = of_elements.detect(symbol, tf, start_timestamp, end_timestamp, cut, target,
-                                    max(0, min(band_days, 14)), vol_filter, live=True)
+                                    max(0, min(band_days, 14)), vol_filter, live=True,
+                                    absorb_bars=max(1, min(absorb_bars, of_elements.ABSORB_MAX_BARS)))
         catalog = {k: v[:2] for k, v in of_elements.CATALOG.items()}
         catalog.update(book_events.CATALOG)
         try:

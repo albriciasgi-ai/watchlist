@@ -29,8 +29,15 @@ DEFAULT_TARGET = 0.05     # Parte de las velas que marca cada elemento relativo
 RATIO = 4.0               # Desequilibrio diagonal del módulo (400 %)
 MIN_IMB = 0.05            # Lado dominante mínimo del desequilibrio, como parte del nivel promedio
 SWEEP_PASSIVE = 0.02      # Contrapartida casi nula en un barrido, como parte del nivel promedio
-REST_SHARE = 0.4          # Parte pasiva mínima de un nivel de absorción
 SWING_BARS = 5
+# Motor 8 (26/11/2026, galería 4 del protocolo de pruebas, decidido por el usuario)
+DT_WICK = 0.5             # Delta Tail: la mecha donde empieza la vela, al menos la mitad de su rango
+DT_CELL = 0.1             # y en ella delta en contra: su celda del extremo, desde el 10% del nivel medio, o la mecha entera
+AD_RATIO = 2.0            # Acumulación/Distribución: en su nivel, el lado pasivo al menos el doble del agresor
+ABSORB_BARS = 10          # Absorción: el segundo intento llega en las N velas siguientes al primero (el usuario elige N)
+ABSORB_MAX_BARS = 50
+ABSORB_CELL_PCT = 95      # Mucho volumen agresivo en una celda: el 5% mayor de las celdas de los 30 días anteriores
+RETIRED = {"RX"}          # Fuera de las listas (lo pidió el usuario): el código queda para abrir las corridas guardadas
 MAX_RANGE_DAYS = 70
 MAX_CACHED_DAYS = 400
 DAY_MS = 86400000
@@ -42,7 +49,7 @@ CATALOG = {
     "OG": ("Orderflows Gap", "band", True, None),
     "AP": ("POC alineado", "band", False, None),
     "SL": ("POC Slingshot", "band", False, None),
-    "RL": ("Absorción (propuesta)", "band", False, None),
+    "RL": ("Absorción (varios intentos)", "band", True, None),
     "EX": ("Exhaustion Print", "band", True, None),
     "ZP": ("Zero Print", "mark", False, None),
     "DT": ("Delta Tail", "band", False, None),
@@ -169,12 +176,21 @@ def bar_facts(ask, bid, o, c):
     totO = A + P
     f.update(A=A, P=P, meanlv=meanlv)
     f["exh"] = P[0] / meanlv if P[0] > 0 else None
+    # Motor 8: el Exhaustion Print y el Volume Decline miran el extremo hacia donde fue el precio (ver _turn_side). La
+    # compra en el máximo y la venta en el mínimo, en orden de precio
+    f["exh_high"] = ask[-1] / meanlv if ask[-1] > 0 else None
+    f["exh_low"] = bid[0] / meanlv if bid[0] > 0 else None
+    f["decline_high"] = bool(n >= 5 and ask[-3] > ask[-2] > ask[-1])
+    f["decline_low"] = bool(n >= 5 and bid[2] > bid[1] > bid[0])
     f["zero"] = bool(P[0] == 0 or P[1] == 0)
     dl = A - P
+    # La regla de antes del motor 8 (el Delta Tail la reemplazó por _tail); la leen las mediciones de la galería 4
     f["tail"] = bool(dl[0] < 0 and np.all(dl[1:][totO[1:] > 0] > 0))
     f["suck"] = P[0] / meanlv if n >= 5 and P[0] > P[1] > P[2] else None
-    k = 1
-    while k < n and A[k] > A[k - 1]:
+    # Motor 8: en cada nivel de la secuencia el agresor crece, le gana al lado contrario y tiene algo de volumen. Antes
+    # contaba niveles de milésimas y niveles donde ganaba el otro lado (galería 4, casos 1, 1044 y 1566)
+    k = 0
+    while k < n and A[k] > P[k] and A[k] >= MIN_IMB * meanlv and (k == 0 or A[k] > A[k - 1]):
         k += 1
     f["seq"] = k
     inner = (P[1:n - 1] <= SWEEP_PASSIVE * meanlv) & (A[1:n - 1] > 0)
@@ -196,7 +212,6 @@ def bar_facts(ask, bid, o, c):
     f["ratio"] = bool(P[0] > 0 and (P[1] / P[0] < 0.7 or P[1] / P[0] > 30))
     ip, ia = int(np.argmax(P)), int(np.argmax(A))
     f["accdist"] = (P[ip] / meanlv, ip) if P[ip] >= A[ia] and ip <= (n - 1) / 3 else None
-    f["rest_cells"] = (totO, P)
     return f
 
 
@@ -382,17 +397,118 @@ def _kth_largest(values, share):
 
 
 def _vertical_run(f, thr):
+    """Racha de niveles con el agresor en el 10% mayor de 30 días. Motor 8: en cada nivel el agresor le gana al lado
+    contrario (galería 4, caso 3072: la mitad de los niveles estaban parejos)."""
     if "A" not in f or thr is None:
         return (0, -1, -1)
-    return _run(f["A"] >= thr)
+    return _run((f["A"] >= thr) & (f["A"] > f["P"]))
 
 
-def _rest_row(f, thr):
+def _edge_rows(f, top, count):
+    """Las `count` filas del máximo (top) o del mínimo de la vela, como índices en su orientación."""
+    n = f["n"]
+    upper = f["col"] > 0  # En una verde el índice crece con el precio
+    if top == upper:
+        return n - count, n - 1
+    return 0, count - 1
+
+
+def _turn_side(f, hi5, lo5):
+    """
+    Motor 8 (galería 4, decidido por el usuario): el Exhaustion Print y el Volume Decline miran el extremo hacia donde
+    fue el precio. Si la vela hace el máximo de 5 velas, miran arriba (los compradores se agotan: bajista); si hace el
+    mínimo, abajo (los vendedores se agotan: alcista); si no hace ninguno, o los dos, el extremo donde empieza la vela,
+    como antes. Antes miraban siempre el inicio: en una vela verde que hacía el máximo, su mínimo (casos 623 y 1037).
+    Devuelve (lado, valor del Exhaustion Print, hay Volume Decline, top): top dice qué extremo, None = el del inicio.
+    """
+    if hi5 and not lo5:
+        return -1, f["exh_high"], f["decline_high"], True
+    if lo5 and not hi5:
+        return 1, f["exh_low"], f["decline_low"], False
+    return f["col"], f["exh"], f["decline"], None
+
+
+def _tail(f):
+    """
+    Delta Tail del motor 8 (la opción B de la galería 4, elegida por el usuario): la mecha donde empieza la vela ocupa al
+    menos la mitad de su rango, el cuerpo va con delta a favor del color y la mecha con delta en contra, en su celda del
+    extremo (desde el 10% del nivel medio) o sumada entera. Antes pedía solo la celda del extremo en contra y todas las
+    demás a favor, sin mecha (casos 29, 43 y 127). Devuelve cuántas filas tiene la mecha, o None.
+    """
+    rng = f["h"] - f["l"]
+    if "A" not in f or rng <= 0:
+        return None
+    wick = (min(f["o"], f["c"]) - f["l"]) if f["col"] > 0 else (f["h"] - max(f["o"], f["c"]))
+    if wick < DT_WICK * rng:
+        return None
+    dl = f["A"] - f["P"]
+    w = min(f["n"], max(1, int(round(wick / f["step"]))))
+    if float(dl[w:].sum()) <= 0:
+        return None
+    if -dl[0] >= DT_CELL * f["meanlv"] or float(dl[:w].sum()) < 0:
+        return w
+    return None
+
+
+def _attempt(f, thr, side):
+    """
+    Intento contra un nivel, para la absorción del motor 8: la celda de la vela con más volumen agresivo de ese lado,
+    desde `thr` (el 5% mayor de las celdas de 30 días), que queda del otro lado de su cierre. side 1: llegó desde abajo
+    con mucha compra y cerró debajo de la celda; -1: desde arriba con mucha venta y cerró encima. (bajo, alto, volumen)
+    o None.
+    """
     if "A" not in f or thr is None:
         return None
-    totO, P = f["rest_cells"]
-    ok = np.nonzero((totO >= thr) & (P >= REST_SHARE * totO))[0]
-    return int(ok[np.argmax(totO[ok])]) if len(ok) else None
+    bid, ask = (f["P"], f["A"]) if f["col"] > 0 else (f["A"][::-1], f["P"][::-1])
+    cells = ask if side > 0 else bid
+    lows = (f["lo"] + np.arange(f["n"])) * f["step"]
+    ok = (cells >= thr) & ((lows >= f["c"] - 1e-9) if side > 0 else (lows + f["step"] <= f["c"] + 1e-9))
+    if not ok.any():
+        return None
+    j = int(np.flatnonzero(ok)[np.argmax(cells[ok])])
+    return round(float(lows[j]), 10), round(float(lows[j] + f["step"]), 10), float(cells[j])
+
+
+def _absorptions(bars, first, last, threshold_of, absorb_bars, tf):
+    """
+    Absorción del motor 8 (la idea del usuario en la galería 4): una barrera que aguanta varios intentos, y la señal en
+    contra de ellos. Una vela es señal si intenta en un nivel (_attempt) donde ya hubo otro intento del mismo lado, a una
+    celda o menos, en las `absorb_bars` velas anteriores, y ninguna vela entre los dos cerró más allá del nivel. Cada
+    intento más en ese nivel vuelve a dar la señal. Solo mira velas ya cerradas: la señal se conoce al cerrar el intento.
+    Devuelve {índice de la vela: [(lado de la señal, bajo, alto, volumen, umbral, hora del primer intento)]} para las
+    velas de first a last.
+    """
+    span = absorb_bars * tf * 60000
+    tries = {}  # índice -> {lado: (bajo, alto, volumen)}
+    start = first
+    while start > 0 and bars[first]["t"] - bars[start - 1]["t"] <= span:
+        start -= 1
+    out = {}
+    oldest = start  # La primera vela que todavía cabe en la ventana de la vela i
+    for i in range(start, last + 1):
+        f = bars[i]
+        thr = threshold_of(f)
+        found = {side: _attempt(f, thr, side) for side in (1, -1)}
+        tries[i] = found
+        while f["t"] - bars[oldest]["t"] > span:
+            tries.pop(oldest, None)
+            oldest += 1
+        if i < first:
+            continue
+        for side, cell in found.items():
+            if cell is None:
+                continue
+            for j in range(oldest, i):
+                prev = tries.get(j, {}).get(side)
+                if prev is None or abs(prev[0] - cell[0]) > max(f["step"], bars[j]["step"]) + 1e-9:
+                    continue
+                lo, hi = min(prev[0], cell[0]), max(prev[1], cell[1])
+                between = bars[j + 1:i]
+                if any((b["c"] > hi + 1e-9) if side > 0 else (b["c"] < lo - 1e-9) for b in between):
+                    continue
+                out.setdefault(i, []).append((-side, lo, hi, cell[2], thr, bars[j]["t"]))
+                break
+    return out
 
 
 def _thresholds(window, target):
@@ -400,15 +516,17 @@ def _thresholds(window, target):
     if len(window) < MIN_WINDOW_BARS:
         return None
     aggr = np.concatenate([f["A"][f["A"] > 0] for f in window if "A" in f] or [np.zeros(0)])
-    totals = np.concatenate([f["rest_cells"][0][f["rest_cells"][0] > 0] for f in window if "A" in f] or [np.zeros(0)])
+    # Las celdas de los dos lados, para la absorción del motor 8: cualquiera de los dos puede chocar con un nivel
+    cells = np.concatenate([np.concatenate([f["A"][f["A"] > 0], f["P"][f["P"] > 0]]) for f in window if "A" in f] or [np.zeros(0)])
     vert_cell = float(np.percentile(aggr, 90)) if len(aggr) else None
-    rest_cell = float(np.percentile(totals, 99.5)) if len(totals) else None
+    absorb_cell = float(np.percentile(cells, ABSORB_CELL_PCT)) if len(cells) else None
     vols = np.array([f["vol"] for f in window])
     medvol = float(np.median(vols)) if len(vols) else None
-    thr = {"vert_cell": vert_cell, "rest_cell": rest_cell, "medvol": medvol}
+    thr = {"vert_cell": vert_cell, "absorb_cell": absorb_cell, "medvol": medvol}
     thr["DV"] = _kth_largest([f["col"] * f["delta"] / f["vol"] if f["vol"] > 0 else None for f in window], target)
     thr["PD"] = _kth_largest([abs(f["delta"]) / f["vol"] if f["col"] * f["delta"] < 0 and f["vol"] > 0 else None for f in window], target)
-    thr["EX"] = _kth_largest([-f["exh"] if f.get("exh") is not None else None for f in window], target)
+    # Motor 8: con el valor del extremo que mira cada vela (_turn_side; detect lo deja en "ex_value")
+    thr["EX"] = _kth_largest([-f["ex_value"] if f.get("ex_value") is not None else None for f in window], target)
     thr["RS"] = _kth_largest([f.get("suck") for f in window], target)
     thr["SQ"] = _kth_largest([f["seq"] if "seq" in f else None for f in window], target)
     thr["SW"] = _kth_largest([f["sweep"][0] if "sweep" in f else None for f in window], target)
@@ -498,18 +616,37 @@ def _atr(bars, period=14):
     return out
 
 
+def _accdist_row(f):
+    """La fila de la Acumulación/Distribución, si en ella el lado pasivo es al menos AD_RATIO veces el agresor (motor 8,
+    galería 4, caso 2332: 1.6 veces); None si no. El umbral relativo sigue saliendo de todas las candidatas."""
+    if not f.get("accdist"):
+        return None
+    row = f["accdist"][1]
+    return row if f["P"][row] >= AD_RATIO * f["A"][row] else None
+
+
+def _closes_toward(f):
+    """Motor 8, Inverse Imbalance: la vela cierra en la mitad de su rango hacia su color (galería 4, caso 2134: una verde
+    con 84% de mecha arriba que cerró al 16% de su rango)."""
+    rng = f["h"] - f["l"]
+    position = (f["c"] - f["l"]) / rng if rng > 0 else 0.5
+    return position >= 0.5 if f["col"] > 0 else position <= 0.5
+
+
 def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DEFAULT_TARGET, band_days=3,
-           vol_filter=DEFAULT_VOL_FILTER, live=False):
+           vol_filter=DEFAULT_VOL_FILTER, live=False, absorb_bars=ABSORB_BARS):
     """
     Elementos de las velas que empiezan entre start_ms y end_ms, y franjas nacidas hasta band_days
     antes. Solo velas cerradas antes de known_until_ms. Devuelve eventos y la tabla de cada vela.
     vol_filter: volumen mínimo de la vela, en veces la mediana de las 20 anteriores, para los
     elementos de VOLUME_FILTERED. 0 los muestra en todas las velas.
     live: también los días de la nube y el PC donde falta el oficial (lo usa la app en tiempo real).
+    absorb_bars: velas en que puede llegar el segundo intento de la absorción (RL), de 1 a ABSORB_MAX_BARS.
     """
     tf = int(interval_minutes)
     target = min(0.3, max(0.005, float(target)))
     vol_filter = min(10.0, max(0.0, float(vol_filter)))
+    absorb_bars = int(min(ABSORB_MAX_BARS, max(1, round(float(absorb_bars)))))
     known_min = (known_until_ms if known_until_ms is not None else end_ms) // 60000
     end_ms = min(end_ms, known_min * 60000)
     if end_ms - start_ms > MAX_RANGE_DAYS * DAY_MS:
@@ -535,20 +672,35 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
     day_index = {}
     for i, f in enumerate(bars):
         day_index.setdefault(f["_day"], []).append(i)
+        if "A" in f:
+            # El extremo de 5 velas (con la vela), para el Exhaustion Print y el Volume Decline del motor 8 (_turn_side)
+            near = bars[max(0, i - SWING_BARS + 1):i + 1]
+            f["ex_side"], f["ex_value"], f["vd_on"], f["turn_top"] = _turn_side(
+                f, f["h"] >= max(b["h"] for b in near), f["l"] <= min(b["l"] for b in near))
     thresholds = {}
     band_from = start_ms - band_days * DAY_MS
     cum, cum_day = 0.0, None
     events = result["events"]
 
-    for i, f in enumerate(bars):
-        if f["t"] < band_from or f["t"] > end_ms:
-            continue
-        d = f["_day"]
+    def day_thresholds(d):
         if d not in thresholds:
             window = [bars[j] for k in range(1, WINDOW_DAYS + 1) for j in day_index.get(d - dt.timedelta(days=k), [])]
             window.sort(key=lambda x: x["t"])
             thresholds[d] = _thresholds(window, target)
-        thr = thresholds[d]
+        return thresholds[d]
+
+    # La absorción mira los intentos de las velas anteriores, también las de antes del tramo pedido: así da lo mismo
+    # pedir la fase entera o por tramos
+    first = next((i for i, f in enumerate(bars) if f["t"] >= band_from), len(bars))
+    last = max((i for i, f in enumerate(bars) if f["t"] <= end_ms), default=-1)
+    absorbs = _absorptions(bars, first, last, lambda f: (day_thresholds(f["_day"]) or {}).get("absorb_cell"),
+                           absorb_bars, tf) if first <= last else {}
+
+    for i, f in enumerate(bars):
+        if f["t"] < band_from or f["t"] > end_ms:
+            continue
+        d = f["_day"]
+        thr = day_thresholds(d)
         if thr is None:
             result["warming"] = True
         p = bars[i - 1] if i else None
@@ -592,19 +744,22 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
         lows = [bars[j]["l"] for j in range(max(0, i - SWING_BARS + 1), i + 1)]
         highs = [bars[j]["h"] for j in range(max(0, i - SWING_BARS + 1), i + 1)]
         if "A" in f:
-            if col > 0 and f["l"] <= min(lows) and f["delta"] > 0:
+            # Motor 8: una vela que hace el máximo y el mínimo de 5 velas a la vez (envuelve a las anteriores) no cuenta
+            # (galería 4, caso 1533: la app la tomaba por el mínimo)
+            outside = f["l"] <= min(lows) and f["h"] >= max(highs)
+            if col > 0 and f["l"] <= min(lows) and f["delta"] > 0 and not outside:
                 add("DD", 1, *_rows_price(f, 0, min(1, f["n"] - 1)))
-            if col < 0 and f["h"] >= max(highs) and f["delta"] < 0:
+            if col < 0 and f["h"] >= max(highs) and f["delta"] < 0 and not outside:
                 add("DD", -1, *_rows_price(f, 0, min(1, f["n"] - 1)))
             if f["zero"]:
                 add("ZP", col, *_rows_price(f, 0, 1))
-            if f["tail"]:
-                add("DT", col, *_row_price(f, 0))
-            if f["inverse"][0] >= 2:
+            tail = _tail(f)
+            if tail is not None:
+                add("DT", col, *_rows_price(f, 0, tail - 1))
+            if f["inverse"][0] >= 2 and _closes_toward(f):
                 add("IV", col, *_rows_price(f, f["inverse"][1], f["inverse"][2]))
-            row = _rest_row(f, thr["rest_cell"]) if thr else None
-            if row is not None:
-                add("RL", col, *_row_price(f, row))
+        for side, lo, hi, volume, cell_thr, first_try in absorbs.get(i, []):
+            add("RL", side, lo, hi, volume, cell_thr, t0=first_try)
         nxt = bars[i + 1] if i + 1 < len(bars) else None
         if nxt is not None and _contiguous(nxt, f, tf):
             vl, vh = _price_va(f)
@@ -626,11 +781,14 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
                     add("IR", col, *_rows_price(f, 0, 1), rel)
                 if p is not None and p.get("col") == col and p["step"] == f["step"] and "imb_rows" in p:
                     mine = {_row_price(f, k) for k in f["imb_rows"]}
-                    shared = sorted(mine & {_row_price(p, k) for k in p["imb_rows"]})
-                    if shared:
-                        add("RD", col, shared[0][0], shared[-1][1], rel)
-                if f["decline"]:
-                    add("VD", col, *_rows_price(f, 0, 2), rel)
+                    # Motor 8: una franja por celda compartida; antes iba de la primera a la última y tomaba celdas que
+                    # las dos velas no comparten (galería 4, casos 593 y 2072). El probador junta las de la vela: su
+                    # zona y sus señales no cambian
+                    for lo_s, hi_s in sorted(mine & {_row_price(p, k) for k in p["imb_rows"]}):
+                        add("RD", col, lo_s, hi_s, rel)
+                if f["vd_on"]:
+                    rows = (0, 2) if f["turn_top"] is None else _edge_rows(f, f["turn_top"], 3)
+                    add("VD", f["ex_side"], *_rows_price(f, *rows), rel)
                 for k in f["thin_rows"][:MAX_THIN_ROWS]:
                     add("TP", col, *_row_price(f, k), rel)
                 if f["ratio"]:
@@ -672,8 +830,9 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
             add("GR", side, p0, max(p1, p0 + f["step"]), usd, thr["GR"])
         if "A" not in f:
             continue
-        if f["exh"] is not None and thr["EX"] is not None and -f["exh"] >= thr["EX"]:
-            add("EX", col, *_row_price(f, 0), f["exh"], -thr["EX"])
+        if f["ex_value"] is not None and thr["EX"] is not None and -f["ex_value"] >= thr["EX"]:
+            rows = (0, 0) if f["turn_top"] is None else _edge_rows(f, f["turn_top"], 1)
+            add("EX", f["ex_side"], *_rows_price(f, *rows), f["ex_value"], -thr["EX"])
         if f["suck"] is not None and thr["RS"] is not None and f["suck"] >= thr["RS"]:
             add("RS", col, *_rows_price(f, 0, 2), f["suck"], thr["RS"])
         need = max(CATALOG["SQ"][3], thr["SQ"]) if thr["SQ"] is not None else None
@@ -686,7 +845,8 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
         need = max(CATALOG["VL"][3], thr["VL"]) if thr["VL"] is not None else None
         if need is not None and run[0] >= need:
             add("VL", col, *_rows_price(f, run[1], run[2]), run[0], need)
-        if f["accdist"] and thr["AD"] is not None and f["accdist"][0] >= thr["AD"]:
-            add("AD", col, *_row_price(f, f["accdist"][1]), f["accdist"][0], thr["AD"])
+        row = _accdist_row(f)
+        if row is not None and thr["AD"] is not None and f["accdist"][0] >= thr["AD"]:
+            add("AD", col, *_row_price(f, row), f["accdist"][0], thr["AD"])
 
     return result
