@@ -1104,6 +1104,8 @@ Con el paso 1.2 y los VP fijos, todas las del backend: 1,014 pasan y fallan 13, 
 - en la vela de la entrada, lo ya cumplido antes (el contexto, el paso 1) salía con ✗: ahora dice «se cumplió antes, dentro de su plazo»;
 - la cuenta de un bloque se partía en tres líneas junto a un texto largo.
 
+**Tutorial en PDF** (26/11, pedido del usuario): `GUIA_COCINA_ESTRATEGIAS.pdf`, 26 páginas con capturas reales de la app (copia aislada, BTC 15m, 2/10/2026) y marcas numeradas: un ejemplo de dos pasos clic por clic, cada parámetro y los 42 bloques con sus valores de fábrica. Generador y capturas en `OrderFlowData/research/central_estrategias/2026-11-26/guia_cocina/` (`guia_cocina.py`; el capturador es Electron sin ventana, en `capturador/`). Si cambia la cocina, se rehace desde ahí. Describe la cocina del paso 1.1: dice que la capa de zona «todavía no está», y no trae las zonas, los VP fijos ni los bloques de order flow del paso 1.2.
+
 **El paso 1.2, probado en pantalla** el 26/11, en otra copia aislada (backend 9310, página 9311) con BTC desde el 01/01/2023, en 15m, 5m y 1h, con el almacén de trades y las liquidaciones reales, solo leyendo:
 - la tarjeta de una vela con sus zonas (la del clic primero), sus Elementos OF y los estados de delta y CVD;
 - «Todas» (soportes: la fila «Zona», la cuenta y las zonas resaltadas) y «Solo esta» (un order block, que queda dibujado como «Zona fija» y dice «ya terminó» cuando un cierre lo rompe);
