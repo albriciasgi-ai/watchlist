@@ -646,6 +646,7 @@ node tests/williamssmc.parity.test.mjs
 node tests/rulefacets.test.mjs
 node tests/montecarlo.test.mjs
 node tests/coach.test.mjs
+node tests/kitchen.test.mjs
 cd ../backend
 .venv\Scripts\python.exe -m pytest tests/test_search_funnel.py tests/test_market_filter.py tests/test_rule_frequency.py tests/test_signal_sweep.py
 cd ../frontend
@@ -945,6 +946,89 @@ node tests/leaks.test.mjs ruta\velas.json
 ```
 
 Con el archivo compara Swing, VWAP y Rejection con velas reales, con y sin el futuro. El archivo trae `{ "5m": [...], "15m": [...], "1h": [...], "4h": [...] }`. `tests/test_dtb_known.py` compara Double Top/Bottom con todos los datos contra solo lo cerrado. `tests/test_rejection_known.py` comprueba que una vela no cambia con velas posteriores y que una simulación no avisa al bot.
+
+---
+
+## COCINA DE ESTRATEGIAS (26/11/2026)
+
+Paso 1.1 de la central de estrategias (`docs/PLAN_CENTRAL_ESTRATEGIAS.md`, etapa 1). Pedido del usuario: una «cocina» en la simulación manual para diseñar estrategias nuevas, que abra en blanco y se llene con lo que se ve en el gráfico. Antes de construirla pidió fichas con imágenes de cómo funciona cada capa, desplegables con un clic.
+
+### Qué hace
+
+- Pestaña **«Cocina»** del panel derecho de la simulación manual, junto al Observador.
+- **Capas:** contexto (estados: lo que ya venía pasando) y gatillo por pasos (hasta 4). La zona llega con el paso 1.2 y está anunciada, sin función.
+- **Se llena desde el gráfico:** un clic en una vela lista lo que se cumple ahí (los eventos de esa vela y los estados vigentes), cada uno con su botón. Lo de una misma vela, o de velas a 3 o menos, va al mismo paso; lo de una vela posterior, a un paso después, con un plazo que cubre la distancia más 3 velas. Un estado de la primera vela va al contexto.
+- **Responde enseguida:** cada bloque dice cuántas veces se cumple en lo recorrido (las últimas 1,000 velas cerradas), y bajo las velas hay una fila por capa, pintada donde se cumple, con un triángulo en cada señal.
+- **«¿Entra aquí?»:** en la vela elegida dice si la estrategia da señal, si está a punto y qué paso falta.
+- **Frase:** la estrategia se lee en una frase que se arma sola.
+- **Versiones:** cada guardado suma una versión con su fecha; se abre cualquiera.
+- **Fichas:** «¿Cómo funciona?» en el encabezado y en cada capa despliega una ficha con su imagen (`KitchenHelp.jsx`). Todas parten del mismo dibujo y cada una resalta su parte.
+
+**Lo que no hace todavía:** no avisa al reproducir, no dibuja la caja de la señal, no abre órdenes y no pasa la estrategia al backtesting global. No tiene zonas ni bloques de order flow. Son los pasos 1.2 a 1.4.
+
+### Flujo
+
+```
+KitchenPanel.jsx (pestaña)        kitchenDoc.js (documento, frase, versiones, franjas)   kitchenCatalog.js (textos de los bloques)
+        │  POST /api/kitchen/evaluate/{symbol}   { tf, candles, doc, view, pick }
+        ▼
+backend/kitchen.py     Facts: lo que se cumple en cada vela, con los detectores del probador
+                       side(): contexto y pasos → señales
+        ▼
+MiniChart (getTradeBands)   filas bajo las velas, señales, líneas y la vela elegida
+```
+
+### Motor (`backend/kitchen.py`)
+
+- **Un bloque de la cocina y un elemento del backtesting global son el mismo cálculo.** Cada evento sale de la función del probador (`rule_tester._pattern_events`, `_fs_events`, `_vpa_events`…) con una regla armada por `clean_rule`: sus valores de fábrica. La EMA es la del filtro de línea (`_line`) y el medidor VPA, el del filtro.
+- **Eventos** (31 códigos, por familias): patrones (HM, EN, DJ), volumen alto (VH), FVG, impulso y swing (FV, IM, SP), cambio de carácter (CC), cajas (BX, BE, CP), Volumen de Respuesta (RF, RB), canal gaussiano (GC), Lector VPA (10), Williams (WD, WA, WF) y SMC (BS, OB, BK, EQ). Además, de las líneas: el precio cruza una línea, rebota en ella, o dos líneas se cruzan.
+- **Estados:** el cierre de un lado de una línea, lejos de ella (ATR), EMA 20, 50 y 200 ordenadas, Alligator despierto o dormido, viene de un tramo fuerte, el precio se queda quieto y el medidor VPA de un lado. Líneas: `e<periodo>` (EMA de 2 a 400) y las tres del Alligator.
+- **Parámetros que se cambian:** los de los estados y, en los eventos, el hueco del FVG (0.3 ATR en la cocina; en el probador es 0), el impulso y las velas del swing. Los demás van de fábrica.
+- **Sin futuro:** la página manda solo velas ya cerradas en la hora simulada (`closedWindow`), cada evento cuenta en la vela con que se conoce (`known`) y nada mira a la derecha. La prueba compara cada bloque con 900 velas y con 1,200.
+- **Capas** (`Facts.side`): el contexto son todos sus bloques a la vez. Se mira mientras se junta el paso 1 o, si se elige, mientras se junta el último. Un evento en el contexto cuenta «si ocurrió en las últimas N velas»; un estado en un paso, «si se cumple en esas velas».
+- **Pasos:** cada uno pide «todos», «al menos N» o «cualquiera» de sus bloques dentro de N velas, y se completa en la vela de uno de sus eventos. Entre pasos: «después», «al tiempo o después» o «en cualquier orden», con un plazo en velas.
+- **Señal:** la vela en que se completa el último paso. Dos señales del mismo lado piden más de 3 velas entre ellas, y un paso final de solo estados da señal cuando empieza a cumplirse. «A punto»: el penúltimo paso ya se cumplió y sigue a tiempo.
+- **Velas:** las últimas 1,000 cerradas son lo recorrido; delante van las que calientan los indicadores (35 días o 300 velas, como el probador, con tope de 8,000 en 1m y 5m).
+- **Tiempos** con velas al azar: la primera vez con unas velas, 0.35 s con 2,000, 0.7 s con 4,400 y 1.5 s con 9,000; con las mismas velas, 5 a 15 ms. Los cálculos de las últimas 4 quedan en memoria.
+- **1 minuto** no es un marco del probador: la regla se arma igual y lleva el marco de las velas.
+
+### Página
+
+- **`kitchenDoc.js`** (lógica pura): el documento (`blankDoc`, `normalizeDoc`), dónde va cada bloque (`placeFor`, `addBlock`), la frase, las versiones (`kitchen_strategies_v1`), el borrador de cada moneda (`kitchen_draft_v1_{símbolo}`), las velas del pedido y las franjas del gráfico (`kitchenBands`).
+- **Al cambiar de lado** cada bloque sigue diciendo lo mismo en el gráfico (lo alcista sigue alcista); «Espejar los bloques» lo da vuelta. Con largos y cortos en espejo, lo elegido se lee frente al lado que se dice estar mirando.
+- **Pedidos:** con la reproducción en pausa, a los 120 ms de cada cambio; reproduciendo, a lo sumo uno cada 1.2 s. Con la cocina en blanco y sin vela elegida no pide nada.
+- **Fecha oculta:** las fechas y los precios de la tarjeta de la vela pasan por `maskDate` y `priceText`. El motor no devuelve textos con precios ni fechas.
+- **`MiniChart`** suma tres cosas opcionales; sin la cocina nada cambia:
+  - `onPickCandle`: un clic sin arrastrar sobre una vela avisa su hora. Si el clic cae en un nivel se abre el menú de siempre, que ofrece «Usar en la estrategia: ¿qué hay en esta vela?»;
+  - las filas (`ticks`) aceptan un tono: fuerte donde se cumple (1) y claro en el estado 2 (el paso suelto, o «a punto»);
+  - la franja `column`: una vela resaltada de arriba abajo.
+- **Solo con la pestaña abierta:** al cambiar de pestaña el borrador se conserva, pero las filas salen del gráfico.
+- Los textos de los bloques están en `kitchenCatalog.js` y su cálculo en `kitchen.py`: una prueba vigila que las dos listas conozcan los mismos bloques.
+
+### Pruebas
+
+```bash
+cd backend
+.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 16
+cd ../frontend
+node tests/kitchen.test.mjs                                  # 15
+```
+
+**Probado en pantalla** el 26/11, en una copia aislada (backend 9300, página 9301) con BTC desde el 01/01/2023, en 15m y 1h:
+- la pestaña y sus seis fichas con imagen;
+- el clic en una vela y su tarjeta, y el clic sobre un nivel, que abre el menú de siempre con «Usar en la estrategia»;
+- una estrategia de dos pasos armada desde dos velas: el paso nuevo, su plazo (17 velas), la frase, las filas bajo las velas, la EMA, los triángulos y la vela resaltada. Dio 7 señales en 15m y ninguna en 1h;
+- «¿entra aquí?» en la vela de la señal, el bloque resaltado en su fila, el buscador, el guardado y el cambio de lado;
+- «Una vela más» (la cocina recalcula al cerrar la vela), el cambio de marco, la reproducción a 1000x y el cambio de pestaña, que quita las filas del gráfico. Sin errores en la consola.
+
+**Sin ver en pantalla:** la fecha oculta, el panel en ventana aparte y los estilos Oscuro, Personalizado y Muhammad. Tampoco 1m, 5m ni 4h (el motor sí los corre en sus pruebas).
+
+**Hallado al probar y corregido:**
+- la compresión, que no tiene lado, salía dos veces en la tarjeta de la vela;
+- en la vela de la entrada, lo ya cumplido antes (el contexto, el paso 1) salía con ✗: ahora dice «se cumplió antes, dentro de su plazo»;
+- la cuenta de un bloque se partía en tres líneas junto a un texto largo.
+
+**Para montar la copia aislada** hace falta un enlace (junction) de `frontend/node_modules` al de la copia principal, una configuración de Vite temporal con `/api` hacia el backend de prueba y `ORDERFLOW_OBSERVER` en una carpeta temporal. Al terminar se quita el enlace con `(Get-Item ...).Delete()`, nunca borrando la carpeta, y se restaura `backtesting_cache/BTCUSDT_backtesting_data.json.gz`, que `bulk-data` reescribe.
 
 ---
 
@@ -3438,6 +3522,18 @@ Cada tick debe costar lo mismo con 1,000 o con 1,000,000 de velas. Medido en la 
 - Tras un bloqueo largo no recupera más de 1 s de tiempo real
 - Las subdivisiones salen del marco con que se creó el reloj, no del marco activo, salvo que un marco más fino esté a la vista (`setStepTimeframes()`)
 - El tick lo marca un Worker: en una pestaña oculta los `setInterval` de la página quedan en uno por segundo (ver "SEGUNDO GRÁFICO, VENTANAS Y MEJORAS DEL 11/11")
+
+### «Una vela más» (26/11)
+
+Pedido del usuario tras usar ese botón en el prototipo de la central de estrategias (`docs/PLAN_CENTRAL_ESTRATEGIAS.md`): la simulación manual no tenía cómo avanzar de a una vela.
+
+- **Botón** en el encabezado, después de "Detener" (`handleStepCandle`, ícono `step` de `uiIcons.jsx`; `⏭` en Clásico). Usa la clase de los otros dos: no hay CSS nuevo.
+- **`TimeController.stepCandle(marco)`**: pausa si estaba reproduciendo y lleva la hora al cierre de la vela en curso del marco a la vista. Con la hora justo en un cierre, avanza una vela entera. No pasa del final de los datos, y ahí no avisa nada.
+- **Órdenes:** el reloj avisa la hora nueva una vez y `handleTimeUpdate` liquida con todas las velas más finas cerradas en el tramo (`candlesToSettle`), como en un tick. Ninguna vela se salta.
+- El 2.º gráfico la sigue como cualquier cambio de hora en pausa: va directo.
+- Sin atajo de teclado.
+- Pruebas: cinco más en `tests/clock.test.mjs` (33). Los tres archivos compilan.
+- **Visto en pantalla** el mismo día, en la copia aislada de la cocina: en 15m avanzó de 12:00 a 12:15 y a 12:30, quedó en pausa y la cocina recalculó con la vela nueva.
 
 ### Tick (BacktestingApp.handleTimeUpdate)
 

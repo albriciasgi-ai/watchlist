@@ -9,6 +9,7 @@ const PATHS = {
   play: <path d="M7 4.5v15l12-7.5z" />,
   pause: <path d="M8 5v14M16 5v14" />,
   stop: <rect x="6" y="6" width="12" height="12" rx="1.5" />,
+  step: <path d="M5 4.5v15l11-7.5zM20 5v14" />,
   refresh: <><path d="M20 12a8 8 0 1 1-2.4-5.7L20 8.5" /><path d="M20 4v4.5h-4.5" /></>,
   layers: <><path d="M12 3 3 7.5 12 12l9-4.5z" /><path d="M3 12l9 4.5 9-4.5" /><path d="M3 16.5 12 21l9-4.5" /></>,
   cursor: <path d="M5 4l6 16 2.4-6.6L20 11z" />,

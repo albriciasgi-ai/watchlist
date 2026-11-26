@@ -55,6 +55,78 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 26 Noviembre 2026: Cocina de Estrategias en la Simulación Manual (paso 1.1 de la central)
+
+**Pedido:** tras aprobar el prototipo 4, el usuario preguntó si el aspecto del prototipo era el definitivo y dijo que le gusta más el de App 1, «más rico» y con gráficos «más agradables». Después pidió fichas con imágenes claras de cómo funcionan el contexto, los pasos y el gatillo, desplegables con un clic, y construir la cocina.
+
+**Cambios:**
+1. **Pestaña «Cocina»** en el panel derecho de la simulación manual, junto al Observador. Abre en blanco. El gráfico es el de App 1, con sus indicadores y el estilo elegido.
+2. **Se llena desde el gráfico:** un clic en una vela lista lo que se cumple ahí (los eventos de esa vela y los estados vigentes), cada uno con su botón.
+   - Lo de una misma vela va al mismo paso; lo de una vela posterior, a un paso después, con su plazo.
+   - Un clic sobre un nivel abre el menú de siempre, que suma «Usar en la estrategia».
+3. **Capas:** contexto (lo que ya venía pasando) y gatillo por pasos, hasta 4. Cada paso pide «todos», «al menos N» o «cualquiera», en N velas.
+4. **Responde enseguida:** cada bloque dice cuántas veces se cumple en las últimas 1,000 velas cerradas. Bajo las velas va una fila por capa, pintada donde se cumple, con un triángulo en cada señal. En la vela elegida dice si la estrategia entra, si está a punto y qué falta.
+5. **Fichas con imagen,** una por capa, que se despliegan con «¿Cómo funciona?»: cómo se arma una estrategia, cómo se llena, contexto, zona, gatillo y qué es un paso.
+6. **Además:** la frase que se arma sola, el buscador de bloques y el guardado por versiones.
+7. **Motor** (`backend/kitchen.py`): 42 bloques. Cada evento sale de la misma función del probador de reglas, con sus valores de fábrica: un bloque de la cocina y un elemento del backtesting global son el mismo cálculo.
+8. **Pruebas:** `test_kitchen.py` (16) y `kitchen.test.mjs` (15).
+
+**IMPORTANTE:**
+- Reiniciar el backend de App 1 (9000) y recargar su página. Llega a la app del usuario al unir esta rama a main.
+- **Sin futuro:** la página manda solo velas ya cerradas en la hora simulada, y cada evento cuenta en la vela con que se conoce. Una prueba compara cada bloque con 900 velas y con 1,200.
+- **Lo que todavía no hace** (pasos 1.2 a 1.4): no avisa al reproducir, no dibuja la caja de la señal, no abre órdenes y no pasa la estrategia al backtesting global. No tiene zonas ni bloques de order flow; la capa de zona está anunciada, sin función.
+- Solo con la pestaña abierta: al cambiar de pestaña el borrador se conserva, pero las filas salen del gráfico.
+- `MiniChart` suma el clic en una vela, el tono de las filas y la vela resaltada, todo opcional: sin la cocina nada cambia.
+- **Probado en pantalla** en una copia aislada con BTC desde el 01/01/2023, en 15m y 1h: las fichas, una estrategia de dos pasos (7 señales en 15m), el guardado, «Una vela más», el cambio de marco y de pestaña. Sin errores en la consola.
+- **Sin ver en pantalla:** la fecha oculta, el panel en ventana aparte y los estilos Oscuro, Personalizado y Muhammad.
+- La cocina sirve para armar y mirar. Lo que valida una estrategia es el backtesting global.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)" y `docs/PLAN_CENTRAL_ESTRATEGIAS.md`
+
+---
+
+### App 1 - 26 Noviembre 2026: Botón «Una vela más» en la Simulación Manual
+
+**Pedido:** al probar el prototipo de la central de estrategias, el usuario usó su botón «Una vela más» y pidió tenerlo en App 1, que no tenía cómo avanzar de a una vela.
+
+**Cambios:**
+1. **Botón** en el encabezado de la simulación manual, después de "Detener": avanza hasta el cierre de la vela del marco a la vista y queda en pausa. Si estaba reproduciendo, pausa primero.
+2. **Reloj** (`TimeController.stepCandle`): con la hora justo en un cierre avanza una vela entera; no pasa del final de los datos.
+3. **Órdenes:** se revisan con todas las velas cerradas en el tramo, como en un tick. Ninguna se salta.
+4. **Pruebas:** `clock.test.mjs` suma 5 (33).
+
+**IMPORTANTE:**
+- Basta recargar la página de App 1: no cambió el backend.
+- Usa la clase de los botones de reproducir y detener: no hay CSS nuevo.
+- Sin atajo de teclado.
+- **Visto en pantalla** el mismo día, en la copia aislada de la cocina: en 15m avanzó de 12:00 a 12:15 y a 12:30, y quedó en pausa.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "REPRODUCCIÓN LIGERA", "«Una vela más» (26/11)"
+
+---
+
+### Central de Estrategias - 25 y 26 Noviembre 2026: Concepto y Cuatro Prototipos (sin Código en las Apps)
+
+**Pedido:** una central para armar estrategias de forma visual, con bloques y capas, a partir de los indicadores que ya existen. Primero el concepto, sin codificar; después, prototipos para decidir. El usuario decidió empezar en la simulación manual de App 1, como una «cocina» en blanco donde se diseñan las estrategias nuevas que después pasan al backtesting global.
+
+**Cambios:** ninguno en el código de las apps.
+1. **Plan:** `docs/PLAN_CENTRAL_ESTRATEGIAS.md`, con el pedido, lo decidido, los principios, los prototipos, las etapas y las decisiones pendientes.
+2. **Cuatro prototipos** en un lienzo privado del usuario (https://claude.ai/artifact/9g6JfDANvRWKeP2XWEGDAL), con velas reales de BTC de 1 hora y los detectores de App 1, solo leyendo:
+   - 1 y 2: el editor por carriles con bloques tipados (estado, evento, zona) y las zonas elegidas en el gráfico;
+   - 3: la cocina dentro de la simulación manual, con reproducción, «¿qué hay en esta vela?», pasos, avisos y «¿entra aquí?»;
+   - 4: la misma cocina con todo elegible sobre el gráfico: zonas como bandas con borde, marcas de dos letras sobre las velas, líneas y volumen.
+3. **Fuentes y pruebas** de los prototipos 3 y 4: `OrderFlowData/research/central_estrategias/2026-11-25/`.
+
+**IMPORTANTE:**
+- **Decidido por el usuario:** carriles en vez de cables; pasos que no son solo secuencia; todo se elige sobre el gráfico; la distribución con el gráfico grande y el panel a la derecha (tres columnas, no).
+- **Lo que su prueba mostró:** juntar en un solo paso lo visto en velas distintas no da señales. Por eso cada bloque va al paso de la vela de donde se tomó.
+- El motor de los prototipos es una versión simplificada dentro de la página, no el del probador.
+- **El paso 1.1 se construyó el 26/11,** con su visto bueno (entrada de arriba). En App 1 la cocina se ve como App 1: el aspecto de los prototipos es solo de los prototipos.
+
+**Ver:** `docs/PLAN_CENTRAL_ESTRATEGIAS.md`
+
+---
+
 ### App 1 + Altagracia Trading Suite - 25 Noviembre 2026: Guías de Elementos con Imágenes Reales, el Consolidado con el Motor 7 y el Registro en Vivo en las 50 Monedas
 
 **Pedido:** tres cosas tras el consolidado:
