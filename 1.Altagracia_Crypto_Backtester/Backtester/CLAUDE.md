@@ -1028,6 +1028,8 @@ node tests/kitchen.test.mjs                                  # 15
 - en la vela de la entrada, lo ya cumplido antes (el contexto, el paso 1) salía con ✗: ahora dice «se cumplió antes, dentro de su plazo»;
 - la cuenta de un bloque se partía en tres líneas junto a un texto largo.
 
+**Tutorial en PDF** (26/11, pedido del usuario): `GUIA_COCINA_ESTRATEGIAS.pdf`, 26 páginas con capturas reales de la app (copia aislada, BTC 15m, 2/10/2026) y marcas numeradas: un ejemplo de dos pasos clic por clic, cada parámetro y los 42 bloques con sus valores de fábrica. Generador y capturas en `OrderFlowData/research/central_estrategias/2026-11-26/guia_cocina/` (`guia_cocina.py`; el capturador es Electron sin ventana, en `capturador/`). Si cambia la cocina, se rehace desde ahí.
+
 **Para montar la copia aislada** hace falta un enlace (junction) de `frontend/node_modules` al de la copia principal, una configuración de Vite temporal con `/api` hacia el backend de prueba y `ORDERFLOW_OBSERVER` en una carpeta temporal. Al terminar se quita el enlace con `(Get-Item ...).Delete()`, nunca borrando la carpeta, y se restaura `backtesting_cache/BTCUSDT_backtesting_data.json.gz`, que `bulk-data` reescribe.
 
 ---
