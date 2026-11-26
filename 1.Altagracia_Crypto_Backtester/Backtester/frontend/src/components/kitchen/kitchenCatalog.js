@@ -12,8 +12,66 @@ export const BLOCK_FAMILIES = [
   { id: 'velas', name: 'Velas y volumen' },
   { id: 'vpa', name: 'Lector VPA' },
   { id: 'estructura', name: 'Estructura' },
-  { id: 'williams', name: 'Williams' }
+  { id: 'williams', name: 'Williams' },
+  { id: 'zonas', name: 'Zonas: lo que hace el precio en la capa de zona' },
+  { id: 'of', name: 'Order flow, con trades reales' }
 ];
+
+// Zonas que el motor detecta (kitchen.py, ZONE_KINDS): soportes y resistencias, FVG abiertos, order blocks y zonas de
+// liquidaciones
+export const ZONE_KINDS = ['sr', 'fvg', 'ob', 'liq'];
+// Lo que el usuario pone en el gráfico y solo conoce la página (kitchen.py, USER_KINDS): un dibujo o un nivel de un
+// perfil de volumen de rango fijo. Entran siempre como zona fija
+export const USER_ZONE_KINDS = ['draw', 'vp'];
+// Lo que ofrece un perfil de rango fijo (VP Fixed Range): sus tres niveles y su área de valor, del VAL al VAH
+export const VP_PARTS = { poc: 'POC', vah: 'VAH', val: 'VAL', va: 'Área de valor' };
+// Estados que salen del almacén de trades (kitchen.py, FLOW_STATE_IDS)
+export const FLOW_STATES = ['delta', 'cvd'];
+// Elementos OF (of_elements.py): eventos con trades reales, solo en las monedas con almacén
+const OF_ELEMENTS = [
+  'VA', 'OG', 'AP', 'SL', 'RL', 'EX', 'ZP', 'DT', 'RS', 'DD', 'PD', 'IV', 'AD', 'SW', 'VL', 'SQ', 'DB', 'PW', 'DV',
+  'ST', 'VI', 'IR', 'RD', 'VD', 'TP', 'OP', 'RX', 'XD', 'SM', 'BR', 'GR'
+];
+
+// Cada tipo de zona: cómo se llama una (según su lado: 1 alcista, −1 bajista), cómo se llaman todas y qué indicador de
+// App 1 las dibuja
+export const ZONE_TYPES = {
+  sr: { one: (way) => (way > 0 ? 'Soporte' : 'Resistencia'), all: 'Soportes y resistencias', up: 'Soportes', down: 'Resistencias', shown: 'S&R v2',
+    help: 'Los swings que el precio no ha superado, cada uno como la línea que dibuja el indicador: el promedio de sus toques. Un nivel termina cuando una vela cierra más allá de todos sus toques.' },
+  fvg: { one: (way) => `FVG ${way > 0 ? 'alcista' : 'bajista'}`, all: 'FVG abiertos', up: 'FVG abiertos alcistas', down: 'FVG abiertos bajistas', shown: 'FVG',
+    help: 'Huecos de tres velas que el precio todavía no llenó. Cada vela que entra en uno lo recorta; lleno, termina.' },
+  ob: { one: (way) => `Order block ${way > 0 ? 'alcista' : 'bajista'}`, all: 'Order blocks', up: 'Order blocks alcistas', down: 'Order blocks bajistas', shown: 'Estructura SMC',
+    help: 'La vela que deja cada ruptura de estructura. Termina cuando una vela cierra más allá de su borde lejano.' },
+  liq: { one: () => 'Zona de liquidaciones', all: 'Zonas de liquidaciones', up: 'Zonas de liquidaciones', down: 'Zonas de liquidaciones', shown: 'Liquidaciones',
+    help: 'Precios donde se liquidó mucho dinero en los últimos 30 días, cerca del precio. Cuenta mientras el indicador la muestra.' },
+  draw: { one: () => 'Zona dibujada', all: 'Zonas dibujadas', up: 'Zonas dibujadas', down: 'Zonas dibujadas', shown: null,
+    help: 'Un rectángulo o una línea horizontal que dibujaste. Cuenta desde que lo sumaste a la estrategia: no se mira hacia atrás.' },
+  vp: { one: (way, zone) => `${VP_PARTS[zone?.shape] || 'Nivel'} del VP fijo`, all: 'Niveles de VP fijo', up: 'Niveles de VP fijo', down: 'Niveles de VP fijo', shown: null,
+    help: 'Un nivel de un perfil de volumen de rango fijo (VP Fixed Range) del gráfico: su POC, su VAH, su VAL o su área de valor, del VAL al VAH. Cuenta desde que lo sumaste a la estrategia, con el precio que tenía entonces: no se mira hacia atrás.' }
+};
+
+/** "Resistencia", "FVG alcista", "POC del VP fijo": una zona por su nombre */
+export const zoneName = (zone) => (ZONE_TYPES[zone?.kind] || ZONE_TYPES.draw).one(zone?.way || 0, zone);
+
+// Una sigla (FVG, POC) se queda como está
+const lowerFirst = (text) => (/^[A-ZÁÉÍÓÚÑ]{2}/.test(text) ? text : `${text.charAt(0).toLowerCase()}${text.slice(1)}`);
+
+/**
+ * Una zona elegida en palabras, para una estrategia de ese lado. «Todas las de este tipo» dice el tipo con su sentido
+ * (con un lado fijo, alcistas o bajistas; con los dos en espejo, a favor o en contra). «Solo esta» dice cuál: `range` es
+ * su precio ya escrito (con fecha oculta va como índice).
+ */
+export function pickText(pick, side, range = '') {
+  const type = ZONE_TYPES[pick?.kind];
+  if (!type) return '';
+  if (pick.type === 'one') {
+    const name = pick.kind === 'draw' ? (pick.lo === pick.hi ? 'Línea dibujada' : 'Zona dibujada') : zoneName(pick);
+    return `Solo esta: ${lowerFirst(name)}${range ? ` ${range}` : ''}`;
+  }
+  if (pick.kind === 'liq' || (pick.dir !== 'favor' && pick.dir !== 'contra')) return type.all;
+  if (side === 'both') return `${type.all}, ${pick.dir === 'contra' ? 'en contra' : 'a favor'}`;
+  return ((side === 'long') === (pick.dir !== 'contra')) ? type.up : type.down;
+}
 
 // Las líneas que un bloque puede mirar. Una EMA de otro periodo se escribe "e<periodo>"
 export const LINE_OPTIONS = [
@@ -86,7 +144,22 @@ const BLOCKS = [
   { id: 'vpam', kind: STATE, fam: 'vpa', name: 'Medidor VPA de un lado', p: { u: 0.3, dir: 'favor' }, sided: true,
     fields: [['u', 'Umbral del medidor', 0.1, 3, 0.1]],
     text: (p, side) => `Medidor VPA ${word(p, side, 'alcista', 'bajista', 'a favor', 'en contra')}`,
-    help: 'El medidor del Lector VPA suma más fuerza que debilidad de ese lado.' }
+    help: 'El medidor del Lector VPA suma más fuerza que debilidad de ese lado.' },
+  // Con trades reales (`flow`): solo en las monedas con almacén de trades
+  { id: 'delta', kind: STATE, fam: 'of', name: 'Delta de la vela', p: { dir: 'favor' }, sided: true, flow: true, shown: 'Delta de volumen',
+    text: (p, side) => `Delta de la vela ${word(p, side, 'comprador', 'vendedor', 'a favor', 'en contra')}`,
+    help: 'En la vela pesó más la compra agresiva o la venta agresiva. Con trades reales.' },
+  { id: 'cvd', kind: STATE, fam: 'of', name: 'CVD de varias velas', p: { n: 20, dir: 'favor' }, sided: true, flow: true, shown: 'CVD',
+    fields: [['n', 'Velas', 2, 100, 1]],
+    text: (p, side) => `CVD de ${num(p.n)} velas ${word(p, side, 'al alza', 'a la baja', 'a favor', 'en contra')}`,
+    help: 'El delta sumado de las últimas velas, con la de la señal, va de ese lado. Es el filtro de CVD del backtesting global, con trades reales.' },
+  // De la capa de zona (`zone`): hablan de las zonas elegidas en ella. Sin lado propio: el rechazo mira el lado del trade
+  { id: 'ztoca', kind: EVENT, fam: 'zonas', name: 'El precio llega a la zona', p: {}, sided: false, zone: true,
+    text: () => 'El precio llega a la zona',
+    help: 'La primera vela que toca una de las zonas de la capa de zona: la anterior, con la zona ya a la vista, no la tocaba.' },
+  { id: 'zrech', kind: EVENT, fam: 'zonas', name: 'Rechazo en la zona', p: {}, sided: false, zone: true,
+    text: () => 'Rechazo en la zona',
+    help: 'Una vela toca una de las zonas de la capa de zona y cierra fuera de ella, del lado del trade: por debajo en un corto, por encima en un largo.' }
 ];
 
 // Eventos del probador de reglas: familia, indicador de App 1 que lo dibuja y campos que la cocina deja cambiar.
@@ -124,6 +197,7 @@ const ELEMENTS = {
   BK: { fam: 'estructura', shown: 'Estructura SMC' },
   EQ: { fam: 'estructura', shown: 'Estructura SMC' }
 };
+for (const code of OF_ELEMENTS) ELEMENTS[code] = { fam: 'of', shown: 'Elementos OF', flow: true };
 
 // Los que se leen mejor con sus propias palabras
 const SPECIAL = {
@@ -141,10 +215,12 @@ for (const [code, item] of Object.entries(ELEMENTS)) {
   const name = elementLabel(code);
   const sided = item.sided !== false;
   BLOCKS.push({
-    id: code, code, kind: EVENT, fam: item.fam, name, shown: item.shown, sided,
+    id: code, code, kind: EVENT, fam: item.fam, name, shown: item.shown, sided, flow: !!item.flow,
     p: { ...(item.p || {}), ...(sided ? { dir: 'favor' } : {}) }, fields: item.fields,
     text: SPECIAL[code] || ((p, side) => (sided ? name + word(p, side, ', alcista', ', bajista', ', a favor', ', en contra') : name)),
-    help: 'Elemento del backtesting global de App 1, detectado con las mismas reglas y sus valores de fábrica.'
+    help: item.flow
+      ? 'Elemento de order flow del backtesting global, detectado en los trades reales con sus valores de fábrica. Solo en las monedas con almacén de trades.'
+      : 'Elemento del backtesting global de App 1, detectado con las mismas reglas y sus valores de fábrica.'
   });
 }
 

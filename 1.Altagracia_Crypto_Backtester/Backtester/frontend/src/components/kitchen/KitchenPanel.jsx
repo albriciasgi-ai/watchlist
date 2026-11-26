@@ -1,15 +1,20 @@
-// La cocina de estrategias en la simulación manual (26/11/2026, paso 1.1 de docs/PLAN_CENTRAL_ESTRATEGIAS.md).
+// La cocina de estrategias en la simulación manual (26/11/2026, pasos 1.1 y 1.2 de docs/PLAN_CENTRAL_ESTRATEGIAS.md).
 // Abre en blanco. El usuario reproduce, pausa donde ve algo, hace clic en esa vela y suma lo que se cumple ahí al
-// contexto o a un paso del gatillo. El backend (kitchen.py) dice dónde se cumple cada cosa en lo ya recorrido, solo con
-// velas cerradas en la hora simulada. No abre órdenes ni avisa al reproducir: eso llega con el paso 1.3.
+// contexto, a la capa de zona o a un paso del gatillo. El backend (kitchen.py) dice dónde se cumple cada cosa en lo ya
+// recorrido, solo con velas cerradas en la hora simulada. Los bloques de order flow se detectan en segundo plano:
+// mientras tanto la pantalla lo dice y vuelve a preguntar. No abre órdenes ni avisa al reproducir: eso llega con el
+// paso 1.3.
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isBlind, maskDate, priceText, volumeText } from '../backtesting/blindClock.js';
 import { TF_MS, lastClosedIndex } from '../backtesting/replayClock.js';
-import { BLOCK_FAMILIES, EVENT, LINE_OPTIONS, STATE, allBlocks, blockDef, blockText, kindIn, protoOf } from './kitchenCatalog.js';
 import {
-  MAX_STEPS, SIDE_NAMES, TF_MINUTES, VIEW_BARS, addBlock, addStep, allBlocksOf, blankDoc, candleVerdict, closedWindow, docForEngine, draftKey,
-  isBlank, kitchenBands, loadStore, mirrored, normalizeDoc, phrase, placeFor, relativeDir, removeBlock, removeStep, saveStore, setLink, setParam,
-  setStep, editBlock, withSide, withVersion, withoutStrategy
+  BLOCK_FAMILIES, EVENT, LINE_OPTIONS, STATE, VP_PARTS, ZONE_TYPES, allBlocks, blockDef, blockText, kindIn, pickText, protoOf, zoneName
+} from './kitchenCatalog.js';
+import {
+  MAX_PICKS, MAX_STEPS, SIDE_NAMES, TF_MINUTES, VIEW_BARS, ZONE_NEAR, addBlock, addPick, addStep, allBlocksOf, blankDoc, candleVerdict, closedWindow,
+  docForEngine, draftKey, drawnZones, isBlank, kitchenBands, loadStore, mirrored, normalizeDoc, offersForEngine, phrase, pickFromZone, pickRange,
+  placeFor, profileZones, relativeDir, removeBlock, removePick, removeStep, samePick, saveStore, setLink, setParam, setStep, setZone, editBlock,
+  withSide, withVersion, withoutStrategy
 } from './kitchenDoc.js';
 import { evaluateKitchen } from './kitchenApi.js';
 import { HelpCard, HelpToggle } from './KitchenHelp.jsx';
@@ -17,11 +22,16 @@ import './Kitchen.css';
 
 const PLAYING_GAP_MS = 1200;   // Mientras reproduce: a lo sumo un pedido cada tanto
 const PAUSED_GAP_MS = 120;
+const PENDING_GAP_MS = 900;    // Con el order flow detectándose: cada cuánto se vuelve a preguntar
+const PROFILES_GAP_MS = 1000;  // Cada cuánto se miran los VP fijos del gráfico: se crean y cambian fuera de esta pestaña
 const HELP_KEY = 'kitchen_help_v1';
 
 const number = (n) => Number(n || 0).toLocaleString('es-CO');
 const candles = (n) => `${number(n)} ${Number(n) === 1 ? 'vela' : 'velas'}`;
 const times = (n) => `${number(n)} ${Number(n) === 1 ? 'vez' : 'veces'}`;
+// Un precio para leer: con fecha oculta, el índice; si no, con los decimales que pide su tamaño
+const price = (value) => priceText(value, value >= 1000 ? 1 : value >= 10 ? 2 : value >= 1 ? 3 : value >= 0.01 ? 5 : 7);
+const FLOW_WAITING = { loading: 'detectando…', none: 'sin almacén de trades', error: 'sin order flow' };
 
 function when(timestamp) {
   if (isBlind()) return maskDate(timestamp);
@@ -45,11 +55,64 @@ function loadHelp() {
   }
 }
 
-/** Lo que dice el motor de un bloque en lo recorrido */
+/** Lo que dice el motor de un bloque en lo recorrido. Un bloque de order flow que todavía no cuenta lo dice */
 function countText(block, info, seen) {
   if (!info) return '';
+  if (info.pending) return FLOW_WAITING[info.pending] || '';
   return kindIn(block) === STATE ? `${number(info.count)} de ${candles(seen)}` : times(info.count);
 }
+
+/** Lo que dice el motor de una zona elegida en lo recorrido. lastTime: la última vela cerrada; tfMs: lo que dura una vela */
+function pickCount(pick, info, lastTime, tfMs) {
+  if (!info) return '';
+  if (pick.type !== 'one') return info.count === 1 ? '1 zona' : `${number(info.count)} zonas`;
+  if (info.count) return info.open ? 'vigente' : 'ya terminó';
+  if (lastTime === null || pick.from <= lastTime) return 'no cuenta en lo recorrido';
+  // Una zona fija empieza en la primera vela que abre después de sumarla; una que viene de otra fecha, más adelante
+  return pick.from <= lastTime + 2 * tfMs ? 'cuenta desde la próxima vela' : 'todavía no cuenta';
+}
+
+/** Una zona elegida en la capa de zona: su texto, lo que dice el motor y, abierta, lo que es. Abierta se dibuja en el gráfico */
+const ZoneChip = ({ pick, side, info, lastTime, tfMs, open, onOpen, onRemove }) => {
+  const type = ZONE_TYPES[pick.kind];
+  return (
+    <div className={`kt-chip-box${open ? ' open' : ''}`}>
+      <div className="kt-chip-row">
+        <button type="button" className="kt-chip zone" onClick={onOpen} title={`${type.help} Un clic la resalta en el gráfico.`}>
+          {pickText(pick, side, pick.type === 'one' ? pickRange(pick, price) : '')}
+        </button>
+        <span className="kt-count">{pickCount(pick, info, lastTime, tfMs)}</span>
+        <button type="button" className="kt-x" onClick={onRemove} title="Quitar esta zona" aria-label="Quitar esta zona">×</button>
+      </div>
+      {open && (
+        <div className="kt-chip-edit">
+          <div className="kt-note">
+            {pick.type === 'one'
+              ? `Una zona fija: desde el ${when(pick.from)}, solo esta franja de precio. Sirve en la simulación manual; no se puede probar en el histórico.`
+              : 'Todas las de este tipo: una regla. Vale para cualquier fecha y después se puede probar en el histórico.'}
+            {' '}{type.help}{type.shown ? ` En el gráfico las dibuja el indicador «${type.shown}»; aquí se resaltan mientras esta zona esté abierta.` : ''}
+          </div>
+        </div>
+      )}
+    </div>
+  );
+};
+
+/** Una zona de la vela elegida (o un dibujo), con sus dos maneras de sumarla */
+const ZoneOffer = ({ zone, note, used, full, onAll, onOne, oneLabel = 'Solo esta' }) => (
+  <div className="kt-offer">
+    <div className="kt-offer-text">
+      <span className="kt-chip zone flat">{zone.kind === 'draw' ? (zone.lo === zone.hi ? 'Línea dibujada' : 'Zona dibujada') : zoneName(zone)} · {pickRange(zone, price)}</span>
+      {note && <span className="kt-count">{note}</span>}
+    </div>
+    <div className="kt-offer-actions">
+      {onAll && (used.all ? <span className="kt-count">Ya están</span>
+        : <button type="button" className="btn-quick kt-main" disabled={full} onClick={onAll} title="Todas las zonas de este tipo: una regla, que después se puede probar en el histórico">Todas</button>)}
+      {used.one ? <span className="kt-count">Ya está</span>
+        : <button type="button" className={`btn-quick${onAll ? '' : ' kt-main'}`} disabled={full} onClick={onOne} title="Solo esta franja de precio: una zona fija, para seguirla en la simulación manual">{oneLabel}</button>}
+    </div>
+  </div>
+);
 
 const Field = ({ label, children }) => (
   <label className="kt-field"><span>{label}</span>{children}</label>
@@ -125,7 +188,7 @@ const Offer = ({ item, doc, side, at, tfMs, onAdd, used }) => {
   );
 };
 
-export default function KitchenPanel({ symbol, timeframe, getCandles, currentTime, isPlaying, picked, onBands }) {
+export default function KitchenPanel({ symbol, timeframe, getCandles, currentTime, isPlaying, picked, onBands, shapes, getShapes, getProfiles }) {
   const draft = useMemo(() => loadDraft(symbol), [symbol]);
   const [doc, setDoc] = useState(draft.doc);
   const [name, setName] = useState(draft.name);
@@ -135,14 +198,18 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
   const [error, setError] = useState(null);
   const [busy, setBusy] = useState(false);
   const [focus, setFocus] = useState(null);       // El bloque abierto: se resalta en su propia fila del gráfico
+  const [focusZone, setFocusZone] = useState(null);   // La zona abierta: sus franjas se dibujan en el gráfico
   const [pick, setPick] = useState(null);         // Hora de la vela elegida en el gráfico
+  const [pickPrice, setPickPrice] = useState(null);   // Y el precio del clic: la zona que quedó debajo va primero
   const [pickNote, setPickNote] = useState(null);
+  const [retry, setRetry] = useState(0);          // Cuenta las veces que se volvió a preguntar por el order flow
   const [help, setHelp] = useState(loadHelp);
   const [store, setStore] = useState(() => loadStore());
   const [palette, setPalette] = useState(false);
   const [search, setSearch] = useState('');
   const [notice, setNotice] = useState(null);
   const [candleInfo, setCandleInfo] = useState(null);   // Lo que el motor dijo de la vela elegida
+  const [profilesKey, setProfilesKey] = useState('[]');   // Los VP fijos del gráfico, con sus niveles de ahora
   const candleRef = useRef(null);
   const requestRef = useRef({ controller: null, timer: null, lastAt: 0, serial: 0 });
 
@@ -152,6 +219,26 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
   const lastIndex = Number.isFinite(currentTime) ? lastClosedIndex(main, timeframe, currentTime) : -1;
   const lastTime = lastIndex >= 0 ? main[lastIndex].timestamp : null;
   const engineDoc = useMemo(() => JSON.stringify(docForEngine(doc)), [doc]);
+
+  // Los perfiles de rango fijo los dibuja y los calcula el gráfico, con lo ya ocurrido: se miran cada tanto, porque se
+  // crean, se mueven y se recalculan (al avanzar la hora, o al llegar su volumen real) sin pasar por esta pestaña
+  useEffect(() => {
+    const read = () => {
+      let next = '[]';
+      try { next = JSON.stringify(getProfiles?.() || []); } catch { /* Sin gráfico todavía */ }
+      setProfilesKey(current => (current === next ? current : next));
+    };
+    read();
+    const timer = setInterval(read, PROFILES_GAP_MS);
+    return () => clearInterval(timer);
+  }, [getProfiles, symbol, timeframe]);
+  // Cada nivel cuenta desde ahora (la hora simulada en que se suma), no desde antes: el rango se eligió viendo lo que pasó
+  const profiles = useMemo(
+    () => profileZones(JSON.parse(profilesKey), Number.isFinite(currentTime) ? currentTime : null),
+    [profilesKey, currentTime]
+  );
+  const offersRef = useRef([]);
+  offersRef.current = offersForEngine(profiles);
 
   // El borrador sigue ahí al cambiar de pestaña o recargar
   useEffect(() => {
@@ -168,6 +255,7 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
   useEffect(() => {
     if (!picked || !Number.isFinite(picked.time)) return;
     if (lastTime === null) return;
+    setPickPrice(Number.isFinite(picked.price) && picked.price > 0 ? picked.price : null);
     if (picked.time > lastTime) {
       setPick(lastTime);
       setPickNote('Esa vela todavía se está formando: se muestra la última cerrada.');
@@ -191,15 +279,19 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
     if (lastTime === null) return undefined;
     if (blank && pick === null) {
       state.controller?.abort();
+      clearTimeout(state.again);
       state.serial += 1;
       setResult(null);
       setBusy(false);
       return undefined;
     }
-    // Lo que hay en una vela ya cerrada no cambia al avanzar: mientras reproduce se pide una sola vez
-    const askPick = pick !== null && (!isPlaying || candleRef.current?.t !== pick) ? pick : null;
+    // Lo que hay en una vela ya cerrada no cambia al avanzar: mientras reproduce se pide una sola vez, salvo que falte
+    // su order flow, que todavía se está detectando
+    const known = candleRef.current;
+    const askPick = pick !== null && (!isPlaying || known?.t !== pick || known?.flow === 'loading') ? pick : null;
     const run = async () => {
       state.timer = null;
+      clearTimeout(state.again);
       const window_ = closedWindow(getCandles?.() || [], timeframe, currentTime, VIEW_BARS);
       if (!window_) return;
       state.controller?.abort();
@@ -209,9 +301,12 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
       state.lastAt = Date.now();
       setBusy(true);
       try {
+        const sendPick = askPick !== null && askPick >= window_.rows[window_.rows.length - window_.view][0] ? askPick : null;
         const data = await evaluateKitchen(symbol, {
           tf: TF_MINUTES[timeframe], candles: window_.rows, view: window_.view, doc: JSON.parse(engineDoc),
-          pick: askPick !== null && askPick >= window_.rows[window_.rows.length - window_.view][0] ? askPick : null
+          pick: sendPick, pickPrice: sendPick !== null ? pickPrice : null,
+          // Los niveles de los VP fijos del gráfico: el motor los ordena con sus zonas, por cercanía al clic
+          ...(sendPick !== null && offersRef.current.length ? { offers: offersRef.current } : {})
         }, controller.signal);
         if (serial !== state.serial) return;
         setResult({ ...data, tfName: timeframe });
@@ -220,6 +315,8 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
           setCandleInfo(data.candle);
         }
         setError(null);
+        // El order flow se detecta en segundo plano: mientras falte, se vuelve a preguntar
+        if (data.pending) state.again = setTimeout(() => setRetry(value => value + 1), PENDING_GAP_MS);
       } catch (problem) {
         if (problem.name === 'AbortError' || serial !== state.serial) return;
         setError(problem.message || 'No se pudo consultar el backend');
@@ -232,23 +329,28 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
     clearTimeout(state.timer);
     state.timer = setTimeout(run, wait);
     return () => clearTimeout(state.timer);
-    // currentTime no va: solo importa cuando cierra una vela (lastTime)
+    // currentTime no va: solo importa cuando cierra una vela (lastTime). profilesKey: con una vela elegida, sus zonas
+    // incluyen los niveles de los VP fijos, que pueden cambiar
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [symbol, timeframe, engineDoc, blank, lastTime, pick, isPlaying]);
+  }, [symbol, timeframe, engineDoc, blank, lastTime, pick, pickPrice, isPlaying, retry, pick !== null ? profilesKey : '']);
 
-  useEffect(() => () => { requestRef.current.controller?.abort(); }, []);
+  useEffect(() => () => { requestRef.current.controller?.abort(); clearTimeout(requestRef.current.again); }, []);
 
   // Otra moneda u otro marco: lo calculado ya no vale
-  useEffect(() => { setResult(null); setPick(null); setFocus(null); setCandleInfo(null); candleRef.current = null; }, [symbol, timeframe]);
+  useEffect(() => { setResult(null); setPick(null); setFocus(null); setFocusZone(null); setCandleInfo(null); candleRef.current = null; }, [symbol, timeframe]);
 
   const fresh = result && result.tfName === timeframe ? result : null;
   const focusBlock = focus ? allBlocksOf(doc).find(block => block.uid === focus) : null;
+  const zone = doc.zone;
+  const openZone = focusZone && zone.picks.some(item => item.uid === focusZone) ? focusZone : null;
 
-  // Lo que se pinta en el gráfico: una fila por capa, las señales, las líneas y la vela elegida
+  // Lo que se pinta en el gráfico: una fila por capa, las señales, las líneas, la vela elegida y las zonas
   useEffect(() => {
-    onBands?.(kitchenBands(fresh, { tf: timeframe, pick, focus: focusBlock ? focus : null, focusText: focusBlock ? blockText(focusBlock, side) : '' }));
+    onBands?.(kitchenBands(fresh, {
+      tf: timeframe, pick, focus: focusBlock ? focus : null, focusText: focusBlock ? blockText(focusBlock, side) : '', focusZone: openZone
+    }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fresh, pick, focus, timeframe, side, doc]);
+  }, [fresh, pick, focus, openZone, timeframe, side, doc]);
   useEffect(() => () => onBands?.([]), []);   // eslint-disable-line react-hooks/exhaustive-deps
 
   const change = useCallback((next) => { setDoc(next); setNotice(null); }, []);
@@ -263,9 +365,35 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
     const parts = [];
     if (item.obs?.atr !== undefined) parts.push(`ahora, ${item.obs.atr} ATR`);
     if (item.obs?.meter !== undefined) parts.push(`ahora, ${item.obs.meter > 0 ? '+' : ''}${item.obs.meter}`);
+    if (Number.isFinite(item.obs?.share)) parts.push(`ahora, ${item.obs.share} % del volumen${item.id === 'cvd' ? ' de esas velas' : ''}`);
     if (item.late) parts.push(`se supo ${candles(item.late)} después`);
     return { id: item.id, p, note: parts.join(' · ') };
   };
+
+  // La capa de zona: lo que el usuario elige en el gráfico, o uno de sus dibujos
+  const usedPick = (candidate) => zone.picks.some(item => samePick(item, candidate));
+  const full = zone.picks.length >= MAX_PICKS;
+  const addZone = (candidate) => {
+    const next = addPick(doc, candidate);
+    change(next);
+    if (next !== doc) setFocusZone(next.zone.picks[next.zone.picks.length - 1].uid);   // Recién elegida, se resalta en el gráfico
+  };
+  const zoneNote = (item) => {
+    const parts = [item.under ? 'bajo tu clic' : item.touch ? 'esta vela la toca' : Number.isFinite(item.gapAtr) ? `a ${item.gapAtr} ATR de esta vela` : ''];
+    if (ZONE_TYPES[item.kind]?.shown) parts.push(`la dibuja «${ZONE_TYPES[item.kind].shown}»`);
+    if (item.own) parts.push('cuenta desde ahora');
+    return parts.filter(Boolean).join(' · ');
+  };
+  // Las zonas de la vela elegida. Las que vuelven con `ref` son de la página (un nivel de un VP fijo): se suman como
+  // están ahora en el gráfico
+  const offerByRef = new Map(profiles.flatMap(group => group.zones.map(item => [item.id, item])));
+  const candleZones = (candleInfo && candleInfo.t === pick ? candleInfo.zones || [] : [])
+    .map(item => (item.ref === undefined ? item : offerByRef.has(item.ref) ? { ...item, own: offerByRef.get(item.ref) } : null))
+    .filter(Boolean);
+  // Un dibujo cuenta desde ahora (la hora simulada en que se suma), no desde antes: se dibujó sabiendo lo que pasó
+  const drawn = drawnZones(getShapes?.() || shapes || [], Number.isFinite(currentTime) ? currentTime : null);
+  const addZoneEvent = (id) => change(addBlock(doc, pick !== null ? 'auto' : 'step', protoOf(id), pick, tfMs));
+  const flowInfo = fresh?.flow || null;
   const isUsed = (item) => allBlocksOf(doc).some(block => block.id === item.id && JSON.stringify(block.p) === JSON.stringify({ ...blockDef(item.id).p, ...item.p }));
   const addFromCandle = (target, item) => {
     const at = pick + (item.lateMs || 0);
@@ -334,6 +462,18 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
 
       {error && <div className="kt-error">{error}</div>}
       {lastTime === null && <div className="kt-note">Todavía no cerró ninguna vela en este marco: avanza la simulación.</div>}
+      {flowInfo?.state === 'loading' && (
+        <div className="kt-hint">
+          Order flow: leyendo los trades de este tramo{flowInfo.total > 1 ? ` (${flowInfo.done} de ${flowInfo.total} partes)` : ''}. La primera vez tarda; lo demás ya cuenta, y los bloques de order flow entran solos cuando termine.
+        </div>
+      )}
+      {flowInfo?.state === 'error' && <div className="kt-error">No se pudo leer el order flow de este tramo ({flowInfo.message}). Los bloques de order flow no cuentan; se intenta de nuevo con la próxima vela o el próximo cambio.</div>}
+      {flowInfo?.state === 'none' && allBlocksOf(doc).some(block => blockDef(block.id)?.flow) && (
+        <div className="kt-note">{symbol} no tiene almacén de trades, o este marco no lo usa: los bloques de order flow de la estrategia no cuentan aquí.</div>
+      )}
+      {flowInfo?.state === 'ready' && flowInfo.cover < 0.98 && (
+        <div className="kt-note">El almacén de trades cubre el {Math.round(flowInfo.cover * 100)} % de estas velas: en el resto, los bloques de order flow no cuentan.</div>
+      )}
 
       <div className="kt-row">
         <span className="kt-label">Busco</span>
@@ -353,9 +493,10 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
       <div className="kt-legend">
         <span className="kt-chip state flat">estado</span><span>se cumple vela tras vela</span>
         <span className="kt-chip event flat">evento</span><span>ocurre en una vela</span>
+        <span className="kt-chip zone flat">zona</span><span>un área de precio que dura</span>
       </div>
 
-      <div className="kt-phrase">{phrase(doc)}</div>
+      <div className="kt-phrase">{phrase(doc, price)}</div>
 
       {pick !== null && (
         <div className="kt-card pick">
@@ -378,7 +519,27 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
           ))}
           {candle && (
             <>
+              <div className="kt-sub">Zonas en esta vela · {candleZones.length}</div>
+              {!candleZones.length && <div className="kt-note">Ninguna cerca: soportes y resistencias, FVG abiertos, order blocks, zonas de liquidaciones o niveles de tus VP fijos a menos de 3 ATR de la vela o de tu clic.</div>}
+              {candleZones.map((item, i) => {
+                if (item.own) {
+                  return (
+                    <ZoneOffer key={`z${i}`} zone={item.own} note={zoneNote(item)} used={{ one: usedPick(item.own) }} full={full}
+                      onOne={() => addZone(item.own)} oneLabel="Usar esta" />
+                  );
+                }
+                const all = pickFromZone(item, 'kind', side, viewSide);
+                const one = pickFromZone(item, 'one', side, viewSide);
+                return (
+                  <ZoneOffer key={`z${i}`} zone={item} note={zoneNote(item)} used={{ all: usedPick(all), one: usedPick(one) }} full={full}
+                    onAll={() => addZone(all)} onOne={() => addZone(one)} />
+                );
+              })}
+              {candleZones.length > 0 && (
+                <div className="kt-note">«Todas»: todas las de ese tipo, una regla que después se puede probar. «Solo esta»: esa franja fija, para seguirla en la simulación.{full ? ` La capa admite hasta ${MAX_PICKS} zonas.` : ''}</div>
+              )}
               <div className="kt-sub">Eventos de esta vela · {candle.events.length}</div>
+              {candle.flow === 'loading' && <div className="kt-note">Los de order flow todavía se están leyendo: aparecen solos al terminar.</div>}
               {!candle.events.length && <div className="kt-note">Ninguno de los que la cocina conoce.</div>}
               {candle.events.map((item, i) => {
                 const offer = { ...offered(item), lateMs: (item.late || 0) * tfMs };
@@ -424,7 +585,77 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
           <HelpToggle open={!!help.zona} onClick={() => toggleHelp('zona')} />
         </div>
         {help.zona && <HelpCard id="zona" />}
-        <div className="kt-empty">Las zonas llegan con el paso 1.2</div>
+        {!zone.picks.length && <div className="kt-empty">Aquí van las zonas: haz clic en una del gráfico, o en la vela donde el precio la toca</div>}
+        {zone.picks.map((item, index) => (
+          <React.Fragment key={item.uid}>
+            {index > 0 && <div className="kt-count">o</div>}
+            <ZoneChip pick={item} side={side} info={fresh?.zone?.picks?.[item.uid]} lastTime={lastTime} tfMs={tfMs} open={openZone === item.uid}
+              onOpen={() => setFocusZone(current => (current === item.uid ? null : item.uid))}
+              onRemove={() => { change(removePick(doc, item.uid)); if (focusZone === item.uid) setFocusZone(null); }} />
+          </React.Fragment>
+        ))}
+        {zone.picks.length > 0 && (
+          <>
+            <div className="kt-row small">
+              <span className="kt-label">El precio</span>
+              <select value={zone.rel} onChange={e => change(setZone(doc, { rel: e.target.value }))}>
+                <option value="near">se acerca a</option>
+                <option value="in">la toca</option>
+              </select>
+              {zone.rel === 'near' && (
+                <>
+                  <input type="number" min={ZONE_NEAR.min} max={ZONE_NEAR.max} step={0.1} value={zone.atr}
+                    onChange={e => { const value = Number(e.target.value); if (e.target.value !== '' && value >= ZONE_NEAR.min) change(setZone(doc, { atr: value })); }} />
+                  <span>ATR o menos</span>
+                </>
+              )}
+            </div>
+            <div className="kt-row small">
+              <span className="kt-label">Se mira</span>
+              <select value={zone.when} onChange={e => change(setZone(doc, { when: e.target.value }))}>
+                <option value="first">mientras se junta el paso 1</option>
+                <option value="last">en la señal</option>
+              </select>
+              {fresh?.zone?.has && (
+                <span className="kt-count">se cumple en {number(fresh.zone.count)} de {candles(seen)} · el precio llegó {times(fresh.zone.arrivals)}</span>
+              )}
+            </div>
+            <div className="kt-row small">
+              <span className="kt-label">Pedir en un paso que el precio</span>
+              <button type="button" className="btn-quick" onClick={() => addZoneEvent('ztoca')} title={blockDef('ztoca').help}>+ llegue a la zona</button>
+              <button type="button" className="btn-quick" onClick={() => addZoneEvent('zrech')} title={blockDef('zrech').help}>+ la rechace</button>
+            </div>
+          </>
+        )}
+        <div className="kt-sub">Tus dibujos · {drawn.length}</div>
+        {!drawn.length && <div className="kt-note">Un rectángulo o una línea horizontal que dibujes en el gráfico aparece aquí, para usarlo como zona.</div>}
+        {drawn.map(item => (
+          <ZoneOffer key={item.id} zone={item} used={{ one: usedPick(item) }} full={full} onOne={() => addZone(item)} oneLabel="Usar esta" />
+        ))}
+        {drawn.length > 0 && <div className="kt-note">Un dibujo cuenta desde el momento en que lo sumas, no hacia atrás: lo trazaste viendo lo que ya pasó. Si después lo mueves, la zona de la estrategia no cambia: quítala y súmalo otra vez.</div>}
+        <div className="kt-sub">Tus VP fijos · {profiles.length}</div>
+        {!profiles.length && <div className="kt-note">Un perfil de volumen de rango fijo (VP Fixed Range) que tengas en el gráfico aparece aquí: su POC, su VAH, su VAL y su área de valor (del VAL al VAH) sirven de zona.</div>}
+        {profiles.map(group => (
+          <div key={group.id} className="kt-vp">
+            <span className="kt-count">
+              {group.label ? `Rango ${group.label} · ` : ''}{when(group.start)} a {Number.isFinite(currentTime) && group.end > currentTime ? 'ahora (su rango sigue abierto)' : when(group.end)}
+              {group.real ? ' · volumen real' : ''}
+            </span>
+            <div className="kt-row">
+              {group.zones.map(item => {
+                const used = usedPick(item);
+                const what = item.shape === 'va' ? 'el área de valor' : `el ${VP_PARTS[item.shape]}`;
+                return (
+                  <button key={item.id} type="button" className="btn-quick" disabled={used || full} onClick={() => addZone(item)}
+                    title={used ? 'Ya está en la estrategia' : `Usar ${what} de este perfil como zona fija: ${pickRange(item, price)}`}>
+                    {used ? '✓ ' : ''}{VP_PARTS[item.shape]}{item.shape === 'va' ? '' : ` ${price(item.lo)}`}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
+        ))}
+        {profiles.length > 0 && <div className="kt-note">Un nivel de un VP fijo cuenta desde el momento en que lo sumas, con el precio que tiene ahora, no hacia atrás: el rango lo elegiste viendo lo que ya pasó. Si el perfil cambia después (su rango sigue abierto, o lo mueves), la zona de la estrategia no cambia: quítala y súmala otra vez.</div>}
       </div>
 
       <div className="kt-layer">
@@ -485,7 +716,7 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
                 )}
                 {info && (
                   <div className="kt-count">
-                    Se cumple {times(info.done)}{usedSteps.indexOf(index) > 0 || doc.ctx.length ? `; encadenado con lo anterior, ${times(info.reached)}` : ''}
+                    Se cumple {times(info.done)}{usedSteps.indexOf(index) > 0 || doc.ctx.length || zone.picks.length ? `; encadenado con lo anterior, ${times(info.reached)}` : ''}
                   </div>
                 )}
               </div>
@@ -501,8 +732,11 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
         <div className={`kt-total${fresh.signals.length ? ' yes' : ''}`}>
           {usedSteps.length
             ? <>La estrategia da <strong>{fresh.signals.length === 1 ? '1 señal' : `${number(fresh.signals.length)} señales`}</strong> en las últimas {candles(seen)} de {timeframe}.</>
-            : <>Todavía no hay gatillo: el contexto solo no da señales.</>}
+            : <>Todavía no hay gatillo: el contexto y la zona solos no dan señales.</>}
           {usedSteps.length > 0 && !fresh.signals.length && <div className="kt-count">Mira en qué paso se corta: es el que tiene pocas o ninguna vez «encadenado».</div>}
+          {fresh.pending && allBlocksOf(doc).some(block => blockDef(block.id)?.flow) && (
+            <div className="kt-count">Falta el order flow: esta cuenta todavía no incluye sus bloques.</div>
+          )}
           <div className="kt-count">Solo cuenta velas ya cerradas en la hora simulada.{busy ? ' Actualizando…' : ''}</div>
         </div>
       )}

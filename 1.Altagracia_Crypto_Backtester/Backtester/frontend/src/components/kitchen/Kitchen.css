@@ -211,6 +211,15 @@
   color: #8a4b00;
 }
 
+/* Zona: franja verde azulada de borde punteado, como un área de precio */
+.kt-chip.zone {
+  background: #e0f2f1;
+  border-color: #4db6ac;
+  border-style: dashed;
+  border-radius: 3px;
+  color: #00594f;
+}
+
 .kt-chip.flat {
   cursor: default;
 }
@@ -316,6 +325,15 @@ button.kt-chip:hover {
   flex: none;
   align-items: center;
   gap: 4px;
+}
+
+/* Un perfil de rango fijo del gráfico: su rango y un botón por nivel */
+.kt-vp {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px 0;
+  border-top: 1px solid #f1f3f5;
 }
 
 .kt-panel .btn-quick.kt-main {

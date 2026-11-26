@@ -27,7 +27,9 @@ const DOWN = '#F23645';
 const INK = '#333333';
 const BLUE = '#2962FF';
 const ORANGE = '#F57C00';
-const PURPLE = '#7B1FA2';
+const TEAL = '#00796B';   // La zona: el color de su fila bajo las velas y de sus franjas en el gráfico
+const ZONE_LOW = 22.2;    // La resistencia del dibujo: la estrella fugaz la toca y cierra por debajo
+const ZONE_HIGH = 23.5;
 
 const x = (i) => LEFT + i * STEP + STEP / 2;
 const y = (price) => TOP + ((HIGH - price) / (HIGH - LOW)) * HEIGHT;
@@ -101,20 +103,31 @@ const Frame = ({ rows = 0, children, label }) => (
   </svg>
 );
 
+/** La zona del dibujo: una franja de precio desde la vela `from` hasta el borde derecho */
+const ZoneBand = ({ from = 0, label = 'Resistencia', strong = false }) => (
+  <g>
+    <rect x={x(from) - 8} y={y(ZONE_HIGH)} width={W - LEFT - x(from) + 8} height={y(ZONE_LOW) - y(ZONE_HIGH)} fill={TEAL} opacity={strong ? 0.16 : 0.1}
+      stroke={TEAL} strokeWidth="1" strokeDasharray="4 3" />
+    <text x={x(from) - 3} y={y(ZONE_HIGH) + 10} fontSize="9.5" fill={TEAL} fontWeight="600">{label}</text>
+  </g>
+);
+
 const scenes = {
   general: (
-    <Frame rows={3} label="Una estrategia entera: el contexto, dos pasos del gatillo y la entrada">
+    <Frame rows={4} label="Una estrategia entera: el contexto, la zona, dos pasos del gatillo y la entrada">
       <rect x={x(3) - 8} y={TOP} width={(STAR - 3) * STEP + 16} height={HEIGHT} fill={BLUE} opacity="0.07" />
+      <ZoneBand from={5} label="Zona" />
       <Ema />
       <Candles />
       <Volume />
-      <text x={x(6)} y={TOP + 12} fontSize="10" fill={BLUE} textAnchor="middle" fontWeight="600">Contexto</text>
+      <text x={x(6)} y={TOP + 26} fontSize="10" fill={BLUE} textAnchor="middle" fontWeight="600">Contexto</text>
       <Bracket from={STAR} to={STAR} top={y(23.2) - 22} label="Paso 1" color={ORANGE} />
       <Bracket from={DROP} to={DROP} top={y(20.7) - 26} label="Paso 2" color={ORANGE} />
       <Signal i={DROP} />
       <Row index={0} label="contexto" color={BLUE} spans={[[3, STAR]]} />
-      <Row index={1} label="pasos" color={ORANGE} spans={[[STAR, STAR], [DROP, DROP]]} />
-      <Row index={2} label="señal" color={INK} spans={[[DROP, DROP]]} />
+      <Row index={1} label="zona" color={TEAL} spans={[[STAR, STAR]]} />
+      <Row index={2} label="pasos" color={ORANGE} spans={[[STAR, STAR], [DROP, DROP]]} />
+      <Row index={3} label="señal" color={INK} spans={[[DROP, DROP]]} />
     </Frame>
   ),
   contexto: (
@@ -130,12 +143,13 @@ const scenes = {
     </Frame>
   ),
   zona: (
-    <Frame label="La zona: una franja de precio a la que el precio llega">
-      <rect x={LEFT} y={y(23.4)} width={W - LEFT * 2} height={y(21.6) - y(23.4)} fill={PURPLE} opacity="0.14" stroke={PURPLE} strokeWidth="1" />
-      <text x={LEFT + 5} y={y(23.4) + 11} fontSize="10" fill={PURPLE} fontWeight="600">Resistencia</text>
-      <Candles faded={[14, 15, 16, 17]} />
-      <path d={`M${x(STAR) + 12},${y(22.6)} h14`} stroke={PURPLE} strokeWidth="1.2" />
-      <text x={x(STAR) + 29} y={y(22.6) + 3} fontSize="9.5" fill={PURPLE}>el precio llega a la zona</text>
+    <Frame rows={1} label="La zona: una resistencia a la que el precio llega; la vela la toca y cierra por debajo">
+      <ZoneBand from={2} strong />
+      <Candles faded={[13, 14, 15, 16, 17]} />
+      <path d={`M${x(STAR)},${y(23.2) - 3} V10 h5`} fill="none" stroke={TEAL} strokeWidth="1.2" />
+      <text x={x(STAR) + 8} y={13} fontSize="9.5" fill={TEAL}>el precio llega a la zona</text>
+      <text x={x(STAR) + 8} y={25} fontSize="9.5" fill={TEAL}>y cierra fuera: rechazo</text>
+      <Row index={0} label="zona" color={TEAL} spans={[[STAR, STAR]]} />
     </Frame>
   ),
   gatillo: (
@@ -189,15 +203,15 @@ export const HELP = {
   general: {
     title: 'Cómo se arma una estrategia',
     text: [
-      'Una estrategia tiene capas. El contexto (azul) es el escenario: lo que ya venía pasando. El gatillo (naranja) es lo que tiene que ocurrir, por pasos y en orden.',
+      'Una estrategia tiene capas. El contexto (azul) es el escenario: lo que ya venía pasando. La zona (verde) es dónde: un área de precio a la que el precio tiene que llegar. El gatillo (naranja) es lo que tiene que ocurrir, por pasos y en orden.',
       'Cuando se cumple el último paso, la estrategia da su señal (el triángulo negro). Bajo las velas, cada capa tiene su fila, pintada donde se cumple.'
     ]
   },
   elegir: {
     title: 'Cómo se llena',
     text: [
-      'Reproduce, pausa donde veas algo y haz clic en esa vela. La cocina lista lo que se cumple ahí: los estados vigentes y los eventos de esa vela.',
-      'Cada uno tiene su botón para sumarlo al contexto o a un paso. Lo de una misma vela va al mismo paso; lo de una vela posterior, a un paso después.'
+      'Reproduce, pausa donde veas algo y haz clic en esa vela. La cocina lista lo que se cumple ahí: las zonas cercanas, los estados vigentes y los eventos de esa vela.',
+      'Cada uno tiene su botón para sumarlo al contexto, a la zona o a un paso. Lo de una misma vela va al mismo paso; lo de una vela posterior, a un paso después.'
     ]
   },
   contexto: {
@@ -210,8 +224,9 @@ export const HELP = {
   zona: {
     title: 'Capa 2 · Zona',
     text: [
-      'Dónde tiene que estar el precio: una franja que dura (una resistencia, una zona de liquidaciones, un FVG, un rectángulo que dibujes).',
-      'Todavía no está: llega con el paso 1.2. Por ahora la estrategia se arma con el contexto y el gatillo.'
+      'Dónde tiene que estar el precio: un área que dura. Puede ser un soporte o una resistencia, un FVG abierto, un order block, una zona de liquidaciones, o algo que pongas tú: un rectángulo o una línea horizontal dibujados, o un nivel de un perfil de volumen de rango fijo (su POC, su VAH, su VAL o su área de valor). Se elige en el gráfico: un clic en la zona, o en la vela donde el precio la toca, la lista con sus botones.',
+      'Se suma de dos maneras. «Todas»: todas las de ese tipo; es una regla, vale en cualquier fecha y después se puede probar. «Solo esta»: esa franja fija, para seguirla en la simulación manual. Una zona cuenta desde que se conoce y hasta que deja de valer (un cierre más allá la rompe; un FVG termina al llenarse). Lo que pones tú (un dibujo, un nivel de un VP fijo) es siempre una zona fija, y cuenta desde que lo sumas.',
+      'La capa pide que el precio se acerque a la zona o la toque, mirado mientras se junta el paso 1 o en la señal. Y deja dos eventos para los pasos: «el precio llega a la zona» y «rechazo en la zona» (la toca y cierra fuera, del lado del trade).'
     ]
   },
   gatillo: {

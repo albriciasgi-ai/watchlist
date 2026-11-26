@@ -1564,8 +1564,14 @@ const BacktestingApp = () => {
     kitchenBandsRef.current = bands || [];
     miniChartRefs.current[activeTimeframeRef.current]?.redraw?.();
   }, []);
-  const handleKitchenPick = useCallback((time) => setKitchenPick({ time, nonce: Date.now() }), []);
+  const handleKitchenPick = useCallback((time, price) => setKitchenPick({ time, price, nonce: Date.now() }), []);
   const getKitchenCandles = useCallback(() => marketDataRef.current?.timeframes?.[activeTimeframeRef.current]?.main || [], []);
+  // Los dibujos del gráfico a la vista: un rectángulo o una línea horizontal puede ser una zona de la estrategia
+  const getKitchenShapes = useCallback(() => miniChartRefs.current[activeTimeframeRef.current]?.getDrawings?.() || [], []);
+  // Y sus perfiles de rango fijo, con los niveles que tienen a la hora simulada: también pueden ser una zona
+  const getKitchenProfiles = useCallback(
+    () => miniChartRefs.current[activeTimeframeRef.current]?.getIndicatorManager?.()?.getFixedRangeLevels?.() || [], []
+  );
 
   const revealDate = useCallback(() => {
     setBlindAnchor(null);
@@ -2646,6 +2652,9 @@ const BacktestingApp = () => {
           isPlaying={isPlaying}
           picked={kitchenPick}
           onBands={handleKitchenBands}
+          shapes={chartShapes}
+          getShapes={getKitchenShapes}
+          getProfiles={getKitchenProfiles}
         />
       )}
 

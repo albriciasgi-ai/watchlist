@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: Zonas y Order Flow en la Cocina de Estrategias
+
+La capa de zona de la cocina ya funciona: un clic en el gráfico lista las zonas de esa vela (soportes y resistencias, FVG abiertos, order blocks y zonas de liquidaciones) y cada una se suma como «todas las de este tipo» o «solo esta»; un rectángulo o una línea dibujados sirven de zona fija, y también el POC, el VAH, el VAL o el área de valor de un perfil de rango fijo (VP fijo). La capa pide que el precio se acerque o la toque, y deja dos eventos para los pasos: llegar a la zona y rechazarla. Además, los Elementos OF y el delta real como bloques, en las monedas con almacén de trades, detectados en segundo plano. Es el paso 1.2 de la central. Detalle en `Backtester/CLAUDE.md`, "COCINA DE ESTRATEGIAS (26/11/2026)", "Zonas" y "Order flow".
+
 ### Noviembre 2026: Cocina de Estrategias y «Una vela más»
 
 Pestaña «Cocina» del panel derecho de la simulación manual: una estrategia en borrador por capas (contexto y gatillo por pasos) que se llena con un clic en una vela del gráfico, con los detectores del backtesting global y solo con velas ya cerradas. Pinta bajo las velas dónde se cumple cada capa, cuenta, dice si entra en la vela elegida y guarda por versiones. Cada capa tiene su ficha con imagen. Es el paso 1.1 de la central de estrategias: no avisa al reproducir ni abre órdenes. Además, el botón «Una vela más» del encabezado. Detalle en `Backtester/CLAUDE.md`, "COCINA DE ESTRATEGIAS (26/11/2026)".
