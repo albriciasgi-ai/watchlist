@@ -161,8 +161,9 @@ def test_parejas_las_dos_señales_del_mismo_lado_en_la_ventana():
 def test_familias_cada_elemento_en_una_y_parejas_dentro_o_entre_dos():
     codes = [c for _, _, family in sw.FAMILIES for c in family]
     assert len(codes) == len(set(codes)) and "LIQ" not in codes
-    # Todo elemento que se puede barrer tiene familia
-    assert set(rt.CANDLE_CODES) - set(sw.SKIP_CODES) <= set(codes) and set(sw.oe.CATALOG) <= set(codes)
+    # Todo elemento que se puede barrer tiene familia; los retirados (motor 8: el ratio de extremos) no se barren
+    assert set(rt.CANDLE_CODES) - set(sw.SKIP_CODES) <= set(codes) and set(sw.oe.CATALOG) - sw.oe.RETIRED <= set(codes)
+    assert not set(codes) & sw.oe.RETIRED and not set(sw.available_codes("BTCUSDT", 15)) & sw.oe.RETIRED
     # Una lista: todas entre sí. Dos listas: solo las cruzadas, sin repetir ni emparejar un elemento consigo mismo
     inside = sw.pair_list(sw.clean_config({"pairs": ["HM", "EN", "DJ", "HM"]}))
     assert inside == [("HM", "EN"), ("HM", "DJ"), ("EN", "DJ")]

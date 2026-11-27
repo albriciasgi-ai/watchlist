@@ -2,7 +2,7 @@
 
 Estado al 26/11/2026: concepto, cuatro prototipos y **los pasos 1.1 y 1.2 construidos en App 1**:
 - el 1.1, la pestaña «Cocina» de la simulación manual, con sus fichas con imágenes (sección 5, «El paso 1.1, construido»), y el botón «Una vela más». Está en main desde el PR #77 (9b136091);
-- el 1.2, las zonas (también los niveles de un VP fijo) y los bloques de order flow (sección 5, «El paso 1.2, construido»). Está en su rama, `claude/eager-shannon-a07487` (commit c0f32017), sin unir a main.
+- el 1.2, las zonas (también los niveles de un VP fijo) y los bloques de order flow (sección 5, «El paso 1.2, construido»). Está en main desde el PR #79 (77578c57).
 
 Siguen el 1.3 y el 1.4: los avisos al reproducir y el paso al backtesting global.
 
@@ -280,7 +280,7 @@ Lo pidió el usuario: «Incluye esto y construye la cocina», tras pedir fichas 
 - **los VP fijos** (lo pidió el usuario el mismo día, antes del commit: «que los volume profile fixed también se incluyan en las zonas»): cada perfil de rango fijo del gráfico ofrece su POC, su VAH, su VAL y su área de valor como zona fija, desde «Tus VP fijos» o con un clic sobre su línea;
 - **lo que pide la capa:** que el precio quede a 0.5 ATR o menos de alguna de sus zonas, o que la toque, mirado mientras se junta el paso 1 o en la señal;
 - **dos eventos para los pasos:** «el precio llega a la zona» y «rechazo en la zona»;
-- **order flow:** los 31 Elementos OF como eventos y los estados «Delta de la vela» y «CVD de N velas», en las monedas con almacén de trades;
+- **order flow:** los 30 Elementos OF como eventos (sin el ratio de extremos, que el motor 8 sacó de las listas) y los estados «Delta de la vela» y «CVD de N velas», en las monedas con almacén de trades;
 - la ficha de la zona con su imagen, y la ficha general con las tres capas.
 
 **Cómo quedó hecho,** frente al prototipo 4:

@@ -84,8 +84,11 @@ function setOrderFlow(of = {}) {
   if (flow && of.step) {
     // stepPerCandle (25/11, O-39): el tope de 200 niveles es de cada vela. Sin él, una vela ancha de lo encuadrado
     // agrandaba las celdas de todas (8 casos de la galería 4 salieron así y se repitieron)
+    // Sin imbalanceCountZero: of_elements cuenta un desequilibrio frente a un 0 (E-10), pero pintarlos llenaba el gráfico
+    // de franjas de apilados (probado el 26/11 con la recarga 593). Las celdas del elemento las señala su marco
     flow.updateConfig({ stepByMinutes: { [flow.tfMinutes]: of.step }, stepPerCandle: true, imbalanceRatio: 4,
-                        imbalanceMode: 'diagonal', stackedMinLevels: 3, showImbalances: of.imbalances !== false });
+                        imbalanceMode: 'diagonal', stackedMinLevels: 3, showImbalances: of.imbalances !== false,
+                        imbalanceCountZero: false });
     out.push(`footprint con celdas de ${of.step}` + (flow.enabled ? '' : ' ⚠ apagado'));
   }
   const elements = im.indicators.find(x => x.name === 'Elementos OF');
@@ -95,6 +98,46 @@ function setOrderFlow(of = {}) {
     out.push(`Elementos OF: ${of.codes.join(', ')}` + (elements.enabled ? '' : ' ⚠ apagado'));
   }
   return out.join(' · ');
+}
+
+async function footprintReady(t, ms) {
+  // Hasta `ms`: el footprint de la vela t cargado y sin pedidos en curso, dos veces seguidas (un cambio de configuración
+  // en medio lo descarta)
+  const end = Date.now() + ms;
+  let ok = 0;
+  while (Date.now() < end) {
+    const im = indicatorManager();
+    const flow = im && im.indicators.find(x => x.name === 'Order Flow');
+    ok = flow && !flow.isLoading && flow.footprintMap.get(t) ? ok + 1 : 0;
+    if (ok >= 2) return true;
+    // El indicador pide sus footprints al dibujarse: sin redibujar, un mapa vacío se queda vacío
+    const c = chart();
+    if (c && c.handle) c.handle.forceRedraw();
+    await sleep(500);
+  }
+  return false;
+}
+
+async function steadyCloseUp(t, of, step, ms) {
+  // De cerca, con la casilla del contexto desmarcada: la app devuelve el footprint a lo guardado un momento después
+  // (O-39) y pisa las celdas del elemento. Se vuelven a poner hasta que se mantienen y la vela t tiene su footprint
+  const end = Date.now() + ms;
+  let ok = 0;
+  while (Date.now() < end) {
+    const im = indicatorManager();
+    const flow = im && im.indicators.find(x => x.name === 'Order Flow');
+    if (flow && ((flow.config.stepByMinutes || {})[flow.tfMinutes] !== step || !flow.config.stepPerCandle)) {
+      setOrderFlow({ codes: [], step, imbalances: of.imbalances });
+      ok = 0;
+    } else {
+      ok = flow && !flow.isLoading && flow.footprintMap.get(t) ? ok + 1 : 0;
+      if (ok >= 3) return true;
+    }
+    const c = chart();
+    if (c && c.handle) c.handle.forceRedraw();
+    await sleep(500);
+  }
+  return false;
 }
 
 function footprintCheck(t, want) {
@@ -254,6 +297,9 @@ async function prepare(n, tfMinutes, opts = {}) {
     // opts.settle: ms de espera antes de copiar el lienzo; opts.until 'signal': encuadra alrededor de la señal y no
     // hasta la salida, para ver el elemento con velas anchas
     if (opts.settle) { await sleep(opts.settle); c.handle.forceRedraw(); await sleep(300); }
+    // 26/11: con el backend recién encendido, el contexto del trade (y con él el step del elemento, O-39) tarda, y cada
+    // cambio de la configuración descarta los footprints que venían. Se espera a que la vela de la señal tenga el suyo
+    if (opts.of && (opts.of.steps || {})[n]) { await footprintReady(signal, 45000); c.handle.forceRedraw(); await sleep(300); }
     if (of && (opts.of.steps || {})[n]) of += ' · ' + footprintCheck(signal, opts.of.steps[n]);
     // Galería 5 (25/11/2026): opts.fit[n] = [bajo, alto] que tiene que verse entero, además de las velas (el área de
     // valor de la sesión anterior, que quedaba cortada)
@@ -286,12 +332,14 @@ async function closeUp(folder, name, n, info, tf, of) {
   const tfMs = tf * 60000;
   const [signal] = info.times || [];
   if (!signal) return false;
-  const before = of.closeBefore ?? 2, after = of.closeAfter ?? 1;
+  // 26/11 (motor 8): la absorción va desde su primer intento (closeBefores, por caso)
+  const before = (of.closeBefores || {})[n] ?? of.closeBefore ?? 2, after = of.closeAfter ?? 1;
   // De cerca va sin lo que dibuja la regla ni la marca de los Elementos OF: sus rellenos y la etiqueta de la franja del
   // elemento tapaban las cifras de su celda. Las celdas del elemento las señala un marco fino, sobre la copia
-  const context = await contextShown(false);
-  // Desde O-39 (25/11), desmarcar la casilla devuelve el footprint y los Elementos OF a lo guardado (celdas automáticas
-  // y todos los códigos): las celdas del elemento y los Elementos OF sin marcas se ponen después
+  // 26/11: la casilla del contexto queda marcada. Desde O-39, desmarcarla devolvía el footprint a lo guardado (celdas
+  // automáticas) y la vela de la señal se quedaba sin footprint; lo que dibuja la regla se quita igual, vaciando las
+  // franjas (abajo). Los Elementos OF van sin marcas, con las celdas del elemento
+  const context = await contextShown(true);
   setOrderFlow({ codes: [], step: (of.steps || {})[n], imbalances: of.imbalances });
   // Las franjas del trade elegido (la zona de cada elemento, con su nombre encima de las celdas) salen solo de esta copia:
   // el arreglo de getTradeBands se vacía y se devuelve al terminar
@@ -300,17 +348,23 @@ async function closeUp(folder, name, n, info, tf, of) {
   const kept = Array.isArray(bands) ? bands.splice(0) : null;
   await frame(signal - before * tfMs, signal + after * tfMs, tfMs, of.closeWidth || 400, before + after + 1);
   let c = await drawn();
-  const zone = (of.zones || {})[n], step = (of.steps || {})[n];
+  // Una zona [bajo, alto] o varias [[bajo, alto], ...] (26/11, galería 4): el Thin Print y la recarga de desequilibrios
+  // marcan cada celda suya, sin las de en medio. La imagen se amplía a todas juntas
+  const given = (of.zones || {})[n], step = (of.steps || {})[n];
+  const zones = !given ? [] : Array.isArray(given[0]) ? given : [given];
+  const zone = zones.length ? [Math.min(...zones.map(z => z[0])), Math.max(...zones.map(z => z[1]))] : null;
   if (zone && step && c && c.ps) {
     const pad = Math.max(3, ((of.levels || 26) - (zone[1] - zone[0]) / step) / 2) * step;
     const lo = zone[0] - pad, hi = zone[1] + pad;
     if (c.ps.maxPrice - c.ps.minPrice > hi - lo) showPrices(c, lo, hi);
   }
   await sleep(of.closeSettle ?? 1500);
+  if (step) await steadyCloseUp(signal, of, step, 30000);
   c = await drawn();
   const check = step ? footprintCheck(signal, step) : '';
   overlay(c, captionOf(info.detail, 'de cerca') + ' · el marco azul son las celdas del elemento', false);
-  const marked = zone ? outline(c, signal, zone) : false;
+  // Una zona puede traer la hora de su vela (la absorción: el marco en cada intento); sin ella, la vela de la señal
+  const marked = zones.length ? zones.map(z => outline(c, z[2] ?? signal, z)).every(Boolean) : false;
   const cv = document.querySelector('#__audit_overlay canvas');
   const saved = cv ? await post('img', folder, name + '_cerca', cv.toDataURL('image/jpeg', 0.86)) : false;
   if (kept && bands.length === 0) bands.push(...kept);

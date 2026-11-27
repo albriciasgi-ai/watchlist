@@ -25,6 +25,10 @@ RUNS = Path(r"C:\Users\inven\OrderFlowData\research\pruebas_backtesting\2026-11-
 # nuevas (<clave>7-<n>): las marcas de antes eran de otros casos
 RUNS_M7 = RUNS.with_name("galeria_corridas_m7.json")
 M7 = ("HM", "EN", "DJ", "RBg", "RBs", "BX", "BE", "CC", "QA", "QV", "QB", "QR", "QT", "QS", "QC", "QE", "QG")
+# Motor 8 (26/11/2026, galería 4): los elementos de order flow que cambiaron, en G8_<clave>, con las claves de
+# galeria_corridas_m8.json (las velas que ya eran caso conservan la suya)
+RUNS_M8 = RUNS.with_name("galeria_corridas_m8.json")
+M8 = ("EX", "VD", "DT", "DD", "IV", "SQ", "VL", "AD", "RL")
 H4, M15 = "BTC · 4h", "BTC · 15m"
 PER_ELEMENT = 4
 
@@ -70,33 +74,33 @@ E = {
     "OG": ("Orderflows Gap", M15, "Las áreas de valor de dos velas seguidas no se tocan, con un hueco de al menos el umbral relativo en ATR.", "el hueco entre las dos áreas de valor; al pie, su tamaño contra el umbral."),
     "AP": ("POC alineado", M15, "El mismo POC (precio de más volumen) en dos velas seguidas.", "los POC de las dos velas (la línea azul de cada footprint) al mismo precio."),
     "SL": ("POC Slingshot", M15, "Dos velas del mismo color con el POC de la segunda hacia atrás del de la primera.", "los POC de las dos velas (la línea azul de cada footprint)."),
-    "RL": ("Absorción (propuesta propia)", M15, "Un nivel con volumen en el percentil 99.5 de 30 días y al menos 40% pasivo. No es una regla del libro.", "de cerca, la celda con mucho volumen y su parte pasiva."),
-    "EX": ("Exhaustion Print", M15, "En el extremo de la vela, el lado pasivo casi en cero (bajo el umbral relativo).", "de cerca, la celda del extremo con casi nada del lado pasivo; al pie, cuánto contra su umbral."),
+    "RL": ("Absorción (varios intentos)", M15, "Motor 8, la idea del usuario: una barrera que aguanta varios intentos. Un intento es una vela con mucho volumen agresivo en una celda (el 5% mayor de las celdas de 30 días) que cierra del otro lado de esa celda: llegó desde abajo comprando y cerró debajo, o desde arriba vendiendo y cerró encima. La señal es la vela que vuelve a intentar en el mismo nivel (a una celda o menos) en las 10 velas siguientes al primer intento, sin que ninguna vela entre las dos cerrara más allá del nivel; va en contra de los intentos. Cada intento más vuelve a dar la señal. Las 10 velas se eligen en el probador y en el modal (hasta 50).", "el primer intento y el segundo: de cerca, un marco en la celda de cada uno, en su vela, y el cierre del otro lado; al pie, el volumen del segundo contra el umbral."),
+    "EX": ("Exhaustion Print", M15, "Motor 8: en el extremo hacia donde fue el precio, el lado que empuja casi en cero (bajo el umbral relativo). Si la vela hace el máximo de 5 velas, mira la compra en su máximo (los compradores se agotan: bajista); si hace el mínimo, la venta en su mínimo (alcista). Si no hace ninguno, o los dos, el extremo donde empieza la vela, como antes.", "de cerca, la celda del extremo marcado y lo poco que hay del lado que se agota; al pie, cuánto contra su umbral."),
     "ZP": ("Zero Print", M15, "Un 0 en una de las dos celdas del inicio de la vela (el mínimo de una verde, el máximo de una roja).", "de cerca, las dos celdas del inicio y el 0 del lado pasivo (una celda sin cifra)."),
-    "DT": ("Delta Tail", M15, "El delta del extremo de inicio va contra el color de la vela y el del resto, a favor.", "de cerca, el delta de la celda del extremo (compra menos venta) contra el de las demás."),
+    "DT": ("Delta Tail", M15, "Motor 8: la mecha donde empieza la vela (abajo en una verde, arriba en una roja) ocupa la mitad de su rango o más; el cuerpo va con delta a favor del color y la mecha con delta en contra, en su celda del extremo (desde el 10% del volumen medio por nivel) o sumada entera.", "la mecha (el marco va sobre ella) y, de cerca, su delta (compra menos venta) en contra frente al del cuerpo; al pie, cuánto de la vela es mecha."),
     "RS": ("Retail Suck", M15, "El lado pasivo del extremo decrece en tres niveles seguidos, con tamaño relativo.", "de cerca, el lado pasivo de las tres celdas del extremo, de mayor a menor; al pie, contra su umbral."),
-    "DD": ("Delta Divergence", M15, "Un extremo de 5 velas con el delta a favor del color de la vela.", "el extremo nuevo y el delta de la vela (bajo la vela y en la tabla)."),
+    "DD": ("Delta Divergence", M15, "Una vela verde que hace el mínimo de 5 velas con el delta positivo, o una roja en el máximo con el delta negativo. Motor 8: una vela que hace a la vez el máximo y el mínimo (envuelve a las anteriores) no cuenta.", "la vela en el extremo de 5 velas y, en la tabla de abajo, su delta del lado de su color."),
     "PD": ("Price Action Divergence", M15, "El delta va contra el color de la vela, con tamaño relativo.", "el color de la vela contra su delta (bajo la vela y en la tabla); al pie, contra su umbral."),
-    "IV": ("Inverse Imbalance", M15, "Dos desequilibrios contrarios seguidos en la mitad lejana de la vela (diagonal 4 a 1).", "de cerca, los dos desequilibrios contrarios (cifras en negrita) en la mitad lejana de la vela."),
-    "AD": ("Acumulación/Distribución", M15, "La celda de más volumen está del lado contrario y en el tercio del inicio de la vela.", "de cerca, dónde cae la celda mayor; al pie, su tamaño contra el umbral."),
+    "IV": ("Inverse Imbalance", M15, "Dos desequilibrios contrarios seguidos en la mitad lejana de la vela (diagonal 4 a 1). Motor 8: la vela cierra en la mitad de su rango del lado de su color.", "de cerca, los dos desequilibrios contrarios (cifras en negrita) en la mitad lejana; al pie, dónde cerró."),
+    "AD": ("Acumulación/Distribución", M15, "La celda de más volumen está del lado contrario y en el tercio del inicio de la vela. Motor 8: en esa celda, el lado contrario es al menos el doble del agresor.", "de cerca, la celda mayor, con el lado contrario al menos el doble; al pie, su tamaño contra el umbral."),
     "SW": ("Market Sweep", M15, "Una racha de 3 o más niveles sin contrapartida (el agresor barre sin que nadie le compre o venda).", "de cerca, la racha de celdas con el lado pasivo casi vacío; al pie, cuántas."),
-    "VL": ("Vertical Liquidity", M15, "Una racha de 3 o más niveles con el agresor en el percentil 90 de 30 días.", "de cerca, la racha de celdas con mucho agresor; al pie, cuántas."),
-    "SQ": ("Orderflows Sequencing", M15, "Una racha de 4 o más niveles con el agresor creciente.", "de cerca, el agresor que crece nivel a nivel; al pie, cuántos niveles."),
+    "VL": ("Vertical Liquidity", M15, "Una racha de 3 o más niveles con el agresor en el percentil 90 de 30 días. Motor 8: en cada nivel de la racha el agresor le gana al lado contrario.", "de cerca, la racha de celdas con mucho agresor, ganándole al otro lado; al pie, cuántas."),
+    "SQ": ("Orderflows Sequencing", M15, "Una racha de 4 o más niveles desde el inicio de la vela con el agresor creciente. Motor 8: en cada nivel el agresor le gana al lado contrario y tiene al menos el 5% del volumen medio por nivel.", "de cerca, el agresor que crece nivel a nivel y le gana al otro lado; al pie, cuántos niveles."),
     "DB": ("Delta Breakout", M15, "Un salto de delta entre dos velas del mismo color, sobre el volumen típico.", "el delta de las dos velas (en la tabla); al pie, el salto contra su umbral."),
     "PW": ("POC Wave", M15, "Tres velas con sus POC en ola, como el libro.", "los POC de las tres velas (la línea azul de cada footprint)."),
     "DV": ("Delta/Volumen extremo", M15, "La razón delta/volumen a favor del color en o sobre el umbral relativo.", "el Δ/Vol de la vela en la tabla (resaltado); al pie, contra su umbral."),
     "ST": ("Desequilibrios apilados", M15, "Tres o más desequilibrios diagonales de 4 a 1 seguidos, a favor del color de la vela, en una vela con 2 o más veces el volumen mediano de las 20 anteriores.", "la franja del apilado y, de cerca, los desequilibrios en negrita; abajo, el volumen."),
     "VI": ("Volume Imbalance", M15, "Tres o más desequilibrios a favor del color, seguidos o no, en una vela de mucho volumen.", "los desequilibrios a favor en el footprint; abajo, el volumen; al pie, cuántos."),
     "IR": ("Imbalance Reversal", M15, "Un desequilibrio contrario en uno de los dos precios del inicio, en una vela de mucho volumen.", "de cerca, el desequilibrio contrario en el extremo de inicio; abajo, el volumen."),
-    "RD": ("Imbalance Reload", M15, "Un desequilibrio al mismo precio en dos velas seguidas del mismo color, de mucho volumen.", "de cerca, los dos desequilibrios al mismo precio, en la vela anterior y en la de la señal."),
-    "VD": ("Volume Decline", M15, "El volumen pasivo crece del 1.º al 3.º precio desde el inicio, en una vela de mucho volumen.", "de cerca, las tres celdas del inicio, con el pasivo creciendo; abajo, el volumen."),
-    "TP": ("Thin Print", M15, "Un nivel interior con contrapartida 0 (hasta 3 por vela), en una vela de mucho volumen.", "de cerca, las celdas interiores con un lado vacío; abajo, el volumen."),
+    "RD": ("Imbalance Reload", M15, "Un desequilibrio al mismo precio en dos velas seguidas del mismo color, de mucho volumen.", "de cerca, un marco en cada celda que comparten la vela anterior y la de la señal: en las dos hay un desequilibrio a favor del color. Uno frente a una celda vacía también cuenta, aunque el footprint no lo marca; y en una celda con desequilibrio de los dos lados, el footprint marca solo el mayor."),
+    "VD": ("Volume Decline", M15, "Motor 8: en el extremo hacia donde fue el precio, el lado que empuja decrece en sus tres precios (la compra hacia el máximo de 5 velas: bajista; la venta hacia el mínimo: alcista); si no hace ninguno, el pasivo crece del 1.º al 3.º precio desde el inicio, como antes. En una vela de mucho volumen.", "de cerca, las tres celdas del extremo marcado, decreciendo hacia él; abajo, el volumen."),
+    "TP": ("Thin Print", M15, "Un nivel interior con contrapartida 0 (hasta 3 por vela), en una vela de mucho volumen.", "de cerca, un marco en cada celda interior con un lado vacío; abajo, el volumen."),
     "OP": ("Open POC", M15, "El POC de la vela queda fuera del rango de las 5 velas anteriores por al menos 0.25 ATR, en una vela de mucho volumen.", "el POC de la vela (línea azul) y el rango de las 5 anteriores; abajo, el volumen."),
     "RX": ("Ratio de extremos", M15, "En el lado pasivo, el 2.º precio dividido por el extremo da menos de 0.70 o más de 30, en una vela de mucho volumen.", "de cerca, las dos celdas del extremo del lado pasivo; abajo, el volumen."),
     "XD": ("Extreme Delta", M15, "El delta cierra en el 95% o más de su máximo (o mínimo) exacto dentro de la vela, con la razón delta/volumen sobre el umbral relativo.", "la tabla de la vela: el delta, resaltado, cierra en su máximo (o mínimo); al pie, contra su umbral."),
     "SM": ("Small Min/Max Delta", M15, "El lado contrario al color apenas movió el delta: un mínimo de delta pequeño en una verde, un máximo pequeño en una roja.", "la tabla de la vela: el Máx o el Mín Δ del lado contrario, resaltado y casi en cero."),
-    "BR": ("Barrido real", M15, "La mayor orden agresiva de la vela que cruzó 3 precios o más, con USD sobre el umbral relativo.", "la franja de la orden; al pie, sus USD contra el umbral."),
-    "GR": ("Orden grande", M15, "La mayor orden agresiva de la vela, con USD sobre el umbral relativo.", "la franja de la orden; al pie, sus USD contra el umbral."),
+    "BR": ("Barrido real", M15, "La mayor orden agresiva de la vela que cruzó 3 precios o más, con USD sobre el umbral relativo.", "la franja de la orden y, de cerca, las celdas de los precios que cruzó, con un marco; al pie, sus USD contra el umbral."),
+    "GR": ("Orden grande", M15, "La mayor orden agresiva de la vela, con USD sobre el umbral relativo.", "la franja de la orden y, de cerca, la celda de su precio (o las que cruzó), con un marco; al pie, sus USD contra el umbral."),
     # Perfil por sesión y liquidaciones
     "VR": ("Regreso al valor de la sesión anterior", M15, "La sesión (un día, en UTC) abre fuera del área de valor de la anterior y 30 minutos de cierres seguidos quedan dentro: va al borde contrario. Una vez por sesión.", "el valor de la sesión anterior (POC, VAH y VAL) y el regreso del precio."),
     "VF": ("Fallo fuera del valor de la sesión anterior", M15, "Con el cierre anterior dentro del valor, una vela pasa el VAH o el VAL y en 3 velas una cierra de vuelta dentro: va al POC.", "el borde pasado y el cierre de vuelta dentro."),
@@ -113,8 +117,8 @@ PAGES = [
      "Volumen y rango de cada vela se miden contra lo normal de su misma hora en los 30 días anteriores; desde el 24/11, un volumen alto lo es también frente a las 20 velas anteriores (lo que ve el ojo). Cada lectura es un grado de 0 a 100% y cuenta desde 50%. Una vela ancha con volumen alto tuvo resultado, también para el medidor. Los elementos que cambiaron el 24/11 y los dos nuevos traen casos nuevos. Cada vela que ya era caso conserva tu marca; las capturas llevan el medidor nuevo."),
     ("3_williams_smc", "Williams y SMC", ["WD", "WA", "WF", "BS", "OB", "BK", "EQ"], ""),
     ("4_orderflow", "Order flow (footprint)", ["VA", "OG", "AP", "SL", "RL", "EX", "ZP", "DT", "RS", "DD", "PD", "IV", "AD", "SW", "VL", "SQ", "DB", "PW", "DV",
-                                               "ST", "VI", "IR", "RD", "VD", "TP", "OP", "RX", "XD", "SM", "BR", "GR"],
-     "Con los trades reales del almacén. El «inicio» de una vela es su mínimo si es verde y su máximo si es roja. «Agresor a favor» son las compras en una verde y las ventas en una roja; «pasivo», el lado contrario. Los umbrales «relativos» salen de los 30 días anteriores, para que cada elemento marque cerca del 5% de las velas. «Vela de mucho volumen»: 2 o más veces la mediana de las 20 anteriores. Desde el 25/11 el footprint va con las celdas con que se calcula el elemento (de 1 a 10 USD, según el precio: de lejos se ve como un mapa de calor) y con el POC de cada vela; los Elementos OF muestran solo ese elemento, y abajo van el volumen y la tabla de la vela (delta, Máx Δ, Mín Δ, Δ/Vol y delta acumulado del día). En los de desequilibrios, el footprint marca los de 4 a 1 en diagonal. En los elementos de celdas, la segunda imagen es de cerca: la zona del elemento en la vela de la señal, con un marco azul en sus celdas y, en cada celda, la venta a la izquierda y la compra a la derecha (una celda sin cifra es un 0 exacto; «0» es algo de menos de 0.05 BTC). Al pie, el valor del elemento contra su umbral."),
+                                               "ST", "VI", "IR", "RD", "VD", "TP", "OP", "XD", "SM", "BR", "GR"],
+     "Con los trades reales del almacén. El «inicio» de una vela es su mínimo si es verde y su máximo si es roja. «Agresor a favor» son las compras en una verde y las ventas en una roja; «pasivo», el lado contrario. Los umbrales «relativos» salen de los 30 días anteriores, para que cada elemento marque cerca del 5% de las velas. «Vela de mucho volumen»: 2 o más veces la mediana de las 20 anteriores. Desde el 25/11 el footprint va con las celdas con que se calcula el elemento (de 1 a 10 USD, según el precio: de lejos se ve como un mapa de calor) y con el POC de cada vela; los Elementos OF muestran solo ese elemento, y abajo van el volumen y la tabla de la vela (delta, Máx Δ, Mín Δ, Δ/Vol y delta acumulado del día). En los de desequilibrios, el footprint marca los de 4 a 1 en diagonal. En los elementos de celdas, la segunda imagen es de cerca: la zona del elemento en la vela de la señal, con un marco azul en sus celdas y, en cada celda, la venta a la izquierda y la compra a la derecha (una celda sin cifra es un 0 exacto; «0» es algo de menos de 0.05 BTC). Al pie, el valor del elemento contra su umbral. Desde el 26/11 (motor 8), los nueve elementos que cambiaron con lo que decidiste en esta galería traen casos de su corrida nueva: la absorción en varios intentos, Exhaustion Print, Delta Tail, Delta Divergence, Inverse Imbalance, Acumulación/Distribución, Vertical Liquidity, Sequencing y Volume Decline. Cada vela que ya era caso conserva tu marca; las demás empiezan sin marca. El ratio de extremos salió de la página."),
     ("5_perfil_liq", "Perfil por sesión y liquidaciones", ["VR", "VF", "VX", "VE", "LIQz", "LIQs"],
      "El perfil es el de la sesión anterior ya cerrada (un día, en UTC), con el volumen real del almacén. Las zonas de liquidaciones son las del indicador Liquidaciones a la vista en esa vela."),
 ]
@@ -160,14 +164,16 @@ def pick(items, k):
     return sorted(spread(longs, q_long) + spread(shorts, q_short), key=lambda it: it["i"])
 
 
-def build_page(slug, title, codes, note, runs, nav_pages, per_element=PER_ELEMENT, runs_m7=None):
-    runs_m7 = runs_m7 or {}
+def build_page(slug, title, codes, note, runs, nav_pages, per_element=PER_ELEMENT, runs_m7=None, runs_m8=None):
+    runs_m7, runs_m8 = runs_m7 or {}, runs_m8 or {}
     parts, nav, total, missing = [], [], 0, []
     for code in codes:
         name, market, definition, look = E[code]
-        m7 = code in M7 and (SHOTS / f"G7_{code}").exists()
-        folder = SHOTS / (f"G7_{code}" if m7 else f"G_{code}")
-        prefix = f"{code}7" if m7 else code
+        m8 = code in M8 and (SHOTS / f"G8_{code}").exists()
+        m7 = not m8 and code in M7 and (SHOTS / f"G7_{code}").exists()
+        folder = SHOTS / (f"G8_{code}" if m8 else f"G7_{code}" if m7 else f"G_{code}")
+        prefix = f"{code}8" if m8 else f"{code}7" if m7 else code
+        runs_new = runs_m8 if m8 else runs_m7 if m7 else {}
         # Una captura con los paneles puede no tener la de solo el precio (los rombos del motor 7)
         files = sorted({folder / re.sub(r"_paneles(?=[.]jpg$)", "", f.name) for f in folder.glob("trade_[0-9][0-9][0-9][0-9]*.jpg")
                         if re.fullmatch(r"trade_[0-9]{4}(_paneles)?[.]jpg", f.name)}) if folder.exists() else []
@@ -193,7 +199,7 @@ def build_page(slug, title, codes, note, runs, nav_pages, per_element=PER_ELEMEN
         # 24/11: tras rehacer una corrida, cada caso lleva la clave de su vela (keys de galeria_corridas_m7.json): una
         # vela que sigue conserva su marca y una nueva empieza sin marca. Un texto es la clave entera (la de una página
         # anterior, como QE-7); un número, su lugar con el prefijo de la página
-        keys = ((runs_m7.get(code) or {}).get("keys") or {}) if m7 else {}
+        keys = (runs_new.get(code) or {}).get("keys") or {}
         cases = []
         for shown, it in enumerate(chosen, 1):
             img, when, side, n = it["img"], it["when"], it["side"], it["n"]
@@ -212,7 +218,7 @@ def build_page(slug, title, codes, note, runs, nav_pages, per_element=PER_ELEMEN
                 f'<label><input type="radio" name="{key}" value="No sé"> No sé</label>'
                 f'<input type="text" class="note" placeholder="Nota (opcional): qué ves distinto"></div></figcaption></figure>')
             total += 1
-        info = (runs_m7.get(code) if m7 else None) or runs.get(code) or {}
+        info = runs_new.get(code) or runs.get(code) or {}
         trades = info.get("trades")
         parts.append(
             f'<section id="{code}"><h2>{html.escape(name)} <small>{market} · fase 1 · {len(chosen)} casos de {trades} trades</small></h2>'
@@ -236,7 +242,8 @@ def main(out_dir, per_element=PER_ELEMENT):
     nav_pages = [(s, t) for s, t, _, _ in PAGES]
     for slug, title, codes, note in PAGES:
         runs_m7 = json.loads(RUNS_M7.read_text(encoding="utf-8")) if RUNS_M7.exists() else {}
-        page, total, missing = build_page(slug, title, codes, note, runs, nav_pages, per_element, runs_m7)
+        runs_m8 = json.loads(RUNS_M8.read_text(encoding="utf-8")) if RUNS_M8.exists() else {}
+        page, total, missing = build_page(slug, title, codes, note, runs, nav_pages, per_element, runs_m7, runs_m8)
         path = out_dir / f"GALERIA_{slug}.html"
         path.write_text(page, encoding="utf-8")
         print(f"{path.name}: {total} casos" + (f" · sin capturas: {', '.join(missing)}" if missing else "") + f" ({path.stat().st_size / 1e6:.1f} MB)")

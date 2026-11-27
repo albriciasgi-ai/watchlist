@@ -51,7 +51,7 @@ FAMILIES = (
     # QV y QG: los elementos nuevos del Lector VPA del motor 7 (esfuerzo con resultado y el medidor que gira, 24/11)
     ("volume", "Volumen y VPA", ("VH", "RF", "RB", "QA", "QV", "QB", "QF", "QR", "QT", "QS", "QC", "QE", "QG")),
     ("delta", "Delta del footprint", ("DT", "DD", "PD", "DB", "DV", "XD", "SM", "VD", "AD")),
-    ("imbalance", "Desequilibrios y agresión", ("IV", "ST", "VI", "IR", "RD", "SW", "VL", "SQ", "BR", "GR", "TP", "ZP", "EX", "RS", "RL", "RX")),
+    ("imbalance", "Desequilibrios y agresión", ("IV", "ST", "VI", "IR", "RD", "SW", "VL", "SQ", "BR", "GR", "TP", "ZP", "EX", "RS", "RL")),  # Sin RX: fuera de las listas desde el motor 8
     ("value", "Valor y POC", ("VA", "OG", "AP", "SL", "PW", "OP", "DA", "DC")),
     ("structure", "Estructura y SMC", ("CC", "BS", "OB", "BK", "EQ", "FV", "SP")),
     ("williams", "Williams", ("WD", "WA", "WF")),
@@ -174,7 +174,8 @@ def available_codes(symbol, tf, flow=True):
     candle = [c for c in rt.CANDLE_CODES if c not in SKIP_CODES]
     if allowed is not None:
         return [c for c in candle if c in allowed]
-    of_codes = [c for c in oe.CATALOG if c not in candle and c not in SKIP_CODES] if flow else []
+    # Sin los retirados (motor 8: el ratio de extremos, a pedido del usuario)
+    of_codes = [c for c in oe.CATALOG if c not in candle and c not in SKIP_CODES and c not in oe.RETIRED] if flow else []
     return of_codes + candle
 
 

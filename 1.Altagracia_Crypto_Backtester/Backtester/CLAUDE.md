@@ -718,14 +718,14 @@ OrderFlowElementsIndicator.js: franjas, celdas, contornos, glifos, EMA 14 y la t
 | VA | VA abandonada | franja | la vela siguiente no entra en el área de valor (70% de a un nivel) |
 | OG | Orderflows Gap | franja | áreas de valor sin solape, hueco ≥ umbral en ATR |
 | AP / SL | POC alineado / Slingshot | franja | mismo POC en dos velas / dos velas del mismo color con el POC hacia atrás |
-| RL | Absorción (propuesta propia) | franja | nivel ≥ p99.5 de 30 días con ≥40% pasivo. No es regla del libro |
-| EX | Exhaustion Print | franja | lado pasivo del extremo casi en cero (umbral relativo) |
-| ZP / DT | Zero Print / Delta Tail | celdas / franja | 0 en una de las dos celdas del inicio / delta contrario en el extremo y a favor en el resto |
+| RL | Absorción (varios intentos; idea del usuario, no del libro) | franja | motor 8: un segundo intento en el mismo nivel (celda con el 5% mayor de volumen agresivo de 30 días y cierre del otro lado) en las N velas siguientes (10; el usuario elige de 1 a 50), sin un cierre más allá; en contra de los intentos. Antes, un nivel ≥ p99.5 con ≥40% pasivo |
+| EX | Exhaustion Print | franja | lado pasivo del extremo casi en cero (umbral relativo). Motor 8: el extremo hacia donde fue el precio (máximo o mínimo de 5 velas) |
+| ZP / DT | Zero Print / Delta Tail | celdas / franja | 0 en una de las dos celdas del inicio / motor 8: mecha de inicio de la mitad de la vela o más, el cuerpo con delta a favor y la mecha en contra |
 | RS | Retail Suck | franja | pasivo del extremo decrece tres niveles, con tamaño relativo |
-| DD / PD | Delta Divergence / Price Action Divergence | franja / celdas | extremo de 5 velas con delta del color / delta contra el color (relativo) |
-| IV | Inverse Imbalance | celdas | dos desequilibrios contrarios seguidos en la mitad lejana (diagonal 4x) |
-| AD | Acumulación/Distribución | franja | mayor celda en el lado contrario y en el tercio del inicio |
-| SW / VL / SQ | Sweep / Vertical Liquidity / Sequencing | franja / celdas / celdas | rachas de niveles: sin contrapartida, con agresor ≥ p90 de 30 días, agresor creciente. Mínimos 3, 3 y 4 |
+| DD / PD | Delta Divergence / Price Action Divergence | franja / celdas | extremo de 5 velas con delta del color, sin la vela que hace los dos (motor 8) / delta contra el color (relativo) |
+| IV | Inverse Imbalance | celdas | dos desequilibrios contrarios seguidos en la mitad lejana (diagonal 4x); motor 8: cierra en la mitad de su color |
+| AD | Acumulación/Distribución | franja | mayor celda en el lado contrario y en el tercio del inicio; motor 8: el pasivo al menos el doble del agresor en ella |
+| SW / VL / SQ | Sweep / Vertical Liquidity / Sequencing | franja / celdas / celdas | rachas de niveles: sin contrapartida, con agresor ≥ p90 de 30 días, agresor creciente; en VL y SQ (motor 8) el agresor le gana al otro lado, y en SQ tiene el 5% del nivel medio. Mínimos 3, 3 y 4 |
 | DB / PW | Delta Breakout / POC Wave | contorno | salto de delta entre dos velas del mismo color sobre el volumen típico / tres velas como el libro |
 | DV | Delta/Volume extremo | tabla | Δ/Vol a favor ≥ umbral relativo |
 
@@ -736,11 +736,11 @@ OrderFlowElementsIndicator.js: franjas, celdas, contornos, glifos, EMA 14 y la t
 | ST | Stacked Imbalance | franja | 3 desequilibrios diagonales 4x seguidos a favor del color | 11.7% | 5.4% |
 | VI | Volume Imbalance | contorno | 3 o más desequilibrios a favor, seguidos o no | 17.2% | 11.4% |
 | IR | Imbalance Reversal | franja | desequilibrio contrario en uno de los dos precios del inicio | 4.7% | 3.2% |
-| RD | Imbalance Reload | franja | desequilibrio al mismo precio en dos velas seguidas del mismo color | 4.3% | 1.7% |
-| VD | Volume Decline | celdas | pasivo crece del 1.º al 3.º precio desde el inicio | 8.1% | 11.8% |
+| RD | Imbalance Reload | franja | desequilibrio al mismo precio en dos velas seguidas del mismo color; motor 8: una franja por celda compartida | 4.3% | 1.7% |
+| VD | Volume Decline | celdas | pasivo crece del 1.º al 3.º precio desde el inicio; motor 8: el extremo hacia donde fue el precio, como EX | 8.1% | 11.8% |
 | TP | Thin Print | celdas | nivel interior con contrapartida 0, hasta 3 por vela | 8.7% | 2.8% |
 | OP | Open POC | franja | POC fuera del rango de las 5 velas previas por al menos 0.25 ATR | 7.5% | 7.4% |
-| RX | Ratio de extremos | celdas | 2.º precio ÷ extremo, en el lado pasivo, < 0.70 o > 30 | 5.0% | 3.3% |
+| RX | Ratio de extremos | celdas | 2.º precio ÷ extremo, en el lado pasivo, < 0.70 o > 30. Fuera de las listas desde el motor 8 (lo pidió el usuario) | 5.0% | 3.3% |
 
 El filtro elige velas de mucho volumen más que elementos: Volume Imbalance, Volume Decline, Reversal y Ratio marcan casi la misma parte de esas velas que del total. Solo Stacked, Open POC y Thin Print se concentran en ellas.
 
@@ -1001,7 +1001,7 @@ Pasos 1.1 y 1.2 de la central de estrategias (`docs/PLAN_CENTRAL_ESTRATEGIAS.md`
 
 ### Order flow (paso 1.2)
 
-- **Bloques:** los 31 Elementos OF de `of_elements.py` como eventos, y dos estados: «Delta de la vela» y «CVD de N velas» (el filtro de CVD del probador, con el delta real).
+- **Bloques:** los 30 Elementos OF de `of_elements.py` como eventos (31 hasta el motor 8, que sacó de las listas el ratio de extremos; `kitchen.OF_CODES` deja fuera `of_elements.RETIRED`), y dos estados: «Delta de la vela» y «CVD de N velas» (el filtro de CVD del probador, con el delta real).
 - **Dónde:** en las monedas con almacén de trades (la condición del probador) y en 1m, 5m, 15m, 1h y 4h.
 - **En segundo plano:** un pedido espera el order flow a lo sumo 0.6 s. Pasado eso responde `pending`, la pantalla dice «leyendo los trades de este tramo (2 de 5 partes)» y vuelve a preguntar cada 0.9 s. Lo demás ya cuenta.
 - **Por bloques de días** en memoria (1 día en 1m y 5m, 2 en 15m, 5 en 1h y 20 en 4h). Un bloque cerrado no cambia; el que tiene la última vela se detecta otra vez con cada vela nueva.
@@ -1783,6 +1783,54 @@ Siguen en el disco.
   - la paridad del lector, `vpa.parity.test.mjs` (12), con la regla nueva y la de antes;
   - `test_structure.py`, `test_line_tf.py`, `test_regime.py` y `test_vpa.py` al día: prueban la regla de antes con sus
     valores explícitos, o con otra serie.
+
+### Motor 8: lo que decidió el usuario en la galería de order flow (26/11)
+
+La galería 4 del protocolo de pruebas (`pruebas_backtesting/revision_visual/G4_RESPUESTAS.md`): Sí 96, No 14 y No sé 14
+de 124. Sin fallos del motor; once propuestas, y el usuario dijo «Todas pero Delta Tail B. Absorción como dices, pero que
+se pueda ver en hasta 50 velas y que sea configurable por el usuario». Todo en `of_elements.py`:
+
+- **Exhaustion Print y Volume Decline:** miran el extremo hacia donde fue el precio (`_turn_side`). Si la vela hace el
+  máximo de 5 velas, la compra en su máximo (`exh_high`, `decline_high`: los compradores se agotan, bajista); si hace el
+  mínimo, la venta en su mínimo (alcista). Si no hace ninguno, o los dos, el extremo donde empieza la vela, como antes.
+  El umbral relativo del Exhaustion Print sale de esos valores (`ex_value`).
+- **Delta Tail (la opción B):** la mecha donde empieza la vela ocupa la mitad de su rango o más (`DT_WICK`), el cuerpo va
+  con delta a favor y la mecha en contra, en su celda del extremo (desde el 10% del nivel medio, `DT_CELL`) o sumada
+  (`_tail`). Su zona es la mecha. Un umbral relativo sacaba casos que el usuario quiere; la mitad de la vela los respeta.
+- **Delta Divergence:** una vela que hace el máximo y el mínimo de 5 velas a la vez no cuenta.
+- **Inverse Imbalance:** la vela cierra en la mitad de su rango del lado de su color (`_closes_toward`).
+- **Orderflows Sequencing:** en cada nivel el agresor crece, le gana al lado contrario y tiene al menos el 5% del nivel
+  medio (`seq` en `bar_facts`).
+- **Vertical Liquidity:** en cada nivel de la racha el agresor le gana al lado contrario (`_vertical_run`).
+- **Acumulación/Distribución:** en su nivel, el pasivo al menos el doble del agresor (`_accdist_row`, `AD_RATIO`); el
+  umbral relativo sigue saliendo de todas las candidatas.
+- **Absorción (RL, la idea del usuario):** reemplaza la de una sola vela (percentil 99.5 con 40% pasivo).
+  - **Intento** (`_attempt`): una vela con mucho volumen agresivo en una celda (el 5% mayor de las celdas de los dos
+    lados de 30 días, `absorb_cell` de `_thresholds`) que cierra del otro lado de esa celda: comprando y cerrando debajo,
+    o vendiendo y cerrando encima.
+  - **Señal** (`_absorptions`): la vela que intenta en un nivel (a una celda o menos) donde ya hubo otro intento del mismo
+    lado en las N velas anteriores, sin que ninguna vela entre los dos cerrara más allá; va en contra de los intentos,
+    con la zona de las dos celdas y la hora del primero (`t0`). Cada intento más vuelve a dar la señal: así depende solo
+    de las N velas anteriores y da lo mismo pedida de una vez o por tramos (lo mira una prueba con datos reales).
+  - **N** (`absorb_bars`, `ABSORB_BARS` 10, de 1 a `ABSORB_MAX_BARS` 50): en el modal de Elementos OF y en el probador
+    (Detección, con la absorción en la regla; `absorbBars` solo entra a la regla si no es 10, `_absorb`). La ruta
+    `/api/orderflow/elements` y la de la suite aceptan `absorb_bars`; el caché de la fase lleva `_a<N>`.
+- **Imbalance Reload:** una franja por celda compartida. El probador junta las zonas de la vela: sus señales y su zona no
+  cambian.
+- **Ratio de extremos:** fuera de las listas (`RETIRED`: el modal, el probador y el barrido); el código queda para las
+  corridas guardadas.
+- **Corridas que quedan fuera:** solo las que usan uno de los nueve que cambiaron (`ENGINE8_CODES`,
+  `_touched_by_engine8`). El caché de los elementos de cada fase se arma otra vez (`SPAN_VERSION` 3).
+- **En BTC 15m, fase 1:** Exhaustion Print 6,597 → 6,552; Volume Decline 3,774 → 4,920; Delta Tail 1,720 → 14,540;
+  Delta Divergence 10,542 → 9,655; Inverse Imbalance 19,674 → 15,943; Sequencing 6,221 → 354; Vertical Liquidity
+  10,228 → 10,264; Acumulación/Distribución 6,365 → 5,573; absorción 8,841 (la de antes) → 4,020 con 10 velas y 5,078
+  con 50. La recarga, en las mismas 8,580 velas. Ningún otro elemento cambió.
+- **Pruebas:** `test_motor8.py` (13), una más en `test_of_elements.py` y en `test_signal_sweep.py`; `ofelements.test.mjs`
+  (10), `ruletester.test.mjs` y `rulefacets.test.mjs` (16); en la suite, `run_checks.py` (48).
+- **La guía** `GUIA_ELEMENTOS_ORDER_FLOW.pdf` se rehízo el mismo día con estas reglas, lo que salió de la galería y la
+  marca del usuario al pie de cada caso. Generador: `OrderFlowData/research/guias_elementos/2026-11-26/`; si cambia otro
+  elemento o el usuario mira los casos nuevos, se rehace desde ahí (`python -B guias.py . G4`, tras
+  `extraer_galerias.py`).
 
 ### Acciones de Alpaca en el probador (20/11)
 

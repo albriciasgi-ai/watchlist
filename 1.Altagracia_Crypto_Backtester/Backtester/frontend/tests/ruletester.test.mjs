@@ -285,6 +285,14 @@ test('al elegir un trade de order flow, el footprint con las celdas del elemento
   assert.deepEqual([el.target, el.volFilter], [8, 3], 'el backend da la parte de las velas; el indicador, el %');
   assert.deepEqual([el.showBands, el.showTable, el.bandOpacity], [false, false, 0.3]);
   assert.equal(ruleOFElementsConfig(back({ codes: ['XD', 'ZP'] }), current).showTable, true, 'con un elemento de la tabla, la tabla');
+  // Motor 8: las velas de la absorción viajan solo con el elemento y si no son las de fábrica; el gráfico usa las de la regla
+  assert.equal(back({ codes: ['RL'], absorbBars: 25 }).absorbBars, 25);
+  assert.equal(back({ codes: ['RL'], absorbBars: 10 }).absorbBars, undefined, 'las de fábrica no cambian la identidad');
+  assert.equal(back({ codes: ['ZP'], absorbBars: 25 }).absorbBars, undefined, 'sin la absorción no cuentan');
+  assert.equal(back({ codes: ['RL'], absorbBars: 90 }).absorbBars, 50);
+  assert.equal(ruleOFElementsConfig(back({ codes: ['RL'], absorbBars: 25 }), current).absorbBars, 25);
+  assert.equal(ruleOFElementsConfig(back({ codes: ['ZP'] }), { ...current, absorbBars: 30 }).absorbBars, 10, 'la regla manda: sin ellas, las de fábrica');
+  assert.equal(fromBackendRule(back({ codes: ['RL'], absorbBars: 25 })).absorbBars, 25, 'ida y vuelta por el formulario');
 });
 
 test('al elegir un trade, los indicadores de la regla: cuáles, en qué marco y con qué ajustes (21/11)', () => {

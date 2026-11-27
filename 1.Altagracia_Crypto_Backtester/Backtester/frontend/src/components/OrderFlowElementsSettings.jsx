@@ -13,7 +13,7 @@ const OrderFlowElementsSettings = ({ symbol, indicator, onApply, onClose, onOpen
   const setCode = (code, on) => setValues(previous => ({ ...previous, codes: { ...previous.codes, [code]: on } }));
   const setGroup = (group, on) => setValues(previous => ({
     ...previous,
-    codes: { ...previous.codes, ...Object.fromEntries(Object.entries(OF_ELEMENTS).filter(([, info]) => info.group === group).map(([code]) => [code, on])) }
+    codes: { ...previous.codes, ...Object.fromEntries(Object.entries(OF_ELEMENTS).filter(([, info]) => info.group === group && !info.retired).map(([code]) => [code, on])) }
   }));
 
   const handleApply = () => {
@@ -49,10 +49,15 @@ const OrderFlowElementsSettings = ({ symbol, indicator, onApply, onClose, onOpen
               <input type="number" min="0" max="10" step="0.5" value={values.volFilter} onChange={(e) => set('volFilter', e.target.value)} />
               <span className="hint">Para los marcados con "vol.": veces la mediana de las 20 velas anteriores. 2 por defecto; 0 los muestra en todas las velas, donde marcan del 12% al 74%.</span>
             </div>
+            <div className="setting-row">
+              <label>Absorción: segundo intento en (velas)</label>
+              <input type="number" min="1" max="50" step="1" value={values.absorbBars} onChange={(e) => set('absorbBars', e.target.value)} />
+              <span className="hint">La absorción marca la vela que vuelve a chocar con un nivel ya intentado, con mucho volumen agresivo, sin que ninguna vela entre las dos cerrara más allá; la señal va en contra de los intentos. Cuántas velas puede tardar ese segundo intento: 10 por defecto, hasta 50.</span>
+            </div>
           </div>
 
           {OF_GROUPS.map(([group, title, description]) => {
-            const codes = Object.entries(OF_ELEMENTS).filter(([, info]) => info.group === group);
+            const codes = Object.entries(OF_ELEMENTS).filter(([, info]) => info.group === group && !info.retired);
             const allOn = codes.every(([code]) => values.codes[code]);
             return (
               <div className="settings-section" key={group}>

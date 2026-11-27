@@ -175,8 +175,8 @@ def market_checks(c):
     # Elementos OF y setups: siempre con live=True y cortados en lo guardado
     got = {}
 
-    def fake_detect(symbol, tf, start, end, cut, target, band_days, vol_filter, live=False):
-        got.update(symbol=symbol, tf=tf, cut=cut, live=live)
+    def fake_detect(symbol, tf, start, end, cut, target, band_days, vol_filter, live=False, absorb_bars=10):
+        got.update(symbol=symbol, tf=tf, cut=cut, live=live, absorb_bars=absorb_bars)
         return {"events": [], "bars": [], "known_until": cut, "warming": False, "step": None}
 
     old_detect, old_until = mr.of_elements.detect, mr._store_until
@@ -185,6 +185,9 @@ def market_checks(c):
     r = c.get(f"/api/orderflow/elements/BTCUSDT?interval=15&start_timestamp=1&end_timestamp={NOW}&known_until={NOW + 10 ** 9}", headers=H)
     check("Elementos OF: live=True", r.status_code == 200 and got.get("live") is True and r.json().get("catalog"))
     check("Elementos OF: corte en el ultimo minuto guardado, nunca despues de ahora", got.get("cut") == NOW - 90_000)
+    check("Elementos OF: velas de la absorcion de fabrica (motor 8 de App 1)", got.get("absorb_bars") == 10)
+    c.get(f"/api/orderflow/elements/BTCUSDT?interval=15&start_timestamp=1&end_timestamp={NOW}&absorb_bars=90", headers=H)
+    check("Elementos OF: las velas de la absorcion llegan, con su tope de 50", got.get("absorb_bars") == 50)
     check("Elementos OF: marco en texto rechazado", c.get("/api/orderflow/elements/BTCUSDT?interval=15m&start_timestamp=1&end_timestamp=2", headers=H).status_code == 400)
     mr._store_until = lambda symbol, now: None
     c.get("/api/orderflow/elements/BTCUSDT?interval=60&start_timestamp=1&end_timestamp=2", headers=H)

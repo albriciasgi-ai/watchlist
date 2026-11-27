@@ -27,10 +27,11 @@ export const USER_ZONE_KINDS = ['draw', 'vp'];
 export const VP_PARTS = { poc: 'POC', vah: 'VAH', val: 'VAL', va: 'Área de valor' };
 // Estados que salen del almacén de trades (kitchen.py, FLOW_STATE_IDS)
 export const FLOW_STATES = ['delta', 'cvd'];
-// Elementos OF (of_elements.py): eventos con trades reales, solo en las monedas con almacén
+// Elementos OF (of_elements.py): eventos con trades reales, solo en las monedas con almacén. Sin el ratio de extremos,
+// que salió de las listas con el motor 8
 const OF_ELEMENTS = [
   'VA', 'OG', 'AP', 'SL', 'RL', 'EX', 'ZP', 'DT', 'RS', 'DD', 'PD', 'IV', 'AD', 'SW', 'VL', 'SQ', 'DB', 'PW', 'DV',
-  'ST', 'VI', 'IR', 'RD', 'VD', 'TP', 'OP', 'RX', 'XD', 'SM', 'BR', 'GR'
+  'ST', 'VI', 'IR', 'RD', 'VD', 'TP', 'OP', 'XD', 'SM', 'BR', 'GR'
 ];
 
 // Cada tipo de zona: cómo se llama una (según su lado: 1 alcista, −1 bajista), cómo se llaman todas y qué indicador de
