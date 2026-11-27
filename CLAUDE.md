@@ -79,10 +79,18 @@ dices, pero que se pueda ver en hasta 50 velas y que sea configurable por el usu
 3. **Galería 4:** los nueve elementos que cambiaron, corridos y capturados otra vez con el motor 8 (en la absorción, un
    marco en la celda de cada intento). Las velas que ya eran caso conservan la marca del usuario.
 4. **Pruebas:** `test_motor8.py` (13) y las que ya había, al día; en la página y en la suite, las suyas.
+5. **La guía de order flow** (`1.Altagracia_Crypto_Backtester/Backtester/GUIA_ELEMENTOS_ORDER_FLOW.pdf`, 65 páginas),
+   rehecha el mismo día a pedido del usuario:
+   - las reglas del motor 8 y sus señales, y 30 elementos (el ratio de extremos salió);
+   - lo que salió de la galería en cada ficha, y la marca del usuario al pie de cada caso, o que es un caso nuevo;
+   - los casos nuevos de los nueve que cambiaron y las imágenes corregidas.
+
+   Generador: `OrderFlowData/research/guias_elementos/2026-11-26/` (`marcas.py` lee las marcas; las otras cuatro guías
+   siguen con el del 25/11).
 
 **IMPORTANTE:**
 - **En main desde el 26/11.** Hay que reiniciar el backend de App 1 (9000) y recargar su página; la suite se reinicia
-  sola.
+  sola. La guía rehecha llegó a main después, en otro PR.
 - **Corridas que quedan fuera:** solo las que usan uno de los nueve elementos que cambiaron. El caché de los elementos de
   cada fase se arma otra vez (BTC 15m, fase 1, unos 4 minutos).
 - **Delta Tail B, con su umbral medido:** sola marcaba un tercio de las velas, y un umbral relativo sacaba casos que el
@@ -228,7 +236,7 @@ dices, pero que se pueda ver en hasta 50 velas y que sea configurable por el usu
    - `GUIA_ELEMENTOS_VELAS_PATRONES_CAJAS.pdf`, con 15 elementos;
    - `GUIA_ELEMENTOS_VPA.pdf`, con 10;
    - `GUIA_ELEMENTOS_WILLIAMS_SMC.pdf`, con 7;
-   - `GUIA_ELEMENTOS_ORDER_FLOW.pdf`, con 31;
+   - `GUIA_ELEMENTOS_ORDER_FLOW.pdf`, con 31 (rehecha el 26/11 con el motor 8: 30; ver la entrada del motor 8);
    - `GUIA_ELEMENTOS_PERFIL_LIQUIDACIONES.pdf`, con 6.
 
    Cada ficha dice cómo lo calcula la app hoy, qué mirar, sus parámetros de fábrica, qué salió de la galería y lo medido.

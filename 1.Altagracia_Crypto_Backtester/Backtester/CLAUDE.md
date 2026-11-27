@@ -1827,6 +1827,10 @@ se pueda ver en hasta 50 velas y que sea configurable por el usuario». Todo en 
   con 50. La recarga, en las mismas 8,580 velas. Ningún otro elemento cambió.
 - **Pruebas:** `test_motor8.py` (13), una más en `test_of_elements.py` y en `test_signal_sweep.py`; `ofelements.test.mjs`
   (10), `ruletester.test.mjs` y `rulefacets.test.mjs` (16); en la suite, `run_checks.py` (48).
+- **La guía** `GUIA_ELEMENTOS_ORDER_FLOW.pdf` se rehízo el mismo día con estas reglas, lo que salió de la galería y la
+  marca del usuario al pie de cada caso. Generador: `OrderFlowData/research/guias_elementos/2026-11-26/`; si cambia otro
+  elemento o el usuario mira los casos nuevos, se rehace desde ahí (`python -B guias.py . G4`, tras
+  `extraer_galerias.py`).
 
 ### Acciones de Alpaca en el probador (20/11)
 
