@@ -53,13 +53,16 @@ FLOW_STATE_IDS = ("delta", "cvd")
 # Estados: se cumplen o no en cada vela. Con lado (dir: favor o contra del trade), salvo los de NEUTRAL
 # Lo que calcula el gráfico con los ajustes de la sesión y manda la página (27/11): una serie de un panel (interés
 # abierto, delta, CVD) que sube o baja en N velas, o que está sobre o bajo cero; y una marca de un indicador
-PAGE_STATE_IDS = ("psube", "ppos")
+PAGE_STATE_IDS = ("psube", "ppos", "pumbral")
 # Eventos sobre una serie: un valor muy grande frente a lo típico (pgrande), cruza el cero (pcruza) y pasa un máximo y
 # empieza a bajar, o un mínimo y empieza a subir (pgiro, como el AO de Williams)
 PAGE_EVENT_IDS = ("pmark", "pgrande", "pcruza", "pgiro")
 PAGE_BIG_BARS = 100       # Velas anteriores con que se mide lo típico de una serie
 PAGE_IDS = PAGE_STATE_IDS + PAGE_EVENT_IDS
 VOLUME = "vol"            # El volumen de las velas: una serie que el motor ya tiene, sin pedirla a la página
+# La tabla de la vela de Elementos OF, con trades reales: delta, Δ/Vol (en %), delta acumulado del día y el máximo y
+# el mínimo exactos del delta dentro de la vela. Series del motor, que salen del almacén de trades
+OF_TABLE = ("of_delta", "of_dvol", "of_cum", "of_maxd", "of_mind")
 ABS_DIRS = ("up", "down", "any")   # Un sentido que no depende del lado del trade: sube, baja o cualquiera
 PAGE_LINE = "p:"          # Una línea del gráfico (el VWAP y sus bandas): "p:<clave>"
 PAGE_SERIES = 16          # Series de cada clase por pedido
@@ -142,6 +145,9 @@ BLOCK_PARAMS = {
     # (steps). min: cuánto como mínimo, en veces el cambio típico (x) o en % del valor de partida (pct); 0 no pide nada
     "psube": {"n": (5, 1, 100), "how": ["ends", "avg", "steps"], "min": (0.0, 0.0, 1000.0), "unit": ["x", "pct"]},
     "ppos": {},
+    # Un valor contra un umbral: al menos (ge) o no más de (le) `u`, medido tal cual (abs), en veces lo típico de las
+    # 100 velas anteriores (x) o en % del volumen de la vela (vol)
+    "pumbral": {"op": ["ge", "le"], "u": (1.0, 0.0, 1e12), "unit": ["x", "vol", "abs"]},
     "pmark": {},
     "pgrande": {"k": (3.0, 1.0, 20.0), "w": (PAGE_BIG_BARS, 20, 500)},
     "pcruza": {},
@@ -337,10 +343,15 @@ def clean_session(raw):
     return out
 
 
+def block_flow(block):
+    """Si el bloque sale del almacén de trades: un Elemento OF, el delta o el CVD reales, o una casilla de la tabla de la vela."""
+    return block["id"] in OF_CODES or block["id"] in FLOW_STATE_IDS or (block["id"] in PAGE_IDS and block["p"].get("s") in OF_TABLE)
+
+
 def uses_page(block):
     """Si el bloque lee algo que manda la página: una serie, una marca o una línea del gráfico."""
     if block["id"] in PAGE_IDS:
-        return block["p"].get("s") != VOLUME
+        return block["p"].get("s") != VOLUME and block["p"].get("s") not in OF_TABLE
     return any(str(block["p"].get(key, "")).startswith(PAGE_LINE) for key in ("line", "a", "b"))
 
 
@@ -377,7 +388,7 @@ def clean_doc(raw):
 
 def uses_flow(doc):
     """Si la estrategia tiene algún bloque de order flow."""
-    return any(b["id"] in OF_CODES or b["id"] in FLOW_STATE_IDS for b in doc["ctx"] + [b for g in doc["gat"] for b in g["blocks"]])
+    return any(block_flow(b) for b in doc["ctx"] + [b for g in doc["gat"] for b in g["blocks"]])
 
 
 # ==================== Order flow en segundo plano ====================
@@ -426,7 +437,7 @@ class FlowBook:
         end = start + self.size
         # Una vela de más, para que la última del bloque vea a su siguiente (VA abandonada), como el probador
         part = oe.detect(self.symbol, self.tf, start, min(end + self.tf_ms, known) - 1, known, oe.DEFAULT_TARGET, 0, oe.DEFAULT_VOL_FILTER)
-        bars = {b["t"]: (b["delta"], b["vol"]) for b in part["bars"] if start <= b["t"] < end}
+        bars = {b["t"]: (b["delta"], b["vol"], b.get("cum"), b.get("maxd"), b.get("mind")) for b in part["bars"] if start <= b["t"] < end}
         events = [(e["code"], e["t"], e["known"], e["dir"]) for e in part["events"] if start <= e["t"] < end and e["known"] <= known]
         expected = max(0, (min(end, known) - start) // self.tf_ms)
         return {"known": known, "events": events, "bars": bars, "short": len(bars) < expected, "at": time.time()}
@@ -628,7 +639,8 @@ class Facts:
         first = max(0, int(start) - FLOW_LEAD)
         if self._flow_first is None or first < self._flow_first:
             self._flow_first, self._flow, self._cvd = first, None, {}
-            self._truth = {key: value for key, value in self._truth.items() if key[0] not in OF_CODES and key[0] not in FLOW_STATE_IDS}
+            self._truth = {key: value for key, value in self._truth.items()
+                           if key[0] not in OF_CODES and key[0] not in FLOW_STATE_IDS and '"s": "of_' not in key[1]}
 
     def flow(self, wait=0.0):
         """El order flow de estas velas. {"state": "none"} sin almacén de trades; "loading" o "error" mientras no esté;
@@ -652,12 +664,18 @@ class Facts:
                     found.append((at, at_known, int(way)))
             events[code] = sorted(found)
         delta, vol = np.full(self.n, np.nan), np.full(self.n, np.nan)
-        for t, (d, v) in got["bars"].items():
+        table = {name: np.full(self.n, np.nan) for name in ("of_cum", "of_maxd", "of_mind")}
+        for t, row in got["bars"].items():
             i = self.index.get(t)
             if i is not None:
-                delta[i], vol[i] = d, v
+                delta[i], vol[i] = row[0], row[1]
+                for name, value in zip(("of_cum", "of_maxd", "of_mind"), row[2:5]):
+                    if value is not None:
+                        table[name][i] = value
+        with np.errstate(invalid="ignore", divide="ignore"):
+            table["of_delta"], table["of_dvol"] = delta, np.where(vol > 0, delta / vol * 100, np.nan)
         have = np.isfinite(delta[first:])
-        self._flow = {"state": "ready", "events": events, "delta": delta, "vol": vol, "first": first,
+        self._flow = {"state": "ready", "events": events, "delta": delta, "vol": vol, "table": table, "first": first,
                       "cover": round(float(have.mean()), 3) if len(have) else 0.0}
         return self._flow
 
@@ -1012,6 +1030,8 @@ class Facts:
             return ok & (np.where(ok, meter, 0.0) * d >= p["u"])
         if bid in PAGE_STATE_IDS:
             # Una serie de un panel del gráfico: sube (o baja) en N velas, o está sobre (o bajo) cero
+            if bid == "pumbral":
+                return self.threshold(p, d)
             value = self.num(p["s"])
             if value is None:
                 return out
@@ -1038,7 +1058,38 @@ class Facts:
 
     def num(self, name):
         """Una serie de un panel: el volumen de las velas, que el motor ya tiene, o lo que manda la página."""
+        if name in OF_TABLE:
+            flow = self.flow()
+            return flow["table"][name] if flow["state"] == "ready" else None
         return self.Vol if name == VOLUME else self.page["nums"].get(name)
+
+    def threshold(self, p, d):
+        """Dónde el valor de una serie pasa un umbral. `ge`: del lado d (o de cualquiera, con d 0), al menos `u`; `le`:
+        su tamaño no pasa de `u`. `unit`: el valor tal cual (abs), en veces la mediana de su tamaño en las 100 velas
+        anteriores (x), o en % del volumen de la vela (vol; el real, en las casillas de la tabla de la vela)."""
+        out = np.zeros(self.n, dtype=bool)
+        value = self.num(p["s"])
+        if value is None:
+            return out
+        ok = np.isfinite(value)
+        size = np.where(ok, np.abs(value), np.nan)
+        if p["unit"] == "vol":
+            base = self.flow()["vol"] if p["s"] in OF_TABLE else self.Vol
+            limit = p["u"] / 100 * np.where(np.isfinite(base), base, np.nan)
+        elif p["unit"] == "x":
+            limit = np.full(self.n, np.nan)
+            for i in np.flatnonzero(ok):
+                past = size[max(0, i - PAGE_BIG_BARS):i]
+                past = past[np.isfinite(past)]
+                if len(past) >= 20:
+                    limit[i] = p["u"] * float(np.median(past))
+        else:
+            limit = np.full(self.n, float(p["u"]))
+        with np.errstate(invalid="ignore"):
+            if p["op"] == "le":
+                return ok & np.isfinite(limit) & (size <= limit)
+            side = (np.where(ok, value, 0.0) * d > 0) if d else ok
+            return ok & np.isfinite(limit) & side & (size >= limit) & (size > 0)
 
     def rising(self, value, p, d):
         """Dónde una serie sube (d 1) o baja (d −1) en N velas. `how`: contra su valor de hace N velas (ends), el
@@ -1141,7 +1192,7 @@ class Facts:
         if key not in self._truth and len(self._truth) > 400:
             self._truth.clear()   # Con cada cambio de lo que manda la página queda una entrada
         if key not in self._truth:
-            if (bid in OF_CODES or bid in FLOW_STATE_IDS) and self.flow()["state"] != "ready":
+            if block_flow(block) and self.flow()["state"] != "ready":
                 return np.zeros(self.n, dtype=bool)   # Sin guardar: se calcula cuando llegue el order flow
             if bid in STATE_IDS:
                 out = self.state(bid, p, d)
@@ -1286,6 +1337,16 @@ class Facts:
             if delta == delta and delta != 0:
                 states.append({"id": "delta", "p": {}, "d": 1 if delta > 0 else -1,
                                "obs": {"share": round(float(abs(delta) / traded * 100), 1) if traded > 0 else None}})
+            # La tabla de la vela: cada casilla con el umbral que hoy cumple justo, para ajustarlo en su bloque
+            for name in ("of_dvol", "of_maxd", "of_mind"):
+                value = flow["table"][name][i]
+                if not (value == value and value != 0 and traded > 0):
+                    continue
+                share = abs(float(value)) if name == "of_dvol" else abs(float(value)) / traded * 100
+                if share >= 1:
+                    states.append({"id": "pumbral", "d": 0, "obs": {"share": round(share, 1)},
+                                   "p": {"s": name, "op": "ge", "u": float(int(share)), "unit": "abs" if name == "of_dvol" else "vol",
+                                         "dir": "up" if value > 0 else "down"}})
             run = self.cvd(20)[i]
             if run == run and run != 0:
                 states.append({"id": "cvd", "p": {"n": 20}, "d": 1 if run > 0 else -1, "obs": {"share": round(float(abs(run) * 100), 1)}})
@@ -1463,7 +1524,7 @@ def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, 
                 if block["uid"] in s["shown"]:
                     mask |= s["shown"][block["uid"]]
             blocks[block["uid"]] = {"runs": _runs(mask, start), "count": int(mask[start:].sum())}
-            if flow is not None and flow["state"] != "ready" and (block["id"] in OF_CODES or block["id"] in FLOW_STATE_IDS):
+            if flow is not None and flow["state"] != "ready" and block_flow(block):
                 blocks[block["uid"]]["pending"] = flow["state"]   # Sin order flow todavía (o sin almacén): no cuenta
         used_steps = [gi for gi, g in enumerate(doc["gat"]) if g["blocks"]]
         ctx_mask = np.zeros(n, dtype=bool)

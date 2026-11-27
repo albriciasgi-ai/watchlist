@@ -55,6 +55,38 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 27 Noviembre 2026: Volumen, Umbrales y Tabla de la Vela en la Cocina, y Filas al Día al Reproducir
+
+**Pedido:** tras probar la cocina, el usuario pidió:
+- el volumen como elemento: muy alto en una vela, o creciendo en las últimas N velas;
+- que cada variable de un bloque se pueda cambiar junto a él (velas, cuánto tiene que subir, umbrales);
+- las casillas de la tabla de la vela de Elementos OF (Máx Δ, Mín Δ, Δ/Vol…) como elementos, cada una con su umbral;
+- que las filas bajo las velas no queden atrás al reproducir.
+
+**Cambios:**
+1. **Volumen:** serie del motor (`vol`), sin encender ningún indicador. «Marca N veces lo típico», de cualquier color o del que se elija, y «sube o baja», de fábrica con el promedio de 5 velas contra las 5 anteriores.
+2. **Tabla de la vela:** delta, Δ/Vol, Máx Δ, Mín Δ y delta acumulado del día (`of_*`), del almacén de trades. Bloque nuevo «un valor pasa un umbral» (`pumbral`): al menos o no más de, tal cual, en % del volumen de la vela o en veces lo típico. La tarjeta de la vela ofrece cada casilla con el umbral que cumple justo; un clic en la tabla lleva a esa tarjeta por el menú de siempre.
+3. **Más variables por bloque:**
+   - «sube o baja»: cómo se mide (contra hace N velas, promedio contra promedio, N velas seguidas) y un mínimo, en veces lo típico o en %;
+   - «un valor muy grande»: el umbral y la ventana de lo típico;
+   - delta y CVD reales: peso mínimo sobre el volumen.
+4. **Sentido fijo** (`up`, `down`, `any`): una serie puede ir hacia arriba o hacia abajo sin depender del lado del trade. No se da vuelta al espejar.
+5. **Opciones a la vista:** botón «Opciones» en cada bloque, y un bloque recién sumado queda abierto.
+6. **Filas al día:** reproduciendo va un pedido a la vez, y el siguiente sale al terminar. Antes cada vela nueva cortaba el pedido en curso y a velocidad alta ninguno terminaba. Mientras vaya atrás, la última fila dice «faltan N» y el panel, hasta qué vela está calculado.
+7. **La frase de la estrategia** se repite junto a la cuenta de señales.
+8. **Pruebas:** `test_kitchen.py` (47) y `kitchen.test.mjs` (28).
+
+**IMPORTANTE:**
+- El backend de App 1 (9000) se recarga solo; hay que recargar su página.
+- Un documento guardado antes se abre igual: los parámetros nuevos entran con el valor que deja todo como estaba.
+- **Sin ver en pantalla:** nada de esta entrada. Las pruebas pasan y la pestaña compila.
+- **Lo que la cocina sigue sin hacer** (paso 1.3): no abre el trade ni dibuja la caja TP/SL al darse la señal.
+- Los elementos de VPA, Williams, SMC y order flow siguen con pocas o ninguna variable en su bloque.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)", "Volumen, umbrales y tabla de la vela (27/11)"
+
+---
+
 ### App 1 - 27 Noviembre 2026: Indicador EMA, y la Cocina Lee lo que Calcula el Gráfico con los Ajustes de la Sesión
 
 **Pedido:** al probar los pasos 1.1 y 1.2, el usuario encontró que:

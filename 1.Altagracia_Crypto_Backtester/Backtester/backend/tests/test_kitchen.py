@@ -591,7 +591,8 @@ class FakeFlow:
         while t <= end and t + MS <= known:
             k = t // MS
             if k not in self.missing:
-                bars.append({"t": t, "delta": self.delta(t), "vol": 100.0})
+                d = self.delta(t)
+                bars.append({"t": t, "delta": d, "vol": 100.0, "cum": d * 2, "maxd": max(0.0, d) + 1.0, "mind": min(0.0, d) - 1.0})
                 if k % 7 == 0:
                     events.append({"code": "ST", "t": t, "known": t + MS, "dir": 1 if k % 2 else -1})
                 if k % 11 == 0 and t + 2 * MS <= known:
@@ -911,6 +912,36 @@ def test_una_serie_sube_con_un_minimo_y_el_delta_con_su_peso():
     clean = kitchen.clean_block({"id": "psube", "p": {"s": "oi", "how": "raro", "unit": "kg", "min": -4}}, "ctx")["p"]
     assert clean["how"] == "ends" and clean["unit"] == "x" and clean["min"] == 0.0
     assert kitchen.clean_block({"id": "side", "p": {"dir": "up"}}, "ctx")["p"]["dir"] == "favor"   # El sentido fijo es solo de las series
+
+
+def test_las_casillas_de_la_tabla_de_la_vela_son_series_con_umbral(flow):
+    """La tabla de la vela de Elementos OF (27/11): delta, Δ/Vol, Máx Δ, Mín Δ y acumulado salen del almacén de trades
+    y cada una acepta un umbral: al menos, o no más de, tal cual o en % del volumen. Sin almacén no cuentan."""
+    bars = walk(400)
+    block = lambda uid, p: {"uid": uid, "id": "pumbral", "p": p}
+    doc = {"side": "long", "gat": [], "ctx": [
+        block("dv", {"s": "of_dvol", "op": "ge", "u": 4, "unit": "abs", "dir": "up"}),
+        block("max", {"s": "of_maxd", "op": "ge", "u": 5, "unit": "vol", "dir": "up"}),
+        block("min", {"s": "of_mind", "op": "le", "u": 1, "unit": "vol"}),
+        block("favor", {"s": "of_delta", "op": "ge", "u": 3, "unit": "abs"})]}
+    out = ask("FLOW", 60, rows(bars), doc, view=300)
+    times = out["times"]
+    hit = lambda uid: {times[i] for a, z in out["blocks"][uid]["runs"] for i in range(a, z + 1)}
+    delta = FakeFlow.delta
+    assert hit("dv") == {t for t in times if delta(t) >= 4}                  # Volumen 100: el Δ/Vol en % es el delta
+    assert hit("max") == {t for t in times if max(0.0, delta(t)) + 1 >= 5}
+    assert hit("min") == {t for t in times if abs(min(0.0, delta(t)) - 1) <= 1}   # El Mín Δ casi no se movió
+    assert hit("favor") == {t for t in times if delta(t) >= 3}               # A favor de un largo: positivo
+    short = ask("FLOW", 60, rows(bars), {**doc, "side": "short"}, view=300)
+    assert {times[i] for a, z in short["blocks"]["favor"]["runs"] for i in range(a, z + 1)} == {t for t in times if delta(t) <= -3}
+    # La tarjeta de la vela ofrece sus casillas con el umbral que cumple justo
+    i = next(k for k, t in enumerate(times) if delta(t) == 5)
+    states = ask("FLOW", 60, rows(bars), doc, view=300, pick=times[i])["candle"]["states"]
+    offered = {s["p"]["s"]: s["p"] for s in states if s["id"] == "pumbral"}
+    assert offered["of_dvol"]["u"] == 5.0 and offered["of_maxd"]["u"] == 6.0 and offered["of_mind"]["dir"] == "down"
+    # Sin almacén de trades no cuentan, y no rompen nada
+    none = kitchen.evaluate("TEST", 60, rows(bars), doc, view=300)
+    assert all(none["blocks"][uid]["count"] == 0 for uid in ("dv", "max", "min", "favor"))
 
 
 def test_los_detectores_calculan_con_los_ajustes_de_la_sesion():

@@ -350,7 +350,7 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
         for (const block of allBlocksOf(JSON.parse(engineDoc))) {
           const source = pageSource(block);
           if (!source) continue;
-          const keys = block.id === 'pmark' ? [['marks', block.p.s]] : ['psube', 'ppos', 'pgrande', 'pcruza', 'pgiro'].includes(block.id) ? [['nums', block.p.s]]
+          const keys = block.id === 'pmark' ? [['marks', block.p.s]] : ['psube', 'ppos', 'pumbral', 'pgrande', 'pcruza', 'pgiro'].includes(block.id) ? [['nums', block.p.s]]
             : ['line', 'a', 'b'].filter(key => String(block.p[key] || '').startsWith('p:')).map(key => ['lines', block.p[key].slice(2)]);
           if (keys.some(([group, key]) => !page?.[group]?.[key])) lacking.add(source);
         }

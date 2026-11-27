@@ -105,8 +105,16 @@ export const PAGE_NUMS = {
   delta: ['el delta de volumen', 'Volume Delta'],
   cvd: ['el CVD', 'CVD'],
   // El volumen de las velas lo tiene el motor: no depende de ningún indicador encendido
-  vol: ['el volumen', null]
+  vol: ['el volumen', null],
+  // La tabla de la vela de Elementos OF: sale del almacén de trades, también sin el indicador encendido
+  of_delta: ['el delta de la vela (tabla)', null],
+  of_dvol: ['el Δ/Vol de la vela, en %', null],
+  of_maxd: ['el Máx Δ de la vela', null],
+  of_mind: ['el Mín Δ de la vela', null],
+  of_cum: ['el delta acumulado del día', null]
 };
+/** Las casillas de la tabla de la vela: con trades reales, solo en las monedas con almacén */
+export const isTableSeries = (key) => String(key || '').startsWith('of_');
 /** Un sentido que no depende del lado del trade: el volumen o el interés abierto suben o bajan igual en un largo y en un corto */
 export const ABS_DIRS = ['up', 'down', 'any'];
 export const isAbsDir = (dir) => ABS_DIRS.includes(dir);
@@ -131,7 +139,7 @@ const pageKey = (line) => (String(line || '').startsWith('p:') ? String(line).sl
 export function pageSource(block) {
   const p = block?.p || {};
   if (block?.id === 'pmark') return PAGE_MARKS[p.s]?.[1] || null;
-  if (['psube', 'ppos', 'pgrande', 'pcruza', 'pgiro'].includes(block?.id)) return PAGE_NUMS[p.s]?.[1] || null;
+  if (['psube', 'ppos', 'pumbral', 'pgrande', 'pcruza', 'pgiro'].includes(block?.id)) return PAGE_NUMS[p.s]?.[1] || null;
   for (const key of ['line', 'a', 'b']) {
     const found = PAGE_LINES[pageKey(p[key])];
     if (found) return found[2];
@@ -219,7 +227,7 @@ const BLOCKS = [
     help: 'El delta sumado de las últimas velas, con la de la señal, va de ese lado. Con el peso mínimo, además, es al menos ese % de lo negociado en esas velas. Es el filtro de CVD del backtesting global, con trades reales.' },
   // Lo que calcula el gráfico con los ajustes de la sesión (`page`): la página lo manda con cada pedido
   { id: 'psube', kind: STATE, fam: 'grafico', name: 'El volumen o una serie del gráfico sube o baja', p: { s: 'oi', n: 5, how: 'ends', min: 0, unit: 'x', dir: 'favor' }, sided: true, page: true,
-    series: seriesOf(['vol', 'oi', 'oi_flow', 'delta', 'cvd']),
+    series: seriesOf(['vol', 'oi', 'oi_flow', 'delta', 'cvd', 'of_cum', 'of_dvol']),
     selects: [['how', 'Cómo se mide', [['ends', 'contra su valor de hace N velas'], ['avg', 'el promedio de N velas contra las N anteriores'], ['steps', 'N velas seguidas, cada una más que la anterior']]]],
     fields: [['n', 'Velas (N)', 1, 100, 1], ['min', 'Cuánto, como mínimo (0 = cualquier cambio)', 0, 1000, 0.5]],
     selectsAfter: [['unit', 'Ese mínimo se mide en', [['x', 'veces el cambio típico de las 100 velas anteriores'], ['pct', '% del valor de partida']]]],
@@ -232,11 +240,23 @@ const BLOCKS = [
     },
     help: 'La serie sube (o baja) en N velas: contra su valor de hace N velas, comparando el promedio de las últimas N con el de las N anteriores (lo mejor para el volumen, que salta mucho de una vela a otra), o N velas seguidas. Se le puede pedir un mínimo. El volumen es el de las velas; las demás series son las que calcula su indicador en el gráfico con tus ajustes, y ese indicador tiene que estar encendido.' },
   { id: 'ppos', kind: STATE, fam: 'grafico', name: 'Una serie del gráfico, sobre o bajo cero', p: { s: 'delta', dir: 'favor' }, sided: true, page: true,
-    series: seriesOf(['oi_flow', 'oi_hist', 'delta', 'cvd']),
+    series: seriesOf(['oi_flow', 'oi_hist', 'delta', 'cvd', 'of_cum', 'of_delta']),
     text: (p, side) => { const name = PAGE_NUMS[p.s]?.[0] || 'la serie'; return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${word(p, side, 'sobre cero', 'bajo cero', 'a favor', 'en contra')}`; },
     help: 'El valor de la serie en la vela, como la calcula su indicador en el gráfico con tus ajustes, es positivo (o negativo). El indicador tiene que estar encendido.' },
+  { id: 'pumbral', kind: STATE, fam: 'grafico', name: 'Un valor pasa un umbral: tabla de la vela, volumen o una serie', p: { s: 'of_dvol', op: 'ge', u: 20, unit: 'abs', dir: 'favor' }, sided: true, page: true,
+    series: seriesOf(['of_dvol', 'of_maxd', 'of_mind', 'of_delta', 'of_cum', 'vol', 'delta', 'cvd', 'oi_hist', 'oi_flow', 'oi']),
+    selects: [['op', 'Condición', [['ge', 'al menos el umbral'], ['le', 'no más que el umbral (un valor chico)']]]],
+    fields: [['u', 'Umbral', 0, 1000000000000, 1]],
+    selectsAfter: [['unit', 'El umbral se mide en', [['abs', 'el valor tal cual (el Δ/Vol ya va en %)'], ['vol', '% del volumen de la vela'], ['x', 'veces lo típico de las 100 velas anteriores']]]],
+    text: (p, side) => {
+      const name = PAGE_NUMS[p.s]?.[0] || 'la serie';
+      const unit = p.unit === 'vol' ? ' % del volumen' : p.unit === 'x' ? ' veces lo típico' : p.s === 'of_dvol' ? ' %' : '';
+      const way = p.op === 'le' ? '' : word(p, side, ', positivo', ', negativo', ', a favor', ', en contra');
+      return `${name.charAt(0).toUpperCase()}${name.slice(1)}: ${p.op === 'le' ? 'no más de' : 'al menos'} ${num(p.u)}${unit}${way}`;
+    },
+    help: 'El valor de la vela pasa el umbral que le pongas. Sirve para cada casilla de la tabla de la vela de Elementos OF (delta, Δ/Vol, Máx Δ, Mín Δ y delta acumulado, con trades reales), para el volumen y para las series de los paneles. «No más que el umbral» pide un valor chico: por ejemplo, un Mín Δ que casi no se movió.' },
   { id: 'pgrande', kind: EVENT, fam: 'grafico', name: 'Un valor muy grande: volumen, delta o interés abierto', p: { s: 'oi_hist', k: 3, w: 100, dir: 'favor' }, sided: true, page: true,
-    series: seriesOf(['vol', 'oi_hist', 'delta']),
+    series: seriesOf(['vol', 'oi_hist', 'delta', 'of_delta', 'of_maxd', 'of_mind']),
     fields: [['k', 'Umbral: veces lo típico', 1, 20, 0.5], ['w', 'Lo típico se mide en las últimas (velas)', 20, 500, 10]],
     text: (p, side) => {
       const name = PAGE_NUMS[p.s]?.[0] || 'la serie';
@@ -246,7 +266,7 @@ const BLOCKS = [
     },
     help: 'El valor de la vela es varias veces la mediana de su tamaño en las velas anteriores (100 de fábrica). Con el volumen: una vela con mucho más volumen que lo normal, de cualquier color o del color que se elija. Con el histograma del interés abierto o el delta: entra (o sale) mucho más de lo normal.' },
   { id: 'pcruza', kind: EVENT, fam: 'grafico', name: 'Una serie del gráfico cruza el cero', p: { s: 'oi_flow', dir: 'favor' }, sided: true, page: true,
-    series: seriesOf(['oi_flow', 'cvd', 'delta']),
+    series: seriesOf(['oi_flow', 'cvd', 'delta', 'of_cum']),
     text: (p, side) => { const name = PAGE_NUMS[p.s]?.[0] || 'la serie'; return `${name.charAt(0).toUpperCase()}${name.slice(1)} cruza el cero${word(p, side, ' hacia arriba', ' hacia abajo', ', a favor', ', en contra')}`; },
     help: 'La serie pasa de un lado del cero al otro en esta vela.' },
   { id: 'pgiro', kind: EVENT, fam: 'grafico', name: 'Una serie del gráfico gira', p: { s: 'oi_flow', dir: 'favor' }, sided: true, page: true,

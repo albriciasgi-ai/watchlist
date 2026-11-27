@@ -317,6 +317,8 @@ El usuario probó los pasos 1.1 y 1.2 y pidió que la cocina lea todos los indic
 
 **Lo que hay que cuidar:** lo que manda la página no se puede probar en el backtesting global. Para el paso 1.4 hay que decidir qué pasa con una estrategia que usa esos bloques.
 
+**Después, el mismo 27/11:** el volumen y las casillas de la tabla de la vela como series del motor, el bloque «un valor pasa un umbral», más variables en cada bloque y un pedido a la vez al reproducir. El usuario preguntó por qué no se abre el trade ni se dibuja la caja al darse la señal: es el paso 1.3, sin construir.
+
 ### Etapa 2. Backtesting global de las mismas estrategias
 
 La central como se pidió: trades por moneda, clic al gráfico, dashboard, fases y controles, con el mismo documento de estrategia y el mismo motor. Las estrategias con zonas fijas o niveles dibujados no entran: no se pueden probar ahí.
