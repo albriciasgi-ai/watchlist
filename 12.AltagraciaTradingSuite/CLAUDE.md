@@ -674,7 +674,8 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
   - `{SIMBOLO}_{día}.bks`: cada segundo, lo que había en cubos finos, de ~0.01% del precio (BTC 5 USD, ETH 0.2, SOL y XRP un tick), hasta ±0.8%, con la mejor compra y venta;
   - `{SIMBOLO}_{día}.bkm`: cada minuto, la profundidad ponderada por tiempo y la mínima del minuto, en cubos gruesos de ~0.03% (BTC 20 USD, como el step del footprint de 15m), hasta ±5%;
   - cantidades en la moneda, no en USD;
-  - bloques de un minuto con zlib. Las filas de cada segundo van con XOR contra la anterior: sin pérdida, y lo que no cambia casi no ocupa. Un bloque cortado al final se ignora al leer.
+  - bloques de un minuto con zlib. Las filas de cada segundo van con XOR contra la anterior: sin pérdida, y lo que no cambia casi no ocupa. Un bloque cortado al final se ignora al leer;
+  - **el ancla del minuto (corregido el 27/11):** cada lado se guardaba desde el precio al abrir el minuto hacia afuera. Si el precio subía dentro del minuto, las compras que lo seguían no se grababan hasta el minuto siguiente (y las ventas, si bajaba). En BTC faltaba un lado junto al precio en el 85-91% de los segundos, y lo mismo en el libro de minutos. Lo grabado así no se recupera. Desde el 27/11 cada lado guarda también `m` = `n` cubos pasando ese precio, al final del bloque (encabezado `"v": 2` con `"m"`): un lector de antes lee lo mismo que antes, y el de ahora lee los bloques viejos con `m` = 0. Los lectores usan `book_store.side_len` y `side_k`; un lector nuevo del libro no debe calcular `kmid ± i` por su cuenta.
 - **Peso medido** (13/11, 12 minutos de las 20 monedas de fábrica, a las 14 h de Colombia): las 20 monedas, unos 200 MB por día y 6 GB por mes. Las que más ocupan: BTC unos 20 MB por día, ETH 19, XRP 18.5, ARB 13, SOL 12 y DOGE 10. Las que menos, de 3 a 7 MB. En horas movidas ocupará más.
 - **Rutas:** `GET /api/book/status` (por moneda: lista, `u`, cubos, mensajes, huecos y resincronizaciones; bytes de hoy) y `GET /api/book/depth/{símbolo}?band=0.005` (lo que hay ahora en cubos finos, para un ladder). `/api/suite/status` trae `book`.
 - **Nube** (13/11, pedido del usuario: la grabación corre solo con la suite abierta, y no la puede tener abierta todas esas semanas):
@@ -696,11 +697,12 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
   
   Un trade anterior a la grabación queda con "—" en estas medidas.
 - **Medición de semanas** (`server/book_study.py`): lo que la medición del 13/11 hizo con 15 minutos, para semanas de libro grabado:
-  - tus zonas: POC, VAH y VAL del perfil del día anterior (almacén de trades), FVG de 15m y 1h, y los niveles elegidos en el journal;
+  - tus zonas: POC, VAH y VAL del perfil del día anterior (almacén de trades), FVG de 15m y 1h, y los niveles elegidos en el journal. Un FVG vale hasta el final del minuto en que el precio lo cruza entero, y no cuenta otra visita después de la primera que lo atraviesa (`once`, también en sus zonas al azar). Hasta el 26/11 terminaba al empezar la vela que lo llenaba: quedaban fuera justo las llegadas que lo cruzan, y su aguante salía inflado;
   - zonas al azar: por cada una, tres del mismo ancho corridas entre 0.3% y 1.5%, en las mismas horas;
   - una visita empieza cuando el precio estuvo a 1/4 de ATR de 15m o más y llega a la zona. Aguanta si vuelve a alejarse 1/2 ATR antes de pasarla por 1/4 ATR; si no, la cruza. El ATR sale de los minutos del almacén de trades, así no depende de cuánto libro hay grabado;
   - en cada visita mide lo que había al acercarse y al llegar, lo negociado ahí contra ese lado (trades exactos) y si el precio la pasó (una limit ahí se habría llenado);
-  - da el aguante de tus zonas y del azar, la diferencia con su IC 95%, el "llena y aguanta" y las cargadas contra el resto. Con menos de 30 visitas resueltas avisa muestra pequeña.
+  - da el aguante de tus zonas y del azar, la diferencia con su IC 95%, el "llena y aguanta" y las cargadas contra el resto. Con menos de 30 visitas resueltas avisa muestra pequeña;
+  - **la diferencia, tipo por tipo (27/11):** cada tipo de zona contra su propio azar, con el peso de sus visitas. Juntas mezclaban tipos en distinta proporción (el azar de un FVG queda lejos del precio y lo visitan menos, así que el azar junto tenía más perfil, que aguanta menos): en 13 días de 23 monedas daban +2.8 puntos juntas y −0.2 tipo por tipo. El margen trata las visitas como independientes; el real es más ancho.
   
   Uso: `C:\Python314\python.exe -B server\book_study.py BTCUSDT,ETHUSDT 2026-11-14 2026-12-14 [salida.json]`.
 - **Antigüedad, velocidad y patrones** (13/11, pedido del usuario: saber si en sus zonas hay órdenes que se sostienen hasta que el precio vuelve, o una "carnada"). Cada visita suma:
@@ -721,7 +723,8 @@ Pedido del usuario el 13/11, tras los informes del price ladder (`reports/Price 
   - en tus zonas, con liquidez de 15 minutos o más aguantaron 8 de 12 contra 5 de 14 con liquidez reciente; en el azar casi igual (46.7% contra 48.8%);
   - en el 20% más cargado de tus zonas, 9 de cada 10 visitas fueron defensa, contra el 59% en el azar;
   - una llegada rápida aguantó más que una lenta en los dos grupos (76% y 62% contra 25% y 27%).
-- **Pruebas:** `tests/book_checks.py` (69) y `tests/book_cloud_checks.py` (16), sin conexión:
+- **Con 14 días (27/11), la primera lectura no se sostiene:** los +8 puntos venían casi todos del sesgo de los FVG. Sin él, en 23 monedas, el perfil del día anterior aguanta 46.8% contra 47.2% del azar, el FVG de 15m 60.2% contra 59.9% y el de 1h 67.9% contra 65.1% (margen de −0.7 a +6.2). Tampoco aguanta más donde hay más liquidez esperando. El estudio completo está en `OrderFlowData/research/libro/2026-11-27/`.
+- **Pruebas:** `tests/book_checks.py` (80 desde el 27/11: suma el ancla del minuto, los bloques de antes, el desempate entre PC y nube y el FVG que termina al llenarse) y `tests/book_cloud_checks.py` (16), sin conexión:
   - cubos y mejor precio exactos tras miles de cambios al azar;
   - una moneda cerrada en Bybit queda fuera;
   - la nube (el `main.py` del collector, corrido en el mismo proceso) lista sus días y entrega solo los minutos pedidos. La suite baja solo lo que le falta, no repite al volver a pasar y respeta el tope por vuelta;
