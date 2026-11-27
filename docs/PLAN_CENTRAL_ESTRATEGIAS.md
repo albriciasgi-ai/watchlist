@@ -2,7 +2,7 @@
 
 Estado al 26/11/2026: concepto, cuatro prototipos y **los pasos 1.1 y 1.2 construidos en App 1**:
 - el 1.1, la pestaña «Cocina» de la simulación manual, con sus fichas con imágenes (sección 5, «El paso 1.1, construido»), y el botón «Una vela más». Está en main desde el PR #77 (9b136091);
-- el 1.2, las zonas (también los niveles de un VP fijo) y los bloques de order flow (sección 5, «El paso 1.2, construido»). Está en su rama, `claude/eager-shannon-a07487` (commit c0f32017), sin unir a main.
+- el 1.2, las zonas (también los niveles de un VP fijo) y los bloques de order flow (sección 5, «El paso 1.2, construido»). Está en main desde el PR #79 (77578c57).
 
 Siguen el 1.3 y el 1.4: los avisos al reproducir y el paso al backtesting global.
 
