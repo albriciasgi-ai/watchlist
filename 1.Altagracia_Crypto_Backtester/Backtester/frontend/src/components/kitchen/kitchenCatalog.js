@@ -103,8 +103,32 @@ export const PAGE_NUMS = {
   oi: ['el interés abierto acumulado', 'Open Interest'],
   oi_flow: ['el flow del interés abierto', 'Open Interest'],
   delta: ['el delta de volumen', 'Volume Delta'],
-  cvd: ['el CVD', 'CVD']
+  cvd: ['el CVD', 'CVD'],
+  // El volumen de las velas lo tiene el motor: no depende de ningún indicador encendido
+  vol: ['el volumen', null],
+  // La tabla de la vela de Elementos OF: sale del almacén de trades, también sin el indicador encendido
+  of_delta: ['el delta de la vela (tabla)', null],
+  of_dvol: ['el Δ/Vol de la vela, en %', null],
+  of_maxd: ['el Máx Δ de la vela', null],
+  of_mind: ['el Mín Δ de la vela', null],
+  of_cum: ['el delta acumulado del día', null]
 };
+/** Las casillas de la tabla de la vela: con trades reales, solo en las monedas con almacén */
+export const isTableSeries = (key) => String(key || '').startsWith('of_');
+/** Un sentido que no depende del lado del trade: el volumen o el interés abierto suben o bajan igual en un largo y en un corto */
+export const ABS_DIRS = ['up', 'down', 'any'];
+export const isAbsDir = (dir) => ABS_DIRS.includes(dir);
+/** Los sentidos que se pueden elegir en un bloque de una serie del gráfico */
+export const dirOptions = (id) => [
+  ['favor', 'a favor del trade'], ['contra', 'en contra del trade'],
+  ['up', id === 'pgrande' ? 'positivo o vela alcista, en largos y en cortos' : 'hacia arriba, en largos y en cortos'],
+  ['down', id === 'pgrande' ? 'negativo o vela bajista, en largos y en cortos' : 'hacia abajo, en largos y en cortos'],
+  ...(id === 'psube' || id === 'ppos' ? [] : [['any', 'cualquiera de los dos']])
+];
+/** El sentido con que arranca un bloque al pasar a una serie: el volumen no tiene lado frente al trade */
+export const dirForSeries = (id, series, dir) => (series === 'vol'
+  ? (isAbsDir(dir) && !(dir === 'any' && (id === 'psube' || id === 'ppos')) ? dir : id === 'pgrande' ? 'any' : 'up')
+  : dir);
 // Marcas de un indicador del gráfico: [nombre, indicador que la dibuja]
 export const PAGE_MARKS = {
   swing: ['Swing del detector', 'Swing Detector']
@@ -115,7 +139,7 @@ const pageKey = (line) => (String(line || '').startsWith('p:') ? String(line).sl
 export function pageSource(block) {
   const p = block?.p || {};
   if (block?.id === 'pmark') return PAGE_MARKS[p.s]?.[1] || null;
-  if (['psube', 'ppos', 'pgrande', 'pcruza', 'pgiro'].includes(block?.id)) return PAGE_NUMS[p.s]?.[1] || null;
+  if (['psube', 'ppos', 'pumbral', 'pgrande', 'pcruza', 'pgiro'].includes(block?.id)) return PAGE_NUMS[p.s]?.[1] || null;
   for (const key of ['line', 'a', 'b']) {
     const found = PAGE_LINES[pageKey(p[key])];
     if (found) return found[2];
@@ -135,7 +159,10 @@ const num = (value) => {
 };
 
 /** La palabra según el lado: con un lado fijo se dice alcista o bajista; con los dos en espejo, a favor o en contra */
-function word(p, side, up, down, favor, against) {
+function word(p, side, up, down, favor, against, any = '') {
+  if (p.dir === 'up') return up;
+  if (p.dir === 'down') return down;
+  if (p.dir === 'any') return any;
   const withTrade = p.dir !== 'contra';
   if (side === 'both') return withTrade ? favor : against;
   return ((side === 'long') === withTrade) ? up : down;
@@ -190,28 +217,56 @@ const BLOCKS = [
     text: (p, side) => `Medidor VPA ${word(p, side, 'alcista', 'bajista', 'a favor', 'en contra')}`,
     help: 'El medidor del Lector VPA suma más fuerza que debilidad de ese lado.' },
   // Con trades reales (`flow`): solo en las monedas con almacén de trades
-  { id: 'delta', kind: STATE, fam: 'of', name: 'Delta de la vela', p: { dir: 'favor' }, sided: true, flow: true, shown: 'Delta de volumen',
-    text: (p, side) => `Delta de la vela ${word(p, side, 'comprador', 'vendedor', 'a favor', 'en contra')}`,
-    help: 'En la vela pesó más la compra agresiva o la venta agresiva. Con trades reales.' },
-  { id: 'cvd', kind: STATE, fam: 'of', name: 'CVD de varias velas', p: { n: 20, dir: 'favor' }, sided: true, flow: true, shown: 'CVD',
-    fields: [['n', 'Velas', 2, 100, 1]],
-    text: (p, side) => `CVD de ${num(p.n)} velas ${word(p, side, 'al alza', 'a la baja', 'a favor', 'en contra')}`,
-    help: 'El delta sumado de las últimas velas, con la de la señal, va de ese lado. Es el filtro de CVD del backtesting global, con trades reales.' },
+  { id: 'delta', kind: STATE, fam: 'of', name: 'Delta de la vela', p: { min: 0, dir: 'favor' }, sided: true, flow: true, shown: 'Delta de volumen',
+    fields: [['min', 'Peso mínimo (% del volumen de la vela; 0 = cualquiera)', 0, 90, 1]],
+    text: (p, side) => `Delta de la vela ${word(p, side, 'comprador', 'vendedor', 'a favor', 'en contra')}${p.min > 0 ? `, del ${num(p.min)} % del volumen o más` : ''}`,
+    help: 'En la vela pesó más la compra agresiva o la venta agresiva. Con el peso mínimo, además, esa diferencia es al menos ese % de lo negociado en la vela. Con trades reales.' },
+  { id: 'cvd', kind: STATE, fam: 'of', name: 'CVD de varias velas', p: { n: 20, min: 0, dir: 'favor' }, sided: true, flow: true, shown: 'CVD',
+    fields: [['n', 'Velas', 2, 100, 1], ['min', 'Peso mínimo (% del volumen de esas velas; 0 = cualquiera)', 0, 90, 1]],
+    text: (p, side) => `CVD de ${num(p.n)} velas ${word(p, side, 'al alza', 'a la baja', 'a favor', 'en contra')}${p.min > 0 ? `, del ${num(p.min)} % del volumen o más` : ''}`,
+    help: 'El delta sumado de las últimas velas, con la de la señal, va de ese lado. Con el peso mínimo, además, es al menos ese % de lo negociado en esas velas. Es el filtro de CVD del backtesting global, con trades reales.' },
   // Lo que calcula el gráfico con los ajustes de la sesión (`page`): la página lo manda con cada pedido
-  { id: 'psube', kind: STATE, fam: 'grafico', name: 'Una serie del gráfico sube o baja', p: { s: 'oi', n: 5, dir: 'favor' }, sided: true, page: true,
-    series: seriesOf(['oi', 'oi_flow', 'delta', 'cvd']), fields: [['n', 'Velas', 1, 100, 1]],
-    text: (p, side) => { const name = PAGE_NUMS[p.s]?.[0] || 'la serie'; return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${word(p, side, 'sube', 'baja', 'va a favor', 'va en contra')} en ${num(p.n)} velas`; },
-    help: 'El valor de la serie, como la calcula su indicador en el gráfico con tus ajustes, es mayor (o menor) que hace N velas. El indicador tiene que estar encendido.' },
+  { id: 'psube', kind: STATE, fam: 'grafico', name: 'El volumen o una serie del gráfico sube o baja', p: { s: 'oi', n: 5, how: 'ends', min: 0, unit: 'x', dir: 'favor' }, sided: true, page: true,
+    series: seriesOf(['vol', 'oi', 'oi_flow', 'delta', 'cvd', 'of_cum', 'of_dvol']),
+    selects: [['how', 'Cómo se mide', [['ends', 'contra su valor de hace N velas'], ['avg', 'el promedio de N velas contra las N anteriores'], ['steps', 'N velas seguidas, cada una más que la anterior']]]],
+    fields: [['n', 'Velas (N)', 1, 100, 1], ['min', 'Cuánto, como mínimo (0 = cualquier cambio)', 0, 1000, 0.5]],
+    selectsAfter: [['unit', 'Ese mínimo se mide en', [['x', 'veces el cambio típico de las 100 velas anteriores'], ['pct', '% del valor de partida']]]],
+    text: (p, side) => {
+      const name = PAGE_NUMS[p.s]?.[0] || 'la serie';
+      const verb = word(p, side, 'sube', 'baja', 'va a favor', 'va en contra');
+      const how = p.how === 'avg' ? `: el promedio de ${num(p.n)} velas contra las ${num(p.n)} anteriores` : p.how === 'steps' ? ` ${num(p.n)} velas seguidas` : ` en ${num(p.n)} velas`;
+      const least = p.min > 0 ? `, al menos ${num(p.min)} ${p.unit === 'pct' ? '%' : 'veces lo típico'}` : '';
+      return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${verb}${how}${least}`;
+    },
+    help: 'La serie sube (o baja) en N velas: contra su valor de hace N velas, comparando el promedio de las últimas N con el de las N anteriores (lo mejor para el volumen, que salta mucho de una vela a otra), o N velas seguidas. Se le puede pedir un mínimo. El volumen es el de las velas; las demás series son las que calcula su indicador en el gráfico con tus ajustes, y ese indicador tiene que estar encendido.' },
   { id: 'ppos', kind: STATE, fam: 'grafico', name: 'Una serie del gráfico, sobre o bajo cero', p: { s: 'delta', dir: 'favor' }, sided: true, page: true,
-    series: seriesOf(['oi_flow', 'oi_hist', 'delta', 'cvd']),
+    series: seriesOf(['oi_flow', 'oi_hist', 'delta', 'cvd', 'of_cum', 'of_delta']),
     text: (p, side) => { const name = PAGE_NUMS[p.s]?.[0] || 'la serie'; return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${word(p, side, 'sobre cero', 'bajo cero', 'a favor', 'en contra')}`; },
     help: 'El valor de la serie en la vela, como la calcula su indicador en el gráfico con tus ajustes, es positivo (o negativo). El indicador tiene que estar encendido.' },
-  { id: 'pgrande', kind: EVENT, fam: 'grafico', name: 'Un valor muy grande en una serie del gráfico', p: { s: 'oi_hist', k: 3, dir: 'favor' }, sided: true, page: true,
-    series: seriesOf(['oi_hist', 'delta']), fields: [['k', 'Veces lo típico de las 100 velas anteriores', 1, 20, 0.5]],
-    text: (p, side) => { const name = PAGE_NUMS[p.s]?.[0] || 'la serie'; return `${name.charAt(0).toUpperCase()}${name.slice(1)} marca ${word(p, side, 'una subida', 'una caída', 'un valor a favor', 'un valor en contra')} de ${num(p.k)} veces lo típico`; },
-    help: 'El valor de la vela, de ese signo, es varias veces la mediana de su tamaño en las 100 velas anteriores. Es el umbral del histograma del interés abierto: entra (o sale) mucho más de lo normal.' },
+  { id: 'pumbral', kind: STATE, fam: 'grafico', name: 'Un valor pasa un umbral: tabla de la vela, volumen o una serie', p: { s: 'of_dvol', op: 'ge', u: 20, unit: 'abs', dir: 'favor' }, sided: true, page: true,
+    series: seriesOf(['of_dvol', 'of_maxd', 'of_mind', 'of_delta', 'of_cum', 'vol', 'delta', 'cvd', 'oi_hist', 'oi_flow', 'oi']),
+    selects: [['op', 'Condición', [['ge', 'al menos el umbral'], ['le', 'no más que el umbral (un valor chico)']]]],
+    fields: [['u', 'Umbral', 0, 1000000000000, 1]],
+    selectsAfter: [['unit', 'El umbral se mide en', [['abs', 'el valor tal cual (el Δ/Vol ya va en %)'], ['vol', '% del volumen de la vela'], ['x', 'veces lo típico de las 100 velas anteriores']]]],
+    text: (p, side) => {
+      const name = PAGE_NUMS[p.s]?.[0] || 'la serie';
+      const unit = p.unit === 'vol' ? ' % del volumen' : p.unit === 'x' ? ' veces lo típico' : p.s === 'of_dvol' ? ' %' : '';
+      const way = p.op === 'le' ? '' : word(p, side, ', positivo', ', negativo', ', a favor', ', en contra');
+      return `${name.charAt(0).toUpperCase()}${name.slice(1)}: ${p.op === 'le' ? 'no más de' : 'al menos'} ${num(p.u)}${unit}${way}`;
+    },
+    help: 'El valor de la vela pasa el umbral que le pongas. Sirve para cada casilla de la tabla de la vela de Elementos OF (delta, Δ/Vol, Máx Δ, Mín Δ y delta acumulado, con trades reales), para el volumen y para las series de los paneles. «No más que el umbral» pide un valor chico: por ejemplo, un Mín Δ que casi no se movió.' },
+  { id: 'pgrande', kind: EVENT, fam: 'grafico', name: 'Un valor muy grande: volumen, delta o interés abierto', p: { s: 'oi_hist', k: 3, w: 100, dir: 'favor' }, sided: true, page: true,
+    series: seriesOf(['vol', 'oi_hist', 'delta', 'of_delta', 'of_maxd', 'of_mind']),
+    fields: [['k', 'Umbral: veces lo típico', 1, 20, 0.5], ['w', 'Lo típico se mide en las últimas (velas)', 20, 500, 10]],
+    text: (p, side) => {
+      const name = PAGE_NUMS[p.s]?.[0] || 'la serie';
+      const start = `${name.charAt(0).toUpperCase()}${name.slice(1)} marca `;
+      if (p.s === 'vol') return `${start}${num(p.k)} veces lo típico${word(p, side, ', en una vela alcista', ', en una vela bajista', ', en una vela a favor', ', en una vela en contra')}`;
+      return `${start}${word(p, side, 'una subida', 'una caída', 'un valor a favor', 'un valor en contra', 'un valor')} de ${num(p.k)} veces lo típico`;
+    },
+    help: 'El valor de la vela es varias veces la mediana de su tamaño en las velas anteriores (100 de fábrica). Con el volumen: una vela con mucho más volumen que lo normal, de cualquier color o del color que se elija. Con el histograma del interés abierto o el delta: entra (o sale) mucho más de lo normal.' },
   { id: 'pcruza', kind: EVENT, fam: 'grafico', name: 'Una serie del gráfico cruza el cero', p: { s: 'oi_flow', dir: 'favor' }, sided: true, page: true,
-    series: seriesOf(['oi_flow', 'cvd', 'delta']),
+    series: seriesOf(['oi_flow', 'cvd', 'delta', 'of_cum']),
     text: (p, side) => { const name = PAGE_NUMS[p.s]?.[0] || 'la serie'; return `${name.charAt(0).toUpperCase()}${name.slice(1)} cruza el cero${word(p, side, ' hacia arriba', ' hacia abajo', ', a favor', ', en contra')}`; },
     help: 'La serie pasa de un lado del cero al otro en esta vela.' },
   { id: 'pgiro', kind: EVENT, fam: 'grafico', name: 'Una serie del gráfico gira', p: { s: 'oi_flow', dir: 'favor' }, sided: true, page: true,

@@ -221,7 +221,7 @@ def test_la_capa_de_zona_queda_dentro_de_rango_y_sin_zonas_desconocidas():
     doc = kitchen.clean_doc({"gat": [{"blocks": [{"id": "ztoca", "p": {"dir": "contra"}}, {"id": "zrech"}, {"id": "ST"}, {"id": "cvd", "p": {"n": 999}}]}]})
     assert [b["id"] for b in doc["gat"][0]["blocks"]] == ["ztoca", "zrech", "ST", "cvd"]
     assert doc["gat"][0]["blocks"][0]["p"] == {} and doc["gat"][0]["blocks"][2]["p"] == {"dir": "favor"}
-    assert doc["gat"][0]["blocks"][3]["p"] == {"n": 100, "dir": "favor"} and doc["gat"][0]["blocks"][3]["conv"] == "during"
+    assert doc["gat"][0]["blocks"][3]["p"] == {"n": 100, "min": 0.0, "dir": "favor"} and doc["gat"][0]["blocks"][3]["conv"] == "during"
     assert kitchen.uses_flow(doc) and not kitchen.uses_flow(kitchen.clean_doc({"gat": [{"blocks": [{"id": "zrech"}, {"id": "VH"}]}]}))
 
 
@@ -235,7 +235,7 @@ def test_lo_que_se_ofrece_en_una_vela_se_cumple_en_esa_vela():
     for i in range(300, 900, 7):
         found = facts.candidates(i)
         for item in found["states"] + found["events"]:
-            block = kitchen.clean_block({"uid": "x", "id": item["id"], "p": {**item["p"], "dir": "favor"}}, "step")
+            block = kitchen.clean_block({"uid": "x", "id": item["id"], "p": {"dir": "favor", **item["p"]}}, "step")
             side = item["d"] or 1
             assert facts.truth(block, side)[i + item.get("late", 0)], f"{item} no se cumple en la vela {i}"
             offered += 1
@@ -591,7 +591,8 @@ class FakeFlow:
         while t <= end and t + MS <= known:
             k = t // MS
             if k not in self.missing:
-                bars.append({"t": t, "delta": self.delta(t), "vol": 100.0})
+                d = self.delta(t)
+                bars.append({"t": t, "delta": d, "vol": 100.0, "cum": d * 2, "maxd": max(0.0, d) + 1.0, "mind": min(0.0, d) - 1.0})
                 if k % 7 == 0:
                     events.append({"code": "ST", "t": t, "known": t + MS, "dir": 1 if k % 2 else -1})
                 if k % 11 == 0 and t + 2 * MS <= known:
@@ -860,6 +861,87 @@ def test_los_tres_modos_del_interes_abierto_cada_uno_a_su_manera():
     # Lo típico sale de las velas anteriores: un valor grande no cambia lo que se dijo antes de él
     longer = kitchen.evaluate("TEST", 60, rows(bars), doc, view=200, page={"nums": {"oi_hist": hist[:160] + [50.0] * 40, "oi_flow": flow}})["blocks"]
     assert longer["big"]["runs"][0] == [150, 150]
+
+
+def test_el_volumen_es_una_serie_del_motor_con_su_umbral_y_su_ventana():
+    """El volumen (27/11) no viene de la página: el motor lo tiene. Una vela con `k` veces lo típico de las `w`
+    anteriores, de cualquier color o del color pedido; y el promedio de N velas contra las N anteriores, que no depende
+    del lado del trade."""
+    bars = walk(500)
+    for b in bars:
+        b["vol"] = 10.0
+    for i in range(420, 440):
+        bars[i]["vol"] = 10.0 + (i - 419) * 2.0             # Crece 20 velas seguidas
+    bars[460]["vol"] = 80.0
+    bars[460]["o"], bars[460]["c"] = bars[460]["l"], bars[460]["h"]   # Alcista
+    block = lambda uid, bid, p: {"uid": uid, "id": bid, "p": {"s": "vol", **p}}
+    doc = {"side": "short", "ctx": [block("crece", "psube", {"n": 5, "how": "avg", "dir": "up"}),
+                                    block("seguidas", "psube", {"n": 4, "how": "steps", "dir": "up"}),
+                                    block("mucho", "psube", {"n": 5, "how": "avg", "dir": "up", "min": 50, "unit": "pct"})],
+           "gat": [{"mode": "any", "blocks": [block("big", "pgrande", {"k": 5, "dir": "any"}),
+                                              block("verde", "pgrande", {"k": 5, "dir": "up"}),
+                                              block("roja", "pgrande", {"k": 5, "dir": "down"}),
+                                              block("corta", "pgrande", {"k": 5, "w": 20, "dir": "any"})]}]}
+    out = kitchen.evaluate("TEST", 60, rows(bars), doc, view=500)["blocks"]
+    assert [460, 460] in out["big"]["runs"] and [460, 460] in out["verde"]["runs"] and [460, 460] not in out["roja"]["runs"]
+    assert [460, 460] in out["corta"]["runs"]
+    assert any(a <= 430 <= b for a, b in out["crece"]["runs"])
+    assert [423, 439] in out["seguidas"]["runs"]            # Desde la 4.ª subida seguida hasta la última
+    assert 0 < out["mucho"]["count"] < out["crece"]["count"]   # El mínimo quita las subidas chicas
+    # No depende del lado: en un largo dice lo mismo, y sin la página
+    again = kitchen.evaluate("TEST", 60, rows(bars), {**doc, "side": "long"}, view=500)["blocks"]
+    assert again["crece"]["runs"] == out["crece"]["runs"] and again["verde"]["runs"] == out["verde"]["runs"]
+    assert not kitchen.uses_page(kitchen.clean_block(block("a", "psube", {}), "ctx"))
+    # Y sin futuro: lo dicho con 470 velas no cambia con 500
+    short = kitchen.evaluate("TEST", 60, rows(bars[:470]), doc, view=470)["blocks"]
+    assert short["big"]["runs"] == [r for r in out["big"]["runs"] if r[1] < 470]
+
+
+def test_una_serie_sube_con_un_minimo_y_el_delta_con_su_peso():
+    """«Sube en N velas» deja pedir cuánto: en veces el cambio típico o en % del valor de partida. Sin mínimo queda
+    como antes. Un valor desconocido de `how` o `unit` vuelve al de fábrica."""
+    bars = walk(400)
+    oi = [1000.0 + (i % 7) for i in range(300)]
+    oi[250:] = [1000.0 + (i - 249) * 30 for i in range(250, 300)]      # Desde la 250 sube 3 % por vela
+    doc = {"side": "long", "ctx": [{"uid": "a", "id": "psube", "p": {"s": "oi", "n": 5}},
+                                   {"uid": "x", "id": "psube", "p": {"s": "oi", "n": 5, "min": 3, "unit": "x"}},
+                                   {"uid": "p", "id": "psube", "p": {"s": "oi", "n": 5, "min": 5, "unit": "pct"}}], "gat": []}
+    out = kitchen.evaluate("TEST", 60, rows(bars), doc, view=300, page={"nums": {"oi": oi}})["blocks"]
+    assert out["a"]["count"] > out["x"]["count"] > 0 and out["a"]["count"] > out["p"]["count"] > 0
+    assert all(a >= 250 for a, _ in out["p"]["runs"])
+    clean = kitchen.clean_block({"id": "psube", "p": {"s": "oi", "how": "raro", "unit": "kg", "min": -4}}, "ctx")["p"]
+    assert clean["how"] == "ends" and clean["unit"] == "x" and clean["min"] == 0.0
+    assert kitchen.clean_block({"id": "side", "p": {"dir": "up"}}, "ctx")["p"]["dir"] == "favor"   # El sentido fijo es solo de las series
+
+
+def test_las_casillas_de_la_tabla_de_la_vela_son_series_con_umbral(flow):
+    """La tabla de la vela de Elementos OF (27/11): delta, Δ/Vol, Máx Δ, Mín Δ y acumulado salen del almacén de trades
+    y cada una acepta un umbral: al menos, o no más de, tal cual o en % del volumen. Sin almacén no cuentan."""
+    bars = walk(400)
+    block = lambda uid, p: {"uid": uid, "id": "pumbral", "p": p}
+    doc = {"side": "long", "gat": [], "ctx": [
+        block("dv", {"s": "of_dvol", "op": "ge", "u": 4, "unit": "abs", "dir": "up"}),
+        block("max", {"s": "of_maxd", "op": "ge", "u": 5, "unit": "vol", "dir": "up"}),
+        block("min", {"s": "of_mind", "op": "le", "u": 1, "unit": "vol"}),
+        block("favor", {"s": "of_delta", "op": "ge", "u": 3, "unit": "abs"})]}
+    out = ask("FLOW", 60, rows(bars), doc, view=300)
+    times = out["times"]
+    hit = lambda uid: {times[i] for a, z in out["blocks"][uid]["runs"] for i in range(a, z + 1)}
+    delta = FakeFlow.delta
+    assert hit("dv") == {t for t in times if delta(t) >= 4}                  # Volumen 100: el Δ/Vol en % es el delta
+    assert hit("max") == {t for t in times if max(0.0, delta(t)) + 1 >= 5}
+    assert hit("min") == {t for t in times if abs(min(0.0, delta(t)) - 1) <= 1}   # El Mín Δ casi no se movió
+    assert hit("favor") == {t for t in times if delta(t) >= 3}               # A favor de un largo: positivo
+    short = ask("FLOW", 60, rows(bars), {**doc, "side": "short"}, view=300)
+    assert {times[i] for a, z in short["blocks"]["favor"]["runs"] for i in range(a, z + 1)} == {t for t in times if delta(t) <= -3}
+    # La tarjeta de la vela ofrece sus casillas con el umbral que cumple justo
+    i = next(k for k, t in enumerate(times) if delta(t) == 5)
+    states = ask("FLOW", 60, rows(bars), doc, view=300, pick=times[i])["candle"]["states"]
+    offered = {s["p"]["s"]: s["p"] for s in states if s["id"] == "pumbral"}
+    assert offered["of_dvol"]["u"] == 5.0 and offered["of_maxd"]["u"] == 6.0 and offered["of_mind"]["dir"] == "down"
+    # Sin almacén de trades no cuentan, y no rompen nada
+    none = kitchen.evaluate("TEST", 60, rows(bars), doc, view=300)
+    assert all(none["blocks"][uid]["count"] == 0 for uid in ("dv", "max", "min", "favor"))
 
 
 def test_los_detectores_calculan_con_los_ajustes_de_la_sesion():

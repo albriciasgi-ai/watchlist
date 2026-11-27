@@ -2,7 +2,7 @@
 // frase que la resume, las versiones guardadas, las velas que se mandan al motor y lo que se pinta en el gráfico.
 // Lógica pura: se prueba con node tests/kitchen.test.mjs. El cálculo de lo que se cumple está en backend/kitchen.py.
 import { TF_MS, lastClosedIndex } from '../backtesting/replayClock.js';
-import { STATE, ZONE_KINDS, ZONE_TYPES, blockDef, blockText, lineLabel, pickText, zoneName } from './kitchenCatalog.js';
+import { STATE, ZONE_KINDS, ZONE_TYPES, isAbsDir, blockDef, blockText, lineLabel, pickText, zoneName } from './kitchenCatalog.js';
 
 export const MAX_STEPS = 4;
 export const MAX_BLOCKS = 8;
@@ -363,7 +363,7 @@ export function removeStep(doc, index) {
 
 /** Los mismos bloques, cada uno con su sentido al revés: para pasar una estrategia de cortos a largos */
 export function mirrored(doc) {
-  const flip = (block) => (blockDef(block.id)?.sided ? { ...block, p: { ...block.p, dir: block.p.dir === 'contra' ? 'favor' : 'contra' } } : block);
+  const flip = (block) => (blockDef(block.id)?.sided && !isAbsDir(block.p.dir) ? { ...block, p: { ...block.p, dir: block.p.dir === 'contra' ? 'favor' : 'contra' } } : block);
   const zone = doc.zone || blankZone();
   return {
     ...doc, ctx: doc.ctx.map(flip), zone: { ...zone, picks: zone.picks.map(flipPick) },
@@ -468,7 +468,7 @@ const expand = (runs, times, state = 1) => {
  * Las zonas: una zona fija («solo esta») se dibuja siempre, porque es de la estrategia y no de un indicador; las de
  * «todas las de este tipo», solo mientras su elección está abierta (`focusZone`), para no llenar el gráfico.
  */
-export function kitchenBands(result, { tf, pick = null, focus = null, focusText = '', focusZone = null } = {}) {
+export function kitchenBands(result, { tf, pick = null, focus = null, focusText = '', focusZone = null, behind = 0 } = {}) {
   const tfMs = TF_MS[tf];
   if (!result?.success || !tfMs) return [];
   const { times } = result;
@@ -493,6 +493,8 @@ export function kitchenBands(result, { tf, pick = null, focus = null, focusText 
     rows.push({ label: 'Señal', tone: TONES.signal,
       items: [...expand(result.near, times, 2), ...result.signals.map(s => [times[s.i], 1])].filter(item => item[0] !== undefined) });
   }
+  // Reproduciendo, el cálculo puede ir unas velas atrás: la última fila lo dice, para no leer un hueco como «no se cumple»
+  if (behind > 0 && rows.length) rows[rows.length - 1] = { ...rows[rows.length - 1], label: `${rows[rows.length - 1].label} · faltan ${behind}` };
   rows.forEach((row, index) => bands.push({ kind: 'ticks', tf: tfMs, rows: rows.length, row: index, label: row.label, tone: row.tone, items: row.items }));
   for (const signal of result.signals || []) {
     if (times[signal.i] !== undefined) bands.push({ kind: 'signal', tf: tfMs, time: times[signal.i], rows: rows.length, dir: signal.side, taken: true, label: '' });

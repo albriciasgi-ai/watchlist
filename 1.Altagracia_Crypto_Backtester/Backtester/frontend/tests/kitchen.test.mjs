@@ -498,6 +498,20 @@ test('los bloques de lo que calcula el gráfico dicen su serie y qué indicador 
   assert.equal(pageSource(protoOf('side', { line: 'p:vwap_l2' })), 'VWAP');
   assert.equal(pageSource(protoOf('side', { line: 'e50' })), null);
   for (const id of ['psube', 'ppos', 'pmark', 'pgrande', 'pcruza', 'pgiro']) assert.ok(blockDef(id).series.length && blockDef(id).page);
+  // El volumen (27/11): del motor, sin indicador; con su sentido fijo y sus maneras de medir
+  assert.equal(pageSource(protoOf('psube', { s: 'vol' })), null);
+  assert.equal(blockText(protoOf('psube', { s: 'vol', how: 'avg', dir: 'up' }), 'short'), 'El volumen sube: el promedio de 5 velas contra las 5 anteriores');
+  assert.equal(blockText(protoOf('psube', { s: 'oi', n: 6, min: 2, unit: 'pct', dir: 'up' }), 'short'), 'El interés abierto acumulado sube en 6 velas, al menos 2 %');
+  assert.equal(blockText(protoOf('pgrande', { s: 'vol', k: 2, dir: 'any' }), 'long'), 'El volumen marca 2 veces lo típico');
+  assert.equal(blockText(protoOf('pgrande', { s: 'vol', k: 2, dir: 'down' }), 'long'), 'El volumen marca 2 veces lo típico, en una vela bajista');
+  // La tabla de la vela de Elementos OF, con umbral
+  assert.equal(blockText(protoOf('pumbral', { s: 'of_maxd', u: 30, unit: 'vol', dir: 'up' }), 'short'), 'El Máx Δ de la vela: al menos 30 % del volumen, positivo');
+  assert.equal(blockText(protoOf('pumbral', { s: 'of_mind', op: 'le', u: 2, unit: 'vol' }), 'long'), 'El Mín Δ de la vela: no más de 2 % del volumen');
+  assert.equal(blockText(protoOf('pumbral'), 'long'), 'El Δ/Vol de la vela, en %: al menos 20 %, positivo');
+  // Un sentido fijo no se da vuelta al espejar la estrategia
+  const fixed = mirrored({ ...blankDoc(), ctx: [{ uid: 'v', ...protoOf('psube', { s: 'vol', dir: 'up' }) }, { uid: 'e', ...protoOf('side') }] });
+  assert.equal(fixed.ctx[0].p.dir, 'up');
+  assert.equal(fixed.ctx[1].p.dir, 'contra');
 });
 
 let failed = 0;

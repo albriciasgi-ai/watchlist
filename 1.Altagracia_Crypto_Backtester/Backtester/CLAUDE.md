@@ -1038,6 +1038,19 @@ Pedido del usuario al probar: la cocina tiene que leer los indicadores de App 1 
 
 **Indicador EMA** (`EMAIndicator.js`): la EMA del cierre de `rule_tester._line`, por línea, extendida solo con las velas nuevas. `seriesFor(velas)` da las series de las cerradas. Ajustes en `ema_settings_{símbolo}`.
 
+### Volumen, umbrales y tabla de la vela (27/11)
+
+Pedido del usuario al probar: el volumen como elemento, cada variable editable junto a su bloque, las casillas de la tabla de la vela con umbral y las filas al día al reproducir.
+
+- **Series del motor** (`Facts.num`): además de lo que manda la página, `vol` (el volumen de las velas) y `OF_TABLE` (`of_delta`, `of_dvol` en %, `of_cum`, `of_maxd`, `of_mind`, de `of_elements.detect`, que `FlowBook` guarda por vela). No usan la huella de la página; las `of_*` esperan el order flow como los demás bloques de trades (`block_flow`).
+- **`pumbral`** (estado, `Facts.threshold`): `op` `ge` (del lado pedido, al menos `u`) o `le` (su tamaño no pasa de `u`); `unit` `abs`, `vol` (% del volumen de la vela; el real en las `of_*`) o `x` (veces la mediana de su tamaño en las 100 velas anteriores).
+- **`psube`** (`Facts.rising`): `how` `ends`, `avg` o `steps`; `min` con `unit` `x` (veces el cambio típico) o `pct`. Con `min` 0 y `ends` es lo de antes.
+- **`pgrande`:** `w`, la ventana de lo típico (100). En el volumen, el lado es el color de la vela.
+- **`delta` y `cvd`:** `min`, su peso mínimo en % del volumen.
+- **Sentido fijo** (`ABS_DIRS`): `dir` `up`, `down` o `any` en los bloques de una serie; `truth` no lo multiplica por el lado. En la página, `dirOptions`, `dirForSeries` e `isAbsDir`; `mirrored` no lo da vuelta.
+- **Campos del bloque** (`kitchenCatalog.js`): `fields` (números), `selects` y `selectsAfter` (desplegables, antes y después de los números). En `BLOCK_PARAMS` del motor, una lista es un desplegable y su primer valor, el de fábrica.
+- **Pedidos al reproducir:** uno a la vez (`state.flight`, `state.queued`); el que está en curso termina y sale otro con lo último, a 250 ms como mínimo. Un cambio de la estrategia o de la vela elegida sí corta el pedido en curso. `kitchenBands(..., { behind })` escribe «faltan N» en la última fila.
+
 ### Flujo
 
 ```
