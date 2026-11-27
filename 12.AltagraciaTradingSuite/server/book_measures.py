@@ -100,8 +100,7 @@ def decision_measures(base, symbol: str, side: int, entry: Optional[float], stop
         mid = h["mid"]
         dist = abs(entry - mid)
         width = h["step"] * h["tick"]
-        i = np.arange(int(h["n"]))
-        k = h["kmid"] - i if book_side == "b" else h["kmid"] + i
+        k = book_store.side_k(h, book_side, np.arange(book_store.side_len(h)))
         center = (k + 0.5) * width
         d = np.abs(center - mid)
         ring = (np.abs(d - dist) <= mid * TYPICAL) & ((center < lo) | (center > hi))

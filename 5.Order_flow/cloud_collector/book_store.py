@@ -10,7 +10,15 @@
 #   b"BK" + version (1 byte) + minuto (int64, ms UTC) + largo (uint32) + zlib(contenido)
 #   contenido = largo del encabezado (uint32) + encabezado JSON + arreglos float32
 # Un bloque cortado al final (un corte de luz) se ignora. Cubo k = [k*step, (k+1)*step) en ticks del precio.
-#   Compras: indice i = cubo kmid - i.  Ventas: indice i = cubo kmid + i.  kmid = cubo del precio medio al abrir el minuto.
+#   kmid = cubo del precio medio al abrir el minuto. Cada lado guarda n cubos desde kmid hacia afuera:
+#   compras kmid, kmid-1, ...; ventas kmid, kmid+1, ...
+# Desde el 27/11 (encabezado "v": 2, con "m") cada lado guarda ademas m cubos que pasan kmid hacia el otro lado:
+#   compras kmid+1 ... kmid+m y ventas kmid-1 ... kmid-m. Hasta el 26/11, si el precio subia dentro del minuto, las compras
+#   que lo seguian no se grababan hasta el minuto siguiente (y las ventas, si bajaba): en BTC faltaban los cubos junto al
+#   precio de un lado en el 85-91% de los segundos (OrderFlowData/research/libro/2026-11-27/ancla.py). Esos m cubos van al
+#   final del contenido: un lector de antes lee lo mismo que antes, y uno de ahora lee los bloques viejos con m = 0.
+#   Al leer (split_seconds, split_minute) cada lado queda entero, de largo side_len = n + m (side_k):
+#   compras: indice i = cubo kmid + m - i;  ventas: indice i = cubo kmid - m + i.
 # En .bks las filas de cada segundo van con XOR contra la fila anterior: sin perdida, y lo que no cambia casi no ocupa.
 import json
 import os
@@ -94,25 +102,64 @@ def decode_payload(payload: bytes) -> Tuple[dict, np.ndarray]:
     return header, arr
 
 
-def seconds_block(minute_ms, header, bids_rows, asks_rows) -> bytes:
-    """Bloque .bks: filas (segundos x n) de compras y de ventas."""
-    return encode_block(minute_ms, header, [xor_rows(bids_rows), xor_rows(asks_rows)])
+def seconds_block(minute_ms, header, bids_rows, asks_rows, bids_over=None, asks_over=None) -> bytes:
+    """Bloque .bks: filas (segundos x n) de compras y de ventas. Con bids_over y asks_over (segundos x m), los cubos que
+    pasan kmid (compras kmid+1 .. kmid+m, ventas kmid-1 .. kmid-m), al final del contenido."""
+    arrays = [xor_rows(bids_rows), xor_rows(asks_rows)]
+    if bids_over is not None and asks_over is not None:
+        arrays += [xor_rows(bids_over), xor_rows(asks_over)]
+    return encode_block(minute_ms, header, arrays)
 
 
-def minute_block(minute_ms, header, twa_b, twa_a, min_b, min_a) -> bytes:
-    return encode_block(minute_ms, header, [twa_b, twa_a, min_b, min_a])
+def minute_block(minute_ms, header, twa_b, twa_a, min_b, min_a, over=None) -> bytes:
+    """Bloque .bkm. over = (twa_b, twa_a, min_b, min_a) de los m cubos que pasan kmid, en el orden de seconds_block."""
+    return encode_block(minute_ms, header, [twa_b, twa_a, min_b, min_a] + (list(over) if over is not None else []))
+
+
+def over(header: dict) -> int:
+    """Cubos que cada lado guarda pasando kmid hacia el otro lado (0 en los bloques de antes del 27/11)."""
+    return int(header.get("m") or 0)
+
+
+def side_len(header: dict) -> int:
+    """Largo de cada lado ya armado por split_seconds o split_minute."""
+    return int(header["n"]) + over(header)
+
+
+def side_k(header: dict, side: str, i):
+    """Cubo del indice i (un numero o un arreglo) del lado ya armado: compras kmid + m - i, ventas kmid - m + i."""
+    m = over(header)
+    return header["kmid"] + m - i if side == "b" else header["kmid"] - m + i
 
 
 def split_seconds(header: dict, arr: np.ndarray) -> Tuple[np.ndarray, np.ndarray]:
-    s, n = len(header["ts"]), int(header["n"])
-    bids = unxor_rows(arr[:s * n].reshape(s, n)) if s else np.zeros((0, n), np.float32)
-    asks = unxor_rows(arr[s * n:2 * s * n].reshape(s, n)) if s else np.zeros((0, n), np.float32)
+    """Filas (segundos x side_len) de compras y de ventas, cada lado entero (ver side_k)."""
+    s, n, m = len(header["ts"]), int(header["n"]), over(header)
+    if not s:
+        return np.zeros((0, n + m), np.float32), np.zeros((0, n + m), np.float32)
+    bids = unxor_rows(arr[:s * n].reshape(s, n))
+    asks = unxor_rows(arr[s * n:2 * s * n].reshape(s, n))
+    if m:
+        a0 = 2 * s * n
+        if len(arr) < a0 + 2 * s * m:
+            header["m"] = 0                      # le faltan los cubos que dice tener: se lee como uno de antes
+            return bids, asks
+        bo = unxor_rows(arr[a0:a0 + s * m].reshape(s, m))
+        ao = unxor_rows(arr[a0 + s * m:a0 + 2 * s * m].reshape(s, m))
+        bids = np.concatenate([bo[:, ::-1], bids], axis=1)
+        asks = np.concatenate([ao[:, ::-1], asks], axis=1)
     return bids, asks
 
 
 def split_minute(header: dict, arr: np.ndarray) -> Dict[str, np.ndarray]:
-    n = int(header["n"])
-    parts = arr[:4 * n].reshape(4, n)
+    """Promedio ponderado y minimo de cada lado, cada uno entero (largo side_len, ver side_k)."""
+    n, m = int(header["n"]), over(header)
+    parts = list(arr[:4 * n].reshape(4, n))
+    if m and len(arr) >= 4 * n + 4 * m:
+        extra = arr[4 * n:4 * n + 4 * m].reshape(4, m)
+        parts = [np.concatenate([extra[j][::-1], parts[j]]) for j in range(4)]
+    elif m:
+        header["m"] = 0
     return {"twa_b": parts[0], "twa_a": parts[1], "min_b": parts[2], "min_a": parts[3]}
 
 
@@ -177,21 +224,23 @@ def blocks(base, symbol: str, kind: str, start_ms: int, end_ms: int) -> Iterator
 
 
 def minute_columns(base, symbol: str, start_ms: int, end_ms: int) -> List[Tuple[dict, Dict[str, np.ndarray]]]:
-    """Columnas de cada minuto. Si un minuto tiene dos bloques (corte y vuelta, o PC y nube), queda el de mas cobertura."""
+    """Columnas de cada minuto. Si un minuto tiene dos bloques (corte y vuelta, o PC y nube), queda el de mas cobertura;
+    con la misma, el que guarda los cubos que pasan kmid."""
     best: Dict[int, Tuple[dict, Dict[str, np.ndarray]]] = {}
     for header, arr in blocks(base, symbol, "bkm", start_ms, end_ms):
         t = int(header["t"])
-        if t not in best or header.get("cov", 0) > best[t][0].get("cov", 0):
+        if t not in best or (header.get("cov", 0), over(header)) > (best[t][0].get("cov", 0), over(best[t][0])):
             best[t] = (header, split_minute(header, arr))
     return [best[t] for t in sorted(best)]
 
 
 def second_rows(base, symbol: str, start_ms: int, end_ms: int) -> List[Tuple[dict, np.ndarray, np.ndarray]]:
-    """Bloques de segundos con sus filas de compras y ventas ya armadas, uno por minuto (el de mas tomas)."""
+    """Bloques de segundos con sus filas de compras y ventas ya armadas, uno por minuto (el de mas tomas; con las
+    mismas, el que guarda los cubos que pasan kmid)."""
     best: Dict[int, Tuple[dict, np.ndarray]] = {}
     for header, arr in blocks(base, symbol, "bks", start_ms, end_ms):
         t = int(header["t"])
-        if t not in best or len(header.get("ts") or []) > len(best[t][0].get("ts") or []):
+        if t not in best or (len(header.get("ts") or []), over(header)) > (len(best[t][0].get("ts") or []), over(best[t][0])):
             best[t] = (header, arr)
     out = []
     for t in sorted(best):
@@ -312,35 +361,34 @@ def oldest_days(base: Path) -> List[Tuple[str, List[Path]]]:
 
 # ---------- lectura de un cubo o una zona ----------
 def bucket_bounds(header: dict, side: str, i: int) -> Tuple[float, float]:
-    """Precio de abajo y de arriba del cubo i de ese lado ('b' compras, 'a' ventas)."""
-    k = header["kmid"] - i if side == "b" else header["kmid"] + i
+    """Precio de abajo y de arriba del cubo i de ese lado ya armado ('b' compras, 'a' ventas)."""
+    k = side_k(header, side, i)
     width = header["step"] * header["tick"]
     return k * width, (k + 1) * width
 
 
 def zone_indices(header: dict, side: str, low: float, high: float) -> np.ndarray:
-    """Indices de los cubos de ese lado cuyo centro cae en [low, high]."""
+    """Indices de los cubos de ese lado (ya armado) cuyo centro cae en [low, high]."""
     width = header["step"] * header["tick"]
-    i = np.arange(int(header["n"]))
-    k = header["kmid"] - i if side == "b" else header["kmid"] + i
-    center = (k + 0.5) * width
+    i = np.arange(side_len(header))
+    center = (side_k(header, side, i) + 0.5) * width
     return i[(center >= low) & (center <= high)]
 
 
 def zone_depth(header: dict, row: np.ndarray, side: str, low: float, high: float) -> Tuple[float, float]:
-    """(cantidad, USD) de ese lado en [low, high], con los cubos de una fila o columna."""
+    """(cantidad, USD) de ese lado en [low, high], con los cubos de una fila o columna ya armada."""
     idx = zone_indices(header, side, low, high)
     if not len(idx):
         return 0.0, 0.0
     width = header["step"] * header["tick"]
-    k = header["kmid"] - idx if side == "b" else header["kmid"] + idx
+    k = side_k(header, side, idx)
     qty = np.maximum(row[idx].astype(np.float64), 0.0)
     return float(qty.sum()), float((qty * (k + 0.5) * width).sum())
 
 
 def covers(header: dict, side: str, low: float, high: float) -> bool:
     """El bloque alcanza toda la zona: si no, lo que falta no se sabe (no es cero)."""
-    n = int(header["n"])
+    n = side_len(header)
     lo0, hi0 = bucket_bounds(header, side, n - 1 if side == "b" else 0)
     lo1, hi1 = bucket_bounds(header, side, 0 if side == "b" else n - 1)
     return min(lo0, lo1) <= low and max(hi0, hi1) >= high

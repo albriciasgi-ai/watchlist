@@ -117,10 +117,10 @@ def grid(base, symbol: str, frame_min: int, start: int, end: int, mode: str = "t
         if h.get("gap"):
             continue                           # minuto incompleto: no se sabe que hubo
         i = (int(h["t"]) - t_first) // MINUTE
-        wm, n, kmid = _width(h), int(h["n"]), int(h["kmid"])
+        wm, idx = _width(h), np.arange(book_store.side_len(h))
         rows_by = {nm: np.zeros(nrows, np.float64) for nm in names}
         for side in ("b", "a"):
-            k = kmid - np.arange(n) if side == "b" else kmid + np.arange(n)
+            k = book_store.side_k(h, side, idx)
             center = (k + 0.5) * wm
             usd = np.maximum(p[f"twa_{side}"].astype(np.float64), 0.0) * center
             r = np.floor(center / w).astype(np.int64) - row0

@@ -152,6 +152,39 @@ try:
     check("toda por lado: cada vela con su lado", int(tbb[:4].min()) > 0 and int(tbb[4:].max()) == 0
           and int(tba[:4].max()) == 0 and int(tba[4:].min()) > 0, str((tbb, tba)))
 
+    # bloques del 27/11 (con m): cada lado trae los cubos que pasan el ancla, y el mapa los pone en su precio. Compras
+    # en el cubo kmid+3 (70,060-70,080) y ventas en kmid-2 (69,960-69,980), al otro lado del precio al abrir el minuto
+    raw = {}
+    M_ = N
+    for i in range(30):
+        m = T0 + i * MIN
+        main_b, main_a = np.zeros(N, np.float32), np.zeros(N, np.float32)
+        over_b, over_a = np.zeros(M_, np.float32), np.zeros(M_, np.float32)
+        over_b[3 - 1] = 6.0                     # compras kmid+1+j: j = 2 es kmid+3
+        over_a[2 - 1] = 5.0                     # ventas kmid-1-j: j = 1 es kmid-2
+        h = {"v": 2, "s": "ANCLAUSDT", "t": m, "tick": TICK, "step": STEP, "kmid": KMID, "n": N, "m": M_, "cov": MIN,
+             "gap": False, "samples": 60, "mid": 70070.0}
+        raw.setdefault(book_store.day_path(base, "ANCLAUSDT", book_store.day_of(m), "bkm"), []).append(
+            book_store.minute_block(m, h, main_b, main_a, main_b, main_a, over=(over_b, over_a, over_b, over_a)))
+    for path, items in raw.items():
+        path.parent.mkdir(parents=True, exist_ok=True)
+        path.write_bytes(b"".join(items))
+    book_store._index.clear()
+    ga = book_heatmap.grid(srcs, "ANCLAUSDT", 15, T0, T0 + 30 * MIN, "toda", sides=True, low=69_000.0, high=71_000.0, step=20.0)
+    cb_ = np.frombuffer(base64.b64decode(ga["cells_b"]), np.uint8).reshape(ga["cols"], ga["rows"])
+    ca_ = np.frombuffer(base64.b64decode(ga["cells_a"]), np.uint8).reshape(ga["cols"], ga["rows"])
+    rb, ra = KMID + 3 - ga["row0"], KMID - 2 - ga["row0"]
+    got_b = book_heatmap.decode(cb_[:, rb])
+    check("con los cubos que pasan el ancla (27/11): las compras sobre el precio al abrir quedan en su fila",
+          all(abs(x / (6.0 * (KMID + 3 + 0.5) * 20.0) - 1) < 0.08 for x in got_b)
+          and int(np.delete(cb_, rb, axis=1).max()) == 0, str(got_b))
+    check("y las ventas bajo ese precio, en la suya", int(ca_[:, ra].min()) > 0 and int(np.delete(ca_, ra, axis=1).max()) == 0)
+    import book_levels  # noqa: E402
+    _, w_, r0_, B_, A_, _ = book_levels._matrix(book_store.minute_columns(srcs, "ANCLAUSDT", T0, T0 + 30 * MIN))
+    check("los niveles leen lo mismo: compras y ventas al otro lado del ancla en su fila de precio",
+          abs(B_[0, KMID + 3 - r0_] - 6.0 * (KMID + 3 + 0.5) * 20.0) < 1 and abs(A_[0, KMID - 2 - r0_] - 5.0 * (KMID - 2 + 0.5) * 20.0) < 1
+          and float(np.nansum(B_[0])) == float(B_[0, KMID + 3 - r0_]), str((w_, r0_)))
+
     # el paso y la primera fila pedidos se respetan
     e = book_heatmap.grid(srcs, "MAPAUSDT", 15, T0 + 90 * MIN, T0 + 120 * MIN, "toda", low=69_000.0, high=71_000.0, step=40.0)
     check("con paso y precios pedidos: filas de 40 USD desde 69,000", e["step"] == 40.0 and e["row0"] == 69_000 // 40

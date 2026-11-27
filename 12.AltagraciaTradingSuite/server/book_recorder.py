@@ -9,7 +9,9 @@
 # /v5/market/full_orderbook al conectar. Los cambios se aplican con u de a 1; si u salta, se pide otra foto
 # (resincronizacion: ese minuto queda incompleto). Con la hora de Bybit, cada segundo se toma lo que hay en cubos
 # finos cerca del precio, y cada minuto la profundidad ponderada por tiempo y la minima en cubos gruesos hasta +-5%.
-# Formato en book_store.py. Solo lectura: no se envia nada a Bybit fuera de las suscripciones y las fotos.
+# Desde el 27/11 cada lado se toma en toda esa banda alrededor del precio al abrir el minuto, tambien pasando ese
+# precio: antes, si el precio se movia dentro del minuto, lo que lo seguia quedaba sin grabar. Formato en book_store.py.
+# Solo lectura: no se envia nada a Bybit fuera de las suscripciones y las fotos.
 # Graba un solo proceso por carpeta (candado live/book/recorder.lock). SUITE_BOOK=0 lo apaga; sin SUITE_BOOK vale
 # SUITE_RECORD, que las pruebas ponen en 0.
 import asyncio
@@ -105,8 +107,12 @@ class Book:
         self.cov_from = None
         self.kmid_f = self.kmid_c = None
         self.nf = self.nc = 0
-        self.rows_b: List[list] = []
-        self.rows_a: List[list] = []
+        self.mf = self.mc = 0          # cubos que cada lado toma pasando el ancla (27/11)
+        self.keys_f = self.keys_c = None
+        self.rows_b: List[np.ndarray] = []
+        self.rows_a: List[np.ndarray] = []
+        self.rows_bo: List[np.ndarray] = []
+        self.rows_ao: List[np.ndarray] = []
         self.row_ts: List[int] = []
         self.row_bb: List[float] = []
         self.row_ba: List[float] = []
@@ -281,23 +287,37 @@ class Book:
         self.kmid_c = int(mid // self.coarse)
         self.nf = max(2, int(math.ceil(mid * FINE_BAND / self.fine)) + 1)
         self.nc = max(2, int(math.ceil(mid * COARSE_BAND / self.coarse)) + 1)
-        self.rows_b, self.rows_a, self.row_ts, self.row_bb, self.row_ba = [], [], [], [], []
+        # cada lado, tambien pasando el ancla hacia el otro lado (m = n): si el precio sube, las compras que lo siguen
+        # quedan en kmid+1, kmid+2...; si baja, las ventas en kmid-1, kmid-2... (formato en book_store.py)
+        self.mf, self.mc = self.nf, self.nc
+        self.keys_f = self._keys(self.kmid_f, self.nf, self.mf)
+        self.keys_c = self._keys(self.kmid_c, self.nc, self.mc)
+        self.rows_b, self.rows_a, self.rows_bo, self.rows_ao = [], [], [], []
+        self.row_ts, self.row_bb, self.row_ba = [], [], []
         self.acc_b, self.acc_a = {}, {}
 
+    @staticmethod
+    def _keys(k0: int, n: int, m: int):
+        """Cubos de cada parte: compras, ventas, compras que pasan el ancla y ventas que la pasan."""
+        return ([k0 - i for i in range(n)], [k0 + i for i in range(n)],
+                [k0 + 1 + j for j in range(m)], [k0 - 1 - j for j in range(m)])
+
     def _sample(self, s: int):
-        fb, fa, k0, n = self.fb, self.fa, self.kmid_f, self.nf
-        self.rows_b.append([fb.get(k0 - i, 0.0) for i in range(n)])
-        self.rows_a.append([fa.get(k0 + i, 0.0) for i in range(n)])
+        fb, fa = self.fb, self.fa
+        kb, ka, kbo, kao = self.keys_f
+        self.rows_b.append(np.array([fb.get(k, 0.0) for k in kb], np.float32))
+        self.rows_a.append(np.array([fa.get(k, 0.0) for k in ka], np.float32))
+        self.rows_bo.append(np.array([fb.get(k, 0.0) for k in kbo], np.float32))
+        self.rows_ao.append(np.array([fa.get(k, 0.0) for k in kao], np.float32))
         self.row_ts.append(s)
         self.row_bb.append(round(self.best_b * self.tick, 10) if self.best_b is not None else None)
         self.row_ba.append(round(self.best_a * self.tick, 10) if self.best_a is not None else None)
 
-    def _column(self, coarse: Dict[int, float], acc: Dict[int, list], sign: int, t_end: int, span: int):
-        twa = np.zeros(self.nc, np.float32)
-        low = np.zeros(self.nc, np.float32)
-        k0 = self.kmid_c
-        for i in range(self.nc):
-            k = k0 + sign * i
+    @staticmethod
+    def _column(coarse: Dict[int, float], acc: Dict[int, list], keys: List[int], t_end: int, span: int):
+        twa = np.zeros(len(keys), np.float32)
+        low = np.zeros(len(keys), np.float32)
+        for i, k in enumerate(keys):
             value = coarse.get(k, 0.0)
             a = acc.get(k)
             if a is None:
@@ -316,23 +336,28 @@ class Book:
         span = max(0, t_end - self.cov_from)
         day = book_store.day_of(minute)
         sym = self.symbol
-        base_header = {"v": 1, "s": sym, "t": minute, "tick": self.tick}
+        base_header = {"v": 2, "s": sym, "t": minute, "tick": self.tick}
         if self.row_ts:
-            head = dict(base_header, step=self.fine, kmid=self.kmid_f, n=self.nf, ts=self.row_ts, bb=self.row_bb,
+            head = dict(base_header, step=self.fine, kmid=self.kmid_f, n=self.nf, m=self.mf, ts=self.row_ts, bb=self.row_bb,
                         ba=self.row_ba, cov=span, gap=bool(gap))
-            data = book_store.seconds_block(minute, head, np.array(self.rows_b, np.float32), np.array(self.rows_a, np.float32))
+            data = book_store.seconds_block(minute, head, np.array(self.rows_b, np.float32), np.array(self.rows_a, np.float32),
+                                            np.array(self.rows_bo, np.float32), np.array(self.rows_ao, np.float32))
             self.out.append((f"{sym}/{day[:4]}/{sym}_{day}.bks", data))
         if span > 0:
-            twa_b, min_b = self._column(self.cb, self.acc_b, -1, t_end, span)
-            twa_a, min_a = self._column(self.ca, self.acc_a, 1, t_end, span)
+            kb, ka, kbo, kao = self.keys_c
+            twa_b, min_b = self._column(self.cb, self.acc_b, kb, t_end, span)
+            twa_a, min_a = self._column(self.ca, self.acc_a, ka, t_end, span)
+            twa_bo, min_bo = self._column(self.cb, self.acc_b, kbo, t_end, span)
+            twa_ao, min_ao = self._column(self.ca, self.acc_a, kao, t_end, span)
             mid = self.mid_ticks()
-            head = dict(base_header, step=self.coarse, kmid=self.kmid_c, n=self.nc, cov=span, gap=bool(gap),
+            head = dict(base_header, step=self.coarse, kmid=self.kmid_c, n=self.nc, m=self.mc, cov=span, gap=bool(gap),
                         samples=len(self.row_ts), mid=round(mid * self.tick, 10) if mid is not None else None)
-            data = book_store.minute_block(minute, head, twa_b, twa_a, min_b, min_a)
+            data = book_store.minute_block(minute, head, twa_b, twa_a, min_b, min_a, over=(twa_bo, twa_ao, min_bo, min_ao))
             self.out.append((f"{sym}/{day[:4]}/{sym}_{day}.bkm", data))
         self.stats["minutes"] += 1
         self.minute = None
-        self.rows_b, self.rows_a, self.row_ts, self.row_bb, self.row_ba = [], [], [], [], []
+        self.rows_b, self.rows_a, self.rows_bo, self.rows_ao = [], [], [], []
+        self.row_ts, self.row_bb, self.row_ba = [], [], []
         self.acc_b, self.acc_a = {}, {}
 
     def lose(self, at_ms: Optional[int], reason: str):

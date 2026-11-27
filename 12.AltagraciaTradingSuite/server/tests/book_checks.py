@@ -166,13 +166,17 @@ try:
         mag, ver, minute, length = book_store.PREFIX.unpack(data[:book_store.PREFIX.size])
         header, arr = book_store.decode_payload(data[book_store.PREFIX.size:])
         bids, asks = book_store.split_seconds(header, arr)
+        idx = np.arange(book_store.side_len(header))
         for r, s in enumerate(header["ts"]):
             fb, fa = expected_rows[s]
-            exp_b = [fb.get(header["kmid"] - i, 0.0) for i in range(header["n"])]
-            exp_a = [fa.get(header["kmid"] + i, 0.0) for i in range(header["n"])]
+            exp_b = [fb.get(int(k), 0.0) for k in book_store.side_k(header, "b", idx)]
+            exp_a = [fa.get(int(k), 0.0) for k in book_store.side_k(header, "a", idx)]
             rows_ok &= np.allclose(bids[r], exp_b, atol=1e-5) and np.allclose(asks[r], exp_a, atol=1e-5)
             n_rows += 1
     check("cada segundo es el libro de ese instante (120 tomas)", rows_ok and n_rows == 120, f"{n_rows} tomas")
+    check("cada lado se guarda tambien pasando el ancla (m = n cubos mas)",
+          all(book_store.decode_payload(d[book_store.PREFIX.size:])[0].get("m") == book_store.decode_payload(
+              d[book_store.PREFIX.size:])[0]["n"] for _, d in out))
 
     # el minuto: ponderado por tiempo y minimo, contra la linea de tiempo
     def expected_column(minute, header, side):
@@ -182,8 +186,7 @@ try:
             if ts_ < start:
                 state = (cb, ca)
         idx = 0 if side == "b" else 1
-        k0, n = header["kmid"], header["n"]
-        ks = [k0 - i if side == "b" else k0 + i for i in range(n)]
+        ks = [int(k) for k in book_store.side_k(header, side, np.arange(book_store.side_len(header)))]
         cur = {k: state[idx].get(k, 0.0) for k in ks}
         integral = {k: 0.0 for k in ks}
         low = dict(cur)
@@ -213,6 +216,78 @@ try:
             cols_ok &= np.allclose(parts[f"twa_{side}"], twa, rtol=1e-5, atol=1e-5) and np.allclose(parts[f"min_{side}"], low, atol=1e-5)
         cols_ok &= header["cov"] == MIN and header["samples"] == 60
     check("cada minuto: profundidad ponderada por tiempo y minima exactas", cols_ok)
+
+    # ---------- el ancla del minuto (27/11): si el precio sube, las compras que lo siguen se graban ----------
+    TA = T0 + 100 * MIN
+    bk = Book("BTCUSDT", 0.1)
+    bk.syncing = True
+    bk.finish_sync(snapshot(u=2000, seed=21), TA - 5_000)
+    ua = 2000
+    bk.on_delta(TA + 100, {"b": [], "a": [], "u": ua + 1})            # abre el minuto con el libro de la foto
+    kf, kc, nf_, nc_ = bk.kmid_f, bk.kmid_c, bk.nf, bk.nc
+    # a los 20 s el precio sube: se van las ventas hasta 69030 y aparecen compras en 69022 y 69028 (sobre el ancla, en
+    # los cubos finos y en el grueso: el precio al abrir estaba cerca de 69000)
+    up = {"b": [["69022.0", "7"], ["69028.0", "3"]], "a": [[f"{t * 0.1:.1f}", "0"] for t in range(690000, 690301)], "u": ua + 2}
+    bk.on_delta(TA + 20_000, up)
+    bk.on_delta(TA + 40_000, {"b": [], "a": [], "u": ua + 3})
+    bk.on_delta(TA + MIN + 1_000, {"b": [], "a": [], "u": ua + 4})   # cierra el minuto
+    outa = {rel.rsplit(".", 1)[1]: data for rel, data in bk.take_output()}
+    hs, arr_s = book_store.decode_payload(outa["bks"][book_store.PREFIX.size:])
+    bs, as_ = book_store.split_seconds(hs, arr_s)
+    cb1, cb2 = 690220 // 50, 690280 // 50                           # cubos finos de 69022 y 69028 (5 USD)
+    i1, i2 = kf + hs["m"] - cb1, kf + hs["m"] - cb2                 # su indice en las compras ya armadas
+    after = [r for r, s in enumerate(hs["ts"]) if s > TA + 20_000]
+    before = [r for r, s in enumerate(hs["ts"]) if s <= TA + 20_000]
+    check("ancla: las compras que pasan el ancla quedan en cada segundo despues de subir el precio",
+          cb2 > cb1 > kf and hs["m"] == nf_ and bs.shape == (60, nf_ + hs["m"])
+          and all(abs(bs[r, i1] - 7) < 1e-6 and abs(bs[r, i2] - 3) < 1e-6 for r in after)
+          and all(bs[r, i1] == 0 and bs[r, i2] == 0 for r in before), f"ancla {kf}, cubos {cb1} {cb2}")
+    check("ancla: la zona de compras sobre el ancla queda cubierta y con lo que habia",
+          book_store.covers(hs, "b", 69020, 69030)
+          and abs(book_store.zone_depth(hs, bs[after[-1]], "b", 69020, 69030)[0] - 10) < 1e-6)
+    s_, n_ = len(hs["ts"]), hs["n"]
+    old_b = book_store.unxor_rows(arr_s[:s_ * n_].reshape(s_, n_))       # lo que lee el codigo de antes
+    old_a = book_store.unxor_rows(arr_s[s_ * n_:2 * s_ * n_].reshape(s_, n_))
+    check("ancla: un lector de antes lee exactamente lo de antes (los cubos nuevos van al final)",
+          np.array_equal(old_b, bs[:, hs["m"]:]) and np.array_equal(old_a, as_[:, hs["m"]:])
+          and book_store.side_k(hs, "b", hs["m"]) == kf and book_store.side_k(hs, "a", hs["m"]) == kf)
+    hm, arr_m = book_store.decode_payload(outa["bkm"][book_store.PREFIX.size:])
+    pm = book_store.split_minute(hm, arr_m)
+    cc = 690220 // 200                                               # cubo grueso de 69020 a 69040 (las dos compras)
+    j = kc + hm["m"] - cc
+    check("ancla: el minuto pondera esas compras por el tiempo que estuvieron (40 de 60 s) y su minimo es 0",
+          cc > kc and hm["m"] == nc_ and len(pm["twa_b"]) == nc_ + hm["m"] and abs(pm["twa_b"][j] - 10 * 40 / 60) < 1e-4
+          and pm["min_b"][j] == 0 and book_store.side_k(hm, "b", j) == cc, f"{pm['twa_b'][j]} {pm['min_b'][j]}")
+    check("ancla: los cuatro arreglos del minuto de antes siguen en su lugar",
+          np.array_equal(arr_m[:4 * hm["n"]].reshape(4, hm["n"])[0], pm["twa_b"][hm["m"]:])
+          and np.array_equal(arr_m[:4 * hm["n"]].reshape(4, hm["n"])[3], pm["min_a"][hm["m"]:]))
+
+    # un bloque de antes del 27/11 (sin m) se lee igual que siempre
+    hv1 = {"v": 1, "s": "VIEJAUSDT", "t": TA, "tick": 0.1, "step": 50, "kmid": 1000, "n": 10, "ts": [TA, TA + 1000],
+           "bb": [1.0, 1.0], "ba": [1.1, 1.1], "cov": MIN, "gap": False}
+    rv = np.arange(20, dtype=np.float32).reshape(2, 10)
+    hv, av = book_store.decode_payload(book_store.seconds_block(TA, hv1, rv, rv * 2)[book_store.PREFIX.size:])
+    bv, avv = book_store.split_seconds(hv, av)
+    mv1 = dict(hv1, ts=None)
+    hmv, amv = book_store.decode_payload(book_store.minute_block(TA, mv1, rv[0], rv[1], rv[0], rv[1])[book_store.PREFIX.size:])
+    check("un bloque de antes (sin m) se lee igual: n cubos desde kmid hacia afuera",
+          np.array_equal(bv, rv) and np.array_equal(avv, rv * 2) and book_store.side_len(hv) == 10
+          and book_store.side_k(hv, "b", 3) == 997 and book_store.side_k(hv, "a", 3) == 1003
+          and np.array_equal(book_store.split_minute(hmv, amv)["twa_a"], rv[1]))
+
+    # con la misma cobertura, de dos bloques del mismo minuto (PC y nube) queda el que pasa el ancla
+    pc_base, cloud_base = TMP / "desempate" / "pc", TMP / "desempate" / "nube"
+    hm_old = {k: v for k, v in hm.items() if k != "m"}
+    hm_old["v"] = 1
+    old_block = book_store.minute_block(TA, hm_old, *arr_m[:4 * hm["n"]].reshape(4, hm["n"]))
+    for base_, data_ in ((pc_base, old_block), (cloud_base, outa["bkm"])):
+        p_ = book_store.day_path(base_, "BTCUSDT", book_store.day_of(TA), "bkm")
+        p_.parent.mkdir(parents=True, exist_ok=True)
+        p_.write_bytes(data_)
+    book_store._index.clear()
+    pick = book_store.minute_columns([pc_base, cloud_base], "BTCUSDT", TA, TA + MIN)
+    check("con la misma cobertura, de PC y nube queda el bloque que pasa el ancla",
+          len(pick) == 1 and book_store.over(pick[0][0]) == nc_ and len(pick[0][1]["twa_b"]) == nc_ + hm["m"])
 
     # ---------- perdida de conexion a mitad de minuto ----------
     book.on_delta(T0 + 2 * MIN + 30_000, {"b": [], "a": [], "u": u + 1})
@@ -597,6 +672,16 @@ try:
           and ss["sostenida_mediana"] == 0.175 and ss["rapida_aguanto_pct"] == 50.0
           and ss["rapida_llegaba"] == 0.55 and ss["lenta_aguanto_pct"] == 50.0 and ss["lenta_llegaba"] == 0.9, str(ss))
 
+    def fake_visits(kind, n_hold, n_cross):
+        return [{"kind": kind, "gap": False, "outcome": "aguanto"}] * n_hold + [{"kind": kind, "gap": False, "outcome": "cruzo"}] * n_cross
+
+    mix = {"fvg15": fake_visits("fvg15", 60, 40), "fvg15_azar": fake_visits("fvg15_azar", 60, 40),
+           "perfil": fake_visits("perfil", 10, 10), "perfil_azar": fake_visits("perfil_azar", 150, 150)}
+    d_mix, ci_mix = book_study.stratified_diff(mix)
+    # juntas, tus zonas 70 de 120 (58.3%) contra 210 de 400 (52.5%): +5.8 sin que ningun tipo aguante mas
+    check("estudio: la diferencia se mide tipo por tipo contra su azar (juntas, la mezcla de tipos la inflaba; 27/11)",
+          d_mix == 0.0 and ci_mix[0] < 0 < ci_mix[1], f"{d_mix} {ci_mix}")
+
     class FakeStore:
         def minutes(self, symbol, a, b, live=None):
             m = np.arange(a, b)
@@ -629,6 +714,36 @@ try:
     fz = book_study.fvg_zones(GapStore(), "TESTUSDT", T0, T0 + 86400000, 15)
     gap = [z for z in fz if z["label"] == "alcista" and abs(z["lo"] - 100.2) < 1e-9 and abs(z["hi"] - 100.4) < 1e-9]
     check("estudio: un FVG alcista de 15m nace al cerrar su vela y dura hasta llenarse o 3 dias", len(gap) == 1, str(fz[:3]))
+
+    class FillStore:
+        """El mismo hueco alcista (100.2 a 100.4) en las velas 300 a 302 de 15m, ya dentro del dia pedido, y lleno en el
+        octavo minuto de la vela 304."""
+        def minutes(self, symbol, a, b, live=None):
+            m = np.arange(a, b)
+            h, l = np.full(len(m), 100.2), np.full(len(m), 99.8)
+            k = (m // 15) - (m[0] // 15)
+            for i, (lo_, hi_) in enumerate(((99.8, 100.2), (100.0, 100.6), (100.4, 100.9))):
+                sel = k == 300 + i
+                l[sel], h[sel] = lo_, hi_
+            sel = k > 302
+            l[sel], h[sel] = 100.5, 101.0
+            l[m == m[k == 304][7]] = 100.1
+            return {"m": m, "h": h, "l": l}
+
+    win = np.arange((T0 - 3 * 86400000) // MIN, (T0 + 86400000) // MIN)
+    fill_minute = int(win[((win // 15) - (win[0] // 15)) == 304][7])
+    fz2 = [z for z in book_study.fvg_zones(FillStore(), "TESTUSDT", T0, T0 + 86400000, 15)
+           if z["label"] == "alcista" and abs(z["lo"] - 100.2) < 1e-9]
+    check("estudio: un FVG termina al final del minuto en que el precio lo cruza entero, no al empezar esa vela (27/11)",
+          len(fz2) == 1 and fz2[0]["to"] == (fill_minute + 1) * MIN and fz2[0].get("once") is True,
+          f"{fz2[0]['to'] if fz2 else None} contra {(fill_minute + 1) * MIN}")
+    once_zone = dict(zone, once=True)
+    vs_once = book_study.visits(sec, atr, once_zone, FakeTrades())
+    check("estudio: en una zona que se llena (FVG), despues de la primera visita que la atraviesa no se cuenta otra",
+          [(v["side"], v["outcome"]) for v in vs_once] == [("b", "aguanto"), ("b", "cruzo")],
+          str([(v["side"], v["outcome"]) for v in vs_once]))
+    rz_once = book_study.random_zones([once_zone], seed=1)
+    check("estudio: sus zonas al azar siguen la misma regla", all(z.get("once") for z in rz_once))
 
     # ---------- rutas sin grabar ----------
     from fastapi.testclient import TestClient  # noqa: E402

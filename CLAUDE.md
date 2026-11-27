@@ -55,6 +55,59 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Altagracia Trading Suite - 27 Noviembre 2026: Dos Semanas del Libro, el Ancla del Minuto y la Medición de las Zonas Corregidas
+
+**Pedido:** dos semanas después de montar el heatmap y el price ladder, revisar cómo va la recolección del libro y si
+ya hay patrones o indicadores útiles para estrategias, con un concepto profesional. Tras el concepto: «Sí, corrígelos»
+(los dos defectos hallados).
+
+**Cambios:**
+1. **Estudio de 14 días** (13 al 27/11, 23 monedas; sin cambios en las apps), en `OrderFlowData/research/libro/2026-11-27/`:
+   - la grabación cubre el 99.8% de los minutos en las 20 monedas que también graba la nube (RUNE, MUBARAK y ALGO, solo
+     en el PC: 77 a 84%), y es coherente por dentro y con los trades;
+   - el perfil del día anterior y los FVG no aguantan más que un precio al azar del mismo ancho, y la liquidez que espera
+     no lo cambia;
+   - los muros sostenidos casi nunca se retiran cerca del precio: se retiran lejos (85%) o se consumen, y aguantan menos
+     que el azar;
+   - el desequilibrio junto al precio predice segundos (0.1 a 0.4 bps), no 15 minutos a 4 horas;
+   - AB, BL y LD de Elementos OF no dan dirección contra el azar.
+2. **El ancla del minuto** (`book_recorder.py`, `book_store.py` y sus copias en `5.Order_flow/cloud_collector`):
+   - cada lado del libro se guardaba desde el precio al abrir el minuto hacia afuera, y si el precio se movía dentro del
+     minuto, lo que lo seguía no se grababa hasta el minuto siguiente;
+   - ahora cada lado guarda también los cubos que pasan ese precio, al final de cada bloque (`"v": 2` con `"m"`). Los
+     lectores de antes leen lo mismo que antes, y los de ahora leen los bloques viejos;
+   - los lectores (`book_levels`, `book_heatmap`, `book_measures` y `book_study`) usan `book_store.side_len` y `side_k`.
+3. **La medición de las zonas** (`book_study.py`):
+   - un FVG terminaba al empezar la vela que lo llenaba, y quedaban fuera justo las llegadas que lo cruzan. Ahora vale
+     hasta el final del minuto en que se llena, y después de la primera visita que lo atraviesa no cuenta otra;
+   - la diferencia contra el azar se mide tipo por tipo: juntas, la mezcla de tipos la inflaba.
+4. **Pruebas:** `book_checks.py` (81) y `book_heatmap_checks.py` (27). Pasan también `book_cloud_checks` (16),
+   `book_levels_checks` (16), `book_defense_checks` (21), `book_events_checks` (18), `ladder_checks` (24),
+   `journal_checks` (89), `run_checks` (48) y `test_book_reading.py` de App 1 (4).
+
+**IMPORTANTE:**
+- **Probado en vivo** con Bybit real, 13 minutos y 7 monedas en una carpeta aparte, contra lo que grabó la suite del
+  usuario en los mismos minutos:
+  - segundos con un lado sin grabar junto al precio: de 62.4% a 0%;
+  - la parte de siempre de cada bloque, igual a la de la suite: los minutos, 84 de 84; los segundos, 70 de 84, y los
+    otros 14 son los del proceso de prueba detenido (abajo);
+  - el lector de antes lee los bloques nuevos;
+  - el peso sube un 6%; la CPU, 1.8% de un núcleo para las 7.
+- **Lo grabado hasta el 27/11 queda con el defecto:** cada lado se ve completo solo desde el precio al abrir cada
+  minuto. Eso no se recupera.
+- **La suite graba así cuando corra este código.** La nube, al desplegar sus dos copias en la rama `deploy` de
+  `footprint-collector`. Mientras tanto, lo que baja de la nube sigue con el defecto.
+- **Lo que cambia la medición:** los +8 puntos de la primera lectura del 13/11 venían del sesgo de los FVG. Con 13 días
+  y 23 monedas: perfil 46.7% contra 47.0% del azar, FVG de 15m 59.8% contra 60.4% y de 1h 68.5% contra 66.8%; tipo por
+  tipo, −0.2 puntos.
+- **Visto en la prueba, sin corregir:** si el proceso del grabador se detiene más de 1.5 s, el reloj de respaldo toma
+  esos segundos con el libro sin los cambios que esperaban en cola. Afecta solo a los segundos, no a los minutos. Pasó
+  una vez en el proceso de prueba (unos 5 s).
+
+**Ver:** `12.AltagraciaTradingSuite/CLAUDE.md` sección "Libro completo (13/11)" y `OrderFlowData/research/libro/2026-11-27/`
+
+---
+
 ### App 1 - 27 Noviembre 2026: Indicador EMA, y la Cocina Lee lo que Calcula el Gráfico con los Ajustes de la Sesión
 
 **Pedido:** al probar los pasos 1.1 y 1.2, el usuario encontró que:

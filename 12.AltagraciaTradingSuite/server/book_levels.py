@@ -77,9 +77,9 @@ def _matrix(cols):
     w = max(set(widths), key=widths.count)
     ks = []
     for h, _ in cols:
-        n, kmid = int(h["n"]), int(h["kmid"])
+        reach, kmid = max(int(h["n"]), book_store.over(h)), int(h["kmid"])   # cada lado llega a kmid +- reach
         wm = h["step"] * h["tick"]
-        ks.append((math.floor((kmid - n) * wm / w), math.floor((kmid + n + 1) * wm / w)))
+        ks.append((math.floor((kmid - reach) * wm / w), math.floor((kmid + reach + 1) * wm / w)))
     r0 = min(a for a, _ in ks)
     r1 = max(b for _, b in ks)
     nrows = r1 - r0 + 1
@@ -92,9 +92,9 @@ def _matrix(cols):
         if h.get("gap"):
             continue
         i = (int(h["t"]) - t0) // MINUTE
-        wm, n, kmid = h["step"] * h["tick"], int(h["n"]), int(h["kmid"])
+        wm, idx = h["step"] * h["tick"], np.arange(book_store.side_len(h))
         for side, M in (("b", B), ("a", A)):
-            k = kmid - np.arange(n) if side == "b" else kmid + np.arange(n)
+            k = book_store.side_k(h, side, idx)
             center = (k + 0.5) * wm
             usd = np.maximum(p[f"twa_{side}"].astype(np.float64), 0.0) * center
             r = np.floor(center / w).astype(np.int64) - r0
