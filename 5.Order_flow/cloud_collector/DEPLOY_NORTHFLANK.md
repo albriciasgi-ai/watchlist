@@ -251,6 +251,7 @@ Ver `12.AltagraciaTradingSuite/CLAUDE.md`, seccion "Nube contra el archivo ofici
 - **En el PC:** `12.AltagraciaTradingSuite/server/book_cloud.py` baja cada 10 minutos solo los minutos que el PC no tiene completos, a `OrderFlowData/live/book_cloud`. Los lectores juntan las dos carpetas.
 - **Pruebas sin conexión:** `tests/book_cloud_checks.py` de la suite (16) corre este `main.py` en el mismo proceso, con `httpx.ASGITransport`.
 - **Despliegue:** copiar a la rama `deploy` de `albriciasgi-ai/footprint-collector` `main.py`, `Dockerfile`, `requirements.txt` (suma httpx), `book_recorder.py` y `book_store.py`.
+- **El ancla del minuto (27/11/2026):** cada lado del libro se guardaba desde el precio al abrir el minuto hacia afuera, y si el precio se movía dentro del minuto, lo que lo seguía no se grababa. Desde el 27/11 cada lado guarda también los cubos que pasan ese precio, al final de cada bloque (ver `book_store.py`). Para llevarlo a la nube basta copiar `book_recorder.py` y `book_store.py` a la rama `deploy`; `main.py` no cambia. El orden no importa: la suite lee los bloques de antes y los de ahora, y la versión anterior de los lectores lee los nuevos como antes, sin los cubos nuevos. Mientras la nube no se despliegue, lo que baja de ella sigue con el defecto.
 
 
 ## Hyperliquid (22/11/2026)

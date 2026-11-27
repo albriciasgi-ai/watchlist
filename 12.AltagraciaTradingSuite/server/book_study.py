@@ -19,6 +19,9 @@
 #     consumida (la liquidez se queda, se negocia y el precio pasa).
 # No es una senal: dice si tus zonas tienen liquidez distinta de un precio cualquiera y si esa liquidez las hace
 # aguantar. Con pocas visitas no se distingue nada del azar: el informe lo avisa.
+# 27/11: un FVG terminaba al empezar la vela que lo llenaba, y quedaban fuera las llegadas que lo cruzan: eso inflaba
+# su aguante (ver fvg_zones). Con 14 dias de 23 monedas, ni el perfil ni los FVG aguantan mas que el azar
+# (OrderFlowData/research/libro/2026-11-27).
 #
 # Uso, desde 12.AltagraciaTradingSuite\server:
 #   C:\Python314\python.exe -B book_study.py BTCUSDT,ETHUSDT 2026-11-14 2026-12-14 [salida.json]
@@ -283,15 +286,22 @@ def vp_zones(fs, symbol: str, day_start: int) -> List[dict]:
 
 
 def fvg_zones(fs, symbol: str, start: int, end: int, frame_min: int) -> List[dict]:
-    """FVG de 15m o 1h con las velas de los trades: hueco entre la vela i-2 y la i, desde el cierre de la i."""
+    """FVG de 15m o 1h con las velas de los trades: hueco entre la vela i-2 y la i, desde el cierre de la i y hasta el
+    final del minuto en que el precio lo cruza entero (a lo sumo ZONE_DAYS). Con "once", visits() deja de contar tras la
+    primera visita que lo atraviesa: ya esta lleno (vale tambien para sus zonas al azar, que copian la zona).
+    Hasta el 26/11 terminaba al EMPEZAR la vela que lo llenaba: las llegadas dentro de esa vela, justo las que lo cruzan,
+    quedaban fuera, y eso inflaba su aguante contra el azar. En 14 dias de 23 monedas (27/11), el FVG de 15m daba 76%
+    contra 58% del azar y el de 1h 91% contra 65%; sin el sesgo, 60% contra 60% y 68% contra 65%."""
     m = fs.minutes(symbol, (start - ZONE_DAYS * DAY) // MINUTE, end // MINUTE, live=True)
     if m is None or not len(m["m"]):
         return []
-    bucket = m["m"] // frame_min
+    mins = np.asarray(m["m"], np.int64)
+    lows, highs = np.asarray(m["l"]), np.asarray(m["h"])
+    bucket = mins // frame_min
     starts, idx = np.unique(bucket, return_index=True)
     ends = np.r_[idx[1:], len(bucket)]
-    hi = np.array([m["h"][a:b].max() for a, b in zip(idx, ends)])
-    lo = np.array([m["l"][a:b].min() for a, b in zip(idx, ends)])
+    hi = np.array([highs[a:b].max() for a, b in zip(idx, ends)])
+    lo = np.array([lows[a:b].min() for a, b in zip(idx, ends)])
     out = []
     for i in range(2, len(starts)):
         if starts[i] - starts[i - 2] != 2:
@@ -301,15 +311,16 @@ def fvg_zones(fs, symbol: str, start: int, end: int, frame_min: int) -> List[dic
             break
         for kind, a, b in (("alcista", hi[i - 2], lo[i]), ("bajista", hi[i], lo[i - 2])):
             if b > a and FVG_MIN <= (b - a) / b <= FVG_MAX:
-                # se llena cuando el precio lo cruza entero; hasta entonces, a lo sumo ZONE_DAYS
+                # se llena cuando el precio lo cruza entero: hasta el final de ese minuto; si no, a lo sumo ZONE_DAYS
                 after = np.arange(i + 1, len(starts))
-                if kind == "alcista":
-                    filled = after[lo[after] < a]
-                else:
-                    filled = after[hi[after] > b]
-                stop = int(starts[filled[0]] * frame_min * MINUTE) if len(filled) else known + ZONE_DAYS * DAY
+                filled = after[lo[after] < a] if kind == "alcista" else after[hi[after] > b]
+                stop = known + ZONE_DAYS * DAY
+                if len(filled):
+                    seg = slice(idx[filled[0]], ends[filled[0]])
+                    hit = lows[seg] < a if kind == "alcista" else highs[seg] > b
+                    stop = int((mins[seg][int(np.argmax(hit))] + 1) * MINUTE)
                 out.append({"kind": f"fvg{frame_min}", "label": kind, "lo": float(a), "hi": float(b), "from": known,
-                            "to": min(stop, known + ZONE_DAYS * DAY)})
+                            "to": min(stop, known + ZONE_DAYS * DAY), "once": True})
     return [z for z in out if z["to"] > start]
 
 
@@ -409,6 +420,12 @@ def visits(sec: dict, atr: np.ndarray, zone: dict, trades: Optional[Trades], min
             v["pattern"] = pattern(v)
             out.append(v)
             pos = k + 1
+    if zone.get("once"):
+        # una zona que se llena al atravesarla (un FVG): despues de la primera visita que la atraviesa ya no cuenta
+        out.sort(key=lambda v: v["at"])
+        for i, v in enumerate(out):
+            if v["pierced"]:
+                return out[:i + 1]
     return out
 
 
@@ -541,12 +558,33 @@ def run(symbols: List[str], start: int, end: int, base: Optional[Path] = None, w
                       "patrones": list(PATTERNS)},
            "tus_zonas": summarize(real), "al_azar": summarize(rand),
            "por_tipo": {k: summarize(v) for k, v in sorted(groups.items())}}
-    p1, n1 = _rate([v for v in real if not v["gap"]])
-    p2, n2 = _rate([v for v in rand if not v["gap"]])
-    out["diferencia_aguante_pts"] = round(100 * (p1 - p2), 1) if p1 is not None and p2 is not None else None
-    out["ic95_diferencia_pts"] = _diff_ci(p1, n1, p2, n2)
+    out["diferencia_aguante_pts"], out["ic95_diferencia_pts"] = stratified_diff(groups)
     out["visitas"] = all_visits
     return out
+
+
+def stratified_diff(groups: Dict[str, List[dict]]) -> Tuple[Optional[float], Optional[List[float]]]:
+    """Diferencia en el aguante de tus zonas contra el azar, tipo por tipo (perfil, FVG de 15m, FVG de 1h, journal):
+    cada tipo contra su propio azar, y el promedio con el peso de las visitas de ese tipo. Hasta el 27/11 se juntaban
+    todas: el azar de un FVG queda lejos del precio y lo visitan menos, asi que el azar junto tenia mas perfil (que
+    aguanta menos) y la diferencia salia a favor de tus zonas sin que ningun tipo aguantara mas (en 13 dias de 23
+    monedas, +2.8 puntos juntas y -0.2 tipo por tipo). El margen trata las visitas como independientes: el real es mas ancho."""
+    num = var = 0.0
+    weight = 0
+    for kind, items in groups.items():
+        if kind.endswith("_azar"):
+            continue
+        pa, na = _rate([v for v in items if not v["gap"]])
+        pb, nb = _rate([v for v in groups.get(kind + "_azar", []) if not v["gap"]])
+        if not na or not nb:
+            continue
+        num += na * (pa - pb)
+        var += na * na * (pa * (1 - pa) / na + pb * (1 - pb) / nb)
+        weight += na
+    if not weight:
+        return None, None
+    d, se = num / weight, math.sqrt(var) / weight
+    return round(100 * d, 1), [round(100 * (d - 1.96 * se), 1), round(100 * (d + 1.96 * se), 1)]
 
 
 def _print(res: dict):
@@ -558,7 +596,8 @@ def _print(res: dict):
     print(f"Del {res['desde']} al {res['hasta']}: {', '.join(f'{k} {len(v)} días' for k, v in res['dias'].items()) or 'sin libro grabado'}")
     print(line("tus zonas", res["tus_zonas"]))
     print(line("al azar", res["al_azar"]))
-    print(f"  diferencia en el aguante: {res['diferencia_aguante_pts']} pts, IC 95% {res['ic95_diferencia_pts']}")
+    print(f"  diferencia en el aguante, tipo por tipo contra su azar: {res['diferencia_aguante_pts']} pts, "
+          f"IC 95% {res['ic95_diferencia_pts']} (con las visitas como independientes: el margen real es mas ancho)")
     for k, s in res["por_tipo"].items():
         print(line(k, s))
 
