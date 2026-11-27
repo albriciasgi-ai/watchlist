@@ -7,7 +7,8 @@ export const STATE = 'estado';   // Se cumple o no en cada vela
 export const EVENT = 'evento';   // Ocurre en una vela
 
 export const BLOCK_FAMILIES = [
-  { id: 'lineas', name: 'Líneas: EMA y Alligator' },
+  { id: 'lineas', name: 'Líneas: EMA, VWAP y Alligator' },
+  { id: 'grafico', name: 'Lo que calcula tu gráfico, con tus ajustes' },
   { id: 'tramo', name: 'Lo que venía pasando' },
   { id: 'velas', name: 'Velas y volumen' },
   { id: 'vpa', name: 'Lector VPA' },
@@ -22,7 +23,8 @@ export const BLOCK_FAMILIES = [
 export const ZONE_KINDS = ['sr', 'fvg', 'ob', 'liq'];
 // Lo que el usuario pone en el gráfico y solo conoce la página (kitchen.py, USER_KINDS): un dibujo o un nivel de un
 // perfil de volumen de rango fijo. Entran siempre como zona fija
-export const USER_ZONE_KINDS = ['draw', 'vp'];
+// 'ind' (27/11): un nivel de cualquier indicador del gráfico, con los ajustes de la sesión, elegido con un clic
+export const USER_ZONE_KINDS = ['draw', 'vp', 'ind'];
 // Lo que ofrece un perfil de rango fijo (VP Fixed Range): sus tres niveles y su área de valor, del VAL al VAH
 export const VP_PARTS = { poc: 'POC', vah: 'VAH', val: 'VAL', va: 'Área de valor' };
 // Estados que salen del almacén de trades (kitchen.py, FLOW_STATE_IDS)
@@ -47,6 +49,8 @@ export const ZONE_TYPES = {
     help: 'Precios donde se liquidó mucho dinero en los últimos 30 días, cerca del precio. Cuenta mientras el indicador la muestra.' },
   draw: { one: () => 'Zona dibujada', all: 'Zonas dibujadas', up: 'Zonas dibujadas', down: 'Zonas dibujadas', shown: null,
     help: 'Un rectángulo o una línea horizontal que dibujaste. Cuenta desde que lo sumaste a la estrategia: no se mira hacia atrás.' },
+  ind: { one: (way, zone) => zone?.label || 'Nivel de un indicador', all: 'Niveles de indicadores', up: 'Niveles de indicadores', down: 'Niveles de indicadores', shown: null,
+    help: 'Un nivel de un indicador del gráfico, como lo dibuja con tus ajustes, elegido con un clic: una zona de liquidaciones, un POC, un borde de un FVG, un soporte. Cuenta desde que lo sumaste a la estrategia, con el precio que tenía entonces: no se mira hacia atrás.' },
   vp: { one: (way, zone) => `${VP_PARTS[zone?.shape] || 'Nivel'} del VP fijo`, all: 'Niveles de VP fijo', up: 'Niveles de VP fijo', down: 'Niveles de VP fijo', shown: null,
     help: 'Un nivel de un perfil de volumen de rango fijo (VP Fixed Range) del gráfico: su POC, su VAH, su VAL o su área de valor, del VAL al VAH. Cuenta desde que lo sumaste a la estrategia, con el precio que tenía entonces: no se mira hacia atrás.' }
 };
@@ -77,14 +81,53 @@ export function pickText(pick, side, range = '') {
 // Las líneas que un bloque puede mirar. Una EMA de otro periodo se escribe "e<periodo>"
 export const LINE_OPTIONS = [
   ['e9', 'EMA 9'], ['e20', 'EMA 20'], ['e50', 'EMA 50'], ['e100', 'EMA 100'], ['e200', 'EMA 200'],
-  ['lips', 'Labios del Alligator'], ['teeth', 'Dientes del Alligator'], ['jaw', 'Mandíbula del Alligator']
+  ['lips', 'Labios del Alligator'], ['teeth', 'Dientes del Alligator'], ['jaw', 'Mandíbula del Alligator'],
+  ['p:vwap', 'VWAP del gráfico'],
+  ['p:vwap_u1', 'VWAP, banda superior 1'], ['p:vwap_l1', 'VWAP, banda inferior 1'],
+  ['p:vwap_u2', 'VWAP, banda superior 2'], ['p:vwap_l2', 'VWAP, banda inferior 2'],
+  ['p:vwap_u3', 'VWAP, banda superior 3'], ['p:vwap_l3', 'VWAP, banda inferior 3']
 ];
 const ALLIGATOR = { lips: 'los labios', teeth: 'los dientes', jaw: 'la mandíbula' };
+// Líneas que calcula el gráfico con los ajustes de la sesión y manda la página (kitchen.py, PAGE_LINE): "p:<clave>".
+// [dentro de una frase, como rótulo, indicador que la dibuja]
+export const PAGE_LINES = {
+  vwap: ['el VWAP', 'VWAP', 'VWAP'],
+  ...Object.fromEntries([1, 2, 3].flatMap(n => [
+    [`vwap_u${n}`, [`la banda superior ${n} del VWAP`, `VWAP +${n}`, 'VWAP']],
+    [`vwap_l${n}`, [`la banda inferior ${n} del VWAP`, `VWAP −${n}`, 'VWAP']]
+  ]))
+};
+// Series de un panel del gráfico: [dentro de una frase, indicador que la dibuja]
+export const PAGE_NUMS = {
+  oi_hist: ['el histograma del interés abierto', 'Open Interest'],
+  oi: ['el interés abierto acumulado', 'Open Interest'],
+  oi_flow: ['el flow del interés abierto', 'Open Interest'],
+  delta: ['el delta de volumen', 'Volume Delta'],
+  cvd: ['el CVD', 'CVD']
+};
+// Marcas de un indicador del gráfico: [nombre, indicador que la dibuja]
+export const PAGE_MARKS = {
+  swing: ['Swing del detector', 'Swing Detector']
+};
+const seriesOf = (keys) => keys.map(key => [key, PAGE_NUMS[key][0]]);
+const pageKey = (line) => (String(line || '').startsWith('p:') ? String(line).slice(2) : null);
+/** El indicador del gráfico que tiene que estar encendido para que un bloque cuente, o null */
+export function pageSource(block) {
+  const p = block?.p || {};
+  if (block?.id === 'pmark') return PAGE_MARKS[p.s]?.[1] || null;
+  if (['psube', 'ppos', 'pgrande', 'pcruza', 'pgiro'].includes(block?.id)) return PAGE_NUMS[p.s]?.[1] || null;
+  for (const key of ['line', 'a', 'b']) {
+    const found = PAGE_LINES[pageKey(p[key])];
+    if (found) return found[2];
+  }
+  return null;
+}
 
 /** "la EMA 50", "los dientes": una línea dentro de una frase */
-export const lineName = (line) => ALLIGATOR[line] || `la EMA ${String(line || '').slice(1)}`;
+export const lineName = (line) => ALLIGATOR[line] || (pageKey(line) ? PAGE_LINES[pageKey(line)]?.[0] || 'una línea del gráfico' : `la EMA ${String(line || '').slice(1)}`);
 /** "EMA 50", "Dientes": una línea como rótulo del gráfico */
-export const lineLabel = (line) => (ALLIGATOR[line] ? { lips: 'Labios', teeth: 'Dientes', jaw: 'Mandíbula' }[line] : `EMA ${String(line || '').slice(1)}`);
+export const lineLabel = (line) => (ALLIGATOR[line] ? { lips: 'Labios', teeth: 'Dientes', jaw: 'Mandíbula' }[line]
+  : pageKey(line) ? PAGE_LINES[pageKey(line)]?.[1] || 'Línea' : `EMA ${String(line || '').slice(1)}`);
 
 const num = (value) => {
   const n = Number(value);
@@ -154,6 +197,31 @@ const BLOCKS = [
     fields: [['n', 'Velas', 2, 100, 1]],
     text: (p, side) => `CVD de ${num(p.n)} velas ${word(p, side, 'al alza', 'a la baja', 'a favor', 'en contra')}`,
     help: 'El delta sumado de las últimas velas, con la de la señal, va de ese lado. Es el filtro de CVD del backtesting global, con trades reales.' },
+  // Lo que calcula el gráfico con los ajustes de la sesión (`page`): la página lo manda con cada pedido
+  { id: 'psube', kind: STATE, fam: 'grafico', name: 'Una serie del gráfico sube o baja', p: { s: 'oi', n: 5, dir: 'favor' }, sided: true, page: true,
+    series: seriesOf(['oi', 'oi_flow', 'delta', 'cvd']), fields: [['n', 'Velas', 1, 100, 1]],
+    text: (p, side) => { const name = PAGE_NUMS[p.s]?.[0] || 'la serie'; return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${word(p, side, 'sube', 'baja', 'va a favor', 'va en contra')} en ${num(p.n)} velas`; },
+    help: 'El valor de la serie, como la calcula su indicador en el gráfico con tus ajustes, es mayor (o menor) que hace N velas. El indicador tiene que estar encendido.' },
+  { id: 'ppos', kind: STATE, fam: 'grafico', name: 'Una serie del gráfico, sobre o bajo cero', p: { s: 'delta', dir: 'favor' }, sided: true, page: true,
+    series: seriesOf(['oi_flow', 'oi_hist', 'delta', 'cvd']),
+    text: (p, side) => { const name = PAGE_NUMS[p.s]?.[0] || 'la serie'; return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${word(p, side, 'sobre cero', 'bajo cero', 'a favor', 'en contra')}`; },
+    help: 'El valor de la serie en la vela, como la calcula su indicador en el gráfico con tus ajustes, es positivo (o negativo). El indicador tiene que estar encendido.' },
+  { id: 'pgrande', kind: EVENT, fam: 'grafico', name: 'Un valor muy grande en una serie del gráfico', p: { s: 'oi_hist', k: 3, dir: 'favor' }, sided: true, page: true,
+    series: seriesOf(['oi_hist', 'delta']), fields: [['k', 'Veces lo típico de las 100 velas anteriores', 1, 20, 0.5]],
+    text: (p, side) => { const name = PAGE_NUMS[p.s]?.[0] || 'la serie'; return `${name.charAt(0).toUpperCase()}${name.slice(1)} marca ${word(p, side, 'una subida', 'una caída', 'un valor a favor', 'un valor en contra')} de ${num(p.k)} veces lo típico`; },
+    help: 'El valor de la vela, de ese signo, es varias veces la mediana de su tamaño en las 100 velas anteriores. Es el umbral del histograma del interés abierto: entra (o sale) mucho más de lo normal.' },
+  { id: 'pcruza', kind: EVENT, fam: 'grafico', name: 'Una serie del gráfico cruza el cero', p: { s: 'oi_flow', dir: 'favor' }, sided: true, page: true,
+    series: seriesOf(['oi_flow', 'cvd', 'delta']),
+    text: (p, side) => { const name = PAGE_NUMS[p.s]?.[0] || 'la serie'; return `${name.charAt(0).toUpperCase()}${name.slice(1)} cruza el cero${word(p, side, ' hacia arriba', ' hacia abajo', ', a favor', ', en contra')}`; },
+    help: 'La serie pasa de un lado del cero al otro en esta vela.' },
+  { id: 'pgiro', kind: EVENT, fam: 'grafico', name: 'Una serie del gráfico gira', p: { s: 'oi_flow', dir: 'favor' }, sided: true, page: true,
+    series: seriesOf(['oi_flow', 'cvd']),
+    text: (p, side) => { const name = PAGE_NUMS[p.s]?.[0] || 'la serie'; return `${name.charAt(0).toUpperCase()}${name.slice(1)} ${word(p, side, 'pasa un mínimo y empieza a subir', 'pasa un máximo y empieza a bajar', 'gira a favor', 'gira en contra')}`; },
+    help: 'Como el AO de Williams: la serie venía subiendo y esta vela baja (pasó un máximo), o venía bajando y esta vela sube (pasó un mínimo).' },
+  { id: 'pmark', kind: EVENT, fam: 'grafico', name: 'Una marca de un indicador del gráfico', p: { s: 'swing', dir: 'favor' }, sided: true, page: true,
+    series: Object.entries(PAGE_MARKS).map(([key, value]) => [key, value[0]]),
+    text: (p, side) => `${PAGE_MARKS[p.s]?.[0] || 'Marca del gráfico'}${word(p, side, ', alcista', ', bajista', ', a favor', ', en contra')}`,
+    help: 'Una marca del indicador, con tus ajustes, en la vela con que se conoce. El indicador tiene que estar encendido.' },
   // De la capa de zona (`zone`): hablan de las zonas elegidas en ella. Sin lado propio: el rechazo mira el lado del trade
   { id: 'ztoca', kind: EVENT, fam: 'zonas', name: 'El precio llega a la zona', p: {}, sided: false, zone: true,
     text: () => 'El precio llega a la zona',

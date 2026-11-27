@@ -20,6 +20,7 @@ import SwingDetectorIndicator from "./SwingDetectorIndicator"; // 🎯 Swing Hig
 import OIVolumeConfluenceIndicator from "./OIVolumeConfluenceIndicator"; // 🎯 OI-Volume Confluence
 import OrderFlowIndicator from "./OrderFlowIndicator"; // 🎯 Order Flow (Footprints)
 import FVGIndicator from "./FVGIndicator";
+import EMAIndicator from "./EMAIndicator";
 import HorizontalRangesIndicator from "./HorizontalRangesIndicator";
 import VolumeProfilePeriodicIndicator from "./VolumeProfilePeriodicIndicator";
 import ResponseVolumeIndicator from "./ResponseVolumeIndicator";
@@ -95,6 +96,7 @@ class IndicatorManager {
     // 🎯 Crear indicador de Order Flow con fecha de inicio de simulación
     this.orderFlowIndicator = new OrderFlowIndicator(this.symbol, this.interval, this.days, backtestingMode, simulationStartTime);
     this.fvgIndicator = new FVGIndicator(this.symbol, this.interval, this.days);
+    this.emaIndicator = new EMAIndicator(this.symbol, this.interval, this.days);
     this.horizontalRangesIndicator = new HorizontalRangesIndicator(this.symbol, this.interval, this.days);
     const sessionProfiles = new SessionProfiles(this.symbol);
     this.vpPeriodicIndicator = new VolumeProfilePeriodicIndicator(this.symbol, this.interval, this.days, sessionProfiles);
@@ -154,6 +156,7 @@ class IndicatorManager {
       new SwingDetectorIndicator(this.symbol, this.interval, this.days), // 🎯 Swing High/Low
       this.orderFlowIndicator, // 🎯 Order Flow (Footprints)
       this.fvgIndicator,
+      this.emaIndicator,
       this.vpPeriodicIndicator,
       this.responseVolumeIndicator,
       this.vpaIndicator,
@@ -1424,6 +1427,101 @@ class IndicatorManager {
 
   getFVGIndicator() {
     return this.fvgIndicator;
+  }
+
+  /**
+   * Cocina de estrategias (27/11): lo que calculan los indicadores encendidos, con los ajustes de la sesión, en esas velas
+   * ya cerradas (`timestamps`, en orden). Un valor por vela, o null:
+   * - lines: líneas sobre el precio (el VWAP y sus bandas);
+   * - nums: series de un panel (interés abierto, delta de volumen, CVD);
+   * - marks: marcas, como pares [hora de la vela con que se conoce, lado].
+   * Solo lee: cada indicador ya calcula sin mirar más allá de la hora simulada.
+   */
+  /**
+   * Los ajustes del modal de cada indicador, con los nombres de la regla del probador (27/11): con ellos calculan los
+   * detectores de la cocina en lugar de sus valores de fábrica. Valen aunque el indicador esté apagado: son los de la sesión.
+   */
+  getKitchenSettings() {
+    const out = {};
+    const attempt = (fn) => { try { fn(); } catch { /* Un indicador sin ajustes deja los de fábrica */ } };
+    attempt(() => {
+      const cfg = this.smcIndicator.config;
+      out.smc = {
+        internal: cfg.internal.length, swing: cfg.swing.length, pick: cfg.ob.pick, area: cfg.ob.area, mitigation: cfg.ob.mitigation,
+        eqLength: cfg.equal.length, eqThreshold: cfg.equal.threshold
+      };
+    });
+    attempt(() => {
+      const cfg = this.williamsHub.config.wise;
+      out.wise = { lookback: cfg.lookback, angBars: cfg.angBars, minGapAtr: cfg.minGapAtr, requireAo: !!cfg.requireAo };
+    });
+    attempt(() => {
+      const p = this.vpaIndicator.config.params;
+      out.vpa = { legAtr: p.legAtr, fire: p.fire, meter: p.meter, decay: p.decay, rangeBars: p.rangeBars, maxRangeAtr: p.maxRangeAtr, pullBars: p.pullBars };
+    });
+    attempt(() => { out.rv = { leg: this.responseVolumeIndicator.config.legAtr }; });
+    attempt(() => {
+      const sr = this.supportResistance2Indicator;
+      out.sr = { bars: sr.swingBars, cluster: sr.clusterDistancePct };
+    });
+    return out;
+  }
+
+  getKitchenSeries(candles) {
+    const out = { lines: {}, nums: {}, marks: {}, settings: this.getKitchenSettings() };
+    if (!Array.isArray(candles) || !candles.length) return out;
+    const on = (name) => this.indicators.find(indicator => indicator.name === name && indicator.enabled);
+    const attempt = (fn) => { try { fn(); } catch { /* Un indicador sin datos no detiene a los demás */ } };
+    const number = (value) => (Number.isFinite(value) ? value : null);
+    attempt(() => {
+      const vwap = on('VWAP');
+      if (!vwap?.dataMap?.size) return;
+      const points = candles.map(candle => vwap.dataMap.get(candle.timestamp));
+      if (!points.some(Boolean)) return;
+      out.lines.vwap = points.map(point => number(point?.vwap));
+      if (vwap.showBands === false) return;
+      for (const band of [1, 2, 3]) {
+        out.lines[`vwap_u${band}`] = points.map(point => number(point?.bands?.[`upper_${band}`]));
+        out.lines[`vwap_l${band}`] = points.map(point => number(point?.bands?.[`lower_${band}`]));
+      }
+    });
+    attempt(() => {
+      const oi = on('Open Interest');
+      if (!oi?.dataMap?.size) return;
+      // Los tres modos del indicador, se muestre el que se muestre: el cambio por vela (histograma), su suma
+      // (acumulado) y el flow, con el suavizado del modal
+      const series = (rows, field) => { const map = new Map((rows || []).map(row => [row.timestamp, row[field]])); return candles.map(candle => number(map.get(candle.timestamp))); };
+      const histogram = oi.calculateHistogramMode(candles);
+      if (!histogram?._hasOICoverage) return;
+      out.nums.oi_hist = series(histogram, 'delta');
+      out.nums.oi = series(oi.calculateCumulativeMode(candles), 'closeCumulative');
+      out.nums.oi_flow = series(oi.calculateFlowMode(candles), 'oiFlow');
+    });
+    const byTime = (rows, field) => {
+      const map = new Map((rows || []).map(row => [row.timestamp, row[field]]));
+      return candles.map(candle => number(map.get(candle.timestamp)));
+    };
+    attempt(() => {
+      const volume = on('Volume Delta');
+      if (volume?.calculateVolumeDelta) out.nums.delta = byTime(volume.calculateVolumeDelta(candles), 'volumeDelta');
+    });
+    attempt(() => {
+      const cvd = on('CVD');
+      if (cvd?.calculateCVD) out.nums.cvd = byTime(cvd.calculateCVD(candles), 'closeCVD');
+    });
+    attempt(() => {
+      const swing = on('Swing Detector');
+      const frame = candles.length > 1 ? candles[candles.length - 1].timestamp - candles[candles.length - 2].timestamp : 0;
+      if (!swing?.signals?.length || !(frame > 0)) return;
+      // Un swing se conoce al cerrar la última vela de su derecha
+      const bars = Number.isFinite(swing.swingBars) ? swing.swingBars : 5;
+      out.marks.swing = swing.signals.map(signal => [signal.timestamp + bars * frame, signal.type === 'SWING_LOW' ? 1 : -1]);
+    });
+    return out;
+  }
+
+  getEMAIndicator() {
+    return this.emaIndicator;
   }
 
   getLiquidationsIndicator() {

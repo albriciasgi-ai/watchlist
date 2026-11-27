@@ -21,6 +21,7 @@ import SwingDetectorSettings from '../SwingDetectorSettings';
 import OIVolumeConfluenceSettings from '../OIVolumeConfluenceSettings';
 import OrderFlowSettings from '../OrderFlowSettings';
 import FVGSettings from '../FVGSettings';
+import EMASettings from '../EMASettings';
 import WilliamsSettings from '../WilliamsSettings';
 import SMCSettings from '../SMCSettings';
 import { WILLIAMS_NAMES } from '../indicators/williams.js';
@@ -101,6 +102,7 @@ const BacktestingApp = () => {
       "OI-Volume Confluence": true, // 🎯 Confluencia OI-Volumen (muestra cuando movimientos son fuertes/débiles)
       "Order Flow": false, // 🎯 Order Flow con Footprints (overlays + sidebar)
       "FVG": false, // Fair value gaps abiertos
+      "EMA": false, // Medias móviles exponenciales, varias a la vez
       "Rangos horizontales": false, // Cajas de rango con los detectores de la pestaña Régimen
       "VP Periodic": false, // Un perfil por sesión
       "Volumen de Respuesta": false, // Velas principales de la tendencia contra las de la retracción
@@ -217,6 +219,7 @@ const BacktestingApp = () => {
   const [showOIVolumeConfluenceSettings, setShowOIVolumeConfluenceSettings] = useState(false);
   const [showOrderFlowSettings, setShowOrderFlowSettings] = useState(false);
   const [showFVGSettings, setShowFVGSettings] = useState(false);
+  const [showEMASettings, setShowEMASettings] = useState(false);
   const [williamsSettingsFor, setWilliamsSettingsFor] = useState(null); // Nombre del indicador de Williams cuyo modal está abierto
   const [showSMCSettings, setShowSMCSettings] = useState(false);
   const [showHorizontalRangesSettings, setShowHorizontalRangesSettings] = useState(false);
@@ -1564,7 +1567,18 @@ const BacktestingApp = () => {
     kitchenBandsRef.current = bands || [];
     miniChartRefs.current[activeTimeframeRef.current]?.redraw?.();
   }, []);
-  const handleKitchenPick = useCallback((time, price) => setKitchenPick({ time, price, nonce: Date.now() }), []);
+  // Con los niveles que quedaron bajo el clic (27/11): lo que dibuja cada indicador con los ajustes de la sesión
+  const handleKitchenPick = useCallback((time, price, levels = null) => setKitchenPick({
+    time, price, nonce: Date.now(),
+    levels: (levels || []).map(level => ({
+      id: level.id, kind: level.kind, source: level.source, price: level.price, low: level.low, high: level.high,
+      line: level.line, mark: !!level.mark, panel: !!level.panel, volumeBar: !!level.volumeBar
+    }))
+  }), []);
+  // Lo que calculan los indicadores encendidos del gráfico a la vista, con sus ajustes, en esas velas cerradas
+  const getKitchenPage = useCallback(
+    (candles) => miniChartRefs.current[activeTimeframeRef.current]?.getIndicatorManager?.()?.getKitchenSeries?.(candles) || null, []
+  );
   const getKitchenCandles = useCallback(() => marketDataRef.current?.timeframes?.[activeTimeframeRef.current]?.main || [], []);
   // Los dibujos del gráfico a la vista: un rectángulo o una línea horizontal puede ser una zona de la estrategia
   const getKitchenShapes = useCallback(() => miniChartRefs.current[activeTimeframeRef.current]?.getDrawings?.() || [], []);
@@ -2028,6 +2042,7 @@ const BacktestingApp = () => {
     setShowOIVolumeConfluenceSettings(false);
     setShowOrderFlowSettings(false);
     setShowFVGSettings(false);
+    setShowEMASettings(false);
     setWilliamsSettingsFor(null);
     setShowSMCSettings(false);
     setShowHorizontalRangesSettings(false);
@@ -2655,6 +2670,7 @@ const BacktestingApp = () => {
           shapes={chartShapes}
           getShapes={getKitchenShapes}
           getProfiles={getKitchenProfiles}
+          getPage={getKitchenPage}
         />
       )}
 
@@ -2905,6 +2921,7 @@ const BacktestingApp = () => {
                     'OI-Volume Confluence': () => setShowOIVolumeConfluenceSettings(true),
                     'Order Flow': () => setShowOrderFlowSettings(true),
                     'FVG': () => setShowFVGSettings(true),
+                    'EMA': () => setShowEMASettings(true),
                     'Rangos horizontales': () => setShowHorizontalRangesSettings(true),
                     'VP Periodic': () => setShowVPPeriodicSettings(true),
                     'Volumen de Respuesta': () => setShowResponseVolumeSettings(true),
@@ -3593,6 +3610,15 @@ const BacktestingApp = () => {
           activeTimeframe={activeTimeframe}
           onApply={(settings) => applyToAllTimeframes(manager => manager.getOrderFlowIndicator().updateConfig(settings))}
           onClose={() => setShowOrderFlowSettings(false)}
+        />
+      )}
+
+      {showEMASettings && indicatorManagerRef.current && (
+        <EMASettings
+          symbol={symbol}
+          indicator={indicatorManagerRef.current.getEMAIndicator()}
+          onApply={(settings) => applyToAllTimeframes(manager => manager.getEMAIndicator().updateConfig(settings))}
+          onClose={() => setShowEMASettings(false)}
         />
       )}
 

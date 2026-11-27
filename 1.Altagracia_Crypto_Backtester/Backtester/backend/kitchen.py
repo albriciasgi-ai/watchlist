@@ -21,6 +21,7 @@ de FLOW_WAIT segundos; mientras tanto responde «detectando» y la página vuelv
 
 Los nombres de los bloques y sus textos viven en la página (frontend/src/components/kitchen/kitchenCatalog.js). Aquí
 están el cálculo y los rangos de cada parámetro; tests/test_kitchen.py vigila que las dos listas digan lo mismo."""
+import hashlib
 import json
 import threading
 import time
@@ -50,7 +51,18 @@ LINES = ("jaw", "teeth", "lips")     # Además de las EMA, que van como "e<perio
 # Estados con trades reales (delta de la vela y CVD de N velas): solo en las monedas con almacén
 FLOW_STATE_IDS = ("delta", "cvd")
 # Estados: se cumplen o no en cada vela. Con lado (dir: favor o contra del trade), salvo los de NEUTRAL
-STATE_IDS = ("side", "lejos", "order", "awake", "sleep", "tramo", "pausa", "vpam") + FLOW_STATE_IDS
+# Lo que calcula el gráfico con los ajustes de la sesión y manda la página (27/11): una serie de un panel (interés
+# abierto, delta, CVD) que sube o baja en N velas, o que está sobre o bajo cero; y una marca de un indicador
+PAGE_STATE_IDS = ("psube", "ppos")
+# Eventos sobre una serie: un valor muy grande frente a lo típico (pgrande), cruza el cero (pcruza) y pasa un máximo y
+# empieza a bajar, o un mínimo y empieza a subir (pgiro, como el AO de Williams)
+PAGE_EVENT_IDS = ("pmark", "pgrande", "pcruza", "pgiro")
+PAGE_BIG_BARS = 100       # Velas anteriores con que se mide lo típico de una serie
+PAGE_IDS = PAGE_STATE_IDS + PAGE_EVENT_IDS
+PAGE_LINE = "p:"          # Una línea del gráfico (el VWAP y sus bandas): "p:<clave>"
+PAGE_SERIES = 16          # Series de cada clase por pedido
+PAGE_MARKS = 4000         # Marcas por serie
+STATE_IDS = ("side", "lejos", "order", "awake", "sleep", "tramo", "pausa", "vpam") + FLOW_STATE_IDS + PAGE_STATE_IDS
 # Eventos de las líneas: ocurren en una vela
 LINE_EVENT_IDS = ("cross", "bounce", "xline")
 # Eventos de la capa de zona: el precio llega a una de sus zonas, o la toca y cierra de vuelta
@@ -78,7 +90,8 @@ NEUTRAL = ("sleep", "pausa", "CP") + ZONE_EVENT_IDS   # Sin lado propio (el rech
 # Zonas que detecta el motor, y las que puede traer una zona fija: además, lo que el usuario pone en el gráfico y solo
 # conoce la página: un dibujo ('draw') o un nivel de un perfil de volumen de rango fijo ('vp': POC, VAH, VAL o área de valor)
 ZONE_KINDS = ("sr", "fvg", "ob", "liq")
-USER_KINDS = ("draw", "vp")
+# 'ind': un nivel de cualquier indicador del gráfico, con los ajustes de la sesión, elegido con un clic (27/11)
+USER_KINDS = ("draw", "vp", "ind")
 FIXED_KINDS = ZONE_KINDS + USER_KINDS
 MAX_PICKS = 6             # Zonas elegidas en la capa de zona
 MAX_OFFERS = 40           # Zonas de la página que se ordenan junto a las del motor en la vela elegida
@@ -123,6 +136,12 @@ BLOCK_PARAMS = {
     "xline": {"a": "e20", "b": "e50"},
     "ztoca": {},
     "zrech": {},
+    "psube": {"n": (5, 1, 100)},
+    "ppos": {},
+    "pmark": {},
+    "pgrande": {"k": (3.0, 1.0, 20.0)},
+    "pcruza": {},
+    "pgiro": {},
 }
 ORDER_LINES = ("e20", "e50", "e200")
 
@@ -145,9 +164,17 @@ def _num(value, default, low, high):
     return max(low, min(high, value))
 
 
-def clean_line(value, default):
-    """Una línea válida: e<periodo> (EMA de 2 a 400 velas) o una del Alligator."""
+def clean_key(value):
+    """La clave de una serie del gráfico: letras minúsculas, números y guion bajo. None si no vale."""
     text = str(value or "")
+    return text if 0 < len(text) <= 24 and all(ch.isdigit() or "a" <= ch <= "z" or ch == "_" for ch in text) else None
+
+
+def clean_line(value, default):
+    """Una línea válida: e<periodo> (EMA de 2 a 400 velas), una del Alligator o una del gráfico (p:<clave>)."""
+    text = str(value or "")
+    if text.startswith(PAGE_LINE) and clean_key(text[len(PAGE_LINE):]):
+        return text
     if text in LINES:
         return text
     if text[:1] == "e" and text[1:].isdigit() and 2 <= int(text[1:]) <= 400:
@@ -162,10 +189,14 @@ def clean_block(raw, place):
         return None
     bid = str(raw.get("id") or "")
     is_state = bid in STATE_IDS
-    if not is_state and bid not in LINE_EVENT_IDS and bid not in ZONE_EVENT_IDS and bid not in EVENT_CODES:
+    if not is_state and bid not in LINE_EVENT_IDS and bid not in ZONE_EVENT_IDS and bid not in EVENT_CODES and bid not in PAGE_EVENT_IDS:
         return None
     given = raw.get("p") if isinstance(raw.get("p"), dict) else {}
     p = {}
+    if bid in PAGE_IDS:
+        p["s"] = clean_key(given.get("s"))
+        if p["s"] is None:
+            return None
     if bid in BLOCK_PARAMS:
         for key, spec in BLOCK_PARAMS[bid].items():
             if isinstance(spec, str):
@@ -231,6 +262,76 @@ def clean_offers(raw):
             continue
         out.append({"ref": str(item.get("ref") or "")[:80], "kind": item["kind"], "lo": min(lo, hi), "hi": max(lo, hi)})
     return out
+
+
+def clean_page(raw, n):
+    """Lo que manda la página de sus indicadores, con los ajustes de la sesión: `lines` (líneas sobre el precio) y
+    `nums` (series de un panel), un valor por vela para las últimas velas del pedido; y `marks`, por serie, pares
+    [hora de la vela con que se conoce la marca, lado]. Todo es de velas ya cerradas: la página no manda otra cosa.
+    Devuelve series del largo de las velas (NaN donde no hay dato) y una huella, para no mezclar cálculos."""
+    raw = raw if isinstance(raw, dict) else {}
+    out = {"lines": {}, "nums": {}, "marks": {}, "stamp": ""}
+    for group in ("lines", "nums"):
+        items = raw.get(group) if isinstance(raw.get(group), dict) else {}
+        for name in sorted(items)[:PAGE_SERIES]:
+            values = items[name]
+            if clean_key(name) is None or not isinstance(values, list):
+                continue
+            tail = values[-n:]
+            series = np.full(n, np.nan)
+            try:
+                series[n - len(tail):] = [np.nan if x is None else float(x) for x in tail]
+            except (TypeError, ValueError):
+                continue
+            series[~np.isfinite(series)] = np.nan
+            out[group][name] = series
+    items = raw.get("marks") if isinstance(raw.get("marks"), dict) else {}
+    for name in sorted(items)[:PAGE_SERIES]:
+        if clean_key(name) is None or not isinstance(items[name], list):
+            continue
+        rows = []
+        for item in items[name][-PAGE_MARKS:]:
+            try:
+                rows.append((int(item[0]), 1 if item[1] > 0 else -1 if item[1] < 0 else 0))
+            except (TypeError, ValueError, IndexError):
+                continue
+        out["marks"][name] = sorted(set(rows))
+    if out["lines"] or out["nums"] or out["marks"]:
+        digest = hashlib.md5()
+        for group in ("lines", "nums"):
+            for name, series in out[group].items():
+                digest.update(f"{group}:{name}".encode())
+                digest.update(series.tobytes())
+        digest.update(json.dumps(out["marks"], sort_keys=True).encode())
+        out["stamp"] = digest.hexdigest()
+    return out
+
+
+SESSION_FAMILIES = ("smc", "wise", "vpa", "rv")   # Familias del probador cuyos ajustes puede traer la sesión
+
+
+def clean_session(raw):
+    """Los ajustes del modal de cada indicador, como los tiene la sesión del usuario (27/11): con ellos calculan los
+    detectores del motor en lugar de sus valores de fábrica. Por familia del probador (smc, wise, vpa, rv) van los campos
+    de su regla, que clean_rule acota; `sr`, las velas por lado y el % de agrupación de S&R v2. Sin nada, todo de fábrica."""
+    raw = raw if isinstance(raw, dict) else {}
+    out = {}
+    for name in SESSION_FAMILIES:
+        item = raw.get(name)
+        if isinstance(item, dict):
+            kept = {str(key)[:24]: value for key, value in item.items() if isinstance(value, (int, float, str, bool)) and value == value}
+            if kept:
+                out[name] = kept
+    sr = raw.get("sr")
+    if isinstance(sr, dict):
+        out["sr"] = {"bars": int(_num(sr.get("bars"), SR_BARS, 2, 15)), "cluster": _num(sr.get("cluster"), SR_CLUSTER_PCT, 0.05, 3.0)}
+    out["stamp"] = json.dumps(out, sort_keys=True) if out else ""
+    return out
+
+
+def uses_page(block):
+    """Si el bloque lee algo que manda la página: una serie, una marca o una línea del gráfico."""
+    return block["id"] in PAGE_IDS or any(str(block["p"].get(key, "")).startswith(PAGE_LINE) for key in ("line", "a", "b"))
 
 
 def clean_zone(raw):
@@ -417,9 +518,12 @@ class Facts:
         self.atr = np.array(self.ctx["atr"], dtype=float)
         self.lock = threading.RLock()
         self._lines, self._events, self._truth = {}, {}, {}
-        self._bw = self._vpa = None
+        self._bw = None
+        self._vpa = {}
         self._zones, self._layers = {}, {}
         self._flow, self._flow_first, self._cvd = None, None, {}
+        self.session = clean_session(None)     # Los ajustes del modal de cada indicador en el pedido en curso
+        self.page = clean_page(None, self.n)   # Lo del gráfico en el pedido en curso (evaluate lo pone, con el candado)
 
     # ---------- Series
     def bw(self):
@@ -429,15 +533,19 @@ class Facts:
 
     def meter(self):
         """El medidor del Lector VPA, con sus valores de fábrica (los del probador)."""
-        if self._vpa is None:
-            rule = self.rule(("QE",))
+        stamp = json.dumps(self.session.get("vpa") or {}, sort_keys=True)
+        if stamp not in self._vpa:
+            rule = self.rule(("QE",), {"vpa": self.session["vpa"]} if self.session.get("vpa") else None)
             cfg = rt._vpa_cfg(rule) if rule else None
             series = vpa.compute(self.ctx["T"], self.ctx["O"], self.ctx["H"], self.ctx["L"], self.ctx["C"], self.ctx["V"], self.tf, cfg)
-            self._vpa = np.array([x if x is not None else np.nan for x in series["meter"]], dtype=float)
-        return self._vpa
+            self._vpa[stamp] = np.array([x if x is not None else np.nan for x in series["meter"]], dtype=float)
+        return self._vpa[stamp]
 
     def line(self, name):
         """Una EMA del cierre (la del probador: sin dato hasta tener su periodo) o una línea del Alligator."""
+        if name.startswith(PAGE_LINE):
+            found = self.page["lines"].get(name[len(PAGE_LINE):])
+            return found if found is not None else np.full(self.n, np.nan)
         if name not in self._lines:
             if name in LINES:
                 self._lines[name] = np.array([x if x is not None else np.nan for x in self.bw()[name]], dtype=float)
@@ -497,7 +605,11 @@ class Facts:
         for other in FAMILIES[FAMILY_OF[code]]:
             for rule_key, field, default, _, _ in EVENT_PARAMS.get(other, ()):
                 extra.setdefault(rule_key, {}).setdefault(field, default)
-        return self.family(FAMILY_OF[code], extra or None)[code]
+        # Con los ajustes del modal del indicador, si la sesión los trae; lo que cambia la cocina en el bloque manda
+        family = FAMILY_OF[code]
+        if family in SESSION_FAMILIES and self.session.get(family):
+            extra[family] = {**self.session[family], **extra.get(family, {})}
+        return self.family(family, extra or None)[code]
 
     # ---------- Order flow
     def want_flow(self, start):
@@ -576,7 +688,8 @@ class Facts:
         indicador S&R v2 (swingLevels.js). Un nivel nace al conocerse su swing; otro swing a SR_CLUSTER_PCT o menos de
         su primer toque lo refuerza; termina cuando una vela cierra más allá de todos sus toques. La zona es la línea
         que dibuja el indicador: el promedio de los toques, que se corre cuando llega uno nuevo."""
-        rule = self.rule(("SP",), {"sp": {"bars": SR_BARS}})
+        sr = self.session.get("sr") or {"bars": SR_BARS, "cluster": SR_CLUSTER_PCT}
+        rule = self.rule(("SP",), {"sp": {"bars": sr["bars"]}})
         swings = {}
         for e in (rt._fs_events(rule, self.span) if rule else []):
             known = self.index.get(e["known"] - self.tf_ms) if e.get("code") == "SP" else None
@@ -619,7 +732,7 @@ class Facts:
                 best, gap = None, None
                 for level in live[way]:
                     distance = abs(price - level["anchor"]) / level["anchor"] * 100
-                    if distance <= SR_CLUSTER_PCT and (gap is None or distance < gap):
+                    if distance <= sr["cluster"] and (gap is None or distance < gap):
                         best, gap = level, distance
                 if best is None:
                     live[way].append({"way": way, "anchor": price, "extreme": price, "sum": price, "touches": 1, "marks": [(i + 1, price, price)]})
@@ -674,7 +787,7 @@ class Facts:
         """Order blocks de la estructura SMC (smc.compute con los valores de fábrica del probador), de la estructura
         interna y de la mayor, como los dibuja el indicador. Cada uno cuenta desde la vela siguiente a la ruptura que
         lo crea y hasta la vela anterior a la que lo rompe (un cierre más allá de su borde lejano)."""
-        rule = self.rule(("OB",))
+        rule = self.rule(("OB",), {"smc": self.session["smc"]} if self.session.get("smc") else None)
         found = smc.compute(self.ctx["O"], self.ctx["H"], self.ctx["L"], self.ctx["C"], (rule or {}).get("smc") or {})
         out = []
         for ob in found["obs"]:
@@ -741,8 +854,10 @@ class Facts:
 
     def zones(self, kind):
         """Las zonas de un tipo en estas velas. Cada tipo se arma una vez."""
+        kind_key = kind
+        kind = (kind, self.session["stamp"])
         if kind not in self._zones:
-            make = {"sr": self._sr_zones, "fvg": self._fvg_zones, "ob": self._ob_zones, "liq": self._liq_zones}[kind]
+            make = {"sr": self._sr_zones, "fvg": self._fvg_zones, "ob": self._ob_zones, "liq": self._liq_zones}[kind_key]
             self._zones[kind] = sorted(make(), key=lambda z: (z["a"], z["lo0"]))
         return self._zones[kind]
 
@@ -773,7 +888,7 @@ class Facts:
         zona ya a la vista, no) y si la rechaza (reject: la toca y cierra fuera, del lado del trade: por debajo en un
         corto, por encima en un largo). `ok` es lo que pide la capa: cerca o tocándola;
         sin zonas elegidas no pide nada. `picks`: las zonas de cada elección."""
-        key = (json.dumps(zone, sort_keys=True), sd)
+        key = (json.dumps(zone, sort_keys=True), sd, self.session["stamp"])
         if key in self._layers:
             return self._layers[key]
         n = self.n
@@ -884,6 +999,20 @@ class Facts:
             meter = self.meter()
             ok = np.isfinite(meter)
             return ok & (np.where(ok, meter, 0.0) * d >= p["u"])
+        if bid in PAGE_STATE_IDS:
+            # Una serie de un panel del gráfico: sube (o baja) en N velas, o está sobre (o bajo) cero
+            value = self.page["nums"].get(p["s"])
+            if value is None:
+                return out
+            if bid == "ppos":
+                ok = np.isfinite(value)
+                return ok & (np.where(ok, value, 0.0) * d > 0)
+            back = int(p["n"])
+            if n > back:
+                ok = np.isfinite(value[back:]) & np.isfinite(value[:-back])
+                with np.errstate(invalid="ignore"):
+                    out[back:] = ok & ((value[back:] - value[:-back]) * d > 0)
+            return out
         if bid in FLOW_STATE_IDS:
             # Con trades reales: el delta de la vela, o el CVD de las últimas N (el filtro de CVD del probador), de ese lado
             flow = self.flow()
@@ -892,6 +1021,35 @@ class Facts:
             value = flow["delta"] if bid == "delta" else self.cvd(int(p["n"]))
             ok = np.isfinite(value)
             return ok & (np.where(ok, value, 0.0) * d > 0)
+        return out
+
+    def series_event(self, bid, p, d):
+        """Un evento sobre una serie de un panel del gráfico, del lado d (1 hacia arriba, −1 hacia abajo):
+        - pgrande: el valor, de ese signo, es `k` veces o más la mediana de |valor| en las PAGE_BIG_BARS velas anteriores;
+        - pcruza: cruza el cero hacia ese lado;
+        - pgiro: gira hacia ese lado: venía bajando y sube (pasó un mínimo), o venía subiendo y baja (pasó un máximo)."""
+        n = self.n
+        out = np.zeros(n, dtype=bool)
+        value = self.page["nums"].get(p["s"])
+        if value is None or n < 3:
+            return out
+        ok = np.isfinite(value)
+        v = np.where(ok, value, 0.0)
+        if bid == "pcruza":
+            both = ok[1:] & ok[:-1]
+            out[1:] = both & ((v[:-1] <= 0) & (v[1:] > 0) if d > 0 else (v[:-1] >= 0) & (v[1:] < 0))
+            return out
+        if bid == "pgiro":
+            both = ok[2:] & ok[1:-1] & ok[:-2]
+            out[2:] = both & ((v[1:-1] < v[:-2]) & (v[2:] > v[1:-1]) if d > 0 else (v[1:-1] > v[:-2]) & (v[2:] < v[1:-1]))
+            return out
+        size = np.where(ok, np.abs(v), np.nan)
+        for i in np.flatnonzero(ok & (v * d > 0)):
+            past = size[max(0, i - PAGE_BIG_BARS):i]
+            past = past[np.isfinite(past)]
+            if len(past) >= 20:
+                typical = float(np.median(past))
+                out[i] = typical > 0 and size[i] >= p["k"] * typical
         return out
 
     def line_event(self, bid, p, d):
@@ -921,7 +1079,9 @@ class Facts:
         conoce."""
         bid, p = block["id"], block["p"]
         d = side * (-1 if p.get("dir") == "contra" else 1)
-        key = (bid, json.dumps(p, sort_keys=True), 0 if bid in NEUTRAL else d)
+        key = (bid, json.dumps(p, sort_keys=True), 0 if bid in NEUTRAL else d, self.page["stamp"] if uses_page(block) else "", self.session["stamp"])
+        if key not in self._truth and len(self._truth) > 400:
+            self._truth.clear()   # Con cada cambio de lo que manda la página queda una entrada
         if key not in self._truth:
             if (bid in OF_CODES or bid in FLOW_STATE_IDS) and self.flow()["state"] != "ready":
                 return np.zeros(self.n, dtype=bool)   # Sin guardar: se calcula cuando llegue el order flow
@@ -931,6 +1091,15 @@ class Facts:
                 out = self.line_event(bid, p, d)
             elif bid in ZONE_EVENT_IDS:
                 out = np.zeros(self.n, dtype=bool)    # Salen de la capa de zona de cada estrategia: ver side()
+            elif bid in ("pgrande", "pcruza", "pgiro"):
+                out = self.series_event(bid, p, d)
+            elif bid in PAGE_EVENT_IDS:
+                # Una marca de un indicador del gráfico, en la vela con que se conoce
+                out = np.zeros(self.n, dtype=bool)
+                for t, way in self.page["marks"].get(p["s"], ()):
+                    at = self.index.get(t)
+                    if at is not None and (not way or way == d):
+                        out[at] = True
             else:
                 out = np.zeros(self.n, dtype=bool)
                 for _, known, way in self.events_of(bid, p):
@@ -1071,6 +1240,39 @@ class Facts:
             for way in (1, -1):
                 if self.line_event("xline", {"a": a, "b": b}, way)[i]:
                     events.append({"id": "xline", "p": {"a": a, "b": b}, "d": way, "late": 0})
+        # Lo del gráfico, con los ajustes de la sesión: sus líneas, sus series y sus marcas
+        for name, series in self.page["lines"].items():
+            level = series[i]
+            if not level == level:
+                continue
+            gap = (close - level) / atr
+            way = 1 if gap >= 0 else -1
+            line = PAGE_LINE + name
+            states.append({"id": "side", "p": {"line": line}, "d": way})
+            if abs(gap) >= 1:
+                states.append({"id": "lejos", "p": {"line": line, "atr": min(8.0, int(abs(gap) * 2) / 2)}, "d": way,
+                               "obs": {"atr": round(abs(float(gap)), 1)}})
+            for side in (1, -1):
+                for bid in ("cross", "bounce"):
+                    if self.line_event(bid, {"line": line}, side)[i]:
+                        events.append({"id": bid, "p": {"line": line}, "d": side, "late": 0})
+        for name, series in self.page["nums"].items():
+            value = series[i]
+            # «Sobre o bajo cero» solo dice algo en una serie que cambia de signo: el interés abierto siempre es positivo
+            signed = bool(np.nanmin(series) < 0 < np.nanmax(series)) if np.isfinite(series).any() else False
+            if signed and value == value and value != 0:
+                states.append({"id": "ppos", "p": {"s": name}, "d": 1 if value > 0 else -1})
+            if i >= 5 and value == value and series[i - 5] == series[i - 5] and value != series[i - 5]:
+                states.append({"id": "psube", "p": {"s": name, "n": 5}, "d": 1 if value > series[i - 5] else -1})
+            for bid in ("pgrande", "pcruza", "pgiro"):
+                for side in (1, -1):
+                    proto = {"s": name, **({"k": 3.0} if bid == "pgrande" else {})}
+                    if self.series_event(bid, proto, side)[i]:
+                        events.append({"id": bid, "p": proto, "d": side, "late": 0})
+        for name, rows in self.page["marks"].items():
+            for t, way in rows:
+                if t == self.bars[i]["t"]:
+                    events.append({"id": "pmark", "p": {"s": name}, "d": way, "late": 0})
         seen = set()
         for code in EVENT_CODES:
             for at, known, way in self.events_of(code):
@@ -1155,7 +1357,7 @@ def _zone_answer(facts, doc, sides, start):
     return {"has": True, "runs": _runs(ok, start), "count": int(ok[start:].sum()), "arrivals": int(arrive[start:].sum()), "picks": picks}
 
 
-def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, offers=None):
+def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, offers=None, page=None, settings=None):
     """La estrategia en borrador sobre unas velas cerradas.
 
     rows: velas [hora, apertura, máximo, mínimo, cierre, volumen]. Las últimas `view` son lo recorrido: ahí se pinta y se
@@ -1179,6 +1381,8 @@ def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, 
     start = max(0, n - max(1, min(MAX_VIEW, int(view or 1000))))
     seen = n - start
     with facts.lock:
+        facts.page = clean_page(page, n)
+        facts.session = clean_session(settings)
         facts.want_flow(start)
         flow = facts.flow(FLOW_WAIT) if uses_flow(doc) or pick is not None else None
         sides = [facts.side(doc, sd) for sd in SIDES[doc["side"]]]
@@ -1258,7 +1462,9 @@ def catalog():
             out[key] = {"default": default, "min": low, "max": high}
         return out
     return {"states": [{"id": bid, "sided": bid not in NEUTRAL, "p": fields(bid)} for bid in STATE_IDS],
-            "events": [{"id": bid, "sided": bid not in NEUTRAL, "p": fields(bid)} for bid in LINE_EVENT_IDS + ZONE_EVENT_IDS + EVENT_CODES],
+            "events": [{"id": bid, "sided": bid not in NEUTRAL, "p": fields(bid)} for bid in LINE_EVENT_IDS + ZONE_EVENT_IDS + PAGE_EVENT_IDS + EVENT_CODES],
+            # Lo que manda la página de sus indicadores: series, marcas y líneas ("p:<clave>")
+            "page": {"states": list(PAGE_STATE_IDS), "events": list(PAGE_EVENT_IDS), "line": PAGE_LINE, "series": PAGE_SERIES},
             # Con trades reales: solo en las monedas con almacén y en estos marcos
             "flow": {"states": list(FLOW_STATE_IDS), "events": list(OF_CODES), "tfs": sorted(FLOW_BLOCK_DAYS)},
             "zones": {"kinds": list(ZONE_KINDS), "fixed": list(FIXED_KINDS), "user": list(USER_KINDS), "maxPicks": MAX_PICKS,

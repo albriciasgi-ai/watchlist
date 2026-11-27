@@ -4601,7 +4601,7 @@ const MiniChart = forwardRef(({
               <div className="level-menu-item">
                 <button type="button" className="btn-quick" style={{ width: '100%' }}
                   title="Cocina de estrategias: lista lo que se cumple en la vela de este clic y las zonas que hay en ese precio, para sumarlo a la estrategia"
-                  onClick={() => { onPickCandle(levelMenu.time, levelMenu.price); setLevelMenu(null); }}>
+                  onClick={() => { onPickCandle(levelMenu.time, levelMenu.price, levelMenu.levels); setLevelMenu(null); }}>
                   Usar en la estrategia: ¿qué hay en esta vela?
                 </button>
               </div>

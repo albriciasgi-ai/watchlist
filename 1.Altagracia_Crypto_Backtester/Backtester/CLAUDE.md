@@ -1008,6 +1008,36 @@ Pasos 1.1 y 1.2 de la central de estrategias (`docs/PLAN_CENTRAL_ESTRATEGIAS.md`
 - **Tiempos** en BTC, con el disco ya leído: unos 2.5 s la primera vez en 15m y 1h, y 0.1 a 0.2 s por vela nueva. En 1m, unos 14 s la primera vez y 1 a 2 s por vela.
 - **Sin almacén**, o donde el almacén no tiene velas, esos bloques no cuentan y la pantalla lo dice.
 
+### Lo que calcula el gráfico (27/11)
+
+Pedido del usuario al probar: la cocina tiene que leer los indicadores de App 1 con los valores de la sesión, no solo sus propios detectores.
+
+- **El puente:** con cada pedido la página manda `page` (`IndicatorManager.getKitchenSeries(velas)`), lo que calculan los indicadores encendidos en las velas cerradas de lo recorrido:
+  - `lines`: un valor por vela. Hoy, el VWAP y sus bandas (`vwap`, `vwap_u1`…`vwap_l3`);
+  - `nums`: series de un panel. Hoy, `oi` (acumulado), `oi_hist` (histograma), `oi_flow`, `delta` y `cvd`;
+  - `marks`: pares [hora de la vela con que se conoce, lado]. Hoy, `swing`.
+- **En el motor** (`clean_page`, `Facts.page`):
+  - una línea `p:<clave>` vale donde vale una EMA: `side`, `lejos`, `cross`, `bounce` y `xline`;
+  - `psube` (la serie sube o baja en N velas), `ppos` (sobre o bajo cero) y `pmark` (una marca);
+  - `pgrande` (un valor de `k` veces la mediana de su tamaño en las `PAGE_BIG_BARS` = 100 velas anteriores, con 20 como mínimo), `pcruza` (cruza el cero) y `pgiro` (pasa un máximo y empieza a bajar, o un mínimo y empieza a subir). La página ofrece cada uno donde tiene sentido (`fitsSeries`): el histograma con `pgrande`, el acumulado con `psube` y el flow con `pcruza` y `pgiro`;
+  - cada cálculo lleva la huella de lo que mandó la página: dos ajustes distintos no se mezclan.
+- **Un nivel de cualquier indicador** (`USER_KINDS` suma `ind`): el menú del gráfico pasa a `onPickCandle` los niveles bajo el clic, `levelZones` los vuelve zonas fijas con su nombre y van al motor como `offers`. Cuentan desde que se suman.
+- **Una línea bajo el clic** (`lineOfLevel`, `levelLines`): el VWAP, una EMA (`line` del indicador EMA) o el Alligator. La tarjeta ofrece sus cuatro condiciones aparte de la vela.
+- **«Sobre o bajo cero»** no se ofrece en una serie que no cambia de signo, como el interés abierto.
+- **Indicador apagado:** `pageSource(bloque)` dice cuál hace falta; la cocina lo avisa y el bloque no cuenta.
+- **Los ajustes del modal** (`settings` del pedido, `IndicatorManager.getKitchenSettings()`, `clean_session`, `Facts.session`): con los nombres de la regla del probador, que `clean_rule` acota.
+  - `smc` (internal, swing, pick, area, mitigation, eqLength, eqThreshold), `wise` (lookback, angBars, minGapAtr, requireAo), `vpa` (legAtr, fire, meter, decay, rangeBars, maxRangeAtr, pullBars) y `rv` (leg) van a los eventos de su familia, al medidor VPA y a los order blocks; `sr` (bars, cluster), a los soportes y resistencias;
+  - valen aunque el indicador esté apagado, y lo que la cocina cambia en un bloque manda sobre ellos;
+  - las zonas, las capas, el medidor y cada cálculo se guardan con la huella de los ajustes;
+  - sin equivalente: el FVG (el modal mide en % del precio y el motor en ATR), las longitudes del Alligator, los Rangos y los patrones de vela.
+- **Límites:**
+  - lo que manda la página no pasa al backtesting global, tampoco los ajustes del modal;
+  - cubre lo recorrido (1,000 velas), no las de calentamiento;
+  - el CVD del gráfico depende de dónde empieza la ventana, y el interés abierto solo tiene dato donde su marco coincide con la vela.
+- **Para sumar un indicador:** su serie en `getKitchenSeries`, su nombre en `PAGE_LINES`, `PAGE_NUMS` o `PAGE_MARKS` de `kitchenCatalog.js` y, si es una línea, su caso en `lineOfLevel`.
+
+**Indicador EMA** (`EMAIndicator.js`): la EMA del cierre de `rule_tester._line`, por línea, extendida solo con las velas nuevas. `seriesFor(velas)` da las series de las cerradas. Ajustes en `ema_settings_{símbolo}`.
+
 ### Flujo
 
 ```

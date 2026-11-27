@@ -10,6 +10,7 @@ import SwingDetectorSettings from '../SwingDetectorSettings';
 import OIVolumeConfluenceSettings from '../OIVolumeConfluenceSettings';
 import OrderFlowSettings from '../OrderFlowSettings';
 import FVGSettings from '../FVGSettings';
+import EMASettings from '../EMASettings';
 import HorizontalRangesSettings from '../HorizontalRangesSettings';
 import LiquidationsSettings from '../LiquidationsSettings';
 import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
@@ -29,7 +30,7 @@ import { WILLIAMS_NAMES } from '../indicators/williams.js';
 // Indicadores con modal de ajustes
 export const WITH_SETTINGS = new Set([
   'Volume Profile', 'Range Detection', 'Rejection Patterns', 'Support & Resistance', 'S&R v2', 'VWAP',
-  'Double Top/Bottom', 'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
+  'Double Top/Bottom', 'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'EMA', 'VP Periodic',
   'Volumen de Respuesta', 'Lector VPA', 'Liquidaciones', 'Elementos OF', 'Rangos horizontales', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
 ]);
 
@@ -222,6 +223,15 @@ const ChartIndicatorSettings = ({
           indicator={current.getOrderFlowIndicator()}
           activeTimeframe={timeframe}
           onApply={(settings) => applyHere(m => m.getOrderFlowIndicator().updateConfig(settings))}
+          onClose={close}
+        />
+      );
+    case 'EMA':
+      return (
+        <EMASettings
+          symbol={symbol}
+          indicator={current.getEMAIndicator()}
+          onApply={(settings) => applyHere(m => m.getEMAIndicator().updateConfig(settings))}
           onClose={close}
         />
       );

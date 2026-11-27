@@ -55,6 +55,43 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 27 Noviembre 2026: Indicador EMA, y la Cocina Lee lo que Calcula el Gráfico con los Ajustes de la Sesión
+
+**Pedido:** al probar los pasos 1.1 y 1.2, el usuario encontró que:
+- el VWAP y el interés abierto se dejaban elegir en el gráfico pero no aparecían en la cocina;
+- una zona de liquidaciones elegida en el gráfico no salía en la lista de la vela;
+- todo quedaba atado a la vela del clic, también una línea que cambia con cada vela.
+
+Pidió que la cocina tenga todos los indicadores de App 1, con los valores de la sesión, y un indicador EMA con varios periodos a la vez.
+
+**Cambios:**
+1. **Indicador «EMA»** (`EMAIndicator.js`, modal `EMASettings.jsx`): hasta 6 líneas, cada una con su periodo (2 a 400), color y grosor. Es la EMA del cierre del backtesting global. En la simulación manual, el 2.º gráfico y el backtesting global.
+2. **Un nivel de cualquier indicador como zona** (tipo `ind`): el clic sobre un nivel manda a la cocina lo que dibuja el indicador con los ajustes de la sesión. Sale en la tarjeta como «bajo tu clic · cuenta desde ahora» y entra como zona fija, igual que un dibujo.
+3. **Líneas del gráfico** (`p:<clave>`): el VWAP y sus tres bandas por lado sirven en «cierra de un lado», «lejos», «cruza» y «rebota».
+4. **«Línea bajo tu clic»:** un clic sobre el VWAP, una EMA o el Alligator ofrece esas cuatro condiciones sin atarlas a la vela.
+5. **Series de un panel:** interés abierto, delta de volumen y CVD del gráfico, como «sube o baja en N velas» y «sobre o bajo cero».
+   - **Los tres modos del interés abierto, cada uno a su manera** (pedido después): el histograma, «un valor muy grande» (N veces lo típico de las 100 velas anteriores, 3 de fábrica); el acumulado, «sube o baja en N velas»; el flow, «cruza el cero» y «gira» (pasa un máximo y empieza a bajar, o un mínimo y empieza a subir, como el AO).
+   - **Los ajustes del modal en el motor:** SMC (longitudes de la estructura, order block e iguales), los sabios de Williams, el Lector VPA, el tramo del Volumen de Respuesta y S&R v2 (velas por lado y % de agrupación) calculan con lo que tiene la sesión.
+6. **Marcas:** las señales del Swing Detector como evento.
+7. **Aviso:** si un bloque lee un indicador que está apagado, la cocina dice cuál encender.
+8. **Pruebas:** `test_kitchen.py` (44), `kitchen.test.mjs` (28) y `ema.test.mjs` (4).
+
+**IMPORTANTE:**
+- El backend de App 1 (9000) se recarga solo al llegar el código; hay que recargar su página.
+- **La causa de la zona que no salía:** el indicador dibuja las zonas de ahora a lo largo de todo el gráfico, y la cocina buscaba las que había en la vela del clic.
+- **Lo que manda la página no se puede probar en el backtesting global:** sale del gráfico, con los ajustes de la sesión. Tampoco los ajustes del modal: allá cada elemento va con los de su regla.
+- **Falta para «todos los indicadores con los valores de la sesión»:**
+  - los ajustes que no tienen equivalente en el motor: el FVG (el modal mide en % y el motor en ATR), las longitudes del Alligator, los Rangos y los patrones de vela;
+  - las marcas de Double Top/Bottom, Rejection, Volumen de Respuesta y Lector VPA con los ajustes de la sesión;
+  - AO, AC, Gator y MFI como series;
+  - el indicador EMA en la suite.
+- **Probado en pantalla** en una copia aislada con BTC 15m desde el 01/01/2023: las tres EMA y su modal, el clic sobre la zona de liquidaciones, el clic sobre la EMA 200 y una banda del VWAP, y una estrategia con el interés abierto y un cruce de la banda (4 señales).
+- **Sin ver en pantalla:** los tres modos del interés abierto y los ajustes del modal (solo con las pruebas), el Swing como marca, el aviso del indicador apagado, la fecha oculta con estos bloques, el 2.º gráfico y el backtesting global con el EMA.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)", "Lo que calcula el gráfico (27/11)"
+
+---
+
 ### App 1 + Altagracia Trading Suite - 26 Noviembre 2026: Motor 8, lo que Decidió el Usuario en la Galería de Order Flow
 
 **Pedido:** el usuario revisó la galería 4 del protocolo de pruebas (order flow): 96 Sí, 14 No y 14 No sé. Cada caso se
