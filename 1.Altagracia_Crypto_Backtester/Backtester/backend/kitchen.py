@@ -59,6 +59,8 @@ PAGE_STATE_IDS = ("psube", "ppos")
 PAGE_EVENT_IDS = ("pmark", "pgrande", "pcruza", "pgiro")
 PAGE_BIG_BARS = 100       # Velas anteriores con que se mide lo típico de una serie
 PAGE_IDS = PAGE_STATE_IDS + PAGE_EVENT_IDS
+VOLUME = "vol"            # El volumen de las velas: una serie que el motor ya tiene, sin pedirla a la página
+ABS_DIRS = ("up", "down", "any")   # Un sentido que no depende del lado del trade: sube, baja o cualquiera
 PAGE_LINE = "p:"          # Una línea del gráfico (el VWAP y sus bandas): "p:<clave>"
 PAGE_SERIES = 16          # Series de cada clase por pedido
 PAGE_MARKS = 4000         # Marcas por serie
@@ -129,17 +131,19 @@ BLOCK_PARAMS = {
     "tramo": {"atr": (4.0, 1.0, 12.0), "n": (24, 3, 60)},
     "pausa": {"n": (3, 2, 20), "atr": (1.0, 0.2, 5.0)},
     "vpam": {"u": (0.3, 0.1, 3.0)},
-    "delta": {},
-    "cvd": {"n": (20, 2, 100)},
+    "delta": {"min": (0.0, 0.0, 90.0)},
+    "cvd": {"n": (20, 2, 100), "min": (0.0, 0.0, 90.0)},
     "cross": {"line": "e20"},
     "bounce": {"line": "e50"},
     "xline": {"a": "e20", "b": "e50"},
     "ztoca": {},
     "zrech": {},
-    "psube": {"n": (5, 1, 100)},
+    # how: contra hace N velas (ends), el promedio de las últimas N contra las N anteriores (avg) o N velas seguidas
+    # (steps). min: cuánto como mínimo, en veces el cambio típico (x) o en % del valor de partida (pct); 0 no pide nada
+    "psube": {"n": (5, 1, 100), "how": ["ends", "avg", "steps"], "min": (0.0, 0.0, 1000.0), "unit": ["x", "pct"]},
     "ppos": {},
     "pmark": {},
-    "pgrande": {"k": (3.0, 1.0, 20.0)},
+    "pgrande": {"k": (3.0, 1.0, 20.0), "w": (PAGE_BIG_BARS, 20, 500)},
     "pcruza": {},
     "pgiro": {},
 }
@@ -201,6 +205,8 @@ def clean_block(raw, place):
         for key, spec in BLOCK_PARAMS[bid].items():
             if isinstance(spec, str):
                 p[key] = clean_line(given.get(key), spec)
+            elif isinstance(spec, list):
+                p[key] = given.get(key) if given.get(key) in spec else spec[0]
             else:
                 value = _num(given.get(key), spec[0], spec[1], spec[2])
                 p[key] = int(round(value)) if isinstance(spec[0], int) else value
@@ -208,7 +214,9 @@ def clean_block(raw, place):
         value = _num(given.get(key), default, low, high)
         p[key] = int(round(value)) if isinstance(default, int) else value
     if bid not in NEUTRAL:
-        p["dir"] = "contra" if given.get("dir") == "contra" else "favor"
+        # El volumen o el interés abierto suben o bajan sin importar el lado del trade: su sentido puede ser fijo
+        fixed = bid in PAGE_IDS and given.get("dir") in ABS_DIRS
+        p["dir"] = given.get("dir") if fixed else "contra" if given.get("dir") == "contra" else "favor"
     conv = None
     if place == "ctx" and not is_state:
         conv = "recent"
@@ -331,7 +339,9 @@ def clean_session(raw):
 
 def uses_page(block):
     """Si el bloque lee algo que manda la página: una serie, una marca o una línea del gráfico."""
-    return block["id"] in PAGE_IDS or any(str(block["p"].get(key, "")).startswith(PAGE_LINE) for key in ("line", "a", "b"))
+    if block["id"] in PAGE_IDS:
+        return block["p"].get("s") != VOLUME
+    return any(str(block["p"].get(key, "")).startswith(PAGE_LINE) for key in ("line", "a", "b"))
 
 
 def clean_zone(raw):
@@ -516,6 +526,7 @@ class Facts:
         self.index = {b["t"]: i for i, b in enumerate(bars)}
         self.O, self.H, self.L, self.C = (np.array(self.ctx[k], dtype=float) for k in ("O", "H", "L", "C"))
         self.atr = np.array(self.ctx["atr"], dtype=float)
+        self.Vol = np.array(self.ctx["V"], dtype=float)
         self.lock = threading.RLock()
         self._lines, self._events, self._truth = {}, {}, {}
         self._bw = None
@@ -1001,18 +1012,13 @@ class Facts:
             return ok & (np.where(ok, meter, 0.0) * d >= p["u"])
         if bid in PAGE_STATE_IDS:
             # Una serie de un panel del gráfico: sube (o baja) en N velas, o está sobre (o bajo) cero
-            value = self.page["nums"].get(p["s"])
+            value = self.num(p["s"])
             if value is None:
                 return out
             if bid == "ppos":
                 ok = np.isfinite(value)
                 return ok & (np.where(ok, value, 0.0) * d > 0)
-            back = int(p["n"])
-            if n > back:
-                ok = np.isfinite(value[back:]) & np.isfinite(value[:-back])
-                with np.errstate(invalid="ignore"):
-                    out[back:] = ok & ((value[back:] - value[:-back]) * d > 0)
-            return out
+            return self.rising(value, p, d or 1)
         if bid in FLOW_STATE_IDS:
             # Con trades reales: el delta de la vela, o el CVD de las últimas N (el filtro de CVD del probador), de ese lado
             flow = self.flow()
@@ -1020,7 +1026,53 @@ class Facts:
                 return out
             value = flow["delta"] if bid == "delta" else self.cvd(int(p["n"]))
             ok = np.isfinite(value)
-            return ok & (np.where(ok, value, 0.0) * d > 0)
+            out = ok & (np.where(ok, value, 0.0) * d > 0)
+            least = float(p.get("min") or 0)
+            if least > 0:
+                # Su peso sobre el volumen negociado: el de la vela, o el de las N del CVD (que ya viene sobre su volumen)
+                with np.errstate(invalid="ignore", divide="ignore"):
+                    share = np.abs(value) / flow["vol"] * 100 if bid == "delta" else np.abs(value) * 100
+                out &= np.isfinite(share) & (np.where(np.isfinite(share), share, 0.0) >= least)
+            return out
+        return out
+
+    def num(self, name):
+        """Una serie de un panel: el volumen de las velas, que el motor ya tiene, o lo que manda la página."""
+        return self.Vol if name == VOLUME else self.page["nums"].get(name)
+
+    def rising(self, value, p, d):
+        """Dónde una serie sube (d 1) o baja (d −1) en N velas. `how`: contra su valor de hace N velas (ends), el
+        promedio de las últimas N contra el de las N anteriores (avg), o N velas seguidas (steps). `min` pide un mínimo:
+        en veces el cambio típico (la mediana de ese mismo cambio en las 100 velas anteriores) o en % del valor de partida."""
+        n, back, how = self.n, int(p["n"]), p.get("how", "ends")
+        out = np.zeros(n, dtype=bool)
+        cur = value
+        if how == "avg":
+            cur = np.full(n, np.nan)
+            if n >= back:
+                cur[back - 1:] = np.lib.stride_tricks.sliding_window_view(value, back).mean(axis=1)
+        if n <= back:
+            return out
+        ref = np.full(n, np.nan)
+        ref[back:] = cur[:-back]
+        with np.errstate(invalid="ignore"):
+            change = cur - ref
+            ok = np.isfinite(change)
+            out = ok & (np.where(ok, change, 0.0) * d > 0)
+            if how == "steps":
+                step = np.zeros(n, dtype=bool)
+                step[1:] = (value[1:] - value[:-1]) * d > 0
+                out[back:] &= np.lib.stride_tricks.sliding_window_view(step[1:], back).all(axis=1)
+            least = float(p.get("min") or 0)
+            if least > 0 and p.get("unit") == "pct":
+                out &= np.abs(np.where(ok, change, 0.0)) >= least / 100 * np.abs(np.where(np.isfinite(ref), ref, np.inf))
+            elif least > 0:
+                size = np.abs(change)
+                for i in np.flatnonzero(out):
+                    past = size[max(0, i - PAGE_BIG_BARS):i]
+                    past = past[np.isfinite(past)]
+                    typical = float(np.median(past)) if len(past) >= 20 else 0.0
+                    out[i] = typical > 0 and size[i] >= least * typical
         return out
 
     def series_event(self, bid, p, d):
@@ -1030,11 +1082,15 @@ class Facts:
         - pgiro: gira hacia ese lado: venía bajando y sube (pasó un mínimo), o venía subiendo y baja (pasó un máximo)."""
         n = self.n
         out = np.zeros(n, dtype=bool)
-        value = self.page["nums"].get(p["s"])
+        value = self.num(p["s"])
         if value is None or n < 3:
             return out
+        if d == 0 and bid != "pgrande":
+            return self.series_event(bid, p, 1) | self.series_event(bid, p, -1)
         ok = np.isfinite(value)
         v = np.where(ok, value, 0.0)
+        if p["s"] == VOLUME:
+            v = v * np.sign(self.C - self.O)   # El volumen no tiene signo: su lado es el color de la vela
         if bid == "pcruza":
             both = ok[1:] & ok[:-1]
             out[1:] = both & ((v[:-1] <= 0) & (v[1:] > 0) if d > 0 else (v[:-1] >= 0) & (v[1:] < 0))
@@ -1043,9 +1099,10 @@ class Facts:
             both = ok[2:] & ok[1:-1] & ok[:-2]
             out[2:] = both & ((v[1:-1] < v[:-2]) & (v[2:] > v[1:-1]) if d > 0 else (v[1:-1] > v[:-2]) & (v[2:] < v[1:-1]))
             return out
-        size = np.where(ok, np.abs(v), np.nan)
-        for i in np.flatnonzero(ok & (v * d > 0)):
-            past = size[max(0, i - PAGE_BIG_BARS):i]
+        size = np.where(ok, np.abs(value), np.nan)
+        window = int(p.get("w") or PAGE_BIG_BARS)
+        for i in np.flatnonzero(ok & ((v * d > 0) if d else (np.abs(value) > 0))):
+            past = size[max(0, i - window):i]
             past = past[np.isfinite(past)]
             if len(past) >= 20:
                 typical = float(np.median(past))
@@ -1078,7 +1135,8 @@ class Facts:
         """Dónde se cumple un bloque para un trade de ese lado (1 largo, −1 corto). Un evento, en la vela con que se
         conoce."""
         bid, p = block["id"], block["p"]
-        d = side * (-1 if p.get("dir") == "contra" else 1)
+        way = p.get("dir")
+        d = 1 if way == "up" else -1 if way == "down" else 0 if way == "any" else side * (-1 if way == "contra" else 1)
         key = (bid, json.dumps(p, sort_keys=True), 0 if bid in NEUTRAL else d, self.page["stamp"] if uses_page(block) else "", self.session["stamp"])
         if key not in self._truth and len(self._truth) > 400:
             self._truth.clear()   # Con cada cambio de lo que manda la página queda una entrada
@@ -1269,6 +1327,17 @@ class Facts:
                     proto = {"s": name, **({"k": 3.0} if bid == "pgrande" else {})}
                     if self.series_event(bid, proto, side)[i]:
                         events.append({"id": bid, "p": proto, "d": side, "late": 0})
+        # El volumen: una vela muy por encima de lo típico, y si viene creciendo o cayendo (el promedio de 5 contra las 5 de antes)
+        vol = self.Vol
+        if i >= 9:
+            now, before = float(vol[i - 4:i + 1].mean()), float(vol[i - 9:i - 4].mean())
+            if before > 0 and now != before:
+                states.append({"id": "psube", "p": {"s": VOLUME, "n": 5, "how": "avg", "dir": "up" if now > before else "down"}, "d": 0,
+                               "obs": {"pct": round((now / before - 1) * 100)}})
+        past = vol[max(0, i - PAGE_BIG_BARS):i]
+        if len(past) >= 20 and float(np.median(past)) > 0 and vol[i] >= 2 * float(np.median(past)):
+            events.append({"id": "pgrande", "p": {"s": VOLUME, "k": 2.0, "dir": "any"}, "d": 0, "late": 0,
+                           "obs": {"x": round(float(vol[i] / np.median(past)), 1)}})
         for name, rows in self.page["marks"].items():
             for t, way in rows:
                 if t == self.bars[i]["t"]:
@@ -1457,7 +1526,7 @@ def catalog():
     def fields(bid):
         out = {}
         for key, spec in BLOCK_PARAMS.get(bid, {}).items():
-            out[key] = {"line": spec} if isinstance(spec, str) else {"default": spec[0], "min": spec[1], "max": spec[2]}
+            out[key] = {"line": spec} if isinstance(spec, str) else {"options": spec} if isinstance(spec, list) else {"default": spec[0], "min": spec[1], "max": spec[2]}
         for _, key, default, low, high in EVENT_PARAMS.get(bid, ()):
             out[key] = {"default": default, "min": low, "max": high}
         return out

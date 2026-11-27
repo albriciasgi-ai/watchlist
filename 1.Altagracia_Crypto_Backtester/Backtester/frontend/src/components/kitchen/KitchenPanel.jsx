@@ -8,7 +8,7 @@ import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { isBlind, maskDate, priceText, volumeText } from '../backtesting/blindClock.js';
 import { TF_MS, lastClosedIndex } from '../backtesting/replayClock.js';
 import {
-  BLOCK_FAMILIES, EVENT, LINE_OPTIONS, STATE, VP_PARTS, ZONE_TYPES, allBlocks, blockDef, blockText, kindIn, lineLabel, pageSource, pickText, protoOf, zoneName
+  BLOCK_FAMILIES, EVENT, LINE_OPTIONS, STATE, VP_PARTS, ZONE_TYPES, allBlocks, blockDef, dirForSeries, dirOptions, isAbsDir, blockText, kindIn, lineLabel, pageSource, pickText, protoOf, zoneName
 } from './kitchenCatalog.js';
 import {
   MAX_PICKS, MAX_STEPS, SIDE_NAMES, TF_MINUTES, VIEW_BARS, ZONE_NEAR, addBlock, addPick, addStep, allBlocksOf, blankDoc, candleVerdict, closedWindow,
@@ -20,7 +20,7 @@ import { evaluateKitchen } from './kitchenApi.js';
 import { HelpCard, HelpToggle } from './KitchenHelp.jsx';
 import './Kitchen.css';
 
-const PLAYING_GAP_MS = 1200;   // Mientras reproduce: a lo sumo un pedido cada tanto
+const PLAYING_GAP_MS = 250;    // Mientras reproduce: a lo sumo un pedido cada tanto, y nunca dos a la vez
 const PAUSED_GAP_MS = 120;
 const PENDING_GAP_MS = 900;    // Con el order flow detectándose: cada cuánto se vuelve a preguntar
 const PROFILES_GAP_MS = 1000;  // Cada cuánto se miran los VP fijos del gráfico: se crean y cambian fuera de esta pestaña
@@ -122,6 +122,13 @@ const Field = ({ label, children }) => (
 const Chip = ({ block, side, info, seen, open, onOpen, onChange, onRemove }) => {
   const def = blockDef(block.id);
   const kind = kindIn(block);
+  const select = ([key, label, options]) => (
+    <Field key={key} label={label}>
+      <select value={block.p[key]} onChange={e => onChange(b => ({ ...b, p: { ...b.p, [key]: e.target.value } }))}>
+        {options.map(([value, name]) => <option key={value} value={value}>{name}</option>)}
+      </select>
+    </Field>
+  );
   return (
     <div className={`kt-chip-box${open ? ' open' : ''}`}>
       <div className="kt-chip-row">
@@ -130,11 +137,19 @@ const Chip = ({ block, side, info, seen, open, onOpen, onChange, onRemove }) => 
           {blockText(block, side)}
         </button>
         <span className="kt-count">{countText(block, info, seen)}</span>
+        <button type="button" className={`btn-quick kt-gear${open ? ' on' : ''}`} onClick={onOpen} title="Lo que se le puede cambiar a este bloque: velas, umbrales, sentido" aria-label="Opciones de este bloque">{open ? 'Cerrar' : 'Opciones'}</button>
         <button type="button" className="kt-x" onClick={onRemove} title="Quitar este bloque" aria-label="Quitar este bloque">×</button>
       </div>
       {open && (
         <div className="kt-chip-edit">
-          {def?.sided && (
+          {def?.sided && def?.series && block.id !== 'pmark' && (
+            <Field label="Sentido">
+              <select value={block.p.dir} onChange={e => onChange(b => ({ ...b, p: { ...b.p, dir: e.target.value } }))}>
+                {dirOptions(block.id).map(([value, name]) => <option key={value} value={value}>{name}</option>)}
+              </select>
+            </Field>
+          )}
+          {def?.sided && !(def?.series && block.id !== 'pmark') && (
             <button type="button" className="btn-quick" onClick={() => onChange(b => ({ ...b, p: { ...b.p, dir: b.p.dir === 'contra' ? 'favor' : 'contra' } }))}>
               Dar vuelta: {block.p.dir === 'contra' ? 'ahora va en contra del trade' : 'ahora va a favor del trade'}
             </button>
@@ -148,17 +163,19 @@ const Chip = ({ block, side, info, seen, open, onOpen, onChange, onRemove }) => 
           ))}
           {def?.series && (
             <Field label="Serie del gráfico">
-              <select value={block.p.s} onChange={e => onChange(b => ({ ...b, p: { ...b.p, s: e.target.value } }))}>
+              <select value={block.p.s} onChange={e => onChange(b => ({ ...b, p: { ...b.p, s: e.target.value, dir: dirForSeries(b.id, e.target.value, b.p.dir) } }))}>
                 {def.series.map(([value, name]) => <option key={value} value={value}>{name}</option>)}
               </select>
             </Field>
           )}
+          {(def?.selects || []).map(select)}
           {(def?.fields || []).map(([key, label, min, max, step]) => (
             <Field key={key} label={label}>
               <input type="number" min={min} max={max} step={step} value={block.p[key]}
                 onChange={e => { const value = Number(e.target.value); if (Number.isFinite(value) && e.target.value !== '') onChange(b => ({ ...b, p: { ...b.p, [key]: Math.max(min, Math.min(max, value)) } })); }} />
             </Field>
           ))}
+          {(def?.selectsAfter || []).map(select)}
           {block.conv === 'recent' && (
             <Field label="Cuenta si ocurrió en las últimas (velas)">
               <input type="number" min={1} max={50} step={1} value={block.cn}
@@ -294,6 +311,7 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
       state.controller?.abort();
       clearTimeout(state.again);
       state.serial += 1;
+      state.flight = null;
       setResult(null);
       setBusy(false);
       return undefined;
@@ -302,11 +320,20 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
     // su order flow, que todavía se está detectando
     const known = candleRef.current;
     const askPick = pick !== null && (!isPlaying || known?.t !== pick || known?.flow === 'loading') ? pick : null;
+    // Reproduciendo, un pedido a la vez: si cada vela nueva cortara el pedido en curso, a velocidad alta ninguno
+    // terminaría y las filas quedarían atrás hasta pausar. El que está en curso termina y enseguida sale otro, con lo último
+    const asking = `${engineDoc}|${askPick}|${pickPrice}`;
+    if (isPlaying && state.flight === asking) {
+      state.queued = true;
+      return undefined;
+    }
     const run = async () => {
       state.timer = null;
+      state.flight = asking;
+      state.queued = false;
       clearTimeout(state.again);
       const window_ = closedWindow(getCandles?.() || [], timeframe, currentTime, VIEW_BARS);
-      if (!window_) return;
+      if (!window_) { state.flight = null; return; }
       state.controller?.abort();
       const controller = new AbortController();
       state.controller = controller;
@@ -349,7 +376,11 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
         if (problem.name === 'AbortError' || serial !== state.serial) return;
         setError(problem.message || 'No se pudo consultar el backend');
       } finally {
-        if (serial === state.serial) setBusy(false);
+        if (serial === state.serial) {
+          setBusy(false);
+          state.flight = null;
+          if (state.queued) { state.queued = false; setRetry(value => value + 1); }
+        }
       }
     };
     const gap = isPlaying ? PLAYING_GAP_MS : PAUSED_GAP_MS;
@@ -368,6 +399,9 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
   useEffect(() => { setResult(null); setPick(null); setFocus(null); setFocusZone(null); setCandleInfo(null); candleRef.current = null; }, [symbol, timeframe]);
 
   const fresh = result && result.tfName === timeframe ? result : null;
+  // Reproduciendo, lo calculado puede ir unas velas atrás de la última cerrada
+  const evalTime = fresh?.times?.length ? fresh.times[fresh.times.length - 1] : null;
+  const behind = evalTime !== null && lastTime !== null && lastTime > evalTime ? Math.round((lastTime - evalTime) / tfMs) : 0;
   const focusBlock = focus ? allBlocksOf(doc).find(block => block.uid === focus) : null;
   const zone = doc.zone;
   const openZone = focusZone && zone.picks.some(item => item.uid === focusZone) ? focusZone : null;
@@ -375,10 +409,10 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
   // Lo que se pinta en el gráfico: una fila por capa, las señales, las líneas, la vela elegida y las zonas
   useEffect(() => {
     onBands?.(kitchenBands(fresh, {
-      tf: timeframe, pick, focus: focusBlock ? focus : null, focusText: focusBlock ? blockText(focusBlock, side) : '', focusZone: openZone
+      tf: timeframe, pick, focus: focusBlock ? focus : null, focusText: focusBlock ? blockText(focusBlock, side) : '', focusZone: openZone, behind
     }));
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [fresh, pick, focus, openZone, timeframe, side, doc]);
+  }, [fresh, pick, focus, openZone, timeframe, side, doc, behind]);
   useEffect(() => () => onBands?.([]), []);   // eslint-disable-line react-hooks/exhaustive-deps
 
   const change = useCallback((next) => { setDoc(next); setNotice(null); }, []);
@@ -392,8 +426,10 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
   const fitsSeries = (item) => { const def = blockDef(item.id); return !def?.series || def.series.some(([key]) => key === item.p?.s); };
   const offered = (item) => {
     const def = blockDef(item.id);
-    const p = { ...item.p, ...(def?.sided ? { dir: relativeDir(item.d || 1, side, viewSide) } : {}) };
+    const p = { ...item.p, ...(def?.sided && !isAbsDir(item.p?.dir) ? { dir: relativeDir(item.d || 1, side, viewSide) } : {}) };
     const parts = [];
+    if (Number.isFinite(item.obs?.pct)) parts.push(`ahora, ${item.obs.pct > 0 ? '+' : ''}${item.obs.pct} %`);
+    if (Number.isFinite(item.obs?.x)) parts.push(`ahora, ${item.obs.x} veces lo típico`);
     if (item.obs?.atr !== undefined) parts.push(`ahora, ${item.obs.atr} ATR`);
     if (item.obs?.meter !== undefined) parts.push(`ahora, ${item.obs.meter > 0 ? '+' : ''}${item.obs.meter}`);
     if (Number.isFinite(item.obs?.share)) parts.push(`ahora, ${item.obs.share} % del volumen${item.id === 'cvd' ? ' de esas velas' : ''}`);
@@ -428,12 +464,19 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
     .filter(Boolean);
   // Un dibujo cuenta desde ahora (la hora simulada en que se suma), no desde antes: se dibujó sabiendo lo que pasó
   const drawn = drawnZones(getShapes?.() || shapes || [], Number.isFinite(currentTime) ? currentTime : null);
-  const addZoneEvent = (id) => change(addBlock(doc, pick !== null ? 'auto' : 'step', protoOf(id), pick, tfMs));
+  // Un bloque recién sumado queda abierto: sus opciones (velas, umbrales, sentido) a la vista, y resaltado en el gráfico
+  const addOpen = (next) => {
+    change(next);
+    const before = new Set(allBlocksOf(doc).map(block => block.uid));
+    const added = allBlocksOf(next).find(block => !before.has(block.uid));
+    if (added) setFocus(added.uid);
+  };
+  const addZoneEvent = (id) => addOpen(addBlock(doc, pick !== null ? 'auto' : 'step', protoOf(id), pick, tfMs));
   const flowInfo = fresh?.flow || null;
   const isUsed = (item) => allBlocksOf(doc).some(block => block.id === item.id && JSON.stringify(block.p) === JSON.stringify({ ...blockDef(item.id).p, ...item.p }));
   const addFromCandle = (target, item) => {
     const at = pick + (item.lateMs || 0);
-    change(addBlock(doc, target, { id: item.id, p: item.p }, at, tfMs));
+    addOpen(addBlock(doc, target, { id: item.id, p: item.p }, at, tfMs));
   };
 
   const pickedCandle = pick !== null ? main[lastClosedIndex(main, timeframe, pick + tfMs)] : null;
@@ -785,7 +828,11 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
           {fresh.pending && allBlocksOf(doc).some(block => blockDef(block.id)?.flow) && (
             <div className="kt-count">Falta el order flow: esta cuenta todavía no incluye sus bloques.</div>
           )}
-          <div className="kt-count">Solo cuenta velas ya cerradas en la hora simulada.{busy ? ' Actualizando…' : ''}</div>
+          <div className="kt-count">Se lee así: {phrase(doc, price)}</div>
+          <div className="kt-count">
+            Solo cuenta velas ya cerradas en la hora simulada.
+            {behind > 0 ? ` Calculado hasta la vela del ${when(evalTime)}: ${behind === 1 ? 'falta 1 vela' : `faltan ${number(behind)} velas`}, que entran en un momento.` : busy ? ' Actualizando…' : ' Al día.'}
+          </div>
         </div>
       )}
 
@@ -809,8 +856,8 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
                         <span className={`kt-chip ${def.kind === STATE ? 'state' : 'event'} flat`} title={def.help}>{blockText(protoOf(def.id), expressSide)}</span>
                       </div>
                       <div className="kt-offer-actions">
-                        <button type="button" className={`btn-quick${def.kind === STATE ? ' kt-main' : ''}`} onClick={() => change(addBlock(doc, 'ctx', protoOf(def.id), null, tfMs))}>Contexto</button>
-                        <button type="button" className={`btn-quick${def.kind === EVENT ? ' kt-main' : ''}`} onClick={() => change(addBlock(doc, 'step', protoOf(def.id), null, tfMs))}>Paso {doc.gat.length}</button>
+                        <button type="button" className={`btn-quick${def.kind === STATE ? ' kt-main' : ''}`} onClick={() => addOpen(addBlock(doc, 'ctx', protoOf(def.id), null, tfMs))}>Contexto</button>
+                        <button type="button" className={`btn-quick${def.kind === EVENT ? ' kt-main' : ''}`} onClick={() => addOpen(addBlock(doc, 'step', protoOf(def.id), null, tfMs))}>Paso {doc.gat.length}</button>
                       </div>
                     </div>
                   ))}
