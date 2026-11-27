@@ -3876,7 +3876,7 @@ async def kitchen_evaluate(request: Request, symbol: str):
     body = await request.json()
     result = await run_in_threadpool(kitchen.evaluate, sanitize_filename(symbol), body.get("tf") or 15, body.get("candles") or [],
                                      body.get("doc"), body.get("view") or 1000, body.get("pick"), body.get("pickPrice"),
-                                     body.get("offers"))
+                                     body.get("offers"), body.get("page"), body.get("settings"))
     return _json_response(result)
 
 

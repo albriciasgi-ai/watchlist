@@ -45,6 +45,8 @@ def every_block():
     """Un bloque de cada clase, con sus valores de fábrica y los dos sentidos."""
     out = []
     for bid in kitchen.STATE_IDS + kitchen.LINE_EVENT_IDS + kitchen.EVENT_CODES:
+        if bid in kitchen.PAGE_IDS:
+            continue   # Lo que manda la página tiene sus propias pruebas
         for way in ("favor", "contra"):
             block = kitchen.clean_block({"uid": bid + way, "id": bid, "p": {"dir": way}}, "step")
             out.append(block)
@@ -544,7 +546,7 @@ def test_un_nivel_de_un_vp_fijo_es_una_zona_fija_que_cuenta_desde_que_se_suma_y_
     assert [s["i"] for s in result["signals"]] == [50, 70]      # La vela 60 lo toca, pero cierra arriba: no es un rechazo
     assert result["zone"]["picks"]["p"] == {"count": 1, "open": True, "bands": [[40 * MS, 80 * MS, 105.5, 105.5, 0]]}
     zones = kitchen.catalog()["zones"]
-    assert set(zones["user"]) == set(kitchen.USER_KINDS) == {"draw", "vp"} and set(zones["user"]) < set(zones["fixed"])
+    assert set(zones["user"]) == set(kitchen.USER_KINDS) == {"draw", "vp", "ind"} and set(zones["user"]) < set(zones["fixed"])
 
 
 def test_los_niveles_de_los_vp_fijos_se_ordenan_con_las_zonas_de_la_vela_elegida():
@@ -744,7 +746,7 @@ def test_la_pagina_conoce_los_mismos_bloques_que_el_motor():
     ids = set(re.findall(r"\bid: '([A-Za-z]+)'", text)) | set(re.findall(r"^\s{2}([A-Z]{2}): ", text, flags=re.M))
     listed = lambda name: set(re.findall(r"'([A-Za-z]+)'", (re.search(name + r" = \[(.*?)\]", text, flags=re.S) or [None, ""])[1]))
     ids |= listed("OF_ELEMENTS")
-    wanted = set(kitchen.STATE_IDS + kitchen.LINE_EVENT_IDS + kitchen.ZONE_EVENT_IDS + kitchen.EVENT_CODES)
+    wanted = set(kitchen.STATE_IDS + kitchen.LINE_EVENT_IDS + kitchen.ZONE_EVENT_IDS + kitchen.PAGE_EVENT_IDS + kitchen.EVENT_CODES)
     assert wanted <= ids, f"La página no conoce: {sorted(wanted - ids)}"
     catalog = kitchen.catalog()
     assert {b["id"] for b in catalog["states"] + catalog["events"]} == wanted
@@ -753,3 +755,129 @@ def test_la_pagina_conoce_los_mismos_bloques_que_el_motor():
     assert listed("USER_ZONE_KINDS") == set(kitchen.USER_KINDS) == set(catalog["zones"]["user"])
     assert listed("OF_ELEMENTS") == set(kitchen.OF_CODES) == set(catalog["flow"]["events"])
     assert listed("FLOW_STATES") == set(kitchen.FLOW_STATE_IDS)
+
+
+# ==================== Lo que calcula el gráfico, con los ajustes de la sesión (27/11) ====================
+
+def test_una_linea_del_grafico_sirve_como_cualquier_linea():
+    """El VWAP que manda la página (un valor por vela cerrada) se usa en «cierra de un lado», «lejos», «cruza» y «rebota»."""
+    bars = walk(600)
+    closes = [b["c"] for b in bars]
+    line = [c * 0.99 for c in closes[-300:]]          # Siempre por debajo del cierre: el precio está encima
+    doc = {"side": "long", "ctx": [{"uid": "a", "id": "side", "p": {"line": "p:vwap"}}], "gat": []}
+    result = kitchen.evaluate("TEST", 60, rows(bars), doc, view=300, page={"lines": {"vwap": line}})
+    assert result["success"] and result["blocks"]["a"]["count"] == 300
+    assert result["lines"]["p:vwap"][0] == pytest.approx(line[0])
+    # Sin la línea en el pedido, el bloque no se cumple nunca
+    empty = kitchen.evaluate("TEST", 60, rows(bars), doc, view=300)
+    assert empty["blocks"]["a"]["count"] == 0
+    # Y otra línea da otro resultado con las mismas velas: los cálculos no se mezclan
+    above = kitchen.evaluate("TEST", 60, rows(bars), doc, view=300, page={"lines": {"vwap": [c * 1.01 for c in closes[-300:]]}})
+    assert above["blocks"]["a"]["count"] == 0
+
+
+def test_una_linea_del_grafico_solo_cuenta_donde_la_pagina_la_mando():
+    bars = walk(600)
+    line = [b["c"] * 0.99 for b in bars[-100:]]
+    doc = {"side": "long", "ctx": [{"uid": "a", "id": "side", "p": {"line": "p:vwap"}}], "gat": []}
+    result = kitchen.evaluate("TEST", 60, rows(bars), doc, view=300, page={"lines": {"vwap": line}})
+    assert result["blocks"]["a"]["count"] == 100 and result["blocks"]["a"]["runs"] == [[200, 299]]
+
+
+def test_una_serie_de_un_panel_sube_o_esta_sobre_cero():
+    bars = walk(400)
+    series = [float(i) for i in range(-100, 100)]     # Sube siempre; pasa de negativa a positiva en la mitad
+    doc = {"side": "long", "ctx": [{"uid": "up", "id": "psube", "p": {"s": "oi", "n": 5}}, {"uid": "pos", "id": "ppos", "p": {"s": "oi"}}], "gat": []}
+    result = kitchen.evaluate("TEST", 60, rows(bars), doc, view=200, page={"nums": {"oi": series}})
+    assert result["blocks"]["up"]["count"] == 195      # Las 5 primeras no tienen con qué comparar
+    assert result["blocks"]["pos"]["count"] == 99      # De 1 a 99
+    short = kitchen.evaluate("TEST", 60, rows(bars), {**doc, "side": "short"}, view=200, page={"nums": {"oi": series}})
+    assert short["blocks"]["up"]["count"] == 0 and short["blocks"]["pos"]["count"] == 100
+
+
+def test_una_marca_del_grafico_es_un_evento_en_la_vela_con_que_se_conoce():
+    bars = walk(400)
+    marks = [[bars[-50]["t"], 1], [bars[-20]["t"], -1], [bars[-10]["t"], 0], [123, 1]]
+    doc = {"side": "long", "gat": [{"blocks": [{"uid": "m", "id": "pmark", "p": {"s": "swing"}}]}]}
+    result = kitchen.evaluate("TEST", 60, rows(bars), doc, view=200, pick=bars[-50]["t"], page={"marks": {"swing": marks}})
+    assert result["blocks"]["m"]["runs"] == [[150, 150], [190, 190]]     # La alcista y la que no tiene lado
+    assert any(e["id"] == "pmark" and e["p"] == {"s": "swing"} and e["d"] == 1 for e in result["candle"]["events"])
+
+
+def test_la_vela_elegida_lista_lo_que_manda_la_pagina():
+    bars = walk(400)
+    page = {"lines": {"vwap": [b["c"] - 5 * (b["h"] - b["l"]) - 50 for b in bars[-100:]]}, "nums": {"oi": [float(i) for i in range(100)], "delta": [float(i) for i in range(-50, 50)]}}
+    result = kitchen.evaluate("TEST", 60, rows(bars), {}, view=200, pick=bars[-3]["t"], page=page)
+    states = result["candle"]["states"]
+    assert any(s["id"] == "side" and s["p"]["line"] == "p:vwap" and s["d"] == 1 for s in states)
+    assert any(s["id"] == "psube" and s["p"]["s"] == "oi" and s["d"] == 1 for s in states)
+    # «Sobre cero» solo se ofrece en una serie que cambia de signo: el interés abierto siempre es positivo
+    assert any(s["id"] == "ppos" and s["p"]["s"] == "delta" for s in states)
+    assert not any(s["id"] == "ppos" and s["p"]["s"] == "oi" for s in states)
+
+
+def test_un_bloque_del_grafico_sin_clave_valida_no_entra():
+    assert kitchen.clean_block({"uid": "a", "id": "psube", "p": {"s": "OI; drop"}}, "ctx") is None
+    assert kitchen.clean_block({"uid": "a", "id": "pmark", "p": {}}, "step") is None
+    assert kitchen.clean_line("p:vwap_u1", "e50") == "p:vwap_u1" and kitchen.clean_line("p:../x", "e50") == "e50"
+
+
+def test_un_nivel_de_un_indicador_es_una_zona_fija_como_un_dibujo():
+    """Lo que se elige con un clic en el gráfico (una zona de liquidaciones, un POC, un borde de FVG) entra como franja
+    fija: cuenta desde que se suma y no termina. Y se ordena con las zonas del motor en la vela elegida."""
+    bars = walk(400)
+    price = bars[-5]["c"]
+    offers = kitchen.clean_offers([{"ref": "liq|1", "kind": "ind", "lo": price * 0.999, "hi": price * 1.001}])
+    assert offers and offers[0]["kind"] == "ind"
+    result = kitchen.evaluate("TEST", 60, rows(bars), {}, view=200, pick=bars[-5]["t"], pick_price=price, offers=offers)
+    assert any(z.get("ref") == "liq|1" and z["under"] for z in result["candle"]["zones"])
+    pick = kitchen.clean_pick({"uid": "z", "type": "one", "kind": "ind", "lo": price * 0.999, "hi": price * 1.001, "from": bars[-30]["t"]})
+    assert pick is not None
+    doc = {"zone": {"picks": [pick], "rel": "in"}, "gat": [{"blocks": [{"uid": "t", "id": "ztoca"}]}]}
+    out = kitchen.evaluate("TEST", 60, rows(bars), doc, view=200)
+    assert out["zone"]["picks"]["z"]["count"] == 1 and out["zone"]["picks"]["z"]["open"]
+
+
+def test_los_tres_modos_del_interes_abierto_cada_uno_a_su_manera():
+    """El histograma, con un umbral frente a lo típico; el flow, cuando cruza el cero o gira (pasa un máximo y empieza a
+    bajar, o un mínimo y empieza a subir). El acumulado va con «sube o baja en N velas»."""
+    bars = walk(500)
+    hist = [1.0 if i % 2 else -1.0 for i in range(200)]
+    hist[150], hist[170] = 9.0, -9.0                       # Dos valores muy grandes, uno de cada signo
+    flow = [float(abs((i % 40) - 20) - 10) for i in range(200)]   # Dientes de sierra entre −10 y 10
+    doc = {"side": "long", "gat": [{"mode": "any", "blocks": [
+        {"uid": "big", "id": "pgrande", "p": {"s": "oi_hist", "k": 3}},
+        {"uid": "cross", "id": "pcruza", "p": {"s": "oi_flow"}},
+        {"uid": "turn", "id": "pgiro", "p": {"s": "oi_flow"}}]}]}
+    page = {"nums": {"oi_hist": hist, "oi_flow": flow}}
+    up = kitchen.evaluate("TEST", 60, rows(bars), doc, view=200, page=page)["blocks"]
+    assert up["big"]["runs"] == [[150, 150]]               # Solo la subida grande: es un largo y va a favor
+    assert up["turn"]["runs"] == [[21, 21], [61, 61], [101, 101], [141, 141], [181, 181]]   # Tras cada mínimo
+    assert up["cross"]["count"] == 5                       # Cada vez que pasa de negativo a positivo
+    down = kitchen.evaluate("TEST", 60, rows(bars), {**doc, "side": "short"}, view=200, page=page)["blocks"]
+    assert down["big"]["runs"] == [[170, 170]]
+    assert down["turn"]["runs"] == [[41, 41], [81, 81], [121, 121], [161, 161]]     # Tras cada máximo
+    # Lo típico sale de las velas anteriores: un valor grande no cambia lo que se dijo antes de él
+    longer = kitchen.evaluate("TEST", 60, rows(bars), doc, view=200, page={"nums": {"oi_hist": hist[:160] + [50.0] * 40, "oi_flow": flow}})["blocks"]
+    assert longer["big"]["runs"][0] == [150, 150]
+
+
+def test_los_detectores_calculan_con_los_ajustes_de_la_sesion():
+    """Los ajustes del modal de cada indicador llegan al motor (27/11): cambian lo que cuenta, y sin ellos, o con los
+    de fábrica, todo queda como antes. Dos ajustes distintos no se mezclan en lo guardado."""
+    bars = walk(900)
+    doc = {"side": "long", "zone": {"picks": [{"kind": "sr", "mode": "type"}]},
+           "gat": [{"mode": "any", "blocks": [{"uid": code, "id": code} for code in ("EQ", "WD", "QA")]}]}
+    def count(settings=None):
+        out = kitchen.evaluate("TEST", 60, rows(bars), doc, view=600, settings=settings)
+        return {**{uid: block["count"] for uid, block in out["blocks"].items()}, "zone": json.dumps(out.get("zone"), sort_keys=True)}
+    base = count()
+    assert count({}) == base and count({"sr": {"bars": 5, "cluster": 0.3}}) == base
+    for name, settings, moves in (("smc", {"internal": 12, "swing": 60, "eqLength": 8}, "EQ"), ("wise", {"requireAo": False, "lookback": 3}, "WD"),
+                                  ("vpa", {"legAtr": 4, "fire": 0.8}, "QA"), ("sr", {"bars": 12, "cluster": 1.5}, "zone")):
+        moved = count({name: settings})
+        assert moved[moves] != base[moves], name                                  # Cada familia toma los suyos
+        assert all(moved[key] == base[key] for key in base if key != moves), name  # Y no toca a las demás
+    assert count() == base                                          # Lo de fábrica no quedó contaminado
+    clean = kitchen.clean_session({"smc": {"internal": 9, "x": [1]}, "otra": {"a": 1}, "sr": {"bars": 99, "cluster": "x"}})
+    assert clean["smc"] == {"internal": 9} and "otra" not in clean and clean["sr"] == {"bars": 15, "cluster": 0.3}

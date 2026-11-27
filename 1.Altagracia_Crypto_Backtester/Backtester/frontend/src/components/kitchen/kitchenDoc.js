@@ -42,6 +42,8 @@ function normalizePick(raw) {
       way: raw.way === 1 || raw.way === -1 ? raw.way : 0,
       // Qué es dentro de su tipo: un dibujo, rect o line; un nivel de un VP fijo, poc, vah, val o va (su área de valor)
       ...(raw.shape ? { shape: String(raw.shape) } : {}),
+      // Un nivel de un indicador: su nombre, como lo dice el gráfico
+      ...(raw.kind === 'ind' && raw.label ? { label: String(raw.label).slice(0, 80) } : {}),
       // Un nivel de S&R: el toque más lejano, que es el que un cierre tiene que pasar para terminarlo
       ...(raw.kind === 'sr' && finite(raw.edge) && raw.edge > 0 ? { edge: raw.edge } : {})
     };
@@ -162,6 +164,56 @@ export function profileZones(profiles, now) {
   }
   return out;
 }
+
+// Lo que el gráfico dibuja como línea que cambia con cada vela: no es una franja fija sino una línea de la estrategia
+const ALLIGATOR_LINES = [['labios', 'lips'], ['dientes', 'teeth'], ['mandíbula', 'jaw']];
+
+/**
+ * La línea de la cocina que corresponde a un elegible del gráfico, o null si no es una línea: una EMA ("e50"), el VWAP
+ * o una de sus bandas ("p:vwap", "p:vwap_u1") o una del Alligator. Con ella se arman condiciones que no dependen de
+ * la vela del clic: el precio la cruza, rebota en ella, cierra de un lado o está lejos.
+ */
+export function lineOfLevel(level) {
+  if (!level) return null;
+  if (typeof level.line === 'string') return level.line;
+  const kind = String(level.kind || '');
+  if (level.source === 'VWAP') {
+    if (kind === 'VWAP') return 'p:vwap';
+    const band = /^Banda (superior|inferior) ([123])$/.exec(kind);
+    return band ? `p:vwap_${band[1] === 'superior' ? 'u' : 'l'}${band[2]}` : null;
+  }
+  if (level.source === 'Alligator') {
+    const found = ALLIGATOR_LINES.find(([word]) => kind.toLowerCase().includes(word));
+    return found ? found[1] : null;
+  }
+  return null;
+}
+
+/**
+ * Los niveles del gráfico que quedaron bajo el clic, como zonas fijas: cada uno es lo que dibuja su indicador con los
+ * ajustes de la sesión (una zona de liquidaciones, un POC, un borde de un FVG, un soporte). Como un dibujo, cuenta desde
+ * `now`, la hora simulada en que se suma, con el precio de ese momento. Las marcas, las lecturas de un panel y las
+ * líneas que cambian con cada vela no son zonas.
+ */
+export function levelZones(levels, now) {
+  if (!finite(now)) return [];
+  const out = [];
+  const seen = new Set();
+  for (const level of levels || []) {
+    if (!level || level.mark || level.panel || level.volumeBar || lineOfLevel(level)) continue;
+    const [low, high] = finite(level.low) && finite(level.high) ? [Math.min(level.low, level.high), Math.max(level.low, level.high)] : [level.price, level.price];
+    if (!finite(low) || !finite(high) || low <= 0) continue;
+    const label = [level.kind, level.source].filter(Boolean).join(' · ').slice(0, 80);
+    const id = `ind|${level.id ?? label}|${low}|${high}`;
+    if (seen.has(id)) continue;
+    seen.add(id);
+    out.push({ id, type: 'one', kind: 'ind', label, lo: low, hi: high, from: now, way: 0 });
+  }
+  return out;
+}
+
+/** Las líneas del gráfico bajo el clic, sin repetir */
+export const levelLines = (levels) => [...new Set((levels || []).map(lineOfLevel).filter(Boolean))];
 
 /** Esas zonas como las pide el motor para ordenarlas en la vela elegida, junto a las suyas (kitchen.py, clean_offers) */
 export const offersForEngine = (groups) => (groups || []).flatMap(group => group.zones.map(zone => ({ ref: zone.id, kind: zone.kind, lo: zone.lo, hi: zone.hi })));

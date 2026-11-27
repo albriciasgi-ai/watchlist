@@ -18,6 +18,7 @@ import SwingDetectorSettings from '../SwingDetectorSettings';
 import OIVolumeConfluenceSettings from '../OIVolumeConfluenceSettings';
 import OrderFlowSettings from '../OrderFlowSettings';
 import FVGSettings from '../FVGSettings';
+import EMASettings from '../EMASettings';
 import HorizontalRangesSettings from '../HorizontalRangesSettings';
 import LiquidationsSettings from '../LiquidationsSettings';
 import OrderFlowElementsSettings from '../OrderFlowElementsSettings';
@@ -52,7 +53,7 @@ const DAY_MS = 86400000;
 
 // Los mismos indicadores que ofrece la principal, apagados salvo el volumen
 const INDICATORS = [
-  'Volume Delta', 'Volume Profile', 'CVD', 'Open Interest', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
+  'Volume Delta', 'Volume Profile', 'CVD', 'Open Interest', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'EMA', 'VP Periodic',
   'Volumen de Respuesta', 'Lector VPA', 'Liquidaciones', 'Elementos OF', 'VWAP', 'Range Detection', 'Rangos horizontales', 'Rejection Patterns',
   'Double Top/Bottom', 'Support & Resistance', 'S&R v2', 'Swing Detector', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
 ];
@@ -61,7 +62,7 @@ const DEFAULT_ON = new Set(['Volume Delta']);
 // Indicadores con modal de ajustes (los mismos que en la principal)
 const WITH_SETTINGS = new Set([
   'Volume Profile', 'Range Detection', 'Rejection Patterns', 'Support & Resistance', 'S&R v2', 'VWAP',
-  'Double Top/Bottom', 'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'VP Periodic',
+  'Double Top/Bottom', 'Swing Detector', 'OI-Volume Confluence', 'Order Flow', 'FVG', 'EMA', 'VP Periodic',
   'Volumen de Respuesta', 'Lector VPA', 'Liquidaciones', 'Elementos OF', 'Rangos horizontales', 'Estructura SMC', 'Alligator', 'Fractales', 'Tres sabios', 'Zonas de Williams', 'AO', 'AC', 'Gator', 'MFI'
 ]);
 
@@ -487,6 +488,15 @@ const SecondaryChartApp = () => {
             indicator={current.getOrderFlowIndicator()}
             activeTimeframe={timeframe}
             onApply={(settings) => applyHere(m => m.getOrderFlowIndicator().updateConfig(settings))}
+            onClose={closeSettings}
+          />
+        );
+      case 'EMA':
+        return (
+          <EMASettings
+            symbol={symbol}
+            indicator={current.getEMAIndicator()}
+            onApply={(settings) => applyHere(m => m.getEMAIndicator().updateConfig(settings))}
             onClose={closeSettings}
           />
         );

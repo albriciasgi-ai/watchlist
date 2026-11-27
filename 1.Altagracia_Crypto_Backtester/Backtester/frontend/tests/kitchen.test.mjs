@@ -3,12 +3,12 @@
 import assert from 'node:assert/strict';
 import {
   EVENT, FLOW_STATES, STATE, USER_ZONE_KINDS, VP_PARTS, ZONE_KINDS, ZONE_TYPES, allBlocks, blockDef, blockText, kindIn, lineName, pickText, protoOf,
-  zoneName
+  zoneName, lineLabel, pageSource
 } from '../src/components/kitchen/kitchenCatalog.js';
 import {
   LEAD_BARS, MAX_PICKS, MAX_STEPS, addBlock, addPick, addStep, allBlocksOf, blankDoc, candleVerdict, closedWindow, docForEngine, drawnZones, isBlank,
   kitchenBands, linkFor, mirrored, normalizeDoc, offersForEngine, phrase, pickFromZone, pickRange, placeFor, profileZones, relativeDir, removeBlock,
-  removePick, removeStep, samePick, setParam, setZone, withSide, withVersion, withoutStrategy, zoneText
+  removePick, removeStep, samePick, setParam, setZone, withSide, withVersion, withoutStrategy, zoneText, levelLines, levelZones, lineOfLevel
 } from '../src/components/kitchen/kitchenDoc.js';
 
 const tests = [];
@@ -281,7 +281,7 @@ test('cada zona elegida se lee según el lado del trade', () => {
   assert.equal(zoneName({ kind: 'sr', way: 1 }), 'Soporte');
   assert.equal(zoneName({ kind: 'liq', way: 0 }), 'Zona de liquidaciones');
   assert.deepEqual(ZONE_KINDS, ['sr', 'fvg', 'ob', 'liq']);
-  assert.deepEqual(USER_ZONE_KINDS, ['draw', 'vp']);
+  assert.deepEqual(USER_ZONE_KINDS, ['draw', 'vp', 'ind']);
   for (const kind of [...ZONE_KINDS, ...USER_ZONE_KINDS]) assert.ok(ZONE_TYPES[kind].help && ZONE_TYPES[kind].all);
 });
 
@@ -447,6 +447,57 @@ test('un documento guardado antes de las zonas, o con zonas rotas, se abre igual
   const first = withVersion({ list: [] }, { id: null, name: 'a', symbol: 'BTCUSDT', tf: '1h' }, base, 1000);
   const second = withVersion(first.store, { id: first.id, name: 'a', symbol: 'BTCUSDT', tf: '1h' }, addPick(base, pickFromZone(RESISTANCE, 'kind', 'short')), 2000);
   assert.ok(second.saved && second.version === 2);
+});
+
+// ==================== Lo que calcula el gráfico, con los ajustes de la sesión (27/11) ====================
+
+test('una línea del gráfico bajo el clic se reconoce: el VWAP, sus bandas, una EMA y el Alligator', () => {
+  assert.equal(lineOfLevel({ source: 'VWAP', kind: 'VWAP', price: 100 }), 'p:vwap');
+  assert.equal(lineOfLevel({ source: 'VWAP', kind: 'Banda superior 2', price: 101 }), 'p:vwap_u2');
+  assert.equal(lineOfLevel({ source: 'VWAP', kind: 'Banda inferior 1', price: 99 }), 'p:vwap_l1');
+  assert.equal(lineOfLevel({ source: 'EMA', kind: 'EMA 34', price: 100, line: 'e34' }), 'e34');
+  assert.equal(lineOfLevel({ source: 'Alligator', kind: 'Alligator, Dientes (8/5)', price: 100 }), 'teeth');
+  assert.equal(lineOfLevel({ source: 'FVG', kind: 'FVG alcista, 50%', price: 100 }), null);
+  assert.deepEqual(levelLines([{ source: 'VWAP', kind: 'VWAP' }, { source: 'VWAP', kind: 'VWAP' }, { source: 'S&R v2', kind: 'Soporte', price: 1 }]), ['p:vwap']);
+  assert.equal(lineName('p:vwap'), 'el VWAP');
+  assert.equal(lineLabel('p:vwap_u1'), 'VWAP +1');
+  assert.equal(blockText(protoOf('cross', { line: 'p:vwap' }), 'long'), 'El precio cruza el VWAP hacia arriba');
+});
+
+test('un nivel de un indicador bajo el clic es una zona fija que cuenta desde ahora; una línea o una marca, no', () => {
+  const levels = [
+    { id: 'a', source: 'Liquidaciones', kind: 'Liquidaciones de largos', price: 16540, low: 16500, high: 16570 },
+    { id: 'b', source: 'VP Periodic', kind: 'POC', price: 16600 },
+    { id: 'c', source: 'VWAP', kind: 'VWAP', price: 16610 },
+    { id: 'd', source: 'Swing Detector', kind: 'Swing alto', price: 16650, mark: true },
+    { id: 'e', source: 'CVD', kind: 'CVD +12', price: 16600, mark: true, panel: true }
+  ];
+  const zones = levelZones(levels, at(10));
+  assert.equal(zones.length, 2);
+  assert.deepEqual(zones.map(zone => [zone.kind, zone.lo, zone.hi, zone.from, zone.label]), [
+    ['ind', 16500, 16570, at(10), 'Liquidaciones de largos · Liquidaciones'], ['ind', 16600, 16600, at(10), 'POC · VP Periodic']
+  ]);
+  assert.deepEqual(levelZones(levels, null), []);
+  // Entra a la estrategia con su nombre, que se conserva al guardar y se dice en la frase
+  const doc = normalizeDoc(addPick(blankDoc(), zones[0]));
+  assert.equal(doc.zone.picks[0].label, 'Liquidaciones de largos · Liquidaciones');
+  assert.ok(pickText(doc.zone.picks[0], 'short').includes('liquidaciones de largos · Liquidaciones'));
+  assert.equal(docForEngine(doc).zone.picks[0].kind, 'ind');
+});
+
+test('los bloques de lo que calcula el gráfico dicen su serie y qué indicador hay que encender', () => {
+  assert.equal(blockText(protoOf('psube', { s: 'oi', n: 6 }), 'long'), 'El interés abierto acumulado sube en 6 velas');
+  // Los tres modos del interés abierto, cada uno con su manera: histograma con umbral, acumulado en N velas y flow
+  assert.equal(blockText(protoOf('pgrande'), 'long'), 'El histograma del interés abierto marca una subida de 3 veces lo típico');
+  assert.equal(blockText(protoOf('pcruza'), 'short'), 'El flow del interés abierto cruza el cero hacia abajo');
+  assert.equal(blockText(protoOf('pgiro'), 'short'), 'El flow del interés abierto pasa un máximo y empieza a bajar');
+  assert.ok(!blockDef('pgiro').series.some(([key]) => key === 'oi_hist') && blockDef('pgrande').series.some(([key]) => key === 'oi_hist'));
+  assert.equal(blockText(protoOf('ppos', { s: 'cvd' }), 'short'), 'El CVD bajo cero');
+  assert.equal(blockText(protoOf('pmark'), 'long'), 'Swing del detector, alcista');
+  assert.equal(pageSource(protoOf('psube', { s: 'oi' })), 'Open Interest');
+  assert.equal(pageSource(protoOf('side', { line: 'p:vwap_l2' })), 'VWAP');
+  assert.equal(pageSource(protoOf('side', { line: 'e50' })), null);
+  for (const id of ['psube', 'ppos', 'pmark', 'pgrande', 'pcruza', 'pgiro']) assert.ok(blockDef(id).series.length && blockDef(id).page);
 });
 
 let failed = 0;

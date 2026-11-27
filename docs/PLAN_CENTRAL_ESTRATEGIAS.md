@@ -305,6 +305,18 @@ Lo pidió el usuario: «Incluye esto y construye la cocina», tras pedir fichas 
 
 **Lo que falta de la etapa 1:** «mis casos», los avisos al reproducir con su caja y la unión con el Observador (1.3); pasar la estrategia al backtesting global y abrir una regla ya probada (1.4). Para el 1.4, la composición por pasos y la capa de zona tienen que alimentar el simulador del probador.
 
+### Tras la primera prueba del usuario (27/11)
+
+El usuario probó los pasos 1.1 y 1.2 y pidió que la cocina lea todos los indicadores de App 1 con los valores de la sesión, y un indicador EMA.
+
+**Hecho:** el indicador EMA; un nivel de cualquier indicador como zona fija; el VWAP y sus bandas como líneas; el interés abierto, el delta y el CVD como series; el Swing como marca, y el clic sobre una línea, que ofrece sus condiciones sin atarlas a la vela.
+
+**Después, el mismo día:** los tres modos del interés abierto (histograma con umbral, acumulado en N velas, flow que cruza el cero o gira) y los ajustes del modal de SMC, los sabios, el Lector VPA, el Volumen de Respuesta y S&R v2 en el motor.
+
+**Falta:** los ajustes sin equivalente en el motor (FVG, Alligator, Rangos, patrones); las marcas de Double Top/Bottom, Rejection, Volumen de Respuesta y Lector VPA con esos ajustes; AO, AC, Gator y MFI como series.
+
+**Lo que hay que cuidar:** lo que manda la página no se puede probar en el backtesting global. Para el paso 1.4 hay que decidir qué pasa con una estrategia que usa esos bloques.
+
 ### Etapa 2. Backtesting global de las mismas estrategias
 
 La central como se pidió: trades por moneda, clic al gráfico, dashboard, fases y controles, con el mismo documento de estrategia y el mismo motor. Las estrategias con zonas fijas o niveles dibujados no entran: no se pueden probar ahí.
