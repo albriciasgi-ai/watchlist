@@ -320,6 +320,8 @@ Lo pidió el usuario al probar: esperaba que la señal abriera el trade con su c
 
 **No se hizo:** «Mis casos». La «caja fantasma» del prototipo es aquí la caja TP/SL de App 1.
 
+**Después, el mismo 27/11 (idea del usuario):** la cocina calcula por adelantado lo de los próximos segundos de reproducción y muestra solo el recorte a la hora simulada; el reloj se detiene en el cierre de la vela de cada señal. A 50000x en 15m quedó al día, con el VWAP, el interés abierto y el CVD incluidos. El delta del gráfico y el Swing siguen vela por vela. Falta lo mismo para los footprints y los Elementos OF del gráfico. Detalle en `Backtester/CLAUDE.md`, «Pedido por adelantado (27/11)».
+
 **Para el 1.4:** la salida de la cocina (stop, objetivo, tamaño) tiene que traducirse a la regla del probador. El stop en ATR y el objetivo en R tienen equivalente directo; el stop detrás de la vela y en la zona, también (vela del elemento y borde de la zona), pero el aire en ATR y el mínimo de 0.25 ATR hay que llevarlos.
 
 ### Tras la primera prueba del usuario (27/11)

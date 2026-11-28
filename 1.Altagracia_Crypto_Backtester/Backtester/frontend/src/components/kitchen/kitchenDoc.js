@@ -19,6 +19,9 @@ export const EXIT_STOPS = ['atr', 'candle', 'zone'];
 export const EXIT_LIMITS = { atr: [1.5, 0.2, 10], buf: [0.1, 0, 2], rr: [2, 0.2, 20], amount: [10, 0.01, 1e9] };
 export const MIN_STOP_ATR = 0.25;              // Un stop más cerca que esto de la entrada se lleva hasta aquí
 export const SIGNAL_LATE_MAX = 3;              // Una señal vale hasta estas velas después de la suya
+// Pedido por adelantado (27/11): la página manda también velas que todavía no ocurrieron en la simulación y muestra
+// la respuesta recortada a la hora simulada (`asOf`). Así nada va atrás al reproducir rápido
+export const AHEAD = { min: 200, max: 2000, seconds: 30 };   // Velas adelantadas: las de unos 30 s de reproducción
 const NEAR_CANDLES = 3;                        // Lo elegido en velas tan cercanas va al mismo paso
 const STORE_KEY = 'kitchen_strategies_v1';
 const MAX_VERSIONS = 30;
@@ -546,17 +549,153 @@ export function phrase(doc, price = plain) {
  * Las velas ya cerradas en la hora simulada que se mandan al motor: las de lo recorrido y las anteriores que calientan
  * los indicadores. Nunca la vela en formación ni nada posterior. null si todavía no cerró ninguna.
  */
-export function closedWindow(main, tf, now, view = VIEW_BARS) {
+export function closedWindow(main, tf, now, view = VIEW_BARS, ahead = 0) {
   if (!Array.isArray(main) || !main.length || !Number.isFinite(now) || !TF_MS[tf]) return null;
   const last = lastClosedIndex(main, tf, now);
   if (last < 0) return null;
   const first = Math.max(0, last + 1 - view - (LEAD_BARS[tf] || 300));
+  // Por adelantado: hasta `ahead` velas después de la última cerrada. Son velas del histórico que la simulación
+  // todavía no vivió: van al motor para calcular antes, y lo que vuelve se recorta con `asOf` antes de mostrarse
+  const end = Math.min(main.length - 1, last + Math.max(0, Math.floor(ahead) || 0));
   const rows = [];
-  for (let i = first; i <= last; i += 1) {
+  for (let i = first; i <= end; i += 1) {
     const c = main[i];
     rows.push([c.timestamp, c.open, c.high, c.low, c.close, c.volume]);
   }
-  return { rows, view: Math.min(view, rows.length), lastTime: main[last].timestamp, firstTime: main[first].timestamp };
+  const known = last - first + 1;
+  return {
+    rows, view: Math.min(view, known) + (end - last), lastTime: main[last].timestamp, firstTime: main[first].timestamp,
+    ahead: end - last, endTime: main[end].timestamp, atEnd: end === main.length - 1
+  };
+}
+
+/** Cuántas velas conviene adelantar: las de unos 30 segundos de reproducción a esa velocidad, entre un mínimo y un tope */
+export function aheadBars(speed, tfMs) {
+  if (!(tfMs > 0)) return 0;
+  const wanted = Math.ceil(((Number(speed) > 0 ? Number(speed) : 1) * AHEAD.seconds * 1000) / tfMs);
+  return Math.max(AHEAD.min, Math.min(AHEAD.max, wanted));
+}
+
+/**
+ * Las mismas velas del pedido, sin las últimas `drop` adelantadas, y las series de la página cortadas igual. Para cuando
+ * una serie del gráfico (el interés abierto, que se carga por tramos) no llega tan lejos como las velas
+ */
+export function dropAhead(window_, page, drop) {
+  const cut = Math.max(0, Math.min(window_.ahead, Math.floor(drop) || 0));
+  if (!cut) return { window: window_, page };
+  const rows = window_.rows.slice(0, window_.rows.length - cut);
+  const trimmed = page ? { ...page } : page;
+  for (const group of ['lines', 'nums']) {
+    if (!page?.[group]) continue;
+    trimmed[group] = Object.fromEntries(Object.entries(page[group]).map(([key, values]) => [key, values.slice(0, values.length - cut)]));
+  }
+  return {
+    window: { ...window_, rows, view: window_.view - cut, ahead: window_.ahead - cut, endTime: rows[rows.length - 1][0], atEnd: false },
+    page: trimmed
+  };
+}
+
+/**
+ * Cuántas de las velas adelantadas hay que soltar para que las series de la página que usa la estrategia tengan dato:
+ * `keys` son pares [grupo, clave] ('lines' o 'nums'); cada serie trae un valor por vela de las últimas del pedido.
+ * Una serie sin ningún dato adelantado (el delta real, que sale de los footprints ya vistos) las suelta todas
+ */
+export function aheadWithoutData(window_, page, keys) {
+  let drop = 0;
+  for (const [group, key] of keys) {
+    const values = page?.[group]?.[key];
+    if (!Array.isArray(values)) continue;
+    let last = values.length - 1;
+    while (last >= 0 && (values[last] === null || values[last] === undefined)) last -= 1;
+    drop = Math.max(drop, Math.min(window_.ahead, values.length - 1 - last));
+  }
+  return drop;
+}
+
+const countUpTo = (times, limit) => {
+  let low = 0;
+  let high = times.length;
+  while (low < high) {
+    const mid = (low + high) >> 1;
+    if (times[mid] <= limit) low = mid + 1; else high = mid;
+  }
+  return low;
+};
+
+/**
+ * La respuesta de un pedido con velas adelantadas, recortada a la hora simulada: lo que el motor respondería con las
+ * velas cerradas hasta `lastTime`, en las últimas `view`. Nada posterior a `lastTime` sale de aquí: ni señales, ni
+ * filas, ni zonas que todavía no nacieron, ni cuentas. La prueba del backend
+ * (test_un_pedido_por_adelantado_recortado_a_la_hora_es_igual_al_de_ese_momento) repite este recorte y lo compara con
+ * el cálculo de ese momento: si cambia uno, cambia el otro.
+ */
+export function asOf(full, lastTime, view = VIEW_BARS) {
+  if (!full?.success || !Array.isArray(full.times) || !Number.isFinite(lastTime)) return null;
+  const times = full.times;
+  const K = countUpTo(times, lastTime);
+  if (K <= 0) return null;
+  const off = Math.max(0, K - view);
+  const tfMs = times.length > 1 ? times[1] - times[0] : 0;
+  const idx = (items) => (items || []).filter(i => i >= off && i < K).map(i => i - off);
+  const runs = (items) => {
+    const out = [];
+    for (const [a, b] of items || []) {
+      const from = Math.max(a, off);
+      const to = Math.min(b, K - 1);
+      if (from <= to) out.push([from - off, to - off]);
+    }
+    return out;
+  };
+  const total = (items) => items.reduce((sum, [a, b]) => sum + b - a + 1, 0);
+  const blocks = {};
+  for (const [uid, info] of Object.entries(full.blocks || {})) {
+    const kept = runs(info.runs);
+    blocks[uid] = { ...info, runs: kept, count: total(kept) };
+  }
+  const contextRuns = runs(full.context?.runs);
+  const steps = (full.steps || []).map(step => {
+    const chained = idx(step.chained);
+    const doneAt = idx(step.doneAt);
+    return { ...step, alone: idx(step.alone), chained, doneAt, done: doneAt.length, reached: chained.length };
+  });
+  let zone = full.zone;
+  if (zone?.has) {
+    const picks = {};
+    for (const [uid, pick] of Object.entries(zone.picks || {})) {
+      const spans = (pick.spans || []).filter(([a, b]) => a < K && b >= off);
+      picks[uid] = {
+        count: spans.length, open: spans.some(([, b]) => b >= K - 1),
+        spans: spans.map(([a, b]) => [a - off, Math.min(b, K - 1) - off]),
+        bands: (pick.bands || []).filter(([start, end]) => start <= lastTime && end > times[off])
+          .map(([start, end, low, high, way]) => [start, Math.min(end, lastTime + tfMs), low, high, way])
+      };
+    }
+    const zoneRuns = runs(zone.runs);
+    const arriveAt = idx(zone.arriveAt);
+    zone = { has: true, runs: zoneRuns, count: total(zoneRuns), arrivals: arriveAt.length, arriveAt, picks };
+  }
+  return {
+    ...full, times: times.slice(off, K), seen: K - off, bars: Number.isFinite(full.bars) ? full.bars - (times.length - K) : full.bars,
+    blocks, steps, zone, near: runs(full.near),
+    context: { ...(full.context || {}), runs: contextRuns, count: total(contextRuns) },
+    signals: (full.signals || []).filter(signal => signal.i >= off && signal.i < K).map(signal => ({ ...signal, i: signal.i - off })),
+    lines: Object.fromEntries(Object.entries(full.lines || {}).map(([name, values]) => [name, values.slice(off, K)]))
+  };
+}
+
+/**
+ * La hora en que cierra la vela de la próxima señal, en una respuesta pedida por adelantado, o null. Es donde el reloj
+ * se detiene un instante para que el aviso y la orden caigan en su vela, a cualquier velocidad. Solo la usa el reloj:
+ * no se muestra
+ */
+export function nextSignalClose(full, lastTime, tfMs) {
+  if (!full?.success || !Array.isArray(full.signals) || !Number.isFinite(lastTime) || !(tfMs > 0)) return null;
+  let best = null;
+  for (const signal of full.signals) {
+    const time = full.times?.[signal.i];
+    if (Number.isFinite(time) && time > lastTime && (best === null || time < best)) best = time;
+  }
+  return best === null ? null : best + tfMs;
 }
 
 // ==================== Lo que se pinta en el gráfico ====================

@@ -55,6 +55,36 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 27 Noviembre 2026: La Cocina Calcula por Adelantado y No se Atrasa al Reproducir Rápido
+
+**Pedido:** a 50000x la cocina no alcanzaba: las filas iban atrás y las señales se perdían. La idea fue del usuario: calcular antes lo de los próximos segundos de reproducción y, al avanzar, solo mostrar, sin enseñar nada del futuro. Pidió incluir el VWAP, el interés abierto, el delta y el CVD.
+
+**Cambios:**
+1. **Pedido por adelantado:** la cocina manda al motor también las velas de los próximos 30 segundos de reproducción (entre 200 y 2,000 velas, según la velocidad). Guarda la respuesta entera y muestra solo el recorte a la hora simulada (`asOf`). Pide otro tramo al pasar la mitad.
+2. **Nada del futuro a la vista:** filas, triángulos, zonas, líneas, cuentas, aviso y orden salen del recorte. Una zona que todavía no nació no se dibuja, y una que sigue viva llega hasta ahora.
+3. **El reloj se detiene en la vela de la señal:** como la cocina ya sabe dónde cae la próxima, el reloj para justo en el cierre de esa vela (`TimeController.stopAt`), la cocina avisa y abre o propone la orden, y sigue solo si no toca pausar.
+4. **Series del gráfico por adelantado:** el VWAP y sus bandas, el interés abierto (sus tres modos) y el CVD.
+5. **Lo que no se adelanta:** el delta de volumen del gráfico (puede ser el real de los footprints ya vistos) y el Swing. Una estrategia que los lee se calcula vela por vela, como antes, y la pestaña lo dice.
+6. **Motor:** la respuesta trae lo que hace falta para recortar (`doneAt`, `arriveAt`, `spans`). No cambia lo que calcula.
+7. **Pruebas:** `test_kitchen.py` (49), `kitchen.test.mjs` (37) y `clock.test.mjs` (34).
+
+**IMPORTANTE:**
+- El backend de App 1 (9000) se recarga solo; hay que recargar su página. Llega a la app del usuario al unir esta rama a main.
+- **La prueba que lo sostiene:** con zonas, contexto, dos pasos y largos y cortos, la respuesta adelantada y recortada es igual, campo por campo, a la calculada con las velas de ese momento.
+- **Probado en pantalla** en una copia aislada con BTC 15m, a 50000x:
+  - una estrategia de un bloque, en automático: más de 100 órdenes, cada una en el cierre exacto de su vela (antes entraban unos minutos después), y la pestaña «Al día»;
+  - «Preguntar» con pausa: el reloj quedó en 07:15 para la señal de la vela de 07:00, con su caja; «Descartar» quitó la caja;
+  - una estrategia con el cruce del VWAP: un minuto seguido, del 2 de febrero al 17 de marzo, sin pedidos al backend durante 10 segundos de reproducción.
+- **Lo que frena a esa velocidad no es la cocina:** cada orden detiene el reloj unos 150 ms para su imagen. Con órdenes automáticas, 50000x en 15m rinde cerca de la mitad.
+- **Visto al probar, sin tocar:** con muchas órdenes por segundo, el backend rechaza parte de las imágenes de los trades (error 429, su límite de pedidos). Las órdenes quedan bien; a esos trades les falta la imagen.
+- **En 1 minuto, a 50000x, no alcanza:** son 833 velas por segundo y el tope adelantado es de 2,000. Va bien hasta unos 10000x.
+- **Sin ver en pantalla:** el interés abierto y el CVD adelantados (solo con las pruebas del recorte), una estrategia con el delta o el Swing y su aviso, 1m, 5m, 1h y 4h, retroceder la simulación con lo adelantado, y cambiar la velocidad en plena reproducción.
+- **Falta, pedido por el usuario:** lo mismo para los footprints y los Elementos OF del gráfico, que hoy piden al backend con cada vela.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)", "Pedido por adelantado (27/11)"
+
+---
+
 ### App 1 - 27 Noviembre 2026: La Señal de la Cocina Avisa, Dibuja la Caja TP/SL y Abre el Trade (paso 1.3 de la central)
 
 **Pedido:** al probar la cocina, el usuario dijo que «cuando se cumplen todas las condiciones, no está abriendo el trade ni dibujando la caja de takeprofit/stoploss». Eso no estaba construido: es el paso 1.3 de la central.

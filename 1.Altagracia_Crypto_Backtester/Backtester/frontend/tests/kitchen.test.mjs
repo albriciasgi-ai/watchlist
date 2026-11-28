@@ -9,7 +9,8 @@ import {
   LEAD_BARS, MAX_PICKS, MAX_STEPS, addBlock, addPick, addStep, allBlocksOf, blankDoc, candleVerdict, closedWindow, docForEngine, drawnZones, isBlank,
   kitchenBands, linkFor, mirrored, normalizeDoc, offersForEngine, phrase, pickFromZone, pickRange, placeFor, profileZones, relativeDir, removeBlock,
   removePick, removeStep, samePick, setParam, setZone, withSide, withVersion, withoutStrategy, zoneText, levelLines, levelZones, lineOfLevel,
-  MIN_STOP_ATR, SIGNAL_LATE_MAX, blankExit, exitText, freshSignal, kitchenTag, normalizeExit, setExit, signalPlan
+  MIN_STOP_ATR, SIGNAL_LATE_MAX, blankExit, exitText, freshSignal, kitchenTag, normalizeExit, setExit, signalPlan,
+  AHEAD, aheadBars, aheadWithoutData, asOf, dropAhead, nextSignalClose
 } from '../src/components/kitchen/kitchenDoc.js';
 
 const tests = [];
@@ -623,6 +624,110 @@ test('una orden nacida de la cocina lleva el nombre y la versión de su estrateg
   assert.equal(tag.note, 'Cocina: «Giro arriba» v3 · señal de corto · automática');
   const draft = kitchenTag({ name: '', signal: { time: at(1), side: 1 }, mode: 'ask', from: 'atr' });
   assert.equal(draft.note, 'Cocina: «Estrategia sin nombre» (sin guardar) · señal de largo · confirmada a mano');
+});
+
+// ==================== Pedido por adelantado (27/11) ====================
+
+test('el pedido por adelantado manda velas que la simulación todavía no vivió, sin cambiar las de antes', () => {
+  const main = Array.from({ length: 3000 }, (_, i) => ({ timestamp: at(i), open: 1, high: 2, low: 0.5, close: 1.5, volume: 10 }));
+  const now = at(2500) + 20 * 60000;
+  const plain = closedWindow(main, '1h', now, 1000);
+  const ahead = closedWindow(main, '1h', now, 1000, 300);
+  assert.deepEqual([plain.ahead, plain.endTime, plain.atEnd], [0, at(2499), false]);
+  assert.equal(ahead.lastTime, at(2499));                       // La última cerrada es la misma
+  assert.equal(ahead.endTime, at(2799));
+  assert.equal(ahead.ahead, 300);
+  assert.equal(ahead.view, 1300);                               // Lo recorrido más lo adelantado
+  assert.deepEqual(ahead.rows.slice(0, plain.rows.length), plain.rows);   // Empieza en la misma vela: mismo calentamiento
+  // Cerca del final del histórico se adelanta lo que hay
+  const end = closedWindow(main, '1h', at(2900), 1000, 300);
+  assert.deepEqual([end.ahead, end.atEnd, end.endTime], [100, true, at(2999)]);
+  // Cuántas velas: las de unos 30 segundos de reproducción, entre el mínimo y el tope
+  assert.equal(aheadBars(1, H), AHEAD.min);
+  assert.equal(aheadBars(3000, 900000), AHEAD.min);            // 3000x en 15m: 100 velas en 30 s
+  assert.equal(aheadBars(50000, 900000), 1667);
+  assert.equal(aheadBars(50000, 60000), AHEAD.max);
+});
+
+test('las series del gráfico que no llegan tan lejos acortan lo adelantado', () => {
+  const main = Array.from({ length: 400 }, (_, i) => ({ timestamp: at(i), open: 1, high: 2, low: 0.5, close: 1.5, volume: 10 }));
+  const win = closedWindow(main, '1h', at(100), 50, 20);        // Velas 50 a 99 conocidas, 100 a 119 adelantadas
+  const series = (filled) => Array.from({ length: 70 }, (_, i) => (i < filled ? i : null));
+  const page = { lines: { vwap: series(70) }, nums: { oi: series(60), delta: series(50) }, marks: {} };
+  assert.equal(aheadWithoutData(win, page, [['lines', 'vwap']]), 0);
+  assert.equal(aheadWithoutData(win, page, [['lines', 'vwap'], ['nums', 'oi']]), 10);   // El OI cargado llega 10 velas más allá
+  assert.equal(aheadWithoutData(win, page, [['nums', 'delta']]), 20);                  // El delta real no se adelanta
+  assert.equal(aheadWithoutData(win, page, [['nums', 'nada']]), 0);
+  const cut = dropAhead(win, page, 10);
+  assert.deepEqual([cut.window.ahead, cut.window.view, cut.window.endTime, cut.window.rows.length], [10, 60, at(109), win.rows.length - 10]);
+  assert.equal(cut.page.nums.oi.length, 60);
+  assert.equal(cut.page.lines.vwap[59], 59);
+  assert.equal(dropAhead(win, page, 0).window, win);
+  assert.equal(dropAhead(win, page, 99).window.ahead, 0);       // Nunca suelta velas ya ocurridas
+});
+
+test('una respuesta pedida por adelantado se muestra recortada a la hora simulada: nada del futuro sale', () => {
+  // 12 velas en la respuesta: las 8 primeras ya ocurrieron al pedir y 4 van adelantadas
+  const times = Array.from({ length: 12 }, (_, i) => at(i));
+  const full = {
+    success: true, bars: 100, seen: 12, times, docKey: 'd', tfName: '1h', doc: { zone: { picks: [{ uid: 'z', type: 'kind', kind: 'sr' }] } },
+    blocks: { a: { runs: [[1, 2], [6, 10]], count: 7 } },
+    context: { has: true, runs: [[0, 9]], count: 10 }, near: [[5, 5], [9, 10]],
+    steps: [{ step: 0, alone: [1, 9], chained: [3, 7, 11], doneAt: [1, 3, 7, 9, 11], done: 5, reached: 3 }],
+    signals: [{ i: 3, side: 1, atr: 2, zone: null }, { i: 7, side: -1, atr: 2, zone: null }, { i: 11, side: 1, atr: 2, zone: null }],
+    lines: { e50: times.map((_, i) => 100 + i) },
+    zone: {
+      has: true, runs: [[2, 8]], count: 7, arrivals: 3, arriveAt: [2, 6, 10],
+      picks: { z: { count: 3, open: true, spans: [[0, 4], [5, 11], [9, 11]], bands: [[at(0), at(5), 90, 91, 1], [at(5), at(12), 95, 96, -1], [at(9), at(12), 99, 99, 1]] } }
+    }
+  };
+  // A la hora de la vela 7 (la última cerrada): la señal de la vela 11 no existe todavía
+  const now = asOf(full, at(7), 1000);
+  assert.deepEqual(now.times, times.slice(0, 8));
+  assert.equal(now.seen, 8);
+  assert.deepEqual(now.signals.map(signal => signal.i), [3, 7]);
+  assert.deepEqual(now.blocks.a, { runs: [[1, 2], [6, 7]], count: 4 });
+  assert.deepEqual(now.context, { has: true, runs: [[0, 7]], count: 8 });
+  assert.deepEqual(now.near, [[5, 5]]);
+  assert.deepEqual(now.steps[0], { step: 0, alone: [1], chained: [3, 7], doneAt: [1, 3, 7], done: 3, reached: 2 });
+  assert.deepEqual(now.lines.e50, [100, 101, 102, 103, 104, 105, 106, 107]);
+  assert.deepEqual([now.zone.runs, now.zone.count, now.zone.arrivals], [[[2, 7]], 6, 2]);
+  // La zona que nace en la vela 9 no está; la que sigue viva se dibuja hasta ahora, no hasta su final
+  assert.deepEqual(now.zone.picks.z, { count: 2, open: true, spans: [[0, 4], [5, 7]], bands: [[at(0), at(5), 90, 91, 1], [at(5), at(8), 95, 96, -1]] });
+  assert.equal(now.bars, 96);
+  assert.equal(now.docKey, 'd');
+  // Con la vela en formación: la hora cae entre dos velas y vale la última cerrada
+  assert.deepEqual(asOf(full, at(7) + 1000, 1000).signals.map(signal => signal.i), [3, 7]);
+  // Al avanzar entra lo siguiente; al final es la respuesta entera
+  assert.deepEqual(asOf(full, at(11), 1000).signals.map(signal => signal.i), [3, 7, 11]);
+  assert.equal(asOf(full, at(11), 1000).zone.picks.z.count, 3);
+  assert.equal(asOf(full, at(99), 1000).seen, 12);
+  // Lo recorrido son las últimas `view` velas: lo anterior sale y las posiciones se corren
+  const slid = asOf(full, at(9), 6);
+  assert.deepEqual(slid.times, times.slice(4, 10));
+  assert.deepEqual(slid.signals.map(signal => signal.i), [3]);            // La de la vela 7; la de la vela 3 quedó fuera
+  assert.deepEqual(slid.blocks.a, { runs: [[2, 5]], count: 4 });
+  assert.deepEqual(slid.zone.picks.z.spans, [[-4, 0], [1, 5], [5, 5]]);   // Como el motor: una zona nacida antes empieza en negativo
+  assert.equal(slid.zone.picks.z.bands[0][1], at(5));
+  // Antes de la primera vela de la respuesta, o sin respuesta, nada
+  assert.equal(asOf(full, at(0) - 1, 1000), null);
+  assert.equal(asOf(null, at(5), 1000), null);
+  // Y lo que arma el gráfico con el recorte no trae nada posterior
+  const bands = kitchenBands(now, { tf: '1h' });
+  assert.ok(bands.filter(band => band.kind === 'signal').every(band => band.time <= at(7)));
+  assert.ok(bands.filter(band => band.kind === 'ticks').every(band => band.items.every(([time]) => time <= at(7))));
+  assert.ok(bands.filter(band => band.kind === 'kzone').every(band => band.end <= at(8)));
+  assert.ok(bands.filter(band => band.kind === 'line').every(band => band.points.every(([time]) => time <= at(7))));
+});
+
+test('el reloj se detiene en el cierre de la vela de la próxima señal', () => {
+  const times = Array.from({ length: 12 }, (_, i) => at(i));
+  const full = { success: true, times, signals: [{ i: 3, side: 1 }, { i: 7, side: -1 }, { i: 11, side: 1 }] };
+  assert.equal(nextSignalClose(full, at(2), H), at(4));
+  assert.equal(nextSignalClose(full, at(3), H), at(8));         // La de la vela 3 ya cerró: sigue la de la 7
+  assert.equal(nextSignalClose(full, at(7) + 1000, H), at(12));
+  assert.equal(nextSignalClose(full, at(11), H), null);
+  assert.equal(nextSignalClose(null, at(2), H), null);
 });
 
 let failed = 0;

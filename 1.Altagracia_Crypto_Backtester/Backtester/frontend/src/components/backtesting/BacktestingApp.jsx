@@ -1415,6 +1415,8 @@ const BacktestingApp = () => {
     }
   };
 
+  latestRef.current.handlePlay = handlePlay;
+
   const handlePause = () => {
     console.log('[BacktestingApp] handlePause clicked');
     captureHold.cancel();
@@ -1577,7 +1579,7 @@ const BacktestingApp = () => {
   }), []);
   // Lo que calculan los indicadores encendidos del gráfico a la vista, con sus ajustes, en esas velas cerradas
   const getKitchenPage = useCallback(
-    (candles) => miniChartRefs.current[activeTimeframeRef.current]?.getIndicatorManager?.()?.getKitchenSeries?.(candles) || null, []
+    (candles, known) => miniChartRefs.current[activeTimeframeRef.current]?.getIndicatorManager?.()?.getKitchenSeries?.(candles, known) || null, []
   );
   const getKitchenCandles = useCallback(() => marketDataRef.current?.timeframes?.[activeTimeframeRef.current]?.main || [], []);
   // Los dibujos del gráfico a la vista: un rectángulo o una línea horizontal puede ser una zona de la estrategia
@@ -1683,6 +1685,21 @@ const BacktestingApp = () => {
     return { ok: true, order };
   };
   const kitchenOrder = useCallback((plan) => latestRef.current.kitchenOrder(plan), []);
+  // Con lo calculado por adelantado, la cocina sabe en qué vela cae la próxima señal: el reloj se detiene justo en su
+  // cierre (`stopAt`), la cocina la atiende y, si no toca quedar en pausa, sigue
+  const [kitchenStop, setKitchenStop] = useState(null);
+  latestRef.current.kitchenStopHit = (time) => {
+    setIsPlaying(false);
+    handleTimeUpdate(time);   // La pantalla queda en la hora exacta del cierre
+    setKitchenStop({ time, nonce: Date.now() });
+  };
+  const kitchenStopAt = useCallback((time) => {
+    const controller = timeControllerRef.current;
+    if (!controller) return;
+    controller.stopAt = Number.isFinite(time) ? time : null;
+    controller.onStopAt = (hit) => latestRef.current.kitchenStopHit(hit);
+  }, []);
+  const kitchenPlay = useCallback(() => latestRef.current.handlePlay?.(), []);
 
   // Imagen de cierre: la simulación ya pasó las velas que siguen al trade
   useEffect(() => {
@@ -2714,6 +2731,10 @@ const BacktestingApp = () => {
           onBox={kitchenBox}
           onDropBox={kitchenDropBox}
           onOrder={kitchenOrder}
+          speed={playbackSpeed}
+          onPlay={kitchenPlay}
+          onStopAt={kitchenStopAt}
+          stopHit={kitchenStop}
         />
       )}
 

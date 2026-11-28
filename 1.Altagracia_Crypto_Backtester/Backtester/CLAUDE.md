@@ -1092,6 +1092,41 @@ Pedido del usuario al probar: «cuando se cumplen todas las condiciones, no est�
 
 **Falta:** «Mis casos» (lo demás del paso 1.3 del plan) y el paso 1.4.
 
+### Pedido por adelantado (27/11)
+
+Idea del usuario, tras ver que a 50000x la cocina iba atrás y perdía señales: calcular antes lo de los próximos segundos de reproducción y, al avanzar, solo mostrar.
+
+- **Por qué se puede:** el motor no mira a la derecha. `test_un_pedido_por_adelantado_recortado_a_la_hora_es_igual_al_de_ese_momento` pide con 400 velas de más y compara el recorte, campo por campo, con el cálculo de ese momento: señales, pasos, contexto, zonas (nacimiento, final, bordes), líneas y cuentas.
+- **El pedido** (`closedWindow(..., ahead)`): las mismas velas de antes, desde la misma primera (el mismo calentamiento), más `ahead` velas del histórico que la simulación todavía no vivió. `view` crece en `ahead`.
+  - `aheadBars(velocidad, marco)`: las velas de `AHEAD.seconds` (30) segundos de reproducción, entre `AHEAD.min` (200) y `AHEAD.max` (2,000). El tope del motor es `MAX_VIEW` 3,000.
+  - se pide otro tramo cuando la hora pasa la mitad de lo adelantado (`refillAt`), o si la simulación retrocede antes de la vela del pedido. El tramo viejo sigue sirviendo mientras llega el nuevo.
+- **El recorte** (`asOf(full, lastTime, view)` en `kitchenDoc.js`): la respuesta como si el motor hubiera recibido las velas cerradas hasta `lastTime`, en las últimas 1,000.
+  - `KitchenPanel` guarda la respuesta entera en `result` y en `resultRef`, y **solo dibuja `fresh`**, el recorte. Si se suma algo que se muestre, tiene que salir de `fresh`;
+  - el motor suma a la respuesta lo que el recorte necesita: `doneAt` por paso, `arriveAt` de la zona y `spans` por zona elegida (las velas en que cuenta cada una). Una zona nacida antes de lo recorrido empieza en negativo;
+  - `as_of` en `test_kitchen.py` repite el recorte en Python para la prueba de paridad: si cambia uno, cambia el otro.
+- **La parada del reloj** (`TimeController.stopAt` y `onStopAt`): `nextSignalClose` da el cierre de la vela de la próxima señal; el reloj no lo pasa, queda en pausa justo ahí y avisa. `BacktestingApp` actualiza la pantalla (`kitchenStopHit`) y pasa `stopHit` a la pestaña.
+  - la pestaña atiende la señal con el efecto de siempre y, si no toca quedar en pausa, sigue (`onPlay`). En automático sin pausa, sigue antes de crear la orden: la imagen de apertura detiene y suelta el reloj como siempre;
+  - si nadie atiende la parada (la señal ya estaba vista, o el aviso se apagó), un efecto aparte sigue la reproducción;
+  - es solo una hora para el reloj: no se muestra.
+- **Series del gráfico** (`getKitchenSeries(velas, conocidas)`):
+  - el VWAP ya está calculado con todo el histórico; el CVD sale de las velas; el interés abierto se carga por tramos, y aquí se pide hasta la última vela adelantada;
+  - el delta de volumen se calcula solo con las velas ocurridas (puede ser el real, de los footprints ya vistos) y el Swing solo conoce lo ocurrido;
+  - `aheadWithoutData` mira las series que usa la estrategia: donde una no llega, se adelanta menos (`dropAhead`); con una marca, nada. Sin nada adelantado la pestaña lo dice («se calcula vela por vela») y vale la regla de las 3 velas.
+- **Costo:** en 15m a 50000x, un pedido de unas 6,000 velas cada 15 segundos de reproducción, en lugar de uno por vela.
+
+**Probado en pantalla** el 27/11, en una copia aislada (backend 9320, página 9321) con BTC 15m, a 50000x:
+- un bloque (vela con volumen alto), en automático y sin pausa: más de 100 órdenes, todas con la entrada en :00, :15, :30 o :45, y «Al día»;
+- «Preguntar» con pausa: la hora quedó en 07:15 para la señal de la vela de 07:00; «Descartar» quitó la caja;
+- el cruce del VWAP (`p:vwap`): un minuto seguido sin detenerse, y ningún pedido a `/api/kitchen/evaluate` en 10 segundos de reproducción.
+
+**Visto al probar, sin tocar:**
+- cada orden detiene el reloj unos 150 ms para su imagen (`CaptureHold`): con órdenes automáticas, 50000x rinde cerca de la mitad;
+- con muchas órdenes por segundo el backend responde 429 a parte de las imágenes: esos trades quedan sin imagen.
+
+**Sin ver en pantalla:** el interés abierto y el CVD adelantados, una estrategia con el delta o el Swing y su aviso, los otros marcos, retroceder con lo adelantado y cambiar la velocidad en plena reproducción.
+
+**Falta, pedido por el usuario:** el mismo trato para los footprints (`OrderFlowIndicator`) y los Elementos OF (`OrderFlowElementsIndicator`) del gráfico, que piden al backend con cada vela, cortado en la hora simulada. Los Elementos OF ya guardan la hora en que se conoce cada evento y su dibujo ya filtra por ella.
+
 ### Flujo
 
 ```
@@ -1158,9 +1193,10 @@ MiniChart (getTradeBands)   filas bajo las velas, señales, líneas, zonas y la 
 
 ```bash
 cd backend
-.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 48 con el paso 1.3
+.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 49 con el paso 1.3 y el pedido por adelantado
 cd ../frontend
-node tests/kitchen.test.mjs                                  # 33 con el paso 1.3
+node tests/kitchen.test.mjs                                  # 37 con el paso 1.3 y el pedido por adelantado
+node tests/clock.test.mjs                                    # 34: una es la parada del reloj en la vela de la señal
 node tests/levels.test.mjs                                   # 56: dos son de los VP fijos de la cocina
 ```
 

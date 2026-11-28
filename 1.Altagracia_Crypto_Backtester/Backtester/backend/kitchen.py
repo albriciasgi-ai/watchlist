@@ -1498,10 +1498,14 @@ def _zone_answer(facts, doc, sides, start):
                 if z["b"] >= start:
                     found[(z["a"], z["b"], z["lo0"], z["hi0"])] = z
         zones = [found[key] for key in sorted(found)]
+        # `spans`: las velas en que cuenta cada zona, desde `start`. Con ellas la página recorta una respuesta pedida
+        # por adelantado a la hora simulada: qué zonas ya nacieron y cuáles siguen contando
         picks[pick["uid"]] = {"count": len(zones), "open": any(z["b"] == n - 1 for z in zones),
+                              "spans": [[z["a"] - start, z["b"] - start] for z in zones],
                               "bands": [[bars[z["a"]]["t"], bars[z["b"]]["t"] + facts.tf_ms, z["lo0"], z["hi0"], z["way"]]
                                         for z in zones[-MAX_BANDS:]]}
-    return {"has": True, "runs": _runs(ok, start), "count": int(ok[start:].sum()), "arrivals": int(arrive[start:].sum()), "picks": picks}
+    return {"has": True, "runs": _runs(ok, start), "count": int(ok[start:].sum()), "arrivals": int(arrive[start:].sum()),
+            "arriveAt": _at(arrive, start), "picks": picks}
 
 
 def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, offers=None, page=None, settings=None):
@@ -1568,7 +1572,7 @@ def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, 
                "zone": _zone_answer(facts, doc, sides, start),
                "context": {"has": bool(doc["ctx"]), "runs": _runs(ctx_mask, start) if doc["ctx"] else [],
                            "count": int(ctx_mask[start:].sum()) if doc["ctx"] else 0},
-               "steps": [{"step": gi, "alone": _at(done & ~reach, start), "chained": _at(reach, start),
+               "steps": [{"step": gi, "alone": _at(done & ~reach, start), "chained": _at(reach, start), "doneAt": _at(done, start),
                           "done": int(done[start:].sum()), "reached": int(reach[start:].sum())}
                          for gi, done, reach in zip(used_steps, step_done, step_reach)],
                "signals": signals, "near": _runs(near, start)}

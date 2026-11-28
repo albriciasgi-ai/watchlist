@@ -1467,9 +1467,18 @@ class IndicatorManager {
     return out;
   }
 
-  getKitchenSeries(candles) {
+  /**
+   * `known`: cuántas de esas velas ya ocurrieron en la hora simulada; las demás van por adelantado (27/11), para que la
+   * cocina calcule antes de que lleguen. Solo es una lectura: nada de lo adelantado se dibuja ni cambia un indicador.
+   * El VWAP (calculado una vez con todo el histórico), el interés abierto (cargado por tramos, que aquí se piden hasta
+   * la última vela) y el CVD (sale de las velas) dan valor en las adelantadas. El delta, que puede ser el real de los
+   * footprints ya vistos, y el Swing, solo en las ocurridas.
+   */
+  getKitchenSeries(candles, known = candles?.length) {
     const out = { lines: {}, nums: {}, marks: {}, settings: this.getKitchenSettings() };
     if (!Array.isArray(candles) || !candles.length) return out;
+    const lived = Number.isFinite(known) ? Math.max(0, Math.min(candles.length, known)) : candles.length;
+    const past = lived < candles.length ? candles.slice(0, lived) : candles;
     const on = (name) => this.indicators.find(indicator => indicator.name === name && indicator.enabled);
     const attempt = (fn) => { try { fn(); } catch { /* Un indicador sin datos no detiene a los demás */ } };
     const number = (value) => (Number.isFinite(value) ? value : null);
@@ -1488,6 +1497,10 @@ class IndicatorManager {
     attempt(() => {
       const oi = on('Open Interest');
       if (!oi?.dataMap?.size) return;
+      // Lo adelantado puede pasar del tramo cargado: se pide, y llega para el pedido siguiente
+      if (lived < candles.length && oi._rangeTo !== null && oi._rangeTo !== undefined && candles[candles.length - 1].timestamp > oi._rangeTo) {
+        oi._loadVisibleRange?.(candles);
+      }
       // Los tres modos del indicador, se muestre el que se muestre: el cambio por vela (histograma), su suma
       // (acumulado) y el flow, con el suavizado del modal
       const series = (rows, field) => { const map = new Map((rows || []).map(row => [row.timestamp, row[field]])); return candles.map(candle => number(map.get(candle.timestamp))); };
@@ -1503,7 +1516,7 @@ class IndicatorManager {
     };
     attempt(() => {
       const volume = on('Volume Delta');
-      if (volume?.calculateVolumeDelta) out.nums.delta = byTime(volume.calculateVolumeDelta(candles), 'volumeDelta');
+      if (volume?.calculateVolumeDelta) out.nums.delta = byTime(volume.calculateVolumeDelta(past), 'volumeDelta');
     });
     attempt(() => {
       const cvd = on('CVD');
