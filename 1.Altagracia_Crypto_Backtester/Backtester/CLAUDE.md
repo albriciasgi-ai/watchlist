@@ -1176,10 +1176,10 @@ Pedido del usuario: cada variable editable junto a su bloque, también en estas 
 ### Las demás variables y el umbral propio por Elemento OF (28/11)
 
 - **`EVENT_PARAMS` suma** los campos de `clean_rule` de:
-  - `pat` (HM, EN, DJ): trend, trendBars, minPart, swingBefore, swingAfter; HM, además, wick. `minZ` no entra;
+  - `pat` (HM, EN, DJ): trend, trendBars, minPart, swingBefore, swingAfter y minZ (0 en la cocina es «sin filtro»: `events_of` lo pasa a la regla como `None`); HM, además, wick;
   - `cc`: swing, legs, ref y closes. El marco de la estructura lo sigue poniendo la cocina;
   - `bx` y `cp`: maxHeight, con 0 como «cualquier alto» (la regla lo lleva como `None`);
-  - `be`: share, maxBody y rejection. `pattern` no entra;
+  - `be`: share, maxBody, rejection y pattern (`NO_YES`: un sí o no apagado de fábrica);
   - `rv`: RF con spike, leg y arrow; RB con leg y rombo;
   - `gc`: period, poles, mult y trend. Su salida propia no es de la cocina.
 - **`of_elements.detect(..., overrides=None)`:** `{código: {campo: valor}}`, acotado por `clean_overrides` con `OWN_FIELDS` (campo → de fábrica, mínimo, máximo). Sin él, o con todo de fábrica, da lo de siempre.
@@ -1199,7 +1199,7 @@ Pedido del usuario: cada variable editable junto a su bloque, también en estas 
 
 **Sin ver en pantalla:** nada de esta sección.
 
-**Falta:** el z-score mínimo del patrón de vela y el patrón de rechazo en el borde de caja.
+Con el z-score mínimo del patrón de vela y el patrón de rechazo en el borde de caja (sumados después, el mismo día), todos los campos de estas familias en `clean_rule` están en la cocina, salvo la salida propia del canal gaussiano.
 
 ### Flujo
 

@@ -60,9 +60,9 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 **Pedido:** lo que había quedado fuera al dar variables a los bloques: los patrones de vela, el cambio de carácter, las cajas, el Volumen de Respuesta y el canal gaussiano, y un umbral propio por Elemento OF, que pedía cambiar el motor de order flow.
 
 **Cambios:**
-1. **Patrones de vela** (martillo o estrella, envolvente, doji): si piden un movimiento previo y de cuántas velas, el tamaño mínimo en ATR y las velas del swing antes y después. El martillo, además, su mecha mínima.
+1. **Patrones de vela** (martillo o estrella, envolvente, doji): si piden un movimiento previo y de cuántas velas, el tamaño mínimo en ATR, las velas del swing antes y después y el volumen mínimo de su vela (z-score; 0 = sin filtro). El martillo, además, su mecha mínima.
 2. **Cambio de carácter:** las velas de cada swing, los máximos y mínimos seguidos de la tendencia, qué swing se rompe y si la tendencia se confirma con cierres.
-3. **Cajas:** el alto máximo de la caja en la ruptura y en la compresión (0 = cualquiera). En el borde, la parte de la caja que cuenta como borde, el cuerpo máximo de la vela y dónde tiene que cerrar.
+3. **Cajas:** el alto máximo de la caja en la ruptura y en la compresión (0 = cualquiera). En el borde, la parte de la caja que cuenta como borde, el cuerpo máximo de la vela, dónde tiene que cerrar y si pide además un patrón de rechazo a favor (apagado de fábrica).
 4. **Volumen de Respuesta:** en la flecha, el volumen pedido, el tramo y si va a favor del tramo, en contra o como sea. En el rombo, el tramo y si se lee como giro o como continuación.
 5. **Canal gaussiano:** periodo, polos, ancho de las bandas y si pide el canal a favor.
 6. **Motor de order flow** (`of_elements.detect`, parámetro nuevo `overrides`): cada elemento puede llevar sus propios valores. En la cocina:
@@ -87,7 +87,6 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 - **Cada bloque de order flow con algo cambiado es otra lectura de los trades,** solo para ese elemento. Dos bloques del mismo elemento con los mismos valores la comparten; los de fábrica comparten la de siempre.
 - **El tamaño mínimo en USD se suma al umbral relativo:** en BTC, 3 millones no quitó ninguna orden grande, porque el umbral relativo ya estaba por encima.
 - **Sin ver en pantalla:** nada de esta entrada. Los campos usan los mismos controles de los bloques que se vieron el 27/11, y una prueba compara la lista de la página con la del motor, campo por campo.
-- **Lo que sigue sin variables:** el filtro de volumen del patrón de vela (z-score mínimo) y el patrón de rechazo en el borde de caja.
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)", "Las demás variables y el umbral propio por Elemento OF (28/11)"
 

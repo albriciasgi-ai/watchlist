@@ -643,11 +643,11 @@ test('los elementos de VPA, Williams, SMC y order flow traen sus variables, con 
   assert.deepEqual(fields('GR'), ['target', 'usd']);
   assert.deepEqual(fields('VA'), []);
   // Patrones, cambio de carácter, cajas, Volumen de Respuesta y canal gaussiano (28/11)
-  assert.deepEqual(fields('HM'), ['trendBars', 'minPart', 'swingBefore', 'swingAfter', 'wick', 'trend']);
-  assert.deepEqual(fields('EN'), ['trendBars', 'minPart', 'swingBefore', 'swingAfter', 'trend']);
+  assert.deepEqual(fields('HM'), ['trendBars', 'minPart', 'swingBefore', 'swingAfter', 'minZ', 'wick', 'trend']);
+  assert.deepEqual(fields('EN'), ['trendBars', 'minPart', 'swingBefore', 'swingAfter', 'minZ', 'trend']);
   assert.deepEqual(fields('CC'), ['swing', 'legs', 'ref', 'closes']);
   assert.deepEqual(fields('BX'), ['maxHeight']);
-  assert.deepEqual(fields('BE'), ['share', 'maxBody', 'rejection']);
+  assert.deepEqual(fields('BE'), ['share', 'maxBody', 'rejection', 'pattern']);
   assert.deepEqual(fields('RF'), ['spike', 'leg', 'arrow']);
   assert.deepEqual(fields('RB'), ['leg', 'rombo']);
   assert.deepEqual(fields('GC'), ['period', 'poles', 'mult', 'trend']);

@@ -893,7 +893,7 @@ def test_cada_variable_de_un_evento_queda_en_rango_y_llega_a_la_regla_del_probad
             facts.family = lambda name, extra=None: (asked.update(extra or {}), real(name, extra))[1]
             facts.events_of(code, block["p"])
             facts.family = real
-            want = (other == "si") if options is kitchen.YES_NO else other
+            want = (other == "si") if options in (kitchen.YES_NO, kitchen.NO_YES) else other
             assert asked[rule_key][field] == want, f"{code}.{field} no llegó a la regla"
             # Y la regla que arma el probador lo conserva: el rango de la cocina es el suyo
             rule = facts.rule((code,), {rule_key: {field: want}})
@@ -949,6 +949,23 @@ def test_las_variables_de_patrones_cajas_respuesta_y_canal_cambian_lo_que_detect
     facts.family = real
     assert count("BX", maxHeight=1.0) <= count("BX", maxHeight=0)
     assert count("BE", share=0.4, maxBody=0, rejection=0) >= count("BE")
+    # El filtro de volumen del patrón: 0 es sin filtro (la regla lo lleva como None), y pedir volumen deja a lo sumo los mismos
+    loose = dict(minPart=0, swingBefore=0, swingAfter=0)
+    facts.family = lambda name, extra=None: (asked.update(extra or {}), real(name, extra))[1]
+    facts.events_of("EN", {"minZ": 0})
+    assert asked["pat"]["minZ"] is None
+    facts.events_of("EN", {"minZ": 1.5})
+    assert asked["pat"]["minZ"] == 1.5
+    # El borde de caja con patrón de rechazo: viene apagado, y pedirlo deja a lo sumo los mismos
+    facts.events_of("BE", {})
+    assert asked["be"]["pattern"] is False and "pattern" not in facts.rule(("BE",), {"be": asked["be"]})["be"]
+    facts.events_of("BE", {"pattern": "si"})
+    assert asked["be"]["pattern"] is True and facts.rule(("BE",), {"be": asked["be"]})["be"]["pattern"] is True
+    facts.family = real
+    for code in ("HM", "EN", "DJ"):
+        assert count(code, minZ=2, **loose) <= count(code, **loose)
+    assert count("EN", minZ=2, **loose) < count("EN", **loose)
+    assert count("BE", share=0.4, maxBody=0, rejection=0, pattern="si") <= count("BE", share=0.4, maxBody=0, rejection=0)
 
 
 def test_un_campo_de_fabrica_deja_mandar_al_ajuste_del_modal_y_uno_cambiado_manda():

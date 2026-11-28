@@ -123,6 +123,7 @@ STORE_CHECK_S = 60        # Cada cuánto se vuelve a mirar si la moneda tiene al
 # sí o no de la regla. Los rangos son los de clean_rule del probador. De VPA, Williams y SMC (27/11, pedido del
 # usuario) cada elemento trae solo los campos que lo mueven
 YES_NO = ["si", "no"]
+NO_YES = ["no", "si"]     # Un sí o no que viene apagado de fábrica
 _Q_FIRE, _Q_LEG = ("vpa", "fire", 0.5, 0.1, 1.0), ("vpa", "legAtr", 2.0, 0.5, 10.0)
 _Q_RANGE, _Q_HIGH, _Q_PULL = ("vpa", "rangeBars", 20, 5, 200), ("vpa", "maxRangeAtr", 6.0, 1.0, 50.0), ("vpa", "pullBars", 8, 1, 50)
 _Q_METER, _Q_DECAY = ("vpa", "meter", 1.0, 0.2, 5.0), ("vpa", "decay", 0.75, 0.0, 0.98)
@@ -130,14 +131,16 @@ _S_SCOPE, _S_IN, _S_SW = ("smc", "scope", ["swing", "internal"]), ("smc", "inter
 _S_BLOCK = (_S_SCOPE, ("smc", "pick", ["extreme", "opposite"]), ("smc", "area", ["full", "body"]),
             ("smc", "mitigation", ["close", "wick"]), _S_IN, _S_SW)
 _P_SHAPE = (("pat", "trend", YES_NO), ("pat", "trendBars", 5, 1, 50), ("pat", "minPart", 0.5, 0.0, 5.0),
-            ("pat", "swingBefore", 5, 0, 50), ("pat", "swingAfter", 2, 0, 20))
+            ("pat", "swingBefore", 5, 0, 50), ("pat", "swingAfter", 2, 0, 20),
+            ("pat", "minZ", 0.0, 0.0, 20.0))   # z-score mínimo del volumen de su vela; 0 = sin filtro (la regla lo lleva como None)
 _R_LEG = ("rv", "leg", 2.0, 0.5, 10.0)
 EVENT_PARAMS = {
     # Patrones de vela, cambio de carácter, cajas, Volumen de Respuesta y canal gaussiano (28/11, pedido del usuario)
     "HM": _P_SHAPE + (("pat", "wick", 2.0, 0.5, 10.0),), "EN": _P_SHAPE, "DJ": _P_SHAPE,
     "CC": (("cc", "swing", 3, 2, 20), ("cc", "legs", 2, 2, 5), ("cc", "ref", ["origin", "last"]), ("cc", "closes", YES_NO)),
     "BX": (("bx", "maxHeight", 0.0, 0.0, 50.0),), "CP": (("cp", "maxHeight", 0.0, 0.0, 50.0),),   # 0 = cajas de cualquier alto
-    "BE": (("be", "share", 0.05, 0.02, 0.5), ("be", "maxBody", 1.0, 0.0, 10.0), ("be", "rejection", 0.6, 0.0, 1.0)),
+    "BE": (("be", "share", 0.05, 0.02, 0.5), ("be", "maxBody", 1.0, 0.0, 10.0), ("be", "rejection", 0.6, 0.0, 1.0),
+           ("be", "pattern", NO_YES)),         # Además, un patrón de rechazo a favor en la vela
     "RF": (("rv", "spike", 2.0, 1.2, 20.0), _R_LEG, ("rv", "arrow", ["with", "against", "any"])),
     "RB": (_R_LEG, ("rv", "rombo", ["turn", "follow"])),
     "GC": (("gc", "period", 144, 10, 1000), ("gc", "poles", 4, 1, 9), ("gc", "mult", 1.414, 0.2, 10.0), ("gc", "trend", YES_NO)),
@@ -690,7 +693,7 @@ class Facts:
         if code in OF_CODES:
             flow = self.flow_more(self.flow_params(code, p))
             return flow["events"].get(code, []) if flow["state"] == "ready" else []
-        as_rule = lambda value, options: (value == "si") if options is YES_NO else value
+        as_rule = lambda value, options: (value == "si") if options is YES_NO or options is NO_YES else value
         extra, changed = {}, {}
         for rule_key, field, default, _, _, options in event_fields(code):
             value = (p or {}).get(field, default)
@@ -701,6 +704,8 @@ class Facts:
         for other in FAMILIES[FAMILY_OF[code]]:
             for rule_key, field, default, _, _, options in event_fields(other):
                 extra.setdefault(rule_key, {}).setdefault(field, as_rule(default, options))
+        if "pat" in extra and not extra["pat"].get("minZ"):
+            extra["pat"]["minZ"] = None   # 0 es «sin filtro de volumen»
         # Con los ajustes del modal del indicador, si la sesión los trae. Lo que la cocina cambió en el bloque manda;
         # un campo que sigue en su valor de fábrica deja mandar al ajuste del modal
         family = FAMILY_OF[code]

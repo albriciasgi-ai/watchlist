@@ -302,6 +302,7 @@ const BLOCKS = [
 // Campos de los elementos de VPA, Williams y SMC (27/11, pedido del usuario): los de su regla en el probador, con los
 // mismos rangos (kitchen.py, EVENT_PARAMS). Una prueba del motor compara las dos listas campo por campo
 const YES_NO = [['si', 'sí'], ['no', 'no']];
+const NO_YES = [['no', 'no'], ['si', 'sí']];
 const Q_FIRE = ['fire', 'Grado mínimo del elemento (0.1 a 1)', 0.1, 1, 0.05];
 const Q_LEG = ['legAtr', 'Tramo: con cuántos ATR gira', 0.5, 10, 0.5];
 const Q_RANGE = ['rangeBars', 'Velas del rango que se rompe', 5, 200, 1];
@@ -327,12 +328,13 @@ const S_BLOCK = {
 // Su nombre es el del backtesting global (elementLabels.js) y se detectan con sus valores de fábrica
 // Patrones de vela, cambio de carácter, cajas, Volumen de Respuesta y canal gaussiano (28/11, pedido del usuario)
 const P_SHAPE = {
-  p: { trend: 'si', trendBars: 5, minPart: 0.5, swingBefore: 5, swingAfter: 2 },
+  p: { trend: 'si', trendBars: 5, minPart: 0.5, swingBefore: 5, swingAfter: 2, minZ: 0 },
   selects: [['trend', 'Pide un movimiento previo en contra', YES_NO]],
   fields: [['trendBars', 'Velas de ese movimiento previo', 1, 50, 1],
     ['minPart', 'Tamaño mínimo de lo que hace el patrón (ATR; 0 = cualquiera)', 0, 5, 0.1],
     ['swingBefore', 'Su extremo pasa el de tantas velas anteriores (0 = no se pide)', 0, 50, 1],
-    ['swingAfter', 'Y tantas velas siguientes no lo alcanzan (0 = no se espera)', 0, 20, 1]]
+    ['swingAfter', 'Y tantas velas siguientes no lo alcanzan (0 = no se espera)', 0, 20, 1],
+    ['minZ', 'Volumen mínimo de su vela (z-score contra las 20 anteriores; 0 = sin filtro)', 0, 20, 0.1]]
 };
 const R_LEG = ['leg', 'Tramo: con cuántos ATR gira', 0.5, 10, 0.5];
 const BOX_HIGH = ['maxHeight', 'Alto máximo de la caja (ATR; 0 = cualquiera)', 0, 50, 0.5];
@@ -350,7 +352,8 @@ const ELEMENTS = {
     selectsAfter: [['ref', 'Swing que se rompe', [['origin', 'el que originó el último tramo'], ['last', 'el último']]],
       ['closes', 'La tendencia se confirma con cierres', YES_NO]] },
   BX: { fam: 'estructura', shown: 'Rangos horizontales', p: { maxHeight: 0 }, fields: [BOX_HIGH] },
-  BE: { fam: 'estructura', shown: 'Rangos horizontales', p: { share: 0.05, maxBody: 1, rejection: 0.6 },
+  BE: { fam: 'estructura', shown: 'Rangos horizontales', p: { share: 0.05, maxBody: 1, rejection: 0.6, pattern: 'no' },
+    selectsAfter: [['pattern', 'Pide además un patrón de rechazo a favor en la vela', NO_YES]],
     fields: [['share', 'Parte de la caja que cuenta como borde (0.05 = 5 %)', 0.02, 0.5, 0.01],
       ['maxBody', 'Cuerpo máximo de la vela (ATR; 0 = sin límite)', 0, 10, 0.1],
       ['rejection', 'Dónde cierra la vela: 0 en el borde, 1 en su otro extremo', 0, 1, 0.05]] },
