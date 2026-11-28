@@ -55,6 +55,50 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 27 Noviembre 2026: La Señal de la Cocina Avisa, Dibuja la Caja TP/SL y Abre el Trade (paso 1.3 de la central)
+
+**Pedido:** al probar la cocina, el usuario dijo que «cuando se cumplen todas las condiciones, no está abriendo el trade ni dibujando la caja de takeprofit/stoploss». Eso no estaba construido: es el paso 1.3 de la central.
+
+**Cambios:**
+1. **Capa 4 · Salida** en la pestaña «Cocina», con su ficha con imagen. Es parte de la estrategia: entra en la frase y en las versiones guardadas.
+   - **stop:** a una distancia en ATR de la entrada (1.5 de fábrica, el del probador), detrás de la vela de la señal o en el borde lejano de la zona, con un aire en ATR;
+   - **objetivo:** en R (2 de fábrica);
+   - **tamaño:** por riesgo (10 USDT de fábrica) o monto fijo, con la cuenta del panel de trading (`orderQuantity`).
+2. **Aviso al reproducir:** cuando cierra una vela con señal, la cocina lo dice arriba de la pestaña y, si está marcado (de fábrica sí), pausa la reproducción.
+3. **Caja de la señal:** una caja TP/SL de las de siempre (`TPSLBox`) en la vela que empieza, con la entrada al precio del momento, el stop y el objetivo de la salida.
+4. **La orden, de dos maneras:**
+   - «Preguntar» (de fábrica): la caja queda propuesta, se puede mover, y «Abrir la orden» la manda con la confirmación de siempre;
+   - «Automática»: la orden se abre sola.
+
+   Pasa por `OrderManager` como una orden manual: historial, imágenes, sesión y Observador. Queda marcada en su nota y en `order.kitchen` con el nombre y la versión de la estrategia.
+5. **Una posición a la vez:** con una abierta o una orden esperando, la señal solo avisa.
+6. **Motor:** cada señal trae el ATR de su vela y, con capa de zona, la zona que le toca (`Facts.zone_by`).
+7. **Pruebas:** `test_kitchen.py` (48) y `kitchen.test.mjs` (33). Pasan también `levels`, `orders`, `journal`, `replay` y `observer`.
+
+**IMPORTANTE:**
+- El backend de App 1 (9000) se recarga solo al llegar el código; hay que recargar su página. Llega a la app del usuario al unir esta rama a main.
+- **Un documento guardado antes se abre igual:** entra con la salida de fábrica, y no cuenta como versión nueva.
+- **Sin futuro:** avisa solo por velas ya cerradas en la hora simulada. Al armar o cambiar la estrategia, lo que ya pasó no avisa: cuenta desde la próxima vela que cierre.
+- **Solo con la pestaña «Cocina» abierta.** En otra pestaña no avisa ni abre órdenes.
+- **Decisiones mías, por confirmar al probar:**
+  - el stop de fábrica va en ATR desde la entrada, lo más ancho de los tres;
+  - un stop que no se puede poner (sin zona, o del lado equivocado de la entrada) vuelve al de ATR y el aviso lo dice; uno a menos de 0.25 ATR de la entrada se lleva hasta ahí;
+  - reproduciendo rápido, el cálculo va unas velas atrás: una señal vale hasta 3 velas después de la suya, con la entrada al precio de ese momento. Más tarde solo avisa;
+  - una propuesta sin abrir vence a las 3 velas, y su caja se quita;
+  - al pausar por una señal, la hora queda unos minutos dentro de la vela siguiente (a 3000x en 15m, 5 minutos).
+- **Probado en pantalla** en una copia aislada con BTC 15m desde el 01/01/2023:
+  - la capa nueva, su ficha y la frase con la salida;
+  - el aviso, la pausa y la caja al cerrar una vela con señal, a 3000x;
+  - «Abrir la orden» con su confirmación (trade #1) y tres órdenes automáticas (#2 a #4), cada una al cerrarse la anterior;
+  - el trade cerrado en el historial, con su nota «Cocina: «Prueba 1.3» (sin guardar) · señal de corto · confirmada a mano», y sus imágenes guardadas;
+  - el stop cambiado a 10 ATR sin rearmar la estrategia, y una señal con la posición abierta, que solo avisó.
+- **Sin ver en pantalla:** el stop detrás de la vela y en la zona (solo con las pruebas), «Descartar», la propuesta vencida, la señal que llega tarde o se pierde, mover la caja antes de abrir, una orden que queda esperando su precio, la fecha oculta, largos o cortos solos, el Observador con estas órdenes, el panel en ventana aparte y los estilos Oscuro, Personalizado y Muhammad.
+- **Falta del paso 1.3 del plan:** «Mis casos». El paso 1.4 (pasar la estrategia al backtesting global) sigue sin construir.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)", "Salida, aviso y orden de una señal (paso 1.3, 27/11)"
+
+---
+
 ### App 1 - 27 Noviembre 2026: Volumen, Umbrales y Tabla de la Vela en la Cocina, y Filas al Día al Reproducir
 
 **Pedido:** tras probar la cocina, el usuario pidió:

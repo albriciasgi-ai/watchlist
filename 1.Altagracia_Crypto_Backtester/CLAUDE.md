@@ -6,6 +6,10 @@ Sistema profesional de backtesting para criptomonedas con análisis avanzado de 
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### Noviembre 2026: La Señal de la Cocina Avisa, Dibuja la Caja y Abre el Trade
+
+Paso 1.3 de la central. La cocina suma la capa «Salida» (stop en ATR, detrás de la vela de la señal o en el borde lejano de la zona; objetivo en R; tamaño por riesgo o monto). Cuando cierra una vela con señal lo avisa, pausa si se elige, dibuja la caja TP/SL y abre la orden, preguntando o sola, por el camino de las órdenes manuales, marcada con el nombre y la versión de la estrategia. Una posición a la vez, sin futuro y solo con la pestaña abierta. Detalle en `Backtester/CLAUDE.md`, "COCINA DE ESTRATEGIAS (26/11/2026)", "Salida, aviso y orden de una señal (paso 1.3, 27/11)".
+
 ### Noviembre 2026: Indicador EMA y la Cocina con lo que Calcula el Gráfico
 
 Indicador «EMA» nuevo, con hasta 6 líneas de periodo propio. La cocina de estrategias recibe de la página lo que calculan los indicadores encendidos, con los ajustes de la sesión: el VWAP y sus bandas como líneas, el interés abierto, el delta y el CVD como series, y el Swing como marca. Un clic sobre un nivel de cualquier indicador lo suma como zona fija, y sobre una línea ofrece sus condiciones sin atarlas a la vela. Detalle en `Backtester/CLAUDE.md`, "COCINA DE ESTRATEGIAS (26/11/2026)", "Lo que calcula el gráfico (27/11)".

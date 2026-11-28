@@ -2,6 +2,7 @@
 // frase que la resume, las versiones guardadas, las velas que se mandan al motor y lo que se pinta en el gráfico.
 // Lógica pura: se prueba con node tests/kitchen.test.mjs. El cálculo de lo que se cumple está en backend/kitchen.py.
 import { TF_MS, lastClosedIndex } from '../backtesting/replayClock.js';
+import { orderQuantity } from '../backtesting/orderPlan.js';
 import { STATE, ZONE_KINDS, ZONE_TYPES, isAbsDir, blockDef, blockText, lineLabel, pickText, zoneName } from './kitchenCatalog.js';
 
 export const MAX_STEPS = 4;
@@ -13,6 +14,11 @@ export const VIEW_BARS = 1000;                 // Lo recorrido: las velas en que
 export const LEAD_BARS = { '1m': 8000, '5m': 8000, '15m': 3360, '1h': 840, '4h': 300 };
 export const TF_MINUTES = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
 export const SIDE_NAMES = { short: 'Solo cortos', long: 'Solo largos', both: 'Largos y cortos' };
+// La salida (paso 1.3): de dónde sale el stop de una señal, el objetivo en R y el tamaño de la orden
+export const EXIT_STOPS = ['atr', 'candle', 'zone'];
+export const EXIT_LIMITS = { atr: [1.5, 0.2, 10], buf: [0.1, 0, 2], rr: [2, 0.2, 20], amount: [10, 0.01, 1e9] };
+export const MIN_STOP_ATR = 0.25;              // Un stop más cerca que esto de la entrada se lleva hasta aquí
+export const SIGNAL_LATE_MAX = 3;              // Una señal vale hasta estas velas después de la suya
 const NEAR_CANDLES = 3;                        // Lo elegido en velas tan cercanas va al mismo paso
 const STORE_KEY = 'kitchen_strategies_v1';
 const MAX_VERSIONS = 30;
@@ -22,8 +28,11 @@ const newStep = (src = null) => ({ mode: 'all', min: 1, win: 5, blocks: [], src 
 /** La capa de zona vacía: sin zonas elegidas no pide nada */
 export const blankZone = () => ({ picks: [], rel: 'near', atr: ZONE_NEAR.default, when: 'first' });
 
+/** La salida de fábrica: el stop del probador (1.5 ATR desde la entrada), objetivo de 2R y 10 USDT de riesgo por trade */
+export const blankExit = () => ({ stop: 'atr', atr: EXIT_LIMITS.atr[0], buf: EXIT_LIMITS.buf[0], rr: EXIT_LIMITS.rr[0], sizeMode: 'risk', amount: EXIT_LIMITS.amount[0] });
+
 /** La cocina en blanco */
-export const blankDoc = () => ({ side: 'short', ctx: [], ctxWhen: 'first', zone: blankZone(), gat: [newStep()], links: [] });
+export const blankDoc = () => ({ side: 'short', ctx: [], ctxWhen: 'first', zone: blankZone(), gat: [newStep()], links: [], exit: blankExit() });
 
 export const isBlank = (doc) => !doc.ctx.length && !doc.zone?.picks?.length && !doc.gat.some(step => step.blocks.length);
 export const allBlocksOf = (doc) => [...doc.ctx, ...doc.gat.flatMap(step => step.blocks)];
@@ -64,6 +73,23 @@ function normalizeZone(raw) {
   };
 }
 
+/** La salida bien formada. Un documento guardado antes del paso 1.3 no la trae: entra con la de fábrica */
+export function normalizeExit(raw) {
+  const base = blankExit();
+  if (!raw || typeof raw !== 'object') return base;
+  const within = (key) => {
+    const [, low, high] = EXIT_LIMITS[key];
+    const value = Number(raw[key]);
+    return raw[key] !== null && raw[key] !== '' && Number.isFinite(value) ? Math.max(low, Math.min(high, value)) : base[key];
+  };
+  return {
+    stop: EXIT_STOPS.includes(raw.stop) ? raw.stop : base.stop, atr: within('atr'), buf: within('buf'), rr: within('rr'),
+    sizeMode: raw.sizeMode === 'fixed' ? 'fixed' : 'risk', amount: within('amount')
+  };
+}
+
+export const setExit = (doc, patch) => ({ ...doc, exit: normalizeExit({ ...(doc.exit || blankExit()), ...patch }) });
+
 /** Un documento guardado o a medio escribir, con todo lo que la pantalla espera */
 export function normalizeDoc(raw) {
   const base = blankDoc();
@@ -83,7 +109,7 @@ export function normalizeDoc(raw) {
   return {
     side: ['long', 'short', 'both'].includes(raw.side) ? raw.side : 'short',
     ctx: (raw.ctx || []).map(block).filter(Boolean).slice(0, MAX_BLOCKS), ctxWhen: raw.ctxWhen === 'last' ? 'last' : 'first',
-    zone: normalizeZone(raw.zone), gat, links
+    zone: normalizeZone(raw.zone), gat, links, exit: normalizeExit(raw.exit)
   };
 }
 
@@ -412,6 +438,89 @@ export function stepText(step, side) {
 
 export const linkText = (link) => `${link.type === 'any' ? 'en cualquier orden' : link.type === 'same' ? 'al tiempo o después' : 'después'}, hasta ${candles(link.max)}`;
 
+/** La salida en palabras: el stop, el objetivo y el tamaño */
+export function exitText(doc) {
+  const exit = normalizeExit(doc.exit);
+  const beyond = exit.buf > 0 ? `, con ${plain(exit.buf)} ATR de aire` : '';
+  const stop = exit.stop === 'zone' ? `stop en el borde lejano de la zona${beyond}`
+    : exit.stop === 'candle' ? `stop detrás de la vela de la señal${beyond}`
+      : `stop a ${plain(exit.atr)} ATR de la entrada`;
+  const size = exit.sizeMode === 'risk' ? `arriesgando ${plain(exit.amount)} USDT` : `con ${plain(exit.amount)} USDT`;
+  return `Salida: ${stop}, objetivo a ${plain(exit.rr)}R, ${size}.`;
+}
+
+/**
+ * La orden que propone una señal (paso 1.3): entrada, stop, objetivo y cantidad, con la salida de la estrategia.
+ * signal: { side: 1 o -1, atr: el de la vela de la señal, zone: [bajo, alto] o null }; candle: la vela de la señal;
+ * entry: el precio al que se entraría (el del momento: al cerrar la vela de la señal, la apertura de la siguiente).
+ * El stop pedido en la zona o en la vela vuelve al de ATR si no hay zona o si queda del lado equivocado de la entrada,
+ * y nunca queda a menos de MIN_STOP_ATR de ella. `from` dice de dónde salió y `note`, por qué cambió.
+ */
+export function signalPlan(exitRaw, { signal, candle, entry }) {
+  const exit = normalizeExit(exitRaw);
+  const dir = signal?.side > 0 ? 1 : -1;
+  const atr = Number(signal?.atr);
+  if (!(atr > 0) || !(entry > 0)) return { ok: false, why: 'Sin ATR en la vela de la señal: no se puede poner el stop.' };
+  let from = exit.stop;
+  let note = '';
+  let stop = null;
+  const behind = (edge) => edge - dir * exit.buf * atr;
+  if (from === 'zone') {
+    const zone = Array.isArray(signal.zone) && signal.zone.length === 2 ? signal.zone : null;
+    if (zone) stop = behind(dir > 0 ? Math.min(...zone) : Math.max(...zone));
+    else { from = 'atr'; note = 'La señal no tiene una zona cerca: el stop va en ATR.'; }
+  } else if (from === 'candle') {
+    if (candle && Number.isFinite(candle.low) && Number.isFinite(candle.high)) stop = behind(dir > 0 ? candle.low : candle.high);
+    else { from = 'atr'; note = 'Sin la vela de la señal: el stop va en ATR.'; }
+  }
+  if (stop !== null && dir * (entry - stop) <= 0) {
+    note = `${from === 'zone' ? 'El borde de la zona' : 'La vela de la señal'} no queda detrás de la entrada: el stop va en ATR.`;
+    from = 'atr';
+    stop = null;
+  }
+  if (stop === null) stop = entry - dir * exit.atr * atr;
+  if (dir * (entry - stop) < MIN_STOP_ATR * atr) {
+    stop = entry - dir * MIN_STOP_ATR * atr;
+    note = `El stop quedaba a menos de ${plain(MIN_STOP_ATR)} ATR de la entrada: se llevó hasta ahí.`;
+  }
+  if (!(stop > 0)) return { ok: false, why: 'El stop queda por debajo de cero.' };
+  const risk = Math.abs(entry - stop);
+  const target = entry + dir * exit.rr * risk;
+  if (!(target > 0)) return { ok: false, why: 'El objetivo queda por debajo de cero: baja el objetivo en R.' };
+  const quantity = orderQuantity({ mode: exit.sizeMode, amount: exit.amount, entry, stopLoss: stop });
+  if (!(quantity > 0)) return { ok: false, why: 'El tamaño no da una cantidad válida.' };
+  return { ok: true, side: dir > 0 ? 'long' : 'short', entry, stop, target, risk, riskAtr: risk / atr, rr: exit.rr, quantity, from, note };
+}
+
+/**
+ * La señal que toca avisar, o null. result: la respuesta del motor; seenUntil: la hora de la última vela ya mirada
+ * (las señales hasta ahí ya se avisaron, o son anteriores a armar la estrategia); lastTime: la última vela cerrada en
+ * la hora simulada. Da la señal más reciente posterior a seenUntil, con `late` (velas que pasaron desde la suya) y
+ * `missed` si pasaron más de SIGNAL_LATE_MAX: reproduciendo rápido el cálculo va unas velas atrás. Nunca una vela
+ * posterior a lastTime.
+ */
+export function freshSignal(result, { seenUntil, lastTime, tfMs }) {
+  if (!result?.success || !Array.isArray(result.signals) || !Number.isFinite(lastTime) || !(tfMs > 0)) return null;
+  let found = null;
+  for (const signal of result.signals) {
+    const time = result.times?.[signal.i];
+    if (!Number.isFinite(time) || time > lastTime || (Number.isFinite(seenUntil) && time <= seenUntil)) continue;
+    if (!found || time > found.time || (time === found.time && signal.side > found.side)) found = { ...signal, time };
+  }
+  if (!found) return null;
+  const late = Math.round((lastTime - found.time) / tfMs);
+  return { ...found, late, missed: late > SIGNAL_LATE_MAX };
+}
+
+/** La marca de una orden nacida de la cocina: de qué estrategia y versión, y de qué señal */
+export function kitchenTag({ name, id = null, version = 0, signal, mode, from }) {
+  const title = String(name || '').trim().slice(0, 60) || 'Estrategia sin nombre';
+  return {
+    name: title, id, version, signalTime: signal.time, side: signal.side > 0 ? 'long' : 'short', late: signal.late || 0, mode, stopFrom: from,
+    note: `Cocina: «${title}»${version ? ` v${version}` : ' (sin guardar)'} · señal de ${signal.side > 0 ? 'largo' : 'corto'} · ${mode === 'auto' ? 'automática' : 'confirmada a mano'}`
+  };
+}
+
 /** La estrategia en una frase. `price` escribe los precios de las zonas fijas (con fecha oculta, el índice) */
 export function phrase(doc, price = plain) {
   const parts = [];
@@ -426,6 +535,7 @@ export function phrase(doc, price = plain) {
     steps.push(steps.length ? `${linkText(doc.links[i - 1] || { type: 'after', max: 5 })}, ${text}` : text);
   });
   if (steps.length) parts.push(`Gatillo: ${steps.join('; ')}.`);
+  if (steps.length) parts.push(exitText(doc));
   if (!parts.length) return 'Todavía está en blanco. Reproduce, pausa donde veas algo y elige en el gráfico lo que quieras usar.';
   return `${SIDE_NAMES[doc.side]}${doc.side === 'both' ? ', en espejo' : ''}. ${parts.join(' ')}`;
 }
@@ -571,7 +681,8 @@ export function saveStore(store, storage = globalThis.localStorage) {
   }
 }
 
-const core = (doc) => JSON.stringify(docForEngine(normalizeDoc(doc)));
+// La salida no va al motor, pero es parte de la estrategia: cambiarla es otra versión
+const core = (doc) => { const clean = normalizeDoc(doc); return JSON.stringify([docForEngine(clean), clean.exit]); };
 
 /** El almacén con una versión nueva de esa estrategia, con la fecha real en que se guardó. No repite una igual a la vigente */
 export function withVersion(store, { id, name, symbol, tf }, doc, now = Date.now()) {

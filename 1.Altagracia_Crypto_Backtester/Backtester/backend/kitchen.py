@@ -949,6 +949,23 @@ class Facts:
         self._layers[key] = out
         return out
 
+    def zone_by(self, layer, i):
+        """La zona elegida más cercana a la vela i, entre las que cuentan en ella y quedan a CANDLE_ZONE_ATR o menos:
+        [borde bajo, borde alto] con los bordes de esa vela, o None. Es la zona de una señal, para poner su stop en el
+        borde lejano (paso 1.3). Solo mira esa vela: nada posterior."""
+        atr = float(self.atr[i]) if self.atr[i] > 0 else 0.0
+        best = None
+        for chosen in layer["picks"].values():
+            for z in chosen:
+                if not z["a"] <= i <= z["b"]:
+                    continue
+                lo = float(z["lo"] if np.isscalar(z["lo"]) else z["lo"][i - z["a"]])
+                hi = float(z["hi"] if np.isscalar(z["hi"]) else z["hi"][i - z["a"]])
+                gap = max(0.0, lo - float(self.H[i]), float(self.L[i]) - hi)
+                if gap <= CANDLE_ZONE_ATR * atr and (best is None or gap < best[0]):
+                    best = (gap, lo, hi)
+        return None if best is None else [best[1], best[2]]
+
     def zones_at(self, i, price=None, offers=()):
         """Las zonas que cuentan en la vela i, de todos los tipos: primero las que quedan bajo el precio del clic (la más
         angosta antes) y después las más cercanas a él (sin clic, a la vela). Es lo que se ofrece para la capa de zona.
@@ -1538,7 +1555,10 @@ def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, 
             for k, step in enumerate(s["steps"]):
                 step_done[k] |= step["done"]
                 step_reach[k] |= step["reach"]
-            signals += [{"i": i - start, "side": s["sd"]} for i in s["signals"] if i >= start]
+            # Cada señal lleva el ATR de su vela y, con capa de zona, la zona que le toca: de ahí sale su stop (paso 1.3)
+            signals += [{"i": i - start, "side": s["sd"], "atr": float(facts.atr[i]) if facts.atr[i] > 0 else None,
+                         "zone": facts.zone_by(s["zone"], i) if s["zone"]["has"] else None}
+                        for i in s["signals"] if i >= start]
         signals.sort(key=lambda x: (x["i"], -x["side"]))
         flow_out = None
         if flow is not None:

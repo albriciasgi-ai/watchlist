@@ -4,7 +4,9 @@ Estado al 26/11/2026: concepto, cuatro prototipos y **los pasos 1.1 y 1.2 constr
 - el 1.1, la pestaña «Cocina» de la simulación manual, con sus fichas con imágenes (sección 5, «El paso 1.1, construido»), y el botón «Una vela más». Está en main desde el PR #77 (9b136091);
 - el 1.2, las zonas (también los niveles de un VP fijo) y los bloques de order flow (sección 5, «El paso 1.2, construido»). Está en main desde el PR #79 (77578c57).
 
-Siguen el 1.3 y el 1.4: los avisos al reproducir y el paso al backtesting global.
+- del 1.3 (27/11), los avisos al reproducir, la caja TP/SL de la señal y la orden, preguntando o sola (sección 5, «El paso 1.3, construido»). Falta «Mis casos».
+
+Sigue el 1.4: el paso al backtesting global.
 
 ---
 
@@ -305,6 +307,21 @@ Lo pidió el usuario: «Incluye esto y construye la cocina», tras pedir fichas 
 
 **Lo que falta de la etapa 1:** «mis casos», los avisos al reproducir con su caja y la unión con el Observador (1.3); pasar la estrategia al backtesting global y abrir una regla ya probada (1.4). Para el 1.4, la composición por pasos y la capa de zona tienen que alimentar el simulador del probador.
 
+### El paso 1.3, construido (27/11)
+
+Lo pidió el usuario al probar: esperaba que la señal abriera el trade con su caja TP/SL.
+
+- **Capa 4 · Salida:** stop en ATR desde la entrada, detrás de la vela de la señal o en el borde lejano de la zona; objetivo en R; tamaño por riesgo o monto fijo. Va en la frase y en las versiones.
+- **Al cerrar una vela con señal:** aviso, pausa si se elige y la caja TP/SL en el gráfico.
+- **La orden:** «Preguntar» (la caja queda propuesta y un botón la abre) o «Automática». Es una orden manual más: historial, imágenes y Observador, marcada con el nombre y la versión de la estrategia. Esa es la unión con el Observador.
+- **Una posición a la vez,** sin futuro y solo con la pestaña abierta.
+
+**Decidido por mí, por confirmar con el usuario:** el stop de fábrica en ATR (1.5); una señal vale hasta 3 velas después de la suya, porque reproduciendo rápido el cálculo va atrás; una propuesta vence a las 3 velas.
+
+**No se hizo:** «Mis casos». La «caja fantasma» del prototipo es aquí la caja TP/SL de App 1.
+
+**Para el 1.4:** la salida de la cocina (stop, objetivo, tamaño) tiene que traducirse a la regla del probador. El stop en ATR y el objetivo en R tienen equivalente directo; el stop detrás de la vela y en la zona, también (vela del elemento y borde de la zona), pero el aire en ATR y el mínimo de 0.25 ATR hay que llevarlos.
+
 ### Tras la primera prueba del usuario (27/11)
 
 El usuario probó los pasos 1.1 y 1.2 y pidió que la cocina lea todos los indicadores de App 1 con los valores de la sesión, y un indicador EMA.
@@ -355,7 +372,7 @@ Reglas:
 
 ## 7. Decisiones pendientes
 
-1. ~~Si se construye el paso 1.1 en App 1~~: construido el 26/11, y el 1.2 el mismo día. Sigue decidir con qué se continúa: el 1.3 (avisos al reproducir) o el 1.4 (pasar al backtesting global), una vez que el usuario los pruebe en su App 1.
+1. ~~Si se construye el paso 1.1 en App 1~~: construido el 26/11, y el 1.2 el mismo día. El 1.3 (avisos, caja y orden) se construyó el 27/11, a pedido del usuario. Sigue el 1.4 (pasar al backtesting global), y decidir si «Mis casos» hace falta.
 2. ~~Tres columnas como el prototipo 2~~: decidido el 26/11, no. Queda el gráfico grande y el panel a la derecha.
 3. Qué marcas vienen encendidas, y si las de order flow se eligen por elemento, como en el modal de Elementos OF.
 4. En App 1, las marcas son las que ya dibuja cada indicador encendido (decidido el 26/11, punto 15 de la sección 2). Hacerlas elegibles toca `MiniChart` y los indicadores, como «Incluir en el análisis». Queda por decidir cómo se ve un bloque cuyo indicador está apagado. Propuesta: la cocina lo enciende mientras el bloque esté en la estrategia, como hace el trade elegido del backtesting global con los indicadores de su regla. En el paso 1.1 no se hizo: el elemento se elige por su vela y se ve en su fila bajo las velas.

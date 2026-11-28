@@ -964,7 +964,9 @@ Pasos 1.1 y 1.2 de la central de estrategias (`docs/PLAN_CENTRAL_ESTRATEGIAS.md`
 - **Versiones:** cada guardado suma una versión con su fecha; se abre cualquiera.
 - **Fichas:** «¿Cómo funciona?» en el encabezado y en cada capa despliega una ficha con su imagen (`KitchenHelp.jsx`). Todas parten del mismo dibujo y cada una resalta su parte.
 
-**Lo que no hace todavía:** no avisa al reproducir, no dibuja la caja de la señal, no abre órdenes y no pasa la estrategia al backtesting global. Son los pasos 1.3 y 1.4.
+**Desde el paso 1.3 (27/11):** avisa al reproducir, dibuja la caja TP/SL de la señal y abre la orden (más abajo, «Salida, aviso y orden de una señal»).
+
+**Lo que no hace todavía:** no pasa la estrategia al backtesting global (paso 1.4), ni tiene «Mis casos».
 
 ### Zonas (paso 1.2)
 
@@ -1051,6 +1053,45 @@ Pedido del usuario al probar: el volumen como elemento, cada variable editable j
 - **Campos del bloque** (`kitchenCatalog.js`): `fields` (números), `selects` y `selectsAfter` (desplegables, antes y después de los números). En `BLOCK_PARAMS` del motor, una lista es un desplegable y su primer valor, el de fábrica.
 - **Pedidos al reproducir:** uno a la vez (`state.flight`, `state.queued`); el que está en curso termina y sale otro con lo último, a 250 ms como mínimo. Un cambio de la estrategia o de la vela elegida sí corta el pedido en curso. `kitchenBands(..., { behind })` escribe «faltan N» en la última fila.
 
+### Salida, aviso y orden de una señal (paso 1.3, 27/11)
+
+Pedido del usuario al probar: «cuando se cumplen todas las condiciones, no está abriendo el trade ni dibujando la caja de takeprofit/stoploss».
+
+- **Capa 4 · Salida** (`doc.exit`, `normalizeExit`, `setExit`, `exitText`): `stop` (`atr`, `candle` o `zone`), `atr` (1.5), `buf` (0.1 ATR de aire detrás de la vela o de la zona), `rr` (2), `sizeMode` (`risk` o `fixed`) y `amount` (10 USDT). Rangos en `EXIT_LIMITS`.
+  - No va al motor (`docForEngine` no la manda): cambiarla no vuelve a pedir el cálculo ni rearma el aviso.
+  - Sí es parte de la estrategia: entra en la frase cuando hay gatillo, y `core()` la cuenta para saber si un guardado es una versión nueva. Un documento sin ella entra con la de fábrica y es igual al mismo documento con la de fábrica.
+- **La orden de una señal** (`signalPlan`, lógica pura): entrada, stop, objetivo y cantidad (`orderQuantity` de `orderPlan.js`).
+  - el stop en la zona usa el borde de arriba en un corto y el de abajo en un largo; el de la vela, su máximo o su mínimo;
+  - sin zona en la señal, o con el stop del lado equivocado de la entrada, vuelve al de ATR (`from`, `note`);
+  - nunca queda a menos de `MIN_STOP_ATR` (0.25) de la entrada: con el tamaño por riesgo, un stop pegado dispara la cantidad.
+- **Motor:** cada señal de la respuesta trae `atr` (el de su vela) y `zone` ([bajo, alto] o null). `Facts.zone_by(layer, i)` da la zona elegida más cercana a la vela, entre las que cuentan en ella y quedan a `CANDLE_ZONE_ATR` o menos, con los bordes de esa vela.
+- **Qué señal avisa** (`freshSignal`, lógica pura): la más reciente posterior a `seenUntil` y nunca una vela posterior a la última cerrada.
+  - `seenUntil` se pone en la última vela cerrada al armar la estrategia (otra estrategia, otro marco, otra moneda): lo que ya pasó no avisa;
+  - si la simulación retrocede, baja con ella;
+  - `late` son las velas que pasaron desde la de la señal; con más de `SIGNAL_LATE_MAX` (3), `missed`: solo se avisa;
+  - la respuesta lleva `docKey`, el documento con que se pidió: una respuesta de la estrategia anterior no avisa.
+- **Preferencias** (`kitchen_run_v1`, por navegador, no por estrategia): `on` (avisar y armar la caja), `pause` y `mode` (`ask` o `auto`).
+- **La caja:** `onBox` llama a `MiniChart.addTPSLBox`, 8 velas de ancho, desde la vela que empieza. Es una caja libre como cualquier otra: se puede mover. Una propuesta sin usar se quita con `MiniChart.removeDrawing(id)` (nuevo) al descartarla, al vencer, al llegar otra señal, al cambiar la estrategia y al salir de la pestaña.
+- **La orden** (`latestRef.current.kitchenOrder` en `BacktestingApp`): `autoOrderType` decide como el panel en «Automática», `createOrder`, `order.kitchen` (`kitchenTag`: nombre, id, versión, hora y lado de la señal, velas de atraso, modo y de dónde salió el stop), su nota en `order.notes` y `afterOrderCreated`, lo que antes iba dentro de `onOrderCreated` del panel de trading.
+  - «Abrir la orden» lee la caja como esté en el gráfico; si se borró, usa lo propuesto y la orden arma su caja;
+  - en «Preguntar» muestra `OrderConfirmationModal`, como el panel;
+  - con una posición abierta o una orden esperando (`isBusy`), no hay orden ni caja.
+- **Solo con la pestaña abierta:** el aviso vive en `KitchenPanel`.
+
+**Probado en pantalla** el 27/11, en una copia aislada (backend 9320, página 9321) con BTC 15m desde el 01/01/2023 y una estrategia de un paso (vela con volumen alto, largos y cortos):
+- la capa 4, su ficha y la frase con la salida;
+- a 3000x: el aviso, la pausa y la caja al cerrar la vela de las 20:00 del 1 de enero, con la hora en 20:20;
+- «Abrir la orden»: la confirmación y el trade #1;
+- «Automática»: los trades #2, #3 y #4, cada uno al cerrarse el anterior, y el #5 con el stop cambiado a 10 ATR sin rearmar;
+- el historial con el trade #1 cerrado y su nota de la cocina; las imágenes de los trades quedaron guardadas;
+- una señal con el trade #5 abierto: solo avisó.
+
+**Sin ver en pantalla:** el stop detrás de la vela y en la zona, «Descartar», la propuesta vencida, la señal tarde o perdida, mover la caja antes de abrir, una orden que espera su precio, la fecha oculta (los textos pasan por `price` y `when`), largos o cortos solos, el Observador con estas órdenes, la ventana aparte y los otros estilos.
+
+**Visto al probar, sin tocar:** al cerrarse sola, `OrderConfirmationModal` llama a su `onClose` dentro de un `setState` y React lo avisa en la consola. Pasa igual desde el panel de trading.
+
+**Falta:** «Mis casos» (lo demás del paso 1.3 del plan) y el paso 1.4.
+
 ### Flujo
 
 ```
@@ -1117,9 +1158,9 @@ MiniChart (getTradeBands)   filas bajo las velas, señales, líneas, zonas y la 
 
 ```bash
 cd backend
-.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 35
+.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 48 con el paso 1.3
 cd ../frontend
-node tests/kitchen.test.mjs                                  # 25
+node tests/kitchen.test.mjs                                  # 33 con el paso 1.3
 node tests/levels.test.mjs                                   # 56: dos son de los VP fijos de la cocina
 ```
 

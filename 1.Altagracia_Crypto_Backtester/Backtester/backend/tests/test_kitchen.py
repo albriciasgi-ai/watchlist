@@ -441,6 +441,31 @@ def test_solo_esta_zona_es_una_franja_fija_que_cuenta_desde_que_se_conoce():
     assert result["zone"]["picks"]["z"] == {"count": 1, "open": True, "bands": [[40 * MS, 80 * MS, 105.0, 107.0, 0]]}
 
 
+def test_cada_senal_lleva_el_atr_de_su_vela_y_la_zona_que_le_toca():
+    """Paso 1.3: de ahí sale el stop de la caja. Solo con la vela de la señal: nada posterior lo cambia."""
+    bars = flat(80)
+    for i in (50, 70):
+        bars[i].update(h=106.0)              # Tocan la franja de 105 a 107 y cierran abajo: un rechazo para un corto
+    zone = zone_doc({"uid": "z", "type": "one", "kind": "draw", "lo": 105.0, "hi": 107.0, "from": 40 * MS},
+                    {"uid": "y", "type": "one", "kind": "draw", "lo": 90.0, "hi": 91.0, "from": 40 * MS}, rel="in")
+    doc = {"side": "short", "zone": zone, "gat": [{"blocks": [{"uid": "g", "id": "zrech"}]}]}
+    result = kitchen.evaluate("TEST", 60, rows(bars), doc, view=80)
+    facts = kitchen.facts_for("TEST", 60, kitchen.bars_of(rows(bars)))
+    assert [s["i"] for s in result["signals"]] == [50, 70]
+    for s in result["signals"]:
+        assert s["zone"] == [105.0, 107.0]                     # La que tocó, no la otra, que queda lejos
+        assert s["atr"] == float(facts.atr[s["i"]]) and s["atr"] > 0
+    # Con menos velas, la señal de la vela 50 dice lo mismo: no mira a la derecha
+    short = kitchen.evaluate("TEST", 60, rows(bars[:60]), doc, view=60)
+    assert short["signals"] == [result["signals"][0]]
+    # Sin capa de zona no hay zona; y una zona a más de 3 ATR de la vela no es la de esa señal
+    plain = kitchen.evaluate("TEST", 60, rows(walk(400)), {"side": "both", "gat": [{"blocks": [{"uid": "g", "id": "VH"}]}]}, view=200)
+    assert plain["signals"] and all(s["zone"] is None and s["atr"] > 0 for s in plain["signals"])
+    far = kitchen.Facts("TEST", 60, flat(80))
+    layer = far.zone_layer(zone_doc({"uid": "z", "type": "one", "kind": "draw", "lo": 150.0, "hi": 151.0, "from": 0}), -1)
+    assert far.zone_by(layer, 60) is None
+
+
 def mask(n, cells):
     out = np.zeros(n, dtype=bool)
     out[list(cells)] = True
