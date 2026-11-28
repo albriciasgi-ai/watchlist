@@ -53,6 +53,8 @@ class TimeController {
     this.currentTime = this.simulationStartTime; // Inicializar en simulationStartTime, no en startTime
     this.timeframe = timeframe; // "15m", "1h", "4h"
     this.playbackSpeed = 1; // 1x, 2x, 5x, etc.
+    this.stopAt = null; // Hora en que el reloj se detiene solo (la cocina: el cierre de la vela de su próxima señal)
+    this.onStopAt = null; // Aviso de esa parada, en lugar de onTimeUpdate
     this.isPlaying = false;
     this.interval = null;
     this.onTimeUpdate = onTimeUpdate; // Callback cuando cambia el tiempo
@@ -226,8 +228,18 @@ class TimeController {
       // nunca adelanta el reloj, y las velas vuelven a cerrar en su hora. Lo que no avanzó queda debido
       const reached = this.currentTime + steps * stepMs;
       const aligned = Math.floor(reached / stepMs) * stepMs;
-      const next = aligned > this.currentTime ? aligned : reached;
+      let next = aligned > this.currentTime ? aligned : reached;
       owedMs += reached - next;
+
+      // Una parada pedida (la cocina: el cierre de la vela de su próxima señal). El reloj no la pasa: queda justo ahí,
+      // en pausa, y avisa. Lo que este avance traía de más no queda debido
+      const stopHere = this.stopAt !== null && this.stopAt !== undefined && this.currentTime < this.stopAt && next >= this.stopAt
+        ? this.stopAt : null;
+      if (stopHere !== null) {
+        next = stopHere;
+        owedMs = 0;
+        this.stopAt = null;
+      }
 
       this.currentTime = next;
       this.currentSubdivision = (this.currentSubdivision + steps) % subdivisions.count;
@@ -236,6 +248,14 @@ class TimeController {
       if (this.currentTime >= this.endTime) {
         this.currentTime = this.endTime;
         this.pause();
+      }
+
+      if (stopHere !== null && this.isPlaying) {
+        this.pause();
+        if (this.onStopAt) {
+          this.onStopAt(stopHere);   // Quien pidió la parada actualiza la pantalla y decide si sigue
+          return;
+        }
       }
 
       if (this.onTimeUpdate) this.onTimeUpdate(this.currentTime);

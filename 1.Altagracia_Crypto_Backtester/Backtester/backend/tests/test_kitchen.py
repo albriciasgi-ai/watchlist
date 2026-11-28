@@ -438,7 +438,32 @@ def test_solo_esta_zona_es_una_franja_fija_que_cuenta_desde_que_se_conoce():
     zone = zone_doc({"uid": "z", "type": "one", "kind": "draw", "lo": 105.0, "hi": 107.0, "from": 40 * MS}, rel="in")
     result = kitchen.evaluate("TEST", 60, rows(bars), {"side": "short", "zone": zone, "gat": [{"blocks": [{"uid": "g", "id": "zrech"}]}]}, view=80)
     assert [s["i"] for s in result["signals"]] == [50, 70]   # La vela 60 la toca, pero cierra arriba: no es un rechazo para un corto
-    assert result["zone"]["picks"]["z"] == {"count": 1, "open": True, "bands": [[40 * MS, 80 * MS, 105.0, 107.0, 0]]}
+    assert result["zone"]["picks"]["z"] == {"count": 1, "open": True, "spans": [[40, 79]], "bands": [[40 * MS, 80 * MS, 105.0, 107.0, 0]]}
+
+
+def test_cada_senal_lleva_el_atr_de_su_vela_y_la_zona_que_le_toca():
+    """Paso 1.3: de ahí sale el stop de la caja. Solo con la vela de la señal: nada posterior lo cambia."""
+    bars = flat(80)
+    for i in (50, 70):
+        bars[i].update(h=106.0)              # Tocan la franja de 105 a 107 y cierran abajo: un rechazo para un corto
+    zone = zone_doc({"uid": "z", "type": "one", "kind": "draw", "lo": 105.0, "hi": 107.0, "from": 40 * MS},
+                    {"uid": "y", "type": "one", "kind": "draw", "lo": 90.0, "hi": 91.0, "from": 40 * MS}, rel="in")
+    doc = {"side": "short", "zone": zone, "gat": [{"blocks": [{"uid": "g", "id": "zrech"}]}]}
+    result = kitchen.evaluate("TEST", 60, rows(bars), doc, view=80)
+    facts = kitchen.facts_for("TEST", 60, kitchen.bars_of(rows(bars)))
+    assert [s["i"] for s in result["signals"]] == [50, 70]
+    for s in result["signals"]:
+        assert s["zone"] == [105.0, 107.0]                     # La que tocó, no la otra, que queda lejos
+        assert s["atr"] == float(facts.atr[s["i"]]) and s["atr"] > 0
+    # Con menos velas, la señal de la vela 50 dice lo mismo: no mira a la derecha
+    short = kitchen.evaluate("TEST", 60, rows(bars[:60]), doc, view=60)
+    assert short["signals"] == [result["signals"][0]]
+    # Sin capa de zona no hay zona; y una zona a más de 3 ATR de la vela no es la de esa señal
+    plain = kitchen.evaluate("TEST", 60, rows(walk(400)), {"side": "both", "gat": [{"blocks": [{"uid": "g", "id": "VH"}]}]}, view=200)
+    assert plain["signals"] and all(s["zone"] is None and s["atr"] > 0 for s in plain["signals"])
+    far = kitchen.Facts("TEST", 60, flat(80))
+    layer = far.zone_layer(zone_doc({"uid": "z", "type": "one", "kind": "draw", "lo": 150.0, "hi": 151.0, "from": 0}), -1)
+    assert far.zone_by(layer, 60) is None
 
 
 def mask(n, cells):
@@ -504,6 +529,71 @@ def test_la_respuesta_pinta_y_cuenta_la_capa_de_zona():
     assert blank["candle"]["diag"][0]["zone"] is None and not [e for e in blank["candle"]["events"] if e["id"] in kitchen.ZONE_EVENT_IDS]
 
 
+# ==================== Pedido por adelantado (27/11) ====================
+
+def as_of(full, last_time, view):
+    """La respuesta de un pedido con velas adelantadas, recortada a la hora simulada: lo mismo que hace `asOf` de
+    kitchenDoc.js en la página. Si cambia una, cambia la otra."""
+    times = full["times"]
+    K = sum(1 for t in times if t <= last_time)
+    off = max(0, K - view)
+    tf = times[1] - times[0]
+    idx = lambda items: [i - off for i in items if off <= i < K]
+    runs = lambda items: [[max(a, off) - off, min(b, K - 1) - off] for a, b in items if max(a, off) <= min(b, K - 1)]
+    total = lambda items: sum(b - a + 1 for a, b in items)
+    out = {"times": times[off:K], "seen": K - off, "near": runs(full["near"]),
+           "signals": [{**s, "i": s["i"] - off} for s in full["signals"] if off <= s["i"] < K],
+           "lines": {name: values[off:K] for name, values in full["lines"].items()},
+           "blocks": {uid: {"runs": runs(b["runs"]), "count": total(runs(b["runs"]))} for uid, b in full["blocks"].items()},
+           "context": {"has": full["context"]["has"], "runs": runs(full["context"]["runs"]), "count": total(runs(full["context"]["runs"]))},
+           "steps": [{"step": s["step"], "alone": idx(s["alone"]), "chained": idx(s["chained"]), "doneAt": idx(s["doneAt"]),
+                      "done": len(idx(s["doneAt"])), "reached": len(idx(s["chained"]))} for s in full["steps"]]}
+    zone = full["zone"]
+    if not zone["has"]:
+        out["zone"] = zone
+        return out
+    picks = {}
+    for uid, pick in zone["picks"].items():
+        spans = [[a, b] for a, b in pick["spans"] if a < K and b >= off]
+        bands = [[s, min(e, last_time + tf), lo, hi, way] for s, e, lo, hi, way in pick["bands"] if s <= last_time and e > times[off]]
+        picks[uid] = {"count": len(spans), "open": any(b >= K - 1 for a, b in spans),
+                      "spans": [[a - off, min(b, K - 1) - off] for a, b in spans], "bands": bands}
+    out["zone"] = {"has": True, "runs": runs(zone["runs"]), "count": total(runs(zone["runs"])), "arrivals": len(idx(zone["arriveAt"])),
+                   "arriveAt": idx(zone["arriveAt"]), "picks": picks}
+    return out
+
+
+def test_un_pedido_por_adelantado_recortado_a_la_hora_es_igual_al_de_ese_momento():
+    """La página pide con velas que todavía no ocurrieron en la simulación y muestra solo hasta la hora simulada.
+    Recortada ahí, la respuesta tiene que ser la misma que daría el motor con las velas de ese momento: señales, pasos,
+    contexto, zonas, líneas y cuentas. Si algo mirara a la derecha, aquí se vería."""
+    bars = walk(1500)
+    zone = {"picks": [{"uid": "s", "type": "kind", "kind": "sr", "dir": "any"}, {"uid": "f", "type": "kind", "kind": "fvg", "dir": "any"},
+                      {"uid": "o", "type": "kind", "kind": "ob", "dir": "any"}], "rel": "near", "atr": 1.5}
+    doc = {"side": "both", "ctx": [{"uid": "c", "id": "side", "p": {"line": "e50"}}], "zone": zone,
+           "gat": [{"blocks": [{"uid": "g", "id": "VH"}, {"uid": "t", "id": "ztoca"}], "mode": "any"}, {"blocks": [{"uid": "h", "id": "HM"}, {"uid": "e", "id": "EN"}], "mode": "any"}],
+           "links": [{"type": "same", "max": 30}]}
+    view, ahead_bars = 300, 400
+    ahead = kitchen.evaluate("TEST", 60, rows(bars[:1400]), doc, view=view + ahead_bars)
+    assert ahead["signals"] and ahead["zone"]["count"] and ahead["context"]["count"]
+    checked = 0
+    for k in (1000, 1001, 1100, 1250, 1399, 1400):
+        direct = kitchen.evaluate("TEST", 60, rows(bars[:k]), doc, view=view)
+        cut = as_of(ahead, bars[k - 1]["t"], view)
+        assert cut["times"] == direct["times"] and cut["seen"] == direct["seen"]
+        assert cut["signals"] == direct["signals"], f"las señales cambian con velas adelantadas (k={k})"
+        assert cut["near"] == direct["near"] and cut["lines"] == direct["lines"]
+        assert cut["context"] == direct["context"]
+        assert cut["blocks"] == {uid: {"runs": b["runs"], "count": b["count"]} for uid, b in direct["blocks"].items()}
+        assert cut["steps"] == direct["steps"]
+        for key in ("runs", "count", "arrivals", "arriveAt"):
+            assert cut["zone"][key] == direct["zone"][key], key
+        for uid, pick in direct["zone"]["picks"].items():
+            assert cut["zone"]["picks"][uid] == pick, f"la zona {uid} cambia con velas adelantadas (k={k})"
+        checked += len(direct["signals"])
+    assert checked > 5
+
+
 def test_las_zonas_de_la_vela_elegida_y_cada_una_sola_es_la_misma_franja():
     """Lo que se ofrece al elegir una vela: zonas que cuentan en ella, la más cercana al clic primero. Y elegida «solo
     esta», la franja toca esa vela igual que la zona de donde salió."""
@@ -544,7 +634,7 @@ def test_un_nivel_de_un_vp_fijo_es_una_zona_fija_que_cuenta_desde_que_se_suma_y_
     doc = {"side": "short", "zone": zone_doc(poc, rel="in"), "gat": [{"blocks": [{"uid": "g", "id": "zrech"}]}]}
     result = kitchen.evaluate("TEST", 60, rows(bars), doc, view=80)
     assert [s["i"] for s in result["signals"]] == [50, 70]      # La vela 60 lo toca, pero cierra arriba: no es un rechazo
-    assert result["zone"]["picks"]["p"] == {"count": 1, "open": True, "bands": [[40 * MS, 80 * MS, 105.5, 105.5, 0]]}
+    assert result["zone"]["picks"]["p"] == {"count": 1, "open": True, "spans": [[40, 79]], "bands": [[40 * MS, 80 * MS, 105.5, 105.5, 0]]}
     zones = kitchen.catalog()["zones"]
     assert set(zones["user"]) == set(kitchen.USER_KINDS) == {"draw", "vp", "ind"} and set(zones["user"]) < set(zones["fixed"])
 

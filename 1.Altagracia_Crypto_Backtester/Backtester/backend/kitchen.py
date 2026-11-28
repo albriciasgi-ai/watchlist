@@ -949,6 +949,23 @@ class Facts:
         self._layers[key] = out
         return out
 
+    def zone_by(self, layer, i):
+        """La zona elegida más cercana a la vela i, entre las que cuentan en ella y quedan a CANDLE_ZONE_ATR o menos:
+        [borde bajo, borde alto] con los bordes de esa vela, o None. Es la zona de una señal, para poner su stop en el
+        borde lejano (paso 1.3). Solo mira esa vela: nada posterior."""
+        atr = float(self.atr[i]) if self.atr[i] > 0 else 0.0
+        best = None
+        for chosen in layer["picks"].values():
+            for z in chosen:
+                if not z["a"] <= i <= z["b"]:
+                    continue
+                lo = float(z["lo"] if np.isscalar(z["lo"]) else z["lo"][i - z["a"]])
+                hi = float(z["hi"] if np.isscalar(z["hi"]) else z["hi"][i - z["a"]])
+                gap = max(0.0, lo - float(self.H[i]), float(self.L[i]) - hi)
+                if gap <= CANDLE_ZONE_ATR * atr and (best is None or gap < best[0]):
+                    best = (gap, lo, hi)
+        return None if best is None else [best[1], best[2]]
+
     def zones_at(self, i, price=None, offers=()):
         """Las zonas que cuentan en la vela i, de todos los tipos: primero las que quedan bajo el precio del clic (la más
         angosta antes) y después las más cercanas a él (sin clic, a la vela). Es lo que se ofrece para la capa de zona.
@@ -1481,10 +1498,14 @@ def _zone_answer(facts, doc, sides, start):
                 if z["b"] >= start:
                     found[(z["a"], z["b"], z["lo0"], z["hi0"])] = z
         zones = [found[key] for key in sorted(found)]
+        # `spans`: las velas en que cuenta cada zona, desde `start`. Con ellas la página recorta una respuesta pedida
+        # por adelantado a la hora simulada: qué zonas ya nacieron y cuáles siguen contando
         picks[pick["uid"]] = {"count": len(zones), "open": any(z["b"] == n - 1 for z in zones),
+                              "spans": [[z["a"] - start, z["b"] - start] for z in zones],
                               "bands": [[bars[z["a"]]["t"], bars[z["b"]]["t"] + facts.tf_ms, z["lo0"], z["hi0"], z["way"]]
                                         for z in zones[-MAX_BANDS:]]}
-    return {"has": True, "runs": _runs(ok, start), "count": int(ok[start:].sum()), "arrivals": int(arrive[start:].sum()), "picks": picks}
+    return {"has": True, "runs": _runs(ok, start), "count": int(ok[start:].sum()), "arrivals": int(arrive[start:].sum()),
+            "arriveAt": _at(arrive, start), "picks": picks}
 
 
 def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, offers=None, page=None, settings=None):
@@ -1538,7 +1559,10 @@ def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, 
             for k, step in enumerate(s["steps"]):
                 step_done[k] |= step["done"]
                 step_reach[k] |= step["reach"]
-            signals += [{"i": i - start, "side": s["sd"]} for i in s["signals"] if i >= start]
+            # Cada señal lleva el ATR de su vela y, con capa de zona, la zona que le toca: de ahí sale su stop (paso 1.3)
+            signals += [{"i": i - start, "side": s["sd"], "atr": float(facts.atr[i]) if facts.atr[i] > 0 else None,
+                         "zone": facts.zone_by(s["zone"], i) if s["zone"]["has"] else None}
+                        for i in s["signals"] if i >= start]
         signals.sort(key=lambda x: (x["i"], -x["side"]))
         flow_out = None
         if flow is not None:
@@ -1548,7 +1572,7 @@ def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, 
                "zone": _zone_answer(facts, doc, sides, start),
                "context": {"has": bool(doc["ctx"]), "runs": _runs(ctx_mask, start) if doc["ctx"] else [],
                            "count": int(ctx_mask[start:].sum()) if doc["ctx"] else 0},
-               "steps": [{"step": gi, "alone": _at(done & ~reach, start), "chained": _at(reach, start),
+               "steps": [{"step": gi, "alone": _at(done & ~reach, start), "chained": _at(reach, start), "doneAt": _at(done, start),
                           "done": int(done[start:].sum()), "reached": int(reach[start:].sum())}
                          for gi, done, reach in zip(used_steps, step_done, step_reach)],
                "signals": signals, "near": _runs(near, start)}

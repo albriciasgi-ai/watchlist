@@ -361,6 +361,44 @@ test('una vela más: las órdenes se revisan con todas las velas del tramo', () 
   assert.equal(settledTo, to);
 });
 
+test('una parada pedida: el reloj no la pasa, queda en pausa justo ahí y avisa una vez', () => {
+  // A 50000x cada tick trae horas de simulación: sin la parada, el reloj saltaría la vela de la señal
+  const clock = fakeClock();
+  const times = [];
+  const hits = [];
+  const controller = new TimeController(START, END, '15m', time => times.push(time), START);
+  controller.playbackSpeed = 50000;
+  controller.stopAt = START + 7 * STEP;
+  controller.onStopAt = time => hits.push([time, controller.isPlaying]);
+  controller.play();
+  clock.advance(1000);                                   // 50,000 s de simulación: 166 pasos de 5 minutos
+  assert.equal(controller.currentTime, START + 7 * STEP, 'queda en la hora pedida, no más allá');
+  assert.deepEqual(hits, [[START + 7 * STEP, false]], 'avisa ya en pausa');
+  assert.equal(clock.running(), false);
+  assert.equal(controller.stopAt, null, 'la parada se gasta');
+  assert.ok(times.every(time => time < START + 7 * STEP), 'la hora de la parada la avisa onStopAt, no onTimeUpdate');
+  // Al seguir no vuelve a parar ahí ni cobra lo que el avance traía de más
+  controller.play();
+  clock.advance(12);                                     // 600 s de simulación: dos pasos
+  assert.equal(controller.currentTime, START + 9 * STEP);
+  assert.deepEqual(hits.length, 1);
+  // Una parada que ya quedó atrás no detiene nada; sin aviso propio, avisa por onTimeUpdate
+  controller.pause();
+  controller.stopAt = START;
+  controller.play();
+  clock.advance(1);
+  assert.equal(controller.isPlaying, true);
+  controller.pause();
+  const plain = new TimeController(START, END, '15m', time => times.push(['plain', time]), START);
+  plain.playbackSpeed = 50000;
+  plain.stopAt = START + 2 * STEP;
+  plain.play();
+  clock.advance(1000);
+  assert.equal(plain.currentTime, START + 2 * STEP);
+  assert.equal(plain.isPlaying, false);
+  assert.deepEqual(times[times.length - 1], ['plain', START + 2 * STEP]);
+});
+
 let failed = 0;
 for (const [name, run] of tests) {
   try {

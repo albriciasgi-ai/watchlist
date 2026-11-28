@@ -505,6 +505,18 @@ const MiniChart = forwardRef(({
       drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
       return true;
     },
+    // Quita un dibujo por su id (la caja propuesta por una señal de la cocina que se descarta o vence)
+    removeDrawing: (shapeId) => {
+      const manager = drawingManagerRef.current;
+      const index = manager ? manager.shapes.findIndex(shape => shape.id === shapeId) : -1;
+      if (index === -1) return false;
+      if (manager.selectedShape?.id === shapeId) manager.selectedShape = null;
+      manager.shapes.splice(index, 1);
+      manager.saveToHistory();
+      saveDrawings();
+      drawChartRef.current?.(candlesRef.current, lastPriceRef.current, null, null);
+      return true;
+    },
     // 🎯 NUEVO: Extender caja TP/SL hasta el timestamp de cierre del trade
     extendTPSLBox: (boxId, exitTime) => {
       console.log(`[MiniChart ${symbol} ${interval}] 🔍 Intentando extender TP/SL box:`, {

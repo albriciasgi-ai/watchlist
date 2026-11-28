@@ -190,6 +190,31 @@ def test_lo_conocido_no_cambia_al_avanzar_la_hora(store):
     assert all(b["t"] + 15 * 60000 <= cut for b in early["bars"])
 
 
+def test_pedido_por_adelantado_la_tabla_y_los_footprints_de_una_vela_cerrada_no_cambian(store):
+    """La página pide por adelantado (27/11): elementos, tabla de la vela y footprints de velas que la simulación todavía
+    no vivió, y muestra cada uno cuando su vela cierra. Lo que se pide con la hora más adelante tiene que ser, para las
+    velas ya cerradas, lo mismo que se pide en ese momento."""
+    day = DAY0 + dt.timedelta(days=32)
+    start, end = _ms(day), _ms(day + dt.timedelta(days=1))
+    cut = _ms(day, 12)
+    tf = 15 * 60000
+    full = oe.detect(SYMBOL, 15, start, end, end, band_days=0)
+    early = oe.detect(SYMBOL, 15, start, end, cut, band_days=0)
+    ahead_bars = {b["t"]: b for b in full["bars"] if b["t"] + tf <= cut}
+    assert early["bars"] and {b["t"]: b for b in early["bars"]} == ahead_bars
+
+    for rules in ({"max_levels": 10}, {"step": 50.0}, {"step": 50.0, "imbalance": {"candle_volume_pct": 150, "candle_volume_bars": 20}}):
+        ahead = fs.footprints(SYMBOL, 15, start, end, end, **rules)
+        now = fs.footprints(SYMBOL, 15, start, end, cut, **rules)
+        closed_now = {f["candle_timestamp"]: f for f in now["footprints"] if f["candle_timestamp"] + tf <= cut}
+        closed_ahead = {f["candle_timestamp"]: f for f in ahead["footprints"] if f["candle_timestamp"] + tf <= cut}
+        assert len(closed_now) == 48 and closed_now == closed_ahead, rules
+        # Y pedido solo el tramo que viene, como hace el depósito: las mismas velas, iguales
+        later = fs.footprints(SYMBOL, 15, cut, end, end, **rules)
+        whole = {f["candle_timestamp"]: f for f in ahead["footprints"] if f["candle_timestamp"] >= cut}
+        assert {f["candle_timestamp"]: f for f in later["footprints"]} == whole, rules
+
+
 def test_frecuencia_cerca_del_objetivo(store):
     day = DAY0 + dt.timedelta(days=31)
     r = oe.detect(SYMBOL, 15, _ms(day), _ms(day + dt.timedelta(days=2)), _ms(day + dt.timedelta(days=2)), target=0.05, band_days=0)

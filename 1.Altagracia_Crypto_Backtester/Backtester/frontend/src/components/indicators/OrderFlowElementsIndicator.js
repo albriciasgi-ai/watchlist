@@ -26,6 +26,11 @@ const MIN_GLYPH_PX = 4; // Con velas más angostas no caben los triángulos
 const MIN_CODE_PX = 16; // Desde este ancho van los códigos bajo el triángulo
 const MIN_TABLE_TEXT_PX = 30;
 const SLOPE_ATR = 0.25; // Pendiente de la EMA, en ATR por 3 velas, para contar como impulso
+// Por adelantado, solo en reproducción (27/11): los elementos y los setups de las velas que vienen se piden antes.
+// Cada evento trae la hora en que se conoce (`known`) y el dibujo ya filtra por ella, así que nada se adelanta a la vista
+const AHEAD_CANDLES = 400;
+const AHEAD_MAX_CANDLES = 1600; // Si la reproducción se las come antes del pedido siguiente, se pide más
+const AHEAD_MAX_MS = 30 * DAY_MS;
 
 function shortNumber(value, decimals = 1) {
   value = maskVolume(value);
@@ -67,6 +72,7 @@ class OrderFlowElementsIndicator extends IndicatorBase {
     this.warming = false;
     this.tooWide = false;
     this.targets = [];
+    this.ahead = { on: true, size: AHEAD_CANDLES }; // Vale solo en reproducción (priceContext.knownCandles)
 
     // Setups: recetas activas y sus coincidencias, pedidas aparte al backend
     this.setupsConfig = loadSetupsConfig(symbol);
@@ -142,12 +148,29 @@ class OrderFlowElementsIndicator extends IndicatorBase {
     const pad = Math.min(MAX_PAD_MS, Math.ceil(visibleCandles.length / 2) * this.tfMs);
     const loaded = this.loaded;
 
+    const aheadEnd = this._aheadEnd(priceContext, last, closedEnd, loaded?.end, wantedEnd, this.isLoading);
     if (!loaded || first < loaded.start || first > loaded.end) {
       this._request(first - pad, last + pad, knownUntil, BAND_DAYS, true, requestRedraw);
+    } else if (aheadEnd !== undefined) {
+      // Reproduciendo: lo que viene se pide antes, completo hasta su propio final. Nada de eso se dibuja hasta su hora
+      if (aheadEnd !== null) this._request(loaded.end - 4 * this.tfMs, aheadEnd, aheadEnd, 0, false, requestRedraw);
     } else if (loaded.end < wantedEnd) {
       // Avanzó la hora o la vista: solo lo nuevo. Cuatro velas atrás para la VA abandonada de la anterior
       this._request(loaded.end - 4 * this.tfMs, last + pad, knownUntil, 0, false, requestRedraw);
     }
+  }
+
+  /**
+   * Hasta dónde pedir por adelantado. undefined: no aplica (en vivo, o mirando velas viejas): se pide como siempre.
+   * null: lo adelantado todavía alcanza. Un número: el final del tramo que hay que pedir ya.
+   */
+  _aheadEnd(priceContext, last, closedEnd, loadedEnd, wantedEnd, busy) {
+    if (!this.ahead.on || !priceContext.knownCandles || !Number.isFinite(loadedEnd) || last < closedEnd) return undefined;
+    const ahead = this.ahead;
+    if (loadedEnd < wantedEnd && !busy) ahead.size = Math.min(AHEAD_MAX_CANDLES, ahead.size * 2); // Se agotó
+    const size = Math.min(ahead.size, Math.max(1, Math.floor(AHEAD_MAX_MS / this.tfMs)));
+    if (loadedEnd - closedEnd >= (size / 2) * this.tfMs) return null;
+    return closedEnd + size * this.tfMs;
   }
 
   _request(start, end, knownUntil, bandDays, replace, redraw) {
@@ -205,8 +228,11 @@ class OrderFlowElementsIndicator extends IndicatorBase {
     const closedEnd = Math.floor(knownUntil / this.tfMs) * this.tfMs;
     const pad = Math.min(MAX_PAD_MS, Math.ceil(visibleCandles.length / 2) * this.tfMs);
     const loaded = this.setupsLoaded;
+    const aheadEnd = this._aheadEnd(priceContext, last, closedEnd, loaded?.end, Math.min(last, closedEnd), true);
     if (!loaded || first < loaded.start || first > loaded.end) {
       this._requestSetups(first - pad, last + pad, knownUntil, recipes, true, requestRedraw);
+    } else if (aheadEnd !== undefined) {
+      if (aheadEnd !== null) this._requestSetups(loaded.end - 12 * this.tfMs, aheadEnd, aheadEnd, recipes, false, requestRedraw);
     } else if (loaded.end < Math.min(last, closedEnd)) {
       // Ventana y confirmación de entrada pueden terminar varias velas después del primer voto
       this._requestSetups(loaded.end - 12 * this.tfMs, last + pad, knownUntil, recipes, false, requestRedraw);

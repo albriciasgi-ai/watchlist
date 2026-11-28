@@ -2,6 +2,7 @@
 // frase que la resume, las versiones guardadas, las velas que se mandan al motor y lo que se pinta en el gráfico.
 // Lógica pura: se prueba con node tests/kitchen.test.mjs. El cálculo de lo que se cumple está en backend/kitchen.py.
 import { TF_MS, lastClosedIndex } from '../backtesting/replayClock.js';
+import { orderQuantity } from '../backtesting/orderPlan.js';
 import { STATE, ZONE_KINDS, ZONE_TYPES, isAbsDir, blockDef, blockText, lineLabel, pickText, zoneName } from './kitchenCatalog.js';
 
 export const MAX_STEPS = 4;
@@ -13,6 +14,14 @@ export const VIEW_BARS = 1000;                 // Lo recorrido: las velas en que
 export const LEAD_BARS = { '1m': 8000, '5m': 8000, '15m': 3360, '1h': 840, '4h': 300 };
 export const TF_MINUTES = { '1m': 1, '5m': 5, '15m': 15, '1h': 60, '4h': 240 };
 export const SIDE_NAMES = { short: 'Solo cortos', long: 'Solo largos', both: 'Largos y cortos' };
+// La salida (paso 1.3): de dónde sale el stop de una señal, el objetivo en R y el tamaño de la orden
+export const EXIT_STOPS = ['atr', 'candle', 'zone'];
+export const EXIT_LIMITS = { atr: [1.5, 0.2, 10], buf: [0.1, 0, 2], rr: [2, 0.2, 20], amount: [10, 0.01, 1e9] };
+export const MIN_STOP_ATR = 0.25;              // Un stop más cerca que esto de la entrada se lleva hasta aquí
+export const SIGNAL_LATE_MAX = 3;              // Una señal vale hasta estas velas después de la suya
+// Pedido por adelantado (27/11): la página manda también velas que todavía no ocurrieron en la simulación y muestra
+// la respuesta recortada a la hora simulada (`asOf`). Así nada va atrás al reproducir rápido
+export const AHEAD = { min: 200, max: 2000, seconds: 30 };   // Velas adelantadas: las de unos 30 s de reproducción
 const NEAR_CANDLES = 3;                        // Lo elegido en velas tan cercanas va al mismo paso
 const STORE_KEY = 'kitchen_strategies_v1';
 const MAX_VERSIONS = 30;
@@ -22,8 +31,11 @@ const newStep = (src = null) => ({ mode: 'all', min: 1, win: 5, blocks: [], src 
 /** La capa de zona vacía: sin zonas elegidas no pide nada */
 export const blankZone = () => ({ picks: [], rel: 'near', atr: ZONE_NEAR.default, when: 'first' });
 
+/** La salida de fábrica: el stop del probador (1.5 ATR desde la entrada), objetivo de 2R y 10 USDT de riesgo por trade */
+export const blankExit = () => ({ stop: 'atr', atr: EXIT_LIMITS.atr[0], buf: EXIT_LIMITS.buf[0], rr: EXIT_LIMITS.rr[0], sizeMode: 'risk', amount: EXIT_LIMITS.amount[0] });
+
 /** La cocina en blanco */
-export const blankDoc = () => ({ side: 'short', ctx: [], ctxWhen: 'first', zone: blankZone(), gat: [newStep()], links: [] });
+export const blankDoc = () => ({ side: 'short', ctx: [], ctxWhen: 'first', zone: blankZone(), gat: [newStep()], links: [], exit: blankExit() });
 
 export const isBlank = (doc) => !doc.ctx.length && !doc.zone?.picks?.length && !doc.gat.some(step => step.blocks.length);
 export const allBlocksOf = (doc) => [...doc.ctx, ...doc.gat.flatMap(step => step.blocks)];
@@ -64,6 +76,23 @@ function normalizeZone(raw) {
   };
 }
 
+/** La salida bien formada. Un documento guardado antes del paso 1.3 no la trae: entra con la de fábrica */
+export function normalizeExit(raw) {
+  const base = blankExit();
+  if (!raw || typeof raw !== 'object') return base;
+  const within = (key) => {
+    const [, low, high] = EXIT_LIMITS[key];
+    const value = Number(raw[key]);
+    return raw[key] !== null && raw[key] !== '' && Number.isFinite(value) ? Math.max(low, Math.min(high, value)) : base[key];
+  };
+  return {
+    stop: EXIT_STOPS.includes(raw.stop) ? raw.stop : base.stop, atr: within('atr'), buf: within('buf'), rr: within('rr'),
+    sizeMode: raw.sizeMode === 'fixed' ? 'fixed' : 'risk', amount: within('amount')
+  };
+}
+
+export const setExit = (doc, patch) => ({ ...doc, exit: normalizeExit({ ...(doc.exit || blankExit()), ...patch }) });
+
 /** Un documento guardado o a medio escribir, con todo lo que la pantalla espera */
 export function normalizeDoc(raw) {
   const base = blankDoc();
@@ -83,7 +112,7 @@ export function normalizeDoc(raw) {
   return {
     side: ['long', 'short', 'both'].includes(raw.side) ? raw.side : 'short',
     ctx: (raw.ctx || []).map(block).filter(Boolean).slice(0, MAX_BLOCKS), ctxWhen: raw.ctxWhen === 'last' ? 'last' : 'first',
-    zone: normalizeZone(raw.zone), gat, links
+    zone: normalizeZone(raw.zone), gat, links, exit: normalizeExit(raw.exit)
   };
 }
 
@@ -412,6 +441,89 @@ export function stepText(step, side) {
 
 export const linkText = (link) => `${link.type === 'any' ? 'en cualquier orden' : link.type === 'same' ? 'al tiempo o después' : 'después'}, hasta ${candles(link.max)}`;
 
+/** La salida en palabras: el stop, el objetivo y el tamaño */
+export function exitText(doc) {
+  const exit = normalizeExit(doc.exit);
+  const beyond = exit.buf > 0 ? `, con ${plain(exit.buf)} ATR de aire` : '';
+  const stop = exit.stop === 'zone' ? `stop en el borde lejano de la zona${beyond}`
+    : exit.stop === 'candle' ? `stop detrás de la vela de la señal${beyond}`
+      : `stop a ${plain(exit.atr)} ATR de la entrada`;
+  const size = exit.sizeMode === 'risk' ? `arriesgando ${plain(exit.amount)} USDT` : `con ${plain(exit.amount)} USDT`;
+  return `Salida: ${stop}, objetivo a ${plain(exit.rr)}R, ${size}.`;
+}
+
+/**
+ * La orden que propone una señal (paso 1.3): entrada, stop, objetivo y cantidad, con la salida de la estrategia.
+ * signal: { side: 1 o -1, atr: el de la vela de la señal, zone: [bajo, alto] o null }; candle: la vela de la señal;
+ * entry: el precio al que se entraría (el del momento: al cerrar la vela de la señal, la apertura de la siguiente).
+ * El stop pedido en la zona o en la vela vuelve al de ATR si no hay zona o si queda del lado equivocado de la entrada,
+ * y nunca queda a menos de MIN_STOP_ATR de ella. `from` dice de dónde salió y `note`, por qué cambió.
+ */
+export function signalPlan(exitRaw, { signal, candle, entry }) {
+  const exit = normalizeExit(exitRaw);
+  const dir = signal?.side > 0 ? 1 : -1;
+  const atr = Number(signal?.atr);
+  if (!(atr > 0) || !(entry > 0)) return { ok: false, why: 'Sin ATR en la vela de la señal: no se puede poner el stop.' };
+  let from = exit.stop;
+  let note = '';
+  let stop = null;
+  const behind = (edge) => edge - dir * exit.buf * atr;
+  if (from === 'zone') {
+    const zone = Array.isArray(signal.zone) && signal.zone.length === 2 ? signal.zone : null;
+    if (zone) stop = behind(dir > 0 ? Math.min(...zone) : Math.max(...zone));
+    else { from = 'atr'; note = 'La señal no tiene una zona cerca: el stop va en ATR.'; }
+  } else if (from === 'candle') {
+    if (candle && Number.isFinite(candle.low) && Number.isFinite(candle.high)) stop = behind(dir > 0 ? candle.low : candle.high);
+    else { from = 'atr'; note = 'Sin la vela de la señal: el stop va en ATR.'; }
+  }
+  if (stop !== null && dir * (entry - stop) <= 0) {
+    note = `${from === 'zone' ? 'El borde de la zona' : 'La vela de la señal'} no queda detrás de la entrada: el stop va en ATR.`;
+    from = 'atr';
+    stop = null;
+  }
+  if (stop === null) stop = entry - dir * exit.atr * atr;
+  if (dir * (entry - stop) < MIN_STOP_ATR * atr) {
+    stop = entry - dir * MIN_STOP_ATR * atr;
+    note = `El stop quedaba a menos de ${plain(MIN_STOP_ATR)} ATR de la entrada: se llevó hasta ahí.`;
+  }
+  if (!(stop > 0)) return { ok: false, why: 'El stop queda por debajo de cero.' };
+  const risk = Math.abs(entry - stop);
+  const target = entry + dir * exit.rr * risk;
+  if (!(target > 0)) return { ok: false, why: 'El objetivo queda por debajo de cero: baja el objetivo en R.' };
+  const quantity = orderQuantity({ mode: exit.sizeMode, amount: exit.amount, entry, stopLoss: stop });
+  if (!(quantity > 0)) return { ok: false, why: 'El tamaño no da una cantidad válida.' };
+  return { ok: true, side: dir > 0 ? 'long' : 'short', entry, stop, target, risk, riskAtr: risk / atr, rr: exit.rr, quantity, from, note };
+}
+
+/**
+ * La señal que toca avisar, o null. result: la respuesta del motor; seenUntil: la hora de la última vela ya mirada
+ * (las señales hasta ahí ya se avisaron, o son anteriores a armar la estrategia); lastTime: la última vela cerrada en
+ * la hora simulada. Da la señal más reciente posterior a seenUntil, con `late` (velas que pasaron desde la suya) y
+ * `missed` si pasaron más de SIGNAL_LATE_MAX: reproduciendo rápido el cálculo va unas velas atrás. Nunca una vela
+ * posterior a lastTime.
+ */
+export function freshSignal(result, { seenUntil, lastTime, tfMs }) {
+  if (!result?.success || !Array.isArray(result.signals) || !Number.isFinite(lastTime) || !(tfMs > 0)) return null;
+  let found = null;
+  for (const signal of result.signals) {
+    const time = result.times?.[signal.i];
+    if (!Number.isFinite(time) || time > lastTime || (Number.isFinite(seenUntil) && time <= seenUntil)) continue;
+    if (!found || time > found.time || (time === found.time && signal.side > found.side)) found = { ...signal, time };
+  }
+  if (!found) return null;
+  const late = Math.round((lastTime - found.time) / tfMs);
+  return { ...found, late, missed: late > SIGNAL_LATE_MAX };
+}
+
+/** La marca de una orden nacida de la cocina: de qué estrategia y versión, y de qué señal */
+export function kitchenTag({ name, id = null, version = 0, signal, mode, from }) {
+  const title = String(name || '').trim().slice(0, 60) || 'Estrategia sin nombre';
+  return {
+    name: title, id, version, signalTime: signal.time, side: signal.side > 0 ? 'long' : 'short', late: signal.late || 0, mode, stopFrom: from,
+    note: `Cocina: «${title}»${version ? ` v${version}` : ' (sin guardar)'} · señal de ${signal.side > 0 ? 'largo' : 'corto'} · ${mode === 'auto' ? 'automática' : 'confirmada a mano'}`
+  };
+}
+
 /** La estrategia en una frase. `price` escribe los precios de las zonas fijas (con fecha oculta, el índice) */
 export function phrase(doc, price = plain) {
   const parts = [];
@@ -426,6 +538,7 @@ export function phrase(doc, price = plain) {
     steps.push(steps.length ? `${linkText(doc.links[i - 1] || { type: 'after', max: 5 })}, ${text}` : text);
   });
   if (steps.length) parts.push(`Gatillo: ${steps.join('; ')}.`);
+  if (steps.length) parts.push(exitText(doc));
   if (!parts.length) return 'Todavía está en blanco. Reproduce, pausa donde veas algo y elige en el gráfico lo que quieras usar.';
   return `${SIDE_NAMES[doc.side]}${doc.side === 'both' ? ', en espejo' : ''}. ${parts.join(' ')}`;
 }
@@ -436,17 +549,153 @@ export function phrase(doc, price = plain) {
  * Las velas ya cerradas en la hora simulada que se mandan al motor: las de lo recorrido y las anteriores que calientan
  * los indicadores. Nunca la vela en formación ni nada posterior. null si todavía no cerró ninguna.
  */
-export function closedWindow(main, tf, now, view = VIEW_BARS) {
+export function closedWindow(main, tf, now, view = VIEW_BARS, ahead = 0) {
   if (!Array.isArray(main) || !main.length || !Number.isFinite(now) || !TF_MS[tf]) return null;
   const last = lastClosedIndex(main, tf, now);
   if (last < 0) return null;
   const first = Math.max(0, last + 1 - view - (LEAD_BARS[tf] || 300));
+  // Por adelantado: hasta `ahead` velas después de la última cerrada. Son velas del histórico que la simulación
+  // todavía no vivió: van al motor para calcular antes, y lo que vuelve se recorta con `asOf` antes de mostrarse
+  const end = Math.min(main.length - 1, last + Math.max(0, Math.floor(ahead) || 0));
   const rows = [];
-  for (let i = first; i <= last; i += 1) {
+  for (let i = first; i <= end; i += 1) {
     const c = main[i];
     rows.push([c.timestamp, c.open, c.high, c.low, c.close, c.volume]);
   }
-  return { rows, view: Math.min(view, rows.length), lastTime: main[last].timestamp, firstTime: main[first].timestamp };
+  const known = last - first + 1;
+  return {
+    rows, view: Math.min(view, known) + (end - last), lastTime: main[last].timestamp, firstTime: main[first].timestamp,
+    ahead: end - last, endTime: main[end].timestamp, atEnd: end === main.length - 1
+  };
+}
+
+/** Cuántas velas conviene adelantar: las de unos 30 segundos de reproducción a esa velocidad, entre un mínimo y un tope */
+export function aheadBars(speed, tfMs) {
+  if (!(tfMs > 0)) return 0;
+  const wanted = Math.ceil(((Number(speed) > 0 ? Number(speed) : 1) * AHEAD.seconds * 1000) / tfMs);
+  return Math.max(AHEAD.min, Math.min(AHEAD.max, wanted));
+}
+
+/**
+ * Las mismas velas del pedido, sin las últimas `drop` adelantadas, y las series de la página cortadas igual. Para cuando
+ * una serie del gráfico (el interés abierto, que se carga por tramos) no llega tan lejos como las velas
+ */
+export function dropAhead(window_, page, drop) {
+  const cut = Math.max(0, Math.min(window_.ahead, Math.floor(drop) || 0));
+  if (!cut) return { window: window_, page };
+  const rows = window_.rows.slice(0, window_.rows.length - cut);
+  const trimmed = page ? { ...page } : page;
+  for (const group of ['lines', 'nums']) {
+    if (!page?.[group]) continue;
+    trimmed[group] = Object.fromEntries(Object.entries(page[group]).map(([key, values]) => [key, values.slice(0, values.length - cut)]));
+  }
+  return {
+    window: { ...window_, rows, view: window_.view - cut, ahead: window_.ahead - cut, endTime: rows[rows.length - 1][0], atEnd: false },
+    page: trimmed
+  };
+}
+
+/**
+ * Cuántas de las velas adelantadas hay que soltar para que las series de la página que usa la estrategia tengan dato:
+ * `keys` son pares [grupo, clave] ('lines' o 'nums'); cada serie trae un valor por vela de las últimas del pedido.
+ * Una serie sin ningún dato adelantado (el delta real, que sale de los footprints ya vistos) las suelta todas
+ */
+export function aheadWithoutData(window_, page, keys) {
+  let drop = 0;
+  for (const [group, key] of keys) {
+    const values = page?.[group]?.[key];
+    if (!Array.isArray(values)) continue;
+    let last = values.length - 1;
+    while (last >= 0 && (values[last] === null || values[last] === undefined)) last -= 1;
+    drop = Math.max(drop, Math.min(window_.ahead, values.length - 1 - last));
+  }
+  return drop;
+}
+
+const countUpTo = (times, limit) => {
+  let low = 0;
+  let high = times.length;
+  while (low < high) {
+    const mid = (low + high) >> 1;
+    if (times[mid] <= limit) low = mid + 1; else high = mid;
+  }
+  return low;
+};
+
+/**
+ * La respuesta de un pedido con velas adelantadas, recortada a la hora simulada: lo que el motor respondería con las
+ * velas cerradas hasta `lastTime`, en las últimas `view`. Nada posterior a `lastTime` sale de aquí: ni señales, ni
+ * filas, ni zonas que todavía no nacieron, ni cuentas. La prueba del backend
+ * (test_un_pedido_por_adelantado_recortado_a_la_hora_es_igual_al_de_ese_momento) repite este recorte y lo compara con
+ * el cálculo de ese momento: si cambia uno, cambia el otro.
+ */
+export function asOf(full, lastTime, view = VIEW_BARS) {
+  if (!full?.success || !Array.isArray(full.times) || !Number.isFinite(lastTime)) return null;
+  const times = full.times;
+  const K = countUpTo(times, lastTime);
+  if (K <= 0) return null;
+  const off = Math.max(0, K - view);
+  const tfMs = times.length > 1 ? times[1] - times[0] : 0;
+  const idx = (items) => (items || []).filter(i => i >= off && i < K).map(i => i - off);
+  const runs = (items) => {
+    const out = [];
+    for (const [a, b] of items || []) {
+      const from = Math.max(a, off);
+      const to = Math.min(b, K - 1);
+      if (from <= to) out.push([from - off, to - off]);
+    }
+    return out;
+  };
+  const total = (items) => items.reduce((sum, [a, b]) => sum + b - a + 1, 0);
+  const blocks = {};
+  for (const [uid, info] of Object.entries(full.blocks || {})) {
+    const kept = runs(info.runs);
+    blocks[uid] = { ...info, runs: kept, count: total(kept) };
+  }
+  const contextRuns = runs(full.context?.runs);
+  const steps = (full.steps || []).map(step => {
+    const chained = idx(step.chained);
+    const doneAt = idx(step.doneAt);
+    return { ...step, alone: idx(step.alone), chained, doneAt, done: doneAt.length, reached: chained.length };
+  });
+  let zone = full.zone;
+  if (zone?.has) {
+    const picks = {};
+    for (const [uid, pick] of Object.entries(zone.picks || {})) {
+      const spans = (pick.spans || []).filter(([a, b]) => a < K && b >= off);
+      picks[uid] = {
+        count: spans.length, open: spans.some(([, b]) => b >= K - 1),
+        spans: spans.map(([a, b]) => [a - off, Math.min(b, K - 1) - off]),
+        bands: (pick.bands || []).filter(([start, end]) => start <= lastTime && end > times[off])
+          .map(([start, end, low, high, way]) => [start, Math.min(end, lastTime + tfMs), low, high, way])
+      };
+    }
+    const zoneRuns = runs(zone.runs);
+    const arriveAt = idx(zone.arriveAt);
+    zone = { has: true, runs: zoneRuns, count: total(zoneRuns), arrivals: arriveAt.length, arriveAt, picks };
+  }
+  return {
+    ...full, times: times.slice(off, K), seen: K - off, bars: Number.isFinite(full.bars) ? full.bars - (times.length - K) : full.bars,
+    blocks, steps, zone, near: runs(full.near),
+    context: { ...(full.context || {}), runs: contextRuns, count: total(contextRuns) },
+    signals: (full.signals || []).filter(signal => signal.i >= off && signal.i < K).map(signal => ({ ...signal, i: signal.i - off })),
+    lines: Object.fromEntries(Object.entries(full.lines || {}).map(([name, values]) => [name, values.slice(off, K)]))
+  };
+}
+
+/**
+ * La hora en que cierra la vela de la próxima señal, en una respuesta pedida por adelantado, o null. Es donde el reloj
+ * se detiene un instante para que el aviso y la orden caigan en su vela, a cualquier velocidad. Solo la usa el reloj:
+ * no se muestra
+ */
+export function nextSignalClose(full, lastTime, tfMs) {
+  if (!full?.success || !Array.isArray(full.signals) || !Number.isFinite(lastTime) || !(tfMs > 0)) return null;
+  let best = null;
+  for (const signal of full.signals) {
+    const time = full.times?.[signal.i];
+    if (Number.isFinite(time) && time > lastTime && (best === null || time < best)) best = time;
+  }
+  return best === null ? null : best + tfMs;
 }
 
 // ==================== Lo que se pinta en el gráfico ====================
@@ -571,7 +820,8 @@ export function saveStore(store, storage = globalThis.localStorage) {
   }
 }
 
-const core = (doc) => JSON.stringify(docForEngine(normalizeDoc(doc)));
+// La salida no va al motor, pero es parte de la estrategia: cambiarla es otra versión
+const core = (doc) => { const clean = normalizeDoc(doc); return JSON.stringify([docForEngine(clean), clean.exit]); };
 
 /** El almacén con una versión nueva de esa estrategia, con la fecha real en que se guardó. No repite una igual a la vigente */
 export function withVersion(store, { id, name, symbol, tf }, doc, now = Date.now()) {

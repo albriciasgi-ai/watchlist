@@ -540,6 +540,20 @@ GET /api/orderflow/coverage/{symbol}
 - Al retroceder el tiempo, `OrderFlowIndicator` borra lo que aún no se conocía y descarta respuestas pendientes con `generation`
 - Una vela cerrada se vuelve a pedir si su footprint quedó parcial
 
+### Por adelantado al reproducir (27/11)
+
+Pedido del usuario: a velocidad alta los footprints iban atrás, porque cada vela se pedía al cerrar. Ahora, solo en reproducción (`backtestingMode`):
+
+- **Depósito** (`this.ahead`): `map` (inicio de vela → footprint completo) y `none` (velas sin trades) de las velas que vienen. **No lo lee nadie más que `_promoteAhead`:** ni el dibujo, ni `footprints`, ni `realDeltas`, ni `priceExtent`.
+- **`_fetchAhead`:** pide desde la vela en formación `AHEAD_CANDLES` (300) velas, con `known_until` en su propio final, cuando lo adelantado baja de la mitad. Si la reproducción se lo come antes, el pedido siguiente es el doble, hasta `AHEAD_MAX_CANDLES` (1,200). Solo mirando el presente de la simulación (la última vela a la vista es la última conocida) y con el step ya elegido.
+- **`_promoteAhead(hora)`:** pasa a `footprintMap` los de las velas ya cerradas en la hora simulada, con `knownUntil` en su cierre. Corre en cada `_syncClock`. El de una vela en formación, que estaba a medias, se reemplaza al cerrar.
+- **Al retroceder la hora o cambiar una regla** (`_clearAhead`): el depósito se vacía, y una respuesta pedida antes no entra (`generation`).
+- **Lo que sigue en vivo:** el footprint parcial de la vela en formación.
+- **Paridad** (`test_pedido_por_adelantado_la_tabla_y_los_footprints_de_una_vela_cerrada_no_cambian` en `test_of_elements.py`): el footprint de una vela cerrada es igual pedido en su momento, con la hora más adelante, o pidiendo solo el tramo que viene; con step automático, con step fijo y con el filtro de volumen relativo.
+- **En vivo** (la suite) `ahead.on` es falso: se pide como siempre.
+
+**Probado en pantalla** el 27/11 (copia aislada, BTC 15m, 50000x): 6 días en 10 segundos con 3 pedidos adelantados de unas 170 velas (30 ms cada uno) y 4 de la vela en formación; al pausar, todas las velas a la vista tenían su footprint.
+
 ### Dibujo
 
 | Ancho de vela | Se muestra |
@@ -797,6 +811,17 @@ Pedido del usuario: decidir las reglas de cada setup probando a mano, sin gastar
 - **Pruebas:** `test_el_ajuste_nunca_mira_las_fechas_reservadas`, `test_la_comprobacion_usa_todo_lo_reservado`, `test_rangos_largos_se_piden_por_tramos_sin_repetir_velas`, `test_informe_por_setup_cuenta_los_setups_elegidos` y dos en `ofsetups.test.mjs`. Probado en la copia aislada: 180 días de ajuste con corte el 01/07/2026 terminan el 30/06 y la comprobación cubre del 01/07 al 04/11
 - **Falta:** la fecha al azar del modo oculto puede caer en lo reservado. Practicar a mano ahí no ajusta la receta, pero sí muestra esas velas
 
+### Por adelantado al reproducir (27/11)
+
+En reproducción (`priceContext.knownCandles`), `OrderFlowElementsIndicator` pide antes los elementos, la tabla y los setups de las velas que vienen: `_aheadEnd` da el final del tramo (`AHEAD_CANDLES` 400 desde la última vela cerrada, el doble si se agota, hasta 1,600 y 30 días), y el pedido lleva `known_until` en ese final.
+
+- **El dibujo no cambió:** ya filtraba cada evento por su `known` (`knownEvents`), cada setup por el suyo, la tabla por velas cerradas, y las franjas se cortan con las velas conocidas (`bandEnd`). Si se suma algo que lea `events`, `bars` o `matches`, tiene que filtrar igual.
+- **Al retroceder la hora** lo cargado sirve: no se pide de nuevo.
+- **En vivo** (la suite, sin `knownCandles`) o mirando velas viejas, se pide como siempre. `ahead.on = false` lo apaga.
+- Pruebas: `tests/ofahead.test.mjs` (5) y, en el backend, la de paridad de `test_of_elements.py`.
+
+**Probado en pantalla** el 27/11 (copia aislada, BTC 15m, 50000x): 2 pedidos de unas 230 velas (0.4 s cada uno) en 10 segundos de reproducción, con los triángulos y la tabla al día al pausar. Los setups, sin ver.
+
 ### Dibujo (frontend)
 
 - `ofElements.js`: catálogo, grupos del modal (Zonas, Giro en la zona, Continuación, Tabla), parámetros y `bandEnd()`. Es lógica pura y se prueba en Node
@@ -964,7 +989,9 @@ Pasos 1.1 y 1.2 de la central de estrategias (`docs/PLAN_CENTRAL_ESTRATEGIAS.md`
 - **Versiones:** cada guardado suma una versión con su fecha; se abre cualquiera.
 - **Fichas:** «¿Cómo funciona?» en el encabezado y en cada capa despliega una ficha con su imagen (`KitchenHelp.jsx`). Todas parten del mismo dibujo y cada una resalta su parte.
 
-**Lo que no hace todavía:** no avisa al reproducir, no dibuja la caja de la señal, no abre órdenes y no pasa la estrategia al backtesting global. Son los pasos 1.3 y 1.4.
+**Desde el paso 1.3 (27/11):** avisa al reproducir, dibuja la caja TP/SL de la señal y abre la orden (más abajo, «Salida, aviso y orden de una señal»).
+
+**Lo que no hace todavía:** no pasa la estrategia al backtesting global (paso 1.4), ni tiene «Mis casos».
 
 ### Zonas (paso 1.2)
 
@@ -1051,6 +1078,80 @@ Pedido del usuario al probar: el volumen como elemento, cada variable editable j
 - **Campos del bloque** (`kitchenCatalog.js`): `fields` (números), `selects` y `selectsAfter` (desplegables, antes y después de los números). En `BLOCK_PARAMS` del motor, una lista es un desplegable y su primer valor, el de fábrica.
 - **Pedidos al reproducir:** uno a la vez (`state.flight`, `state.queued`); el que está en curso termina y sale otro con lo último, a 250 ms como mínimo. Un cambio de la estrategia o de la vela elegida sí corta el pedido en curso. `kitchenBands(..., { behind })` escribe «faltan N» en la última fila.
 
+### Salida, aviso y orden de una señal (paso 1.3, 27/11)
+
+Pedido del usuario al probar: «cuando se cumplen todas las condiciones, no está abriendo el trade ni dibujando la caja de takeprofit/stoploss».
+
+- **Capa 4 · Salida** (`doc.exit`, `normalizeExit`, `setExit`, `exitText`): `stop` (`atr`, `candle` o `zone`), `atr` (1.5), `buf` (0.1 ATR de aire detrás de la vela o de la zona), `rr` (2), `sizeMode` (`risk` o `fixed`) y `amount` (10 USDT). Rangos en `EXIT_LIMITS`.
+  - No va al motor (`docForEngine` no la manda): cambiarla no vuelve a pedir el cálculo ni rearma el aviso.
+  - Sí es parte de la estrategia: entra en la frase cuando hay gatillo, y `core()` la cuenta para saber si un guardado es una versión nueva. Un documento sin ella entra con la de fábrica y es igual al mismo documento con la de fábrica.
+- **La orden de una señal** (`signalPlan`, lógica pura): entrada, stop, objetivo y cantidad (`orderQuantity` de `orderPlan.js`).
+  - el stop en la zona usa el borde de arriba en un corto y el de abajo en un largo; el de la vela, su máximo o su mínimo;
+  - sin zona en la señal, o con el stop del lado equivocado de la entrada, vuelve al de ATR (`from`, `note`);
+  - nunca queda a menos de `MIN_STOP_ATR` (0.25) de la entrada: con el tamaño por riesgo, un stop pegado dispara la cantidad.
+- **Motor:** cada señal de la respuesta trae `atr` (el de su vela) y `zone` ([bajo, alto] o null). `Facts.zone_by(layer, i)` da la zona elegida más cercana a la vela, entre las que cuentan en ella y quedan a `CANDLE_ZONE_ATR` o menos, con los bordes de esa vela.
+- **Qué señal avisa** (`freshSignal`, lógica pura): la más reciente posterior a `seenUntil` y nunca una vela posterior a la última cerrada.
+  - `seenUntil` se pone en la última vela cerrada al armar la estrategia (otra estrategia, otro marco, otra moneda): lo que ya pasó no avisa;
+  - si la simulación retrocede, baja con ella;
+  - `late` son las velas que pasaron desde la de la señal; con más de `SIGNAL_LATE_MAX` (3), `missed`: solo se avisa;
+  - la respuesta lleva `docKey`, el documento con que se pidió: una respuesta de la estrategia anterior no avisa.
+- **Preferencias** (`kitchen_run_v1`, por navegador, no por estrategia): `on` (avisar y armar la caja), `pause` y `mode` (`ask` o `auto`).
+- **La caja:** `onBox` llama a `MiniChart.addTPSLBox`, 8 velas de ancho, desde la vela que empieza. Es una caja libre como cualquier otra: se puede mover. Una propuesta sin usar se quita con `MiniChart.removeDrawing(id)` (nuevo) al descartarla, al vencer, al llegar otra señal, al cambiar la estrategia y al salir de la pestaña.
+- **La orden** (`latestRef.current.kitchenOrder` en `BacktestingApp`): `autoOrderType` decide como el panel en «Automática», `createOrder`, `order.kitchen` (`kitchenTag`: nombre, id, versión, hora y lado de la señal, velas de atraso, modo y de dónde salió el stop), su nota en `order.notes` y `afterOrderCreated`, lo que antes iba dentro de `onOrderCreated` del panel de trading.
+  - «Abrir la orden» lee la caja como esté en el gráfico; si se borró, usa lo propuesto y la orden arma su caja;
+  - en «Preguntar» muestra `OrderConfirmationModal`, como el panel;
+  - con una posición abierta o una orden esperando (`isBusy`), no hay orden ni caja.
+- **Solo con la pestaña abierta:** el aviso vive en `KitchenPanel`.
+
+**Probado en pantalla** el 27/11, en una copia aislada (backend 9320, página 9321) con BTC 15m desde el 01/01/2023 y una estrategia de un paso (vela con volumen alto, largos y cortos):
+- la capa 4, su ficha y la frase con la salida;
+- a 3000x: el aviso, la pausa y la caja al cerrar la vela de las 20:00 del 1 de enero, con la hora en 20:20;
+- «Abrir la orden»: la confirmación y el trade #1;
+- «Automática»: los trades #2, #3 y #4, cada uno al cerrarse el anterior, y el #5 con el stop cambiado a 10 ATR sin rearmar;
+- el historial con el trade #1 cerrado y su nota de la cocina; las imágenes de los trades quedaron guardadas;
+- una señal con el trade #5 abierto: solo avisó.
+
+**Sin ver en pantalla:** el stop detrás de la vela y en la zona, «Descartar», la propuesta vencida, la señal tarde o perdida, mover la caja antes de abrir, una orden que espera su precio, la fecha oculta (los textos pasan por `price` y `when`), largos o cortos solos, el Observador con estas órdenes, la ventana aparte y los otros estilos.
+
+**Visto al probar, sin tocar:** al cerrarse sola, `OrderConfirmationModal` llama a su `onClose` dentro de un `setState` y React lo avisa en la consola. Pasa igual desde el panel de trading.
+
+**Falta:** «Mis casos» (lo demás del paso 1.3 del plan) y el paso 1.4.
+
+### Pedido por adelantado (27/11)
+
+Idea del usuario, tras ver que a 50000x la cocina iba atrás y perdía señales: calcular antes lo de los próximos segundos de reproducción y, al avanzar, solo mostrar.
+
+- **Por qué se puede:** el motor no mira a la derecha. `test_un_pedido_por_adelantado_recortado_a_la_hora_es_igual_al_de_ese_momento` pide con 400 velas de más y compara el recorte, campo por campo, con el cálculo de ese momento: señales, pasos, contexto, zonas (nacimiento, final, bordes), líneas y cuentas.
+- **El pedido** (`closedWindow(..., ahead)`): las mismas velas de antes, desde la misma primera (el mismo calentamiento), más `ahead` velas del histórico que la simulación todavía no vivió. `view` crece en `ahead`.
+  - `aheadBars(velocidad, marco)`: las velas de `AHEAD.seconds` (30) segundos de reproducción, entre `AHEAD.min` (200) y `AHEAD.max` (2,000). El tope del motor es `MAX_VIEW` 3,000.
+  - se pide otro tramo cuando la hora pasa la mitad de lo adelantado (`refillAt`), o si la simulación retrocede antes de la vela del pedido. El tramo viejo sigue sirviendo mientras llega el nuevo.
+- **El recorte** (`asOf(full, lastTime, view)` en `kitchenDoc.js`): la respuesta como si el motor hubiera recibido las velas cerradas hasta `lastTime`, en las últimas 1,000.
+  - `KitchenPanel` guarda la respuesta entera en `result` y en `resultRef`, y **solo dibuja `fresh`**, el recorte. Si se suma algo que se muestre, tiene que salir de `fresh`;
+  - el motor suma a la respuesta lo que el recorte necesita: `doneAt` por paso, `arriveAt` de la zona y `spans` por zona elegida (las velas en que cuenta cada una). Una zona nacida antes de lo recorrido empieza en negativo;
+  - `as_of` en `test_kitchen.py` repite el recorte en Python para la prueba de paridad: si cambia uno, cambia el otro.
+- **La parada del reloj** (`TimeController.stopAt` y `onStopAt`): `nextSignalClose` da el cierre de la vela de la próxima señal; el reloj no lo pasa, queda en pausa justo ahí y avisa. `BacktestingApp` actualiza la pantalla (`kitchenStopHit`) y pasa `stopHit` a la pestaña.
+  - la pestaña atiende la señal con el efecto de siempre y, si no toca quedar en pausa, sigue (`onPlay`). En automático sin pausa, sigue antes de crear la orden: la imagen de apertura detiene y suelta el reloj como siempre;
+  - si nadie atiende la parada (la señal ya estaba vista, o el aviso se apagó), un efecto aparte sigue la reproducción;
+  - es solo una hora para el reloj: no se muestra.
+- **Series del gráfico** (`getKitchenSeries(velas, conocidas)`):
+  - el VWAP ya está calculado con todo el histórico; el CVD sale de las velas; el interés abierto se carga por tramos, y aquí se pide hasta la última vela adelantada;
+  - el delta de volumen se calcula solo con las velas ocurridas (puede ser el real, de los footprints ya vistos) y el Swing solo conoce lo ocurrido;
+  - `aheadWithoutData` mira las series que usa la estrategia: donde una no llega, se adelanta menos (`dropAhead`); con una marca, nada. Sin nada adelantado la pestaña lo dice («se calcula vela por vela») y vale la regla de las 3 velas.
+- **Costo:** en 15m a 50000x, un pedido de unas 6,000 velas cada 15 segundos de reproducción, en lugar de uno por vela.
+
+**Probado en pantalla** el 27/11, en una copia aislada (backend 9320, página 9321) con BTC 15m, a 50000x:
+- un bloque (vela con volumen alto), en automático y sin pausa: más de 100 órdenes, todas con la entrada en :00, :15, :30 o :45, y «Al día»;
+- «Preguntar» con pausa: la hora quedó en 07:15 para la señal de la vela de 07:00; «Descartar» quitó la caja;
+- el cruce del VWAP (`p:vwap`): un minuto seguido sin detenerse, y ningún pedido a `/api/kitchen/evaluate` en 10 segundos de reproducción.
+
+**Visto al probar, sin tocar:**
+- cada orden detiene el reloj unos 150 ms para su imagen (`CaptureHold`): con órdenes automáticas, 50000x rinde cerca de la mitad;
+- con muchas órdenes por segundo el backend responde 429 a parte de las imágenes: esos trades quedan sin imagen.
+
+**Sin ver en pantalla:** el interés abierto y el CVD adelantados, una estrategia con el delta o el Swing y su aviso, los otros marcos, retroceder con lo adelantado y cambiar la velocidad en plena reproducción.
+
+**Los footprints y los Elementos OF del gráfico** se adelantaron después, el mismo día: ver «ORDER FLOW SOBRE LAS VELAS» y «ELEMENTOS DE ORDER FLOW», «Por adelantado al reproducir (27/11)». Con eso, el delta de volumen del gráfico va adelantado en la cocina cuando es el estimado de las velas (`getKitchenSeries`); el real, de los footprints ya vistos, sigue vela por vela.
+
 ### Flujo
 
 ```
@@ -1117,9 +1218,10 @@ MiniChart (getTradeBands)   filas bajo las velas, señales, líneas, zonas y la 
 
 ```bash
 cd backend
-.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 35
+.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 49 con el paso 1.3 y el pedido por adelantado
 cd ../frontend
-node tests/kitchen.test.mjs                                  # 25
+node tests/kitchen.test.mjs                                  # 37 con el paso 1.3 y el pedido por adelantado
+node tests/clock.test.mjs                                    # 34: una es la parada del reloj en la vela de la señal
 node tests/levels.test.mjs                                   # 56: dos son de los VP fijos de la cocina
 ```
 

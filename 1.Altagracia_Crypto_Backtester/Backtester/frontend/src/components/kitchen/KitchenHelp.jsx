@@ -180,6 +180,20 @@ const scenes = {
       <text x={x(10)} y={TOP + HEIGHT - 9} fontSize="9.5" fill="#8A4B00" textAnchor="middle">dentro de las 5 velas</text>
     </Frame>
   ),
+  salida: (
+    <Frame rows={1} label="La salida: al dar señal, una caja con la entrada, el stop detrás y el objetivo a dos veces el riesgo">
+      <Candles faded={[0, 1, 2, 3, 4, 5, 6, 7, 8]} />
+      <Signal i={DROP} />
+      <rect x={x(15) - 8} y={y(21.0)} width={W - LEFT - x(15) + 8} height={y(18.3) - y(21.0)} fill={DOWN} opacity="0.16" />
+      <rect x={x(15) - 8} y={y(18.3)} width={W - LEFT - x(15) + 8} height={y(12.9) - y(18.3)} fill={UP} opacity="0.16" />
+      <line x1={x(15) - 8} x2={W - LEFT} y1={y(18.3)} y2={y(18.3)} stroke={INK} strokeWidth="1" />
+      <text x={x(15) - 12} y={y(21.0) + 4} fontSize="9.5" fill={DOWN} textAnchor="end" fontWeight="600">stop</text>
+      <text x={x(15) - 12} y={y(12.9) + 3} fontSize="9.5" fill={UP} textAnchor="end" fontWeight="600">objetivo · 2R</text>
+      <text x={x(15) - 4} y={y(18.3) + 11} fontSize="9.5" fill={INK}>entrada</text>
+      <text x={x(16)} y={y(19.6) + 3} fontSize="9" fill={DOWN} textAnchor="middle">1R</text>
+      <Row index={0} label="señal" color={INK} spans={[[DROP, DROP]]} />
+    </Frame>
+  ),
   elegir: (
     <Frame label="Cómo se llena: un clic en una vela muestra lo que se cumple en ella">
       <rect x={x(STAR) - 8} y={TOP} width="16" height={HEIGHT + 18} fill={BLUE} opacity="0.1" stroke={BLUE} strokeWidth="1" strokeDasharray="4 3" />
@@ -234,6 +248,14 @@ export const HELP = {
     text: [
       'Lo que tiene que pasar. Va por pasos, en orden: primero el 1, después el 2. Entre dos pasos hay un plazo («después, hasta 7 velas»): si el paso 2 llega más tarde, no cuenta.',
       'La señal sale en la vela en que se cumple el último paso. En la fila «Señal», el gris es «a punto»: ya se cumplió el penúltimo paso y sigue a tiempo.'
+    ]
+  },
+  salida: {
+    title: 'Capa 4 · Salida y orden',
+    text: [
+      'Lo que pasa cuando la estrategia da señal. Al cerrar la vela de la señal se arma una caja TP/SL: la entrada al precio de ese momento (la apertura de la vela que sigue), el stop detrás y el objetivo a tantas veces el riesgo (R).',
+      'El stop sale de donde elijas: a una distancia en ATR de la entrada, detrás de la vela de la señal, o en el borde lejano de la zona, si la estrategia tiene capa de zona. El tamaño va por riesgo (lo que pierdes si toca el stop) o por monto fijo, como en el panel de trading.',
+      '«Preguntar»: la caja queda propuesta y tú decides si abrir la orden; puedes moverla antes. «Automática»: la orden se abre sola. De las dos maneras la orden es como cualquier orden manual: va al historial, a las imágenes y al Observador, marcada con el nombre y la versión de la estrategia. Va una posición a la vez: con una abierta, la señal solo avisa. Solo con esta pestaña abierta.'
     ]
   },
   paso: {

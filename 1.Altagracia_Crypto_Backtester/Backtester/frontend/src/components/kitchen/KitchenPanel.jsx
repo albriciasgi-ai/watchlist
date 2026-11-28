@@ -2,16 +2,22 @@
 // Abre en blanco. El usuario reproduce, pausa donde ve algo, hace clic en esa vela y suma lo que se cumple ahí al
 // contexto, a la capa de zona o a un paso del gatillo. El backend (kitchen.py) dice dónde se cumple cada cosa en lo ya
 // recorrido, solo con velas cerradas en la hora simulada. Los bloques de order flow se detectan en segundo plano:
-// mientras tanto la pantalla lo dice y vuelve a preguntar. No abre órdenes ni avisa al reproducir: eso llega con el
-// paso 1.3.
+// mientras tanto la pantalla lo dice y vuelve a preguntar.
+// Paso 1.3 (27/11/2026): cuando cierra una vela con señal, la cocina lo avisa, dibuja la caja TP/SL con la salida de la
+// estrategia y, preguntando o sola, abre la orden por el camino de las órdenes manuales. Solo con la pestaña abierta.
+// Por adelantado (27/11/2026, idea del usuario): el pedido lleva también las velas de los próximos segundos de
+// reproducción, y lo que vuelve se guarda entero pero se muestra recortado a la hora simulada (`asOf`). Así las filas,
+// el aviso y la orden caen en su vela a cualquier velocidad. `result` (lo adelantado) no se dibuja nunca: solo `fresh`.
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { isBlind, maskDate, priceText, volumeText } from '../backtesting/blindClock.js';
+import OrderConfirmationModal from '../backtesting/OrderConfirmationModal';
 import { TF_MS, lastClosedIndex } from '../backtesting/replayClock.js';
 import {
   BLOCK_FAMILIES, EVENT, LINE_OPTIONS, STATE, VP_PARTS, ZONE_TYPES, allBlocks, blockDef, dirForSeries, dirOptions, isAbsDir, blockText, kindIn, lineLabel, pageSource, pickText, protoOf, zoneName
 } from './kitchenCatalog.js';
 import {
-  MAX_PICKS, MAX_STEPS, SIDE_NAMES, TF_MINUTES, VIEW_BARS, ZONE_NEAR, addBlock, addPick, addStep, allBlocksOf, blankDoc, candleVerdict, closedWindow,
+  EXIT_LIMITS, MAX_PICKS, MAX_STEPS, SIDE_NAMES, SIGNAL_LATE_MAX, TF_MINUTES, VIEW_BARS, ZONE_NEAR, addBlock, addPick, addStep, allBlocksOf, blankDoc, candleVerdict, closedWindow,
+  freshSignal, kitchenTag, normalizeExit, setExit, signalPlan, aheadBars, aheadWithoutData, asOf, dropAhead, nextSignalClose,
   docForEngine, draftKey, drawnZones, isBlank, kitchenBands, levelLines, levelZones, loadStore, mirrored, normalizeDoc, offersForEngine, phrase, pickFromZone, pickRange,
   placeFor, profileZones, relativeDir, removeBlock, removePick, removeStep, samePick, saveStore, setLink, setParam, setStep, setZone, editBlock,
   withSide, withVersion, withoutStrategy
@@ -25,6 +31,19 @@ const PAUSED_GAP_MS = 120;
 const PENDING_GAP_MS = 900;    // Con el order flow detectándose: cada cuánto se vuelve a preguntar
 const PROFILES_GAP_MS = 1000;  // Cada cuánto se miran los VP fijos del gráfico: se crean y cambian fuera de esta pestaña
 const HELP_KEY = 'kitchen_help_v1';
+const RUN_KEY = 'kitchen_run_v1';   // Qué hace la cocina al dar señal: avisar, pausar y cómo abre la orden
+const BOX_CANDLES = 8;              // Ancho de la caja propuesta, en velas
+const STOP_FROM = { atr: 'en ATR desde la entrada', candle: 'detrás de la vela de la señal', zone: 'en el borde lejano de la zona' };
+
+function loadRun() {
+  const base = { on: true, pause: true, mode: 'ask' };
+  try {
+    const raw = JSON.parse(localStorage.getItem(RUN_KEY) || 'null') || {};
+    return { on: raw.on !== false, pause: raw.pause !== false, mode: raw.mode === 'auto' ? 'auto' : 'ask' };
+  } catch {
+    return base;
+  }
+}
 
 const number = (n) => Number(n || 0).toLocaleString('es-CO');
 const candles = (n) => `${number(n)} ${Number(n) === 1 ? 'vela' : 'velas'}`;
@@ -212,7 +231,10 @@ const Offer = ({ item, doc, side, at, tfMs, onAdd, used }) => {
   );
 };
 
-export default function KitchenPanel({ symbol, timeframe, getCandles, currentTime, isPlaying, picked, onBands, shapes, getShapes, getProfiles, getPage }) {
+export default function KitchenPanel({
+  symbol, timeframe, getCandles, currentTime, isPlaying, picked, onBands, shapes, getShapes, getProfiles, getPage,
+  currentPrice, onPause, isBusy, onBox, onDropBox, onOrder, speed, onPlay, onStopAt, stopHit
+}) {
   const draft = useMemo(() => loadDraft(symbol), [symbol]);
   const [doc, setDoc] = useState(draft.doc);
   const [name, setName] = useState(draft.name);
@@ -238,6 +260,17 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
   const [profilesKey, setProfilesKey] = useState('[]');   // Los VP fijos del gráfico, con sus niveles de ahora
   const candleRef = useRef(null);
   const requestRef = useRef({ controller: null, timer: null, lastAt: 0, serial: 0 });
+  const [run, setRun] = useState(loadRun);
+  const [alert, setAlert] = useState(null);       // La última señal avisada: su orden propuesta o abierta, o por qué no
+  const [confirm, setConfirm] = useState(null);   // La orden recién abierta a mano: su confirmación, como en el panel
+  const alertRef = useRef(null);
+  alertRef.current = alert;
+  const alertBoxRef = useRef(null);
+  const seenRef = useRef({ key: null, until: null });   // Hasta qué vela ya se miraron las señales de esta estrategia
+  const resultRef = useRef(null);                 // La última respuesta entera, con lo adelantado: nunca se dibuja
+  const hitRef = useRef(null);                    // La última parada del reloj ya atendida
+  const [slow, setSlow] = useState(false);        // La estrategia lee algo del gráfico que no se puede calcular por adelantado
+  const liveRef = useRef({});
 
   const tfMs = TF_MS[timeframe];
   const side = doc.side;
@@ -312,6 +345,7 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
       clearTimeout(state.again);
       state.serial += 1;
       state.flight = null;
+      resultRef.current = null;
       setResult(null);
       setBusy(false);
       return undefined;
@@ -322,6 +356,11 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
     const askPick = pick !== null && (!isPlaying || known?.t !== pick || known?.flow === 'loading') ? pick : null;
     // Reproduciendo, un pedido a la vez: si cada vela nueva cortara el pedido en curso, a velocidad alta ninguno
     // terminaría y las filas quedarían atrás hasta pausar. El que está en curso termina y enseguida sale otro, con lo último
+    // Lo adelantado todavía alcanza y es de esta estrategia: nada que pedir. Con una vela elegida sí se pide lo suyo
+    const have = resultRef.current;
+    const covered = have && have.docKey === engineDoc && have.tfName === timeframe && have.symbol === symbol
+      && lastTime >= have.baseTime && lastTime <= have.refillAt;
+    if (covered && askPick === null && !have.pending) return undefined;
     const asking = `${engineDoc}|${askPick}|${pickPrice}`;
     if (isPlaying && state.flight === asking) {
       state.queued = true;
@@ -332,7 +371,8 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
       state.flight = asking;
       state.queued = false;
       clearTimeout(state.again);
-      const window_ = closedWindow(getCandles?.() || [], timeframe, currentTime, VIEW_BARS);
+      // Las velas del pedido: las cerradas y, por adelantado, las de los próximos segundos de reproducción
+      let window_ = closedWindow(getCandles?.() || [], timeframe, currentTime, VIEW_BARS, aheadBars(speed, tfMs));
       if (!window_) { state.flight = null; return; }
       state.controller?.abort();
       const controller = new AbortController();
@@ -342,18 +382,27 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
       setBusy(true);
       try {
         const sendPick = askPick !== null && askPick >= window_.rows[window_.rows.length - window_.view][0] ? askPick : null;
-        // Lo que calculan los indicadores encendidos del gráfico, con sus ajustes, en lo recorrido
+        // Lo que calculan los indicadores encendidos del gráfico, con sus ajustes, en lo recorrido y en lo adelantado
         const tail = window_.rows.slice(-window_.view).map(row => ({ timestamp: row[0], open: row[1], high: row[2], low: row[3], close: row[4], volume: row[5] }));
-        const page = getPage?.(tail) || null;
-        const hasPage = page && ['lines', 'nums', 'marks'].some(group => Object.keys(page[group] || {}).length);
+        let page = getPage?.(tail, window_.view - window_.ahead) || null;
         const lacking = new Set();
+        const pageKeys = [];
         for (const block of allBlocksOf(JSON.parse(engineDoc))) {
           const source = pageSource(block);
           if (!source) continue;
           const keys = block.id === 'pmark' ? [['marks', block.p.s]] : ['psube', 'ppos', 'pumbral', 'pgrande', 'pcruza', 'pgiro'].includes(block.id) ? [['nums', block.p.s]]
             : ['line', 'a', 'b'].filter(key => String(block.p[key] || '').startsWith('p:')).map(key => ['lines', block.p[key].slice(2)]);
+          pageKeys.push(...keys);
           if (keys.some(([group, key]) => !page?.[group]?.[key])) lacking.add(source);
         }
+        // Una marca del gráfico (el Swing) se conoce solo con lo ya ocurrido, y una serie puede no llegar tan lejos
+        // como las velas (el delta real, el interés abierto todavía sin cargar): ahí se adelanta menos, o nada
+        const drop = pageKeys.some(([group]) => group === 'marks') ? window_.ahead : aheadWithoutData(window_, page, pageKeys);
+        // Sin nada adelantado, la cocina calcula vela por vela, como antes: a velocidad alta puede ir atrás, y lo dice
+        const stepwise = window_.ahead > 0 && drop >= window_.ahead;
+        setSlow(previous => (previous === stepwise ? previous : stepwise));
+        if (drop > 0) ({ window: window_, page } = dropAhead(window_, page, drop));
+        const hasPage = page && ['lines', 'nums', 'marks'].some(group => Object.keys(page[group] || {}).length);
         setMissing(previous => (previous.join('|') === [...lacking].join('|') ? previous : [...lacking]));
         const data = await evaluateKitchen(symbol, {
           tf: TF_MINUTES[timeframe], candles: window_.rows, view: window_.view, doc: JSON.parse(engineDoc),
@@ -364,7 +413,13 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
           ...(page?.settings && Object.keys(page.settings).length ? { settings: page.settings } : {})
         }, controller.signal);
         if (serial !== state.serial) return;
-        setResult({ ...data, tfName: timeframe });
+        // Vale mientras la hora simulada siga entre la vela del pedido y la mitad de lo adelantado: ahí se pide más
+        const next = {
+          ...data, tfName: timeframe, docKey: engineDoc, symbol, baseTime: window_.lastTime, endTime: window_.endTime, ahead: window_.ahead,
+          refillAt: window_.atEnd ? Infinity : window_.lastTime + Math.floor(window_.ahead / 2) * tfMs
+        };
+        resultRef.current = next;
+        setResult(next);
         if (data.candle) {
           candleRef.current = data.candle;
           setCandleInfo(data.candle);
@@ -391,14 +446,18 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
     // currentTime no va: solo importa cuando cierra una vela (lastTime). profilesKey: con una vela elegida, sus zonas
     // incluyen los niveles de los VP fijos, que pueden cambiar
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [symbol, timeframe, engineDoc, blank, lastTime, pick, pickPrice, isPlaying, retry, pick !== null ? profilesKey : '']);
+  }, [symbol, timeframe, engineDoc, blank, lastTime, pick, pickPrice, isPlaying, retry, speed, pick !== null ? profilesKey : '']);
 
   useEffect(() => () => { requestRef.current.controller?.abort(); clearTimeout(requestRef.current.again); }, []);
 
   // Otra moneda u otro marco: lo calculado ya no vale
-  useEffect(() => { setResult(null); setPick(null); setFocus(null); setFocusZone(null); setCandleInfo(null); candleRef.current = null; }, [symbol, timeframe]);
+  useEffect(() => { resultRef.current = null; setResult(null); setPick(null); setFocus(null); setFocusZone(null); setCandleInfo(null); candleRef.current = null; }, [symbol, timeframe]);
 
-  const fresh = result && result.tfName === timeframe ? result : null;
+  // Lo único que se muestra: la respuesta recortada a la última vela cerrada en la hora simulada
+  const fresh = useMemo(
+    () => (result && result.tfName === timeframe && lastTime !== null ? asOf(result, lastTime, VIEW_BARS) : null),
+    [result, timeframe, lastTime]
+  );
   // Reproduciendo, lo calculado puede ir unas velas atrás de la última cerrada
   const evalTime = fresh?.times?.length ? fresh.times[fresh.times.length - 1] : null;
   const behind = evalTime !== null && lastTime !== null && lastTime > evalTime ? Math.round((lastTime - evalTime) / tfMs) : 0;
@@ -414,6 +473,114 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fresh, pick, focus, openZone, timeframe, side, doc, behind]);
   useEffect(() => () => onBands?.([]), []);   // eslint-disable-line react-hooks/exhaustive-deps
+
+  // ==================== Paso 1.3: el aviso, la caja y la orden de una señal ====================
+
+  useEffect(() => {
+    try { localStorage.setItem(RUN_KEY, JSON.stringify(run)); } catch { /* Solo son preferencias */ }
+  }, [run]);
+
+  const exit = useMemo(() => normalizeExit(doc.exit), [doc.exit]);
+  liveRef.current = { currentPrice, currentTime, lastTime, tfMs, exit, run, name, savedAs, main, timeframe, stopHit };
+
+  /** Quita del gráfico la caja de una propuesta que no llegó a ser una orden */
+  const dropProposal = useCallback(() => {
+    const current = alertRef.current;
+    if (current?.status === 'proposed' && current.boxId) onDropBox?.(current.boxId);
+  }, [onDropBox]);
+
+  // Otra estrategia, otro marco u otra moneda: lo que ya pasó no avisa. Las señales cuentan desde la próxima vela que cierre
+  const armKey = `${symbol}|${timeframe}|${engineDoc}`;
+  useEffect(() => {
+    seenRef.current = { key: armKey, until: liveRef.current.lastTime };
+    dropProposal();
+    setAlert(null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [armKey]);
+  useEffect(() => () => dropProposal(), [dropProposal]);   // Al salir de la pestaña, una propuesta sin usar no queda en el gráfico
+
+  // Si la simulación retrocede, las velas que vuelven a cerrar avisan otra vez. Una propuesta vale SIGNAL_LATE_MAX velas
+  useEffect(() => {
+    if (lastTime === null) return;
+    const seen = seenRef.current;
+    if (seen.until === null || seen.until === undefined || lastTime < seen.until) seen.until = lastTime;
+    const current = alertRef.current;
+    if (current?.status === 'proposed' && (lastTime > current.signal.time + SIGNAL_LATE_MAX * tfMs || lastTime < current.signal.time)) {
+      dropProposal();
+      setAlert({ ...current, status: 'expired', boxId: null });
+    }
+  }, [lastTime, tfMs, dropProposal]);
+
+  // Cada respuesta del motor: si cerró una vela con señal, se avisa una sola vez. Solo velas ya cerradas en la hora simulada
+  useEffect(() => {
+    const live = liveRef.current;
+    const seen = seenRef.current;
+    if (!fresh || fresh.docKey !== engineDoc || seen.key !== armKey || live.lastTime === null || fresh.pending) return;
+    const evalTime = fresh.times?.length ? Math.min(fresh.times[fresh.times.length - 1], live.lastTime) : null;
+    if (evalTime === null) return;
+    const signal = live.run.on ? freshSignal(fresh, { seenUntil: seen.until, lastTime: live.lastTime, tfMs: live.tfMs }) : null;
+    seen.until = Math.max(seen.until ?? evalTime, evalTime);
+    if (!signal) return;
+    dropProposal();
+    const base = { signal, at: Date.now() };
+    // El reloj se detuvo en el cierre de esta vela para atender la señal: si no toca quedar en pausa, sigue
+    const hit = live.stopHit;
+    const byStop = !!hit && hit.time === signal.time + live.tfMs && hitRef.current !== hit.nonce;
+    if (byStop) hitRef.current = hit.nonce;
+    const resume = () => { if (byStop) onPlay?.(); };
+    if (signal.missed) { setAlert({ ...base, status: 'missed' }); resume(); return; }
+    if (isBusy?.()) { setAlert({ ...base, status: 'busy' }); resume(); return; }
+    const index = lastClosedIndex(live.main, live.timeframe, signal.time + live.tfMs);
+    const bar = index >= 0 && live.main[index].timestamp === signal.time ? live.main[index] : null;
+    const plan = signalPlan(live.exit, { signal, candle: bar, entry: live.currentPrice });
+    if (!plan.ok) { setAlert({ ...base, status: 'error', message: plan.why }); resume(); return; }
+    const full = {
+      ...plan, time: live.lastTime + live.tfMs, sizeMode: live.exit.sizeMode, amount: live.exit.amount,
+      tag: kitchenTag({ name: live.name, id: live.savedAs.id, version: live.savedAs.version, signal, mode: live.run.mode, from: plan.from })
+    };
+    if (live.run.mode === 'auto') {
+      // Sin pausa, el reloj sigue antes de crear la orden: la imagen de apertura lo detiene y lo suelta como siempre
+      if (!live.run.pause) resume();
+      const out = onOrder?.({ ...full, boxId: null }) || { ok: false, why: 'Sin gestor de órdenes.' };
+      setAlert(out.ok ? { ...base, status: 'opened', plan: full, order: out.order } : { ...base, status: 'error', plan: full, message: out.why });
+    } else {
+      setAlert({ ...base, status: 'proposed', plan: full, boxId: onBox?.(full) ?? null });
+      if (!live.run.pause) resume();
+    }
+    if (live.run.pause) onPause?.();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [fresh]);
+
+  // Con lo adelantado se sabe en qué vela cae la próxima señal: el reloj se detiene justo en su cierre, para que el
+  // aviso y la orden sean de esa vela a cualquier velocidad. Es solo una hora para el reloj: no se muestra
+  useEffect(() => {
+    const valid = result && result.docKey === engineDoc && result.tfName === timeframe && !result.pending;
+    onStopAt?.(run.on && valid && lastTime !== null ? nextSignalClose(result, lastTime, tfMs) : null);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [result, lastTime, run.on, engineDoc, timeframe]);
+  useEffect(() => () => onStopAt?.(null), []);   // eslint-disable-line react-hooks/exhaustive-deps
+  // Si el reloj se detuvo por una señal y nadie la atendió (ya estaba vista, o el aviso se apagó), sigue
+  useEffect(() => {
+    if (stopHit && hitRef.current !== stopHit.nonce) { hitRef.current = stopHit.nonce; onPlay?.(); }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [stopHit]);
+
+  useEffect(() => { if (alert?.at) alertBoxRef.current?.scrollIntoView?.({ block: 'nearest' }); }, [alert?.at]);
+
+  /** «Abrir la orden»: con la caja como esté ahora en el gráfico, por si se movió */
+  const openProposed = () => {
+    const current = alertRef.current;
+    if (current?.status !== 'proposed') return;
+    const box = (getShapes?.() || []).find(shape => shape.id === current.boxId && shape.type === 'tpsl');
+    const plan = box
+      ? { ...current.plan, entry: box.entryPrice, stop: box.slPrice, target: box.tpPrice, side: box.tpPrice < box.entryPrice ? 'short' : 'long', boxId: box.id }
+      : { ...current.plan, boxId: null };
+    const out = onOrder?.(plan) || { ok: false, why: 'Sin gestor de órdenes.' };
+    if (!out.ok) { setAlert({ ...current, message: out.why }); return; }
+    setAlert({ ...current, status: 'opened', order: out.order, boxId: null, message: null });
+    setConfirm(out.order);
+  };
+  const discardProposed = () => { dropProposal(); setAlert(null); };
 
   const change = useCallback((next) => { setDoc(next); setNotice(null); }, []);
   const toggleHelp = (id) => setHelp(current => ({ ...current, [id]: !current[id] }));
@@ -539,9 +706,48 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
         </>
       )}
 
+      {alert && (
+        <div ref={alertBoxRef} className={`kt-verdict${alert.status === 'proposed' || alert.status === 'opened' ? ' yes' : ' near'}`}>
+          <strong>
+            Señal de {alert.signal.side > 0 ? 'largo' : 'corto'} en la vela del {when(alert.signal.time)}
+            {alert.signal.late > 0 ? ` · llegó ${candles(alert.signal.late)} tarde` : ''}
+          </strong>
+          {alert.plan && (
+            <div>
+              Entrada {price(alert.plan.entry)} · stop {price(alert.plan.stop)} ({Math.round(alert.plan.riskAtr * 100) / 100} ATR, {STOP_FROM[alert.plan.from]})
+              {' '}· objetivo {price(alert.plan.target)} ({alert.plan.rr}R) · {alert.plan.sizeMode === 'risk' ? `arriesga ${alert.plan.amount} USDT` : `${alert.plan.amount} USDT`}
+            </div>
+          )}
+          {alert.plan?.note && <div className="kt-count">{alert.plan.note}</div>}
+          {alert.status === 'proposed' && (
+            <>
+              <div className="kt-count">La caja TP/SL está en el gráfico: puedes moverla antes de abrir. Vale {candles(SIGNAL_LATE_MAX)}; entra al precio del momento.</div>
+              <div className="kt-row">
+                <button type="button" className="btn-quick kt-main" onClick={openProposed}>Abrir la orden</button>
+                <button type="button" className="btn-quick" onClick={discardProposed}>Descartar</button>
+              </div>
+            </>
+          )}
+          {alert.status === 'opened' && (
+            <div className="ok">✓ Orden abierta{alert.order?.tradeNumber ? ` (trade #${alert.order.tradeNumber})` : alert.order?.status === 'pending' ? ', esperando su precio' : ''}: está en el historial, marcada como nacida de la cocina.</div>
+          )}
+          {alert.status === 'busy' && <div className="no">Ya hay una posición abierta o una orden esperando: va una a la vez, así que esta señal solo avisa.</div>}
+          {alert.status === 'missed' && <div className="no">Pasaron {candles(alert.signal.late)} desde esa vela (la reproducción iba más rápido que el cálculo): ya no se propone la orden. Vale hasta {candles(SIGNAL_LATE_MAX)} después.</div>}
+          {alert.status === 'expired' && <div className="no">La propuesta venció sin abrirse: pasaron más de {candles(SIGNAL_LATE_MAX)}. Su caja se quitó del gráfico.</div>}
+          {alert.message && <div className="no">{alert.message}</div>}
+          {alert.status !== 'proposed' && (
+            <div className="kt-row"><button type="button" className="btn-quick" onClick={() => setAlert(null)}>Cerrar el aviso</button></div>
+          )}
+        </div>
+      )}
+      {confirm && <OrderConfirmationModal order={confirm} currentPrice={currentPrice} onClose={() => setConfirm(null)} />}
+
       {error && <div className="kt-error">{error}</div>}
       {missing.length > 0 && (
         <div className="kt-hint">Enciende {missing.map(name => `«${name}»`).join(', ')} en Indicadores: hay bloques que leen lo que ese indicador calcula en el gráfico, con tus ajustes. Mientras esté apagado no cuentan.</div>
+      )}
+      {slow && !isBlank(doc) && (
+        <div className="kt-note">Esta estrategia lee del gráfico el Swing, o el delta real de los footprints, que solo existen para lo ya ocurrido: se calcula vela por vela y no por adelantado. A velocidad alta puede ir unas velas atrás; una señal vale hasta {candles(SIGNAL_LATE_MAX)} después de la suya.</div>
       )}
       {lastTime === null && <div className="kt-note">Todavía no cerró ninguna vela en este marco: avanza la simulación.</div>}
       {flowInfo?.state === 'loading' && (
@@ -819,6 +1025,78 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
         )}
       </div>
 
+      <div className="kt-layer">
+        <div className="kt-layer-head">
+          <strong>Capa 4 · Salida <span>· qué hace cada señal</span></strong>
+          <HelpToggle open={!!help.salida} onClick={() => toggleHelp('salida')} />
+        </div>
+        {help.salida && <HelpCard id="salida" />}
+        <div className="kt-row small">
+          <span className="kt-label">Stop</span>
+          <select value={exit.stop} onChange={e => change(setExit(doc, { stop: e.target.value }))}>
+            <option value="atr">a una distancia de la entrada</option>
+            <option value="candle">detrás de la vela de la señal</option>
+            <option value="zone">en el borde lejano de la zona</option>
+          </select>
+          {exit.stop === 'atr' ? (
+            <>
+              <input type="number" min={EXIT_LIMITS.atr[1]} max={EXIT_LIMITS.atr[2]} step={0.1} value={exit.atr}
+                onChange={e => { const value = Number(e.target.value); if (e.target.value !== '' && value >= EXIT_LIMITS.atr[1]) change(setExit(doc, { atr: value })); }} />
+              <span>ATR</span>
+            </>
+          ) : (
+            <>
+              <span>, con</span>
+              <input type="number" min={EXIT_LIMITS.buf[1]} max={EXIT_LIMITS.buf[2]} step={0.05} value={exit.buf}
+                onChange={e => { const value = Number(e.target.value); if (e.target.value !== '' && value >= 0) change(setExit(doc, { buf: value })); }} />
+              <span>ATR de aire</span>
+            </>
+          )}
+        </div>
+        {exit.stop !== 'atr' && (
+          <div className="kt-row small">
+            <span className="kt-label">Si no se puede, a</span>
+            <input type="number" min={EXIT_LIMITS.atr[1]} max={EXIT_LIMITS.atr[2]} step={0.1} value={exit.atr}
+              onChange={e => { const value = Number(e.target.value); if (e.target.value !== '' && value >= EXIT_LIMITS.atr[1]) change(setExit(doc, { atr: value })); }} />
+            <span>ATR de la entrada</span>
+          </div>
+        )}
+        {exit.stop === 'zone' && !zone.picks.length && <div className="kt-note">La estrategia no tiene zonas en la capa 2: mientras no las tenga, el stop va en ATR.</div>}
+        <div className="kt-row small">
+          <span className="kt-label">Objetivo a</span>
+          <input type="number" min={EXIT_LIMITS.rr[1]} max={EXIT_LIMITS.rr[2]} step={0.5} value={exit.rr}
+            onChange={e => { const value = Number(e.target.value); if (e.target.value !== '' && value >= EXIT_LIMITS.rr[1]) change(setExit(doc, { rr: value })); }} />
+          <span>R (veces el riesgo)</span>
+        </div>
+        <div className="kt-row small">
+          <span className="kt-label">Tamaño</span>
+          <select value={exit.sizeMode} onChange={e => change(setExit(doc, { sizeMode: e.target.value }))}>
+            <option value="risk">por riesgo</option>
+            <option value="fixed">monto fijo</option>
+          </select>
+          <input type="number" min={EXIT_LIMITS.amount[1]} step={1} value={exit.amount}
+            onChange={e => { const value = Number(e.target.value); if (e.target.value !== '' && value > 0) change(setExit(doc, { amount: value })); }} />
+          <span>{exit.sizeMode === 'risk' ? 'USDT que se pierden si toca el stop' : 'USDT de posición'}</span>
+        </div>
+        <div className="kt-sub">Cuando cierra una vela con señal</div>
+        <div className="kt-row small">
+          <label><input type="checkbox" checked={run.on} onChange={e => setRun(value => ({ ...value, on: e.target.checked }))} /> Avisar y armar la caja TP/SL</label>
+          <label><input type="checkbox" checked={run.pause} disabled={!run.on} onChange={e => setRun(value => ({ ...value, pause: e.target.checked }))} /> Pausar la reproducción</label>
+        </div>
+        <div className="kt-row small">
+          <span className="kt-label">La orden</span>
+          {[['ask', 'Preguntar'], ['auto', 'Automática']].map(([value, label]) => (
+            <button key={value} type="button" className={`kt-seg${run.mode === value ? ' on' : ''}`} disabled={!run.on} onClick={() => setRun(current => ({ ...current, mode: value }))}>{label}</button>
+          ))}
+        </div>
+        <div className="kt-note">
+          {!run.on ? 'Apagado: la cocina solo pinta dónde se cumple la estrategia.'
+            : run.mode === 'auto' ? 'Automática: la orden se abre sola al precio del momento, con esta salida, y queda en el historial y en el Observador como cualquier orden manual.'
+              : 'Preguntar: la caja queda propuesta en el gráfico y tú decides si abrir la orden. Puedes moverla antes.'}
+          {' '}Va una posición a la vez, cuenta desde la próxima vela que cierre y solo con esta pestaña abierta.
+        </div>
+      </div>
+
       {fresh && !isBlank(doc) && (
         <div className={`kt-total${fresh.signals.length ? ' yes' : ''}`}>
           {usedSteps.length
@@ -903,7 +1181,7 @@ export default function KitchenPanel({ symbol, timeframe, getCandles, currentTim
       </div>
 
       <div className="kt-note">
-        La cocina no abre órdenes ni avisa al reproducir: por ahora pinta dónde se cumple cada capa y cuenta. Lo que valida una estrategia es el backtesting global, no la cocina.
+        La cocina avisa y abre órdenes solo con esta pestaña abierta, en la simulación manual. Lo que valida una estrategia es el backtesting global, no la cocina.
       </div>
     </div>
   );

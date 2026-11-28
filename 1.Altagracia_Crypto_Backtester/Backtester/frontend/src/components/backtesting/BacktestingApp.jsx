@@ -50,7 +50,7 @@ import { ruleTesterUrl } from './ruleTester.js';
 import { fetchBlindStart, rangesInUse, recordCancel, recordClose, recordFill, recordImage, recordOrder, registryChartView } from './observer.js';
 import { blindAnchor, blindScale, isBlind, maskDate, priceText, pricesHidden, scaleFromCandles, setBlindAnchor, setBlindScale } from './blindClock.js';
 import { CaptureHold, exitCaptureTime, exitCapturesDue, tradeBoundaries } from './tradeJournal.js';
-import { boxesFollowOrders, latestFreeBox } from './orderPlan.js';
+import { autoOrderType, boxesFollowOrders, latestFreeBox, orderQuantity } from './orderPlan.js';
 import { installCoach } from './coachState.js';
 import { drawingsForOrder } from './tradeContext.js';
 import { restoreLevels, takeLevels } from '../indicators/analysisLevels.js';
@@ -1415,6 +1415,8 @@ const BacktestingApp = () => {
     }
   };
 
+  latestRef.current.handlePlay = handlePlay;
+
   const handlePause = () => {
     console.log('[BacktestingApp] handlePause clicked');
     captureHold.cancel();
@@ -1577,7 +1579,7 @@ const BacktestingApp = () => {
   }), []);
   // Lo que calculan los indicadores encendidos del gráfico a la vista, con sus ajustes, en esas velas cerradas
   const getKitchenPage = useCallback(
-    (candles) => miniChartRefs.current[activeTimeframeRef.current]?.getIndicatorManager?.()?.getKitchenSeries?.(candles) || null, []
+    (candles, known) => miniChartRefs.current[activeTimeframeRef.current]?.getIndicatorManager?.()?.getKitchenSeries?.(candles, known) || null, []
   );
   const getKitchenCandles = useCallback(() => marketDataRef.current?.timeframes?.[activeTimeframeRef.current]?.main || [], []);
   // Los dibujos del gráfico a la vista: un rectángulo o una línea horizontal puede ser una zona de la estrategia
@@ -1618,6 +1620,86 @@ const BacktestingApp = () => {
       levels: order.analysisItems
     }).then(() => setObserverRevision(value => value + 1));
   };
+
+  /** Lo que sigue a una orden recién creada, venga del panel de trading o de una señal de la cocina */
+  const afterOrderCreated = (order) => {
+    console.log('[BacktestingApp] Orden creada:', order);
+    observeOrder(order);
+    if (order.status === 'pending') {
+      captureHold.run(release => captureDecision(order, miniChartRefs.current[activeTimeframeRef.current], release));
+    }
+
+    // Una orden que usa la caja dibujada la lleva a su entrada al abrir
+    if (order.tpslBoxId) {
+      if (order.status === 'open') {
+        miniChartRefs.current[activeTimeframe]?.anchorTPSLBox?.(order.tpslBoxId, order.executedAt, order.executedPrice);
+      }
+    } else if (order.type === 'market' && (order.stopLoss || order.takeProfit)) {
+      // 🎯 NUEVO: Crear caja TP/SL automática solo para market orders con SL y TP
+      const miniChart = miniChartRefs.current[activeTimeframe];
+      if (miniChart && miniChart.addTPSLBox) {
+        order.tpslBoxId = miniChart.addTPSLBox(
+          order.entryPrice,
+          order.openTime || currentTime,
+          order.side, // 'long' o 'short'
+          order.stopLoss,
+          order.takeProfit,
+          5 // 5 velas de ancho
+        );
+      }
+    }
+
+    saveTradeSession();
+  };
+
+  // Cocina, paso 1.3 (27/11/2026): una señal de la estrategia propone su caja TP/SL y, confirmada o sola, abre la
+  // orden por el camino de las órdenes manuales (OrderManager, imágenes, sesión y Observador). Una posición a la vez
+  latestRef.current.currentPrice = currentPrice;
+  latestRef.current.currentTime = currentTime;
+  const kitchenBusy = useCallback(() => {
+    const manager = orderManagerRef.current;
+    return !manager || manager.getOpenOrders().length + manager.getPendingOrders().length > 0;
+  }, []);
+  const kitchenBox = useCallback(
+    (plan) => miniChartRefs.current[activeTimeframeRef.current]?.addTPSLBox?.(plan.entry, plan.time, plan.side, plan.stop, plan.target, 8) ?? null, []
+  );
+  const kitchenDropBox = useCallback((boxId) => { miniChartRefs.current[activeTimeframeRef.current]?.removeDrawing?.(boxId); }, []);
+  latestRef.current.kitchenOrder = (plan) => {
+    const manager = orderManagerRef.current;
+    const price = latestRef.current.currentPrice;
+    const now = timeControllerRef.current?.currentTime ?? latestRef.current.currentTime;
+    if (!manager || !(price > 0) || !Number.isFinite(now)) return { ok: false, why: 'La simulación todavía no tiene precio ni hora.' };
+    if (kitchenBusy()) return { ok: false, why: 'Ya hay una posición abierta o una orden esperando: va una a la vez.' };
+    // Como el panel en «Automática»: junto al precio entra a mercado; si la caja se movió lejos, espera su precio
+    const type = autoOrderType(plan.entry, price, plan.side);
+    const fill = type === 'market' ? price : plan.entry;
+    const quantity = orderQuantity({ mode: plan.sizeMode, amount: plan.amount, entry: fill, stopLoss: plan.stop });
+    if (!(quantity > 0)) return { ok: false, why: 'El tamaño no da una cantidad válida.' };
+    const order = manager.createOrder({
+      type, side: plan.side, quantity, entryPrice: fill, currentTime: now, currentPrice: price,
+      stopLoss: plan.stop, takeProfit: plan.target, notes: plan.tag?.note || ''
+    });
+    order.kitchen = plan.tag || null;   // De qué estrategia y versión nació: va con la orden a la sesión
+    order.tpslBoxId = plan.boxId ?? null;
+    afterOrderCreated(order);
+    return { ok: true, order };
+  };
+  const kitchenOrder = useCallback((plan) => latestRef.current.kitchenOrder(plan), []);
+  // Con lo calculado por adelantado, la cocina sabe en qué vela cae la próxima señal: el reloj se detiene justo en su
+  // cierre (`stopAt`), la cocina la atiende y, si no toca quedar en pausa, sigue
+  const [kitchenStop, setKitchenStop] = useState(null);
+  latestRef.current.kitchenStopHit = (time) => {
+    setIsPlaying(false);
+    handleTimeUpdate(time);   // La pantalla queda en la hora exacta del cierre
+    setKitchenStop({ time, nonce: Date.now() });
+  };
+  const kitchenStopAt = useCallback((time) => {
+    const controller = timeControllerRef.current;
+    if (!controller) return;
+    controller.stopAt = Number.isFinite(time) ? time : null;
+    controller.onStopAt = (hit) => latestRef.current.kitchenStopHit(hit);
+  }, []);
+  const kitchenPlay = useCallback(() => latestRef.current.handlePlay?.(), []);
 
   // Imagen de cierre: la simulación ya pasó las velas que siguen al trade
   useEffect(() => {
@@ -2578,35 +2660,7 @@ const BacktestingApp = () => {
             currentPrice={currentPrice}
             currentTime={currentTime}
             chartBox={latestFreeBox(chartShapes, orderManagerRef.current?.orders)}
-            onOrderCreated={(order) => {
-              console.log('[BacktestingApp] Orden creada:', order);
-              observeOrder(order);
-              if (order.status === 'pending') {
-                captureHold.run(release => captureDecision(order, miniChartRefs.current[activeTimeframeRef.current], release));
-              }
-
-              // Una orden que usa la caja dibujada la lleva a su entrada al abrir
-              if (order.tpslBoxId) {
-                if (order.status === 'open') {
-                  miniChartRefs.current[activeTimeframe]?.anchorTPSLBox?.(order.tpslBoxId, order.executedAt, order.executedPrice);
-                }
-              } else if (order.type === 'market' && (order.stopLoss || order.takeProfit)) {
-                // 🎯 NUEVO: Crear caja TP/SL automática solo para market orders con SL y TP
-                const miniChart = miniChartRefs.current[activeTimeframe];
-                if (miniChart && miniChart.addTPSLBox) {
-                  order.tpslBoxId = miniChart.addTPSLBox(
-                    order.entryPrice,
-                    order.openTime || currentTime,
-                    order.side, // 'long' o 'short'
-                    order.stopLoss,
-                    order.takeProfit,
-                    5 // 5 velas de ancho
-                  );
-                }
-              }
-
-              saveTradeSession();
-            }}
+            onOrderCreated={afterOrderCreated}
           />
         </>
       )}
@@ -2671,6 +2725,16 @@ const BacktestingApp = () => {
           getShapes={getKitchenShapes}
           getProfiles={getKitchenProfiles}
           getPage={getKitchenPage}
+          currentPrice={currentPrice}
+          onPause={handlePause}
+          isBusy={kitchenBusy}
+          onBox={kitchenBox}
+          onDropBox={kitchenDropBox}
+          onOrder={kitchenOrder}
+          speed={playbackSpeed}
+          onPlay={kitchenPlay}
+          onStopAt={kitchenStopAt}
+          stopHit={kitchenStop}
         />
       )}
 

@@ -55,6 +55,103 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 27 Noviembre 2026: Footprints y Elementos OF por Adelantado al Reproducir
+
+**Pedido:** tras adelantar la cocina, el usuario pidió lo mismo para los footprints y los Elementos OF del gráfico: son claves en sus estrategias y no pueden ir atrás al reproducir rápido.
+
+**Cambios:**
+1. **Footprints** (`OrderFlowIndicator.js`): en reproducción, los de las velas que vienen se piden antes (300 por pedido, hasta 1,200 si la reproducción se los come) a un depósito que el dibujo no lee. Cada uno pasa a la vista cuando su vela cierra en la hora simulada. La vela en formación se sigue pidiendo en vivo.
+2. **Elementos OF** (`OrderFlowElementsIndicator.js`): los elementos, la tabla de la vela y los setups de las velas que vienen se piden antes (400 por pedido, hasta 1,600). Cada evento ya traía la hora en que se conoce y el dibujo ya filtraba por ella: no hubo que cambiar el dibujo.
+3. **Cocina:** el delta de volumen del gráfico también va adelantado cuando es el estimado de las velas, que es lo usual con mil velas. Si es el real de los footprints ya vistos, sigue vela por vela.
+4. **Pruebas:** `orderflow.test.mjs` (42), `ofahead.test.mjs` (5, nuevo) y una más en `test_of_elements.py` (19).
+
+**IMPORTANTE:**
+- Basta recargar la página de App 1: no cambió el backend. Llega a la app del usuario al unir esta rama a main.
+- **Solo en reproducción.** La suite, en vivo, pide como siempre.
+- **La prueba que lo sostiene** (backend): el footprint, los elementos y la tabla de una vela cerrada son iguales pedidos en su momento o con la hora más adelante, también con el filtro de volumen relativo y pidiendo solo el tramo que viene.
+- **Nada del futuro a la vista:** lo adelantado de los footprints vive en un depósito aparte (`ahead.map`), que no leen el dibujo, el delta real ni la escala de precios. Al retroceder la hora o cambiar una regla se vacía.
+- **Probado en pantalla** en una copia aislada con BTC 15m, a 50000x con los dos indicadores encendidos: 6 días en 10 segundos, con 3 pedidos adelantados de footprints (unos 170 velas y 30 ms cada uno) y 2 de elementos (unas 230 velas y 0.4 s). Al pausar, el panel de delta decía «trades reales» (todas las velas a la vista tenían su footprint), y con zoom se veían las celdas, el delta y la tabla de las últimas velas.
+- **Sin ver en pantalla:** los setups adelantados, retroceder la hora, cambiar de marco reproduciendo, 1m, 5m, 1h y 4h, el 2.º gráfico y el delta estimado adelantado en la cocina (este, sin prueba propia: solo compila).
+- **Lo que sigue pidiéndose con cada vela:** el footprint parcial de la vela en formación, uno a la vez. A velocidad alta casi no se alcanza a ver.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` secciones "ORDER FLOW SOBRE LAS VELAS", "Por adelantado al reproducir (27/11)", y "ELEMENTOS DE ORDER FLOW", "Por adelantado al reproducir (27/11)"
+
+---
+
+### App 1 - 27 Noviembre 2026: La Cocina Calcula por Adelantado y No se Atrasa al Reproducir Rápido
+
+**Pedido:** a 50000x la cocina no alcanzaba: las filas iban atrás y las señales se perdían. La idea fue del usuario: calcular antes lo de los próximos segundos de reproducción y, al avanzar, solo mostrar, sin enseñar nada del futuro. Pidió incluir el VWAP, el interés abierto, el delta y el CVD.
+
+**Cambios:**
+1. **Pedido por adelantado:** la cocina manda al motor también las velas de los próximos 30 segundos de reproducción (entre 200 y 2,000 velas, según la velocidad). Guarda la respuesta entera y muestra solo el recorte a la hora simulada (`asOf`). Pide otro tramo al pasar la mitad.
+2. **Nada del futuro a la vista:** filas, triángulos, zonas, líneas, cuentas, aviso y orden salen del recorte. Una zona que todavía no nació no se dibuja, y una que sigue viva llega hasta ahora.
+3. **El reloj se detiene en la vela de la señal:** como la cocina ya sabe dónde cae la próxima, el reloj para justo en el cierre de esa vela (`TimeController.stopAt`), la cocina avisa y abre o propone la orden, y sigue solo si no toca pausar.
+4. **Series del gráfico por adelantado:** el VWAP y sus bandas, el interés abierto (sus tres modos) y el CVD.
+5. **Lo que no se adelanta:** el delta de volumen del gráfico (puede ser el real de los footprints ya vistos) y el Swing. Una estrategia que los lee se calcula vela por vela, como antes, y la pestaña lo dice.
+6. **Motor:** la respuesta trae lo que hace falta para recortar (`doneAt`, `arriveAt`, `spans`). No cambia lo que calcula.
+7. **Pruebas:** `test_kitchen.py` (49), `kitchen.test.mjs` (37) y `clock.test.mjs` (34).
+
+**IMPORTANTE:**
+- El backend de App 1 (9000) se recarga solo; hay que recargar su página. Llega a la app del usuario al unir esta rama a main.
+- **La prueba que lo sostiene:** con zonas, contexto, dos pasos y largos y cortos, la respuesta adelantada y recortada es igual, campo por campo, a la calculada con las velas de ese momento.
+- **Probado en pantalla** en una copia aislada con BTC 15m, a 50000x:
+  - una estrategia de un bloque, en automático: más de 100 órdenes, cada una en el cierre exacto de su vela (antes entraban unos minutos después), y la pestaña «Al día»;
+  - «Preguntar» con pausa: el reloj quedó en 07:15 para la señal de la vela de 07:00, con su caja; «Descartar» quitó la caja;
+  - una estrategia con el cruce del VWAP: un minuto seguido, del 2 de febrero al 17 de marzo, sin pedidos al backend durante 10 segundos de reproducción.
+- **Lo que frena a esa velocidad no es la cocina:** cada orden detiene el reloj unos 150 ms para su imagen. Con órdenes automáticas, 50000x en 15m rinde cerca de la mitad.
+- **Visto al probar, sin tocar:** con muchas órdenes por segundo, el backend rechaza parte de las imágenes de los trades (error 429, su límite de pedidos). Las órdenes quedan bien; a esos trades les falta la imagen.
+- **En 1 minuto, a 50000x, no alcanza:** son 833 velas por segundo y el tope adelantado es de 2,000. Va bien hasta unos 10000x.
+- **Sin ver en pantalla:** el interés abierto y el CVD adelantados (solo con las pruebas del recorte), una estrategia con el delta o el Swing y su aviso, 1m, 5m, 1h y 4h, retroceder la simulación con lo adelantado, y cambiar la velocidad en plena reproducción.
+- **Los footprints y los Elementos OF del gráfico** se adelantaron después, el mismo día (entrada de arriba).
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)", "Pedido por adelantado (27/11)"
+
+---
+
+### App 1 - 27 Noviembre 2026: La Señal de la Cocina Avisa, Dibuja la Caja TP/SL y Abre el Trade (paso 1.3 de la central)
+
+**Pedido:** al probar la cocina, el usuario dijo que «cuando se cumplen todas las condiciones, no está abriendo el trade ni dibujando la caja de takeprofit/stoploss». Eso no estaba construido: es el paso 1.3 de la central.
+
+**Cambios:**
+1. **Capa 4 · Salida** en la pestaña «Cocina», con su ficha con imagen. Es parte de la estrategia: entra en la frase y en las versiones guardadas.
+   - **stop:** a una distancia en ATR de la entrada (1.5 de fábrica, el del probador), detrás de la vela de la señal o en el borde lejano de la zona, con un aire en ATR;
+   - **objetivo:** en R (2 de fábrica);
+   - **tamaño:** por riesgo (10 USDT de fábrica) o monto fijo, con la cuenta del panel de trading (`orderQuantity`).
+2. **Aviso al reproducir:** cuando cierra una vela con señal, la cocina lo dice arriba de la pestaña y, si está marcado (de fábrica sí), pausa la reproducción.
+3. **Caja de la señal:** una caja TP/SL de las de siempre (`TPSLBox`) en la vela que empieza, con la entrada al precio del momento, el stop y el objetivo de la salida.
+4. **La orden, de dos maneras:**
+   - «Preguntar» (de fábrica): la caja queda propuesta, se puede mover, y «Abrir la orden» la manda con la confirmación de siempre;
+   - «Automática»: la orden se abre sola.
+
+   Pasa por `OrderManager` como una orden manual: historial, imágenes, sesión y Observador. Queda marcada en su nota y en `order.kitchen` con el nombre y la versión de la estrategia.
+5. **Una posición a la vez:** con una abierta o una orden esperando, la señal solo avisa.
+6. **Motor:** cada señal trae el ATR de su vela y, con capa de zona, la zona que le toca (`Facts.zone_by`).
+7. **Pruebas:** `test_kitchen.py` (48) y `kitchen.test.mjs` (33). Pasan también `levels`, `orders`, `journal`, `replay` y `observer`.
+
+**IMPORTANTE:**
+- El backend de App 1 (9000) se recarga solo al llegar el código; hay que recargar su página. Llega a la app del usuario al unir esta rama a main.
+- **Un documento guardado antes se abre igual:** entra con la salida de fábrica, y no cuenta como versión nueva.
+- **Sin futuro:** avisa solo por velas ya cerradas en la hora simulada. Al armar o cambiar la estrategia, lo que ya pasó no avisa: cuenta desde la próxima vela que cierre.
+- **Solo con la pestaña «Cocina» abierta.** En otra pestaña no avisa ni abre órdenes.
+- **Decisiones mías, por confirmar al probar:**
+  - el stop de fábrica va en ATR desde la entrada, lo más ancho de los tres;
+  - un stop que no se puede poner (sin zona, o del lado equivocado de la entrada) vuelve al de ATR y el aviso lo dice; uno a menos de 0.25 ATR de la entrada se lleva hasta ahí;
+  - reproduciendo rápido, el cálculo va unas velas atrás: una señal vale hasta 3 velas después de la suya, con la entrada al precio de ese momento. Más tarde solo avisa;
+  - una propuesta sin abrir vence a las 3 velas, y su caja se quita;
+  - al pausar por una señal, la hora queda unos minutos dentro de la vela siguiente (a 3000x en 15m, 5 minutos).
+- **Probado en pantalla** en una copia aislada con BTC 15m desde el 01/01/2023:
+  - la capa nueva, su ficha y la frase con la salida;
+  - el aviso, la pausa y la caja al cerrar una vela con señal, a 3000x;
+  - «Abrir la orden» con su confirmación (trade #1) y tres órdenes automáticas (#2 a #4), cada una al cerrarse la anterior;
+  - el trade cerrado en el historial, con su nota «Cocina: «Prueba 1.3» (sin guardar) · señal de corto · confirmada a mano», y sus imágenes guardadas;
+  - el stop cambiado a 10 ATR sin rearmar la estrategia, y una señal con la posición abierta, que solo avisó.
+- **Sin ver en pantalla:** el stop detrás de la vela y en la zona (solo con las pruebas), «Descartar», la propuesta vencida, la señal que llega tarde o se pierde, mover la caja antes de abrir, una orden que queda esperando su precio, la fecha oculta, largos o cortos solos, el Observador con estas órdenes, el panel en ventana aparte y los estilos Oscuro, Personalizado y Muhammad.
+- **Falta del paso 1.3 del plan:** «Mis casos». El paso 1.4 (pasar la estrategia al backtesting global) sigue sin construir.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)", "Salida, aviso y orden de una señal (paso 1.3, 27/11)"
+
+---
+
 ### App 1 - 27 Noviembre 2026: Volumen, Umbrales y Tabla de la Vela en la Cocina, y Filas al Día al Reproducir
 
 **Pedido:** tras probar la cocina, el usuario pidió:
