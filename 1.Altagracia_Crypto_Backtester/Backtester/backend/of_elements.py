@@ -97,6 +97,63 @@ OPEN_POC_BARS = 5
 OPEN_POC_ATR = 0.25  # El POC debe quedar a esta parte del ATR fuera del rango de las 5 velas previas
 MAX_THIN_ROWS = 3
 
+INVERSE_MIN = 2  # Inverse Imbalance: desequilibrios contrarios en la mitad lejana
+
+# Lo que un elemento puede llevar propio en `overrides` de detect (28/11/2026, pedido del usuario para la cocina de
+# estrategias): campo -> (de fábrica, mínimo, máximo). Sin `overrides`, todos van con los valores de fábrica y detect
+# da exactamente lo de siempre: el probador, la suite y el indicador no cambian.
+# - target: parte de las velas que marca un elemento relativo (su umbral sale de los 30 días anteriores);
+# - vol: volumen mínimo de la vela, en veces la mediana de las 20 anteriores (los de VOLUME_FILTERED);
+# - min: su mínimo literal (niveles apilados, desequilibrios, niveles de la secuencia, del barrido o de la liquidez);
+# - absorb y cell (RL): velas del segundo intento, y parte de las celdas que cuentan como «mucho volumen»;
+# - margin y bars (OP): cuánto fuera del rango de las velas previas queda el POC, en ATR, y cuántas velas;
+# - usd (BR, GR): tamaño mínimo en USD, además de su umbral relativo.
+OWN_FIELDS = {}
+for _code, (_name, _shape, _relative, _literal) in CATALOG.items():
+    _own = {}
+    if _relative and _code != "RL":
+        _own["target"] = (DEFAULT_TARGET, 0.005, 0.3)
+    if _code in VOLUME_FILTERED:
+        _own["vol"] = (DEFAULT_VOL_FILTER, 0.0, 10.0)
+    if _literal is not None:
+        _own["min"] = (_literal, 1, 50)
+    if _code == "IV":
+        _own["min"] = (INVERSE_MIN, 1, 50)
+    if _code == "RL":
+        _own["absorb"] = (ABSORB_BARS, 1, ABSORB_MAX_BARS)
+        _own["cell"] = (round(1 - ABSORB_CELL_PCT / 100, 4), 0.005, 0.3)
+    if _code == "OP":
+        _own["margin"] = (OPEN_POC_ATR, 0.0, 5.0)
+        _own["bars"] = (OPEN_POC_BARS, 2, 50)
+    if _code in ("BR", "GR"):
+        _own["usd"] = (0.0, 0.0, 1e12)
+    OWN_FIELDS[_code] = _own
+
+
+def clean_overrides(raw):
+    """Los valores propios de cada elemento, dentro de rango: {código: {campo: valor}}. Lo desconocido se descarta."""
+    out = {}
+    for code, fields in (raw or {}).items():
+        known = OWN_FIELDS.get(code)
+        if not known or not isinstance(fields, dict):
+            continue
+        kept = {}
+        for field, value in fields.items():
+            if field not in known:
+                continue
+            default, low, high = known[field]
+            try:
+                number = min(high, max(low, float(value)))
+            except (TypeError, ValueError):
+                continue
+            if not math.isfinite(number):
+                continue
+            kept[field] = int(round(number)) if isinstance(default, int) else number
+        if kept:
+            out[code] = kept
+    return out
+
+
 _cache = OrderedDict()
 _lock = threading.Lock()
 
@@ -511,7 +568,7 @@ def _absorptions(bars, first, last, threshold_of, absorb_bars, tf):
     return out
 
 
-def _thresholds(window, target):
+def _thresholds(window, target, absorb_pct=ABSORB_CELL_PCT):
     """Umbrales relativos con las velas de los 30 días anteriores."""
     if len(window) < MIN_WINDOW_BARS:
         return None
@@ -519,7 +576,7 @@ def _thresholds(window, target):
     # Las celdas de los dos lados, para la absorción del motor 8: cualquiera de los dos puede chocar con un nivel
     cells = np.concatenate([np.concatenate([f["A"][f["A"] > 0], f["P"][f["P"] > 0]]) for f in window if "A" in f] or [np.zeros(0)])
     vert_cell = float(np.percentile(aggr, 90)) if len(aggr) else None
-    absorb_cell = float(np.percentile(cells, ABSORB_CELL_PCT)) if len(cells) else None
+    absorb_cell = float(np.percentile(cells, absorb_pct)) if len(cells) else None
     vols = np.array([f["vol"] for f in window])
     medvol = float(np.median(vols)) if len(vols) else None
     thr = {"vert_cell": vert_cell, "absorb_cell": absorb_cell, "medvol": medvol}
@@ -634,7 +691,7 @@ def _closes_toward(f):
 
 
 def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DEFAULT_TARGET, band_days=3,
-           vol_filter=DEFAULT_VOL_FILTER, live=False, absorb_bars=ABSORB_BARS):
+           vol_filter=DEFAULT_VOL_FILTER, live=False, absorb_bars=ABSORB_BARS, overrides=None):
     """
     Elementos de las velas que empiezan entre start_ms y end_ms, y franjas nacidas hasta band_days
     antes. Solo velas cerradas antes de known_until_ms. Devuelve eventos y la tabla de cada vela.
@@ -642,7 +699,11 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
     elementos de VOLUME_FILTERED. 0 los muestra en todas las velas.
     live: también los días de la nube y el PC donde falta el oficial (lo usa la app en tiempo real).
     absorb_bars: velas en que puede llegar el segundo intento de la absorción (RL), de 1 a ABSORB_MAX_BARS.
+    overrides: valores propios de un elemento, {código: {campo: valor}} (OWN_FIELDS). Lo que no trae va con los
+    generales (target, vol_filter, absorb_bars) y con sus mínimos de fábrica; sin él, todo es como siempre.
     """
+    over = clean_overrides(overrides)
+    own = lambda code, field, default: over.get(code, {}).get(field, default)
     tf = int(interval_minutes)
     target = min(0.3, max(0.005, float(target)))
     vol_filter = min(10.0, max(0.0, float(vol_filter)))
@@ -682,19 +743,26 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
     cum, cum_day = 0.0, None
     events = result["events"]
 
-    def day_thresholds(d):
-        if d not in thresholds:
-            window = [bars[j] for k in range(1, WINDOW_DAYS + 1) for j in day_index.get(d - dt.timedelta(days=k), [])]
-            window.sort(key=lambda x: x["t"])
-            thresholds[d] = _thresholds(window, target)
-        return thresholds[d]
+    windows = {}
+
+    def day_thresholds(d, share=None, absorb_pct=ABSORB_CELL_PCT):
+        """Los umbrales de un día. share: otra parte de las velas que la general, para un elemento con `target` propio."""
+        key = (d, target if share is None else share, absorb_pct)
+        if key not in thresholds:
+            if d not in windows:
+                window = [bars[j] for k in range(1, WINDOW_DAYS + 1) for j in day_index.get(d - dt.timedelta(days=k), [])]
+                window.sort(key=lambda x: x["t"])
+                windows[d] = window
+            thresholds[key] = _thresholds(windows[d], key[1], absorb_pct)
+        return thresholds[key]
 
     # La absorción mira los intentos de las velas anteriores, también las de antes del tramo pedido: así da lo mismo
     # pedir la fase entera o por tramos
     first = next((i for i, f in enumerate(bars) if f["t"] >= band_from), len(bars))
     last = max((i for i, f in enumerate(bars) if f["t"] <= end_ms), default=-1)
-    absorbs = _absorptions(bars, first, last, lambda f: (day_thresholds(f["_day"]) or {}).get("absorb_cell"),
-                           absorb_bars, tf) if first <= last else {}
+    absorb_pct = 100 - 100 * own("RL", "cell", 1 - ABSORB_CELL_PCT / 100) if "cell" in over.get("RL", {}) else ABSORB_CELL_PCT
+    absorbs = _absorptions(bars, first, last, lambda f: (day_thresholds(f["_day"], None, absorb_pct) or {}).get("absorb_cell"),
+                           int(own("RL", "absorb", absorb_bars)), tf) if first <= last else {}
 
     for i, f in enumerate(bars):
         if f["t"] < band_from or f["t"] > end_ms:
@@ -703,6 +771,11 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
         thr = day_thresholds(d)
         if thr is None:
             result["warming"] = True
+
+        def limit(code):
+            """El umbral relativo de un elemento: el general, o el de su propia parte de las velas."""
+            share = over.get(code, {}).get("target")
+            return thr[code] if share is None else day_thresholds(d, share)[code]
         p = bars[i - 1] if i else None
         p = p if _contiguous(f, p, tf) else None
         in_range = f["t"] >= start_ms
@@ -756,7 +829,7 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
             tail = _tail(f)
             if tail is not None:
                 add("DT", col, *_rows_price(f, 0, tail - 1))
-            if f["inverse"][0] >= 2 and _closes_toward(f):
+            if f["inverse"][0] >= own("IV", "min", INVERSE_MIN) and _closes_toward(f):
                 add("IV", col, *_rows_price(f, f["inverse"][1], f["inverse"][2]))
         for side, lo, hi, volume, cell_thr, first_try in absorbs.get(i, []):
             add("RL", side, lo, hi, volume, cell_thr, t0=first_try)
@@ -772,31 +845,33 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
         if "A" in f and i >= VOLUME_BARS:
             median = float(np.median([bars[j]["vol"] for j in range(i - VOLUME_BARS, i)]))
             rel = f["vol"] / median if median > 0 else 0.0
-            if rel >= vol_filter:
-                if f["stacked"][0] >= CATALOG["ST"][3]:
+            heavy = lambda code: rel >= own(code, "vol", vol_filter)   # Cada uno con su filtro de volumen, si lo trae
+            if True:
+                if heavy("ST") and f["stacked"][0] >= own("ST", "min", CATALOG["ST"][3]):
                     add("ST", col, *_rows_price(f, f["stacked"][1], f["stacked"][2]), rel)
-                if f["imb_count"] >= CATALOG["VI"][3]:
+                if heavy("VI") and f["imb_count"] >= own("VI", "min", CATALOG["VI"][3]):
                     add("VI", col, f["l"], f["h"], f["imb_count"])
-                if f["reversal_rows"]:
+                if heavy("IR") and f["reversal_rows"]:
                     add("IR", col, *_rows_price(f, 0, 1), rel)
-                if p is not None and p.get("col") == col and p["step"] == f["step"] and "imb_rows" in p:
+                if heavy("RD") and p is not None and p.get("col") == col and p["step"] == f["step"] and "imb_rows" in p:
                     mine = {_row_price(f, k) for k in f["imb_rows"]}
                     # Motor 8: una franja por celda compartida; antes iba de la primera a la última y tomaba celdas que
                     # las dos velas no comparten (galería 4, casos 593 y 2072). El probador junta las de la vela: su
                     # zona y sus señales no cambian
                     for lo_s, hi_s in sorted(mine & {_row_price(p, k) for k in p["imb_rows"]}):
                         add("RD", col, lo_s, hi_s, rel)
-                if f["vd_on"]:
+                if heavy("VD") and f["vd_on"]:
                     rows = (0, 2) if f["turn_top"] is None else _edge_rows(f, f["turn_top"], 3)
                     add("VD", f["ex_side"], *_rows_price(f, *rows), rel)
-                for k in f["thin_rows"][:MAX_THIN_ROWS]:
+                for k in (f["thin_rows"][:MAX_THIN_ROWS] if heavy("TP") else ()):
                     add("TP", col, *_row_price(f, k), rel)
-                if f["ratio"]:
+                if heavy("RX") and f["ratio"]:
                     add("RX", col, *_rows_price(f, 0, 1), rel)
-                prev = bars[max(0, i - OPEN_POC_BARS):i]
-                if len(prev) == OPEN_POC_BARS and atr[i] > 0:
+                poc_bars = int(own("OP", "bars", OPEN_POC_BARS))
+                prev = bars[max(0, i - poc_bars):i]
+                if heavy("OP") and len(prev) == poc_bars and atr[i] > 0:
                     lo_p, hi_p = _poc_price(f)
-                    margin = OPEN_POC_ATR * atr[i]
+                    margin = own("OP", "margin", OPEN_POC_ATR) * atr[i]
                     if lo_p > max(x["h"] for x in prev) + margin:
                         add("OP", 1, lo_p, hi_p, rel)
                     elif hi_p < min(x["l"] for x in prev) - margin:
@@ -805,48 +880,49 @@ def detect(symbol, interval_minutes, start_ms, end_ms, known_until_ms, target=DE
         if thr is None:
             continue
         # Con umbral relativo
-        if f["vol"] > 0 and col != 0 and thr["DV"] is not None and col * f["delta"] / f["vol"] >= thr["DV"]:
-            add("DV", col, f["l"], f["h"], col * f["delta"] / f["vol"], thr["DV"])
-        if f["vol"] > 0 and col * f["delta"] < 0 and thr["PD"] is not None and abs(f["delta"]) / f["vol"] >= thr["PD"] and "A" in f:
-            add("PD", col, *_rows_price(f, 0, 1), abs(f["delta"]) / f["vol"], thr["PD"])
+        # (limit(código): el umbral general o, si el elemento trae su propia parte de las velas, el suyo)
+        if f["vol"] > 0 and col != 0 and limit("DV") is not None and col * f["delta"] / f["vol"] >= limit("DV"):
+            add("DV", col, f["l"], f["h"], col * f["delta"] / f["vol"], limit("DV"))
+        if f["vol"] > 0 and col * f["delta"] < 0 and limit("PD") is not None and abs(f["delta"]) / f["vol"] >= limit("PD") and "A" in f:
+            add("PD", col, *_rows_price(f, 0, 1), abs(f["delta"]) / f["vol"], limit("PD"))
         jump = _jump(f, p)
-        if jump is not None and thr["medvol"] and thr["DB"] is not None and jump / thr["medvol"] >= thr["DB"]:
-            add("DB", col, min(f["l"], p["l"]), max(f["h"], p["h"]), jump / thr["medvol"], thr["DB"], t0=p["t"])
+        if jump is not None and thr["medvol"] and limit("DB") is not None and jump / thr["medvol"] >= limit("DB"):
+            add("DB", col, min(f["l"], p["l"]), max(f["h"], p["h"]), jump / thr["medvol"], limit("DB"), t0=p["t"])
         g = _gap(f, p)
-        if g and atr[i] > 0 and thr["OG"] is not None and g[2] / atr[i] >= thr["OG"]:
-            add("OG", g[0], g[1][0], g[1][1], g[2] / atr[i], thr["OG"], t0=p["t"])
+        if g and atr[i] > 0 and limit("OG") is not None and g[2] / atr[i] >= limit("OG"):
+            add("OG", g[0], g[1][0], g[1][1], g[2] / atr[i], limit("OG"), t0=p["t"])
         if "xmaxd" in f and f["vol"] > 0:
             value = _extreme(f)
-            if value is not None and thr["XD"] is not None and value >= thr["XD"]:
-                add("XD", 1 if f["delta"] > 0 else -1, f["l"], f["h"], value, thr["XD"])
+            if value is not None and limit("XD") is not None and value >= limit("XD"):
+                add("XD", 1 if f["delta"] > 0 else -1, f["l"], f["h"], value, limit("XD"))
             small = _small(f)
-            if small is not None and thr["SM"] is not None and -small >= thr["SM"]:
-                add("SM", col, f["l"], f["h"], small, -thr["SM"])
-        if "sweep_real" in f and thr["BR"] is not None and f["sweep_real"][0] >= thr["BR"]:
+            if small is not None and limit("SM") is not None and -small >= limit("SM"):
+                add("SM", col, f["l"], f["h"], small, -limit("SM"))
+        if "sweep_real" in f and limit("BR") is not None and f["sweep_real"][0] >= max(limit("BR"), own("BR", "usd", 0.0)):
             usd, side, p0, p1, _ = f["sweep_real"]
-            add("BR", side, p0, max(p1, p0 + f["step"]), usd, thr["BR"])
-        if "big" in f and thr["GR"] is not None and f["big"][0] >= thr["GR"]:
+            add("BR", side, p0, max(p1, p0 + f["step"]), usd, limit("BR"))
+        if "big" in f and limit("GR") is not None and f["big"][0] >= max(limit("GR"), own("GR", "usd", 0.0)):
             usd, side, p0, p1 = f["big"]
-            add("GR", side, p0, max(p1, p0 + f["step"]), usd, thr["GR"])
+            add("GR", side, p0, max(p1, p0 + f["step"]), usd, limit("GR"))
         if "A" not in f:
             continue
-        if f["ex_value"] is not None and thr["EX"] is not None and -f["ex_value"] >= thr["EX"]:
+        if f["ex_value"] is not None and limit("EX") is not None and -f["ex_value"] >= limit("EX"):
             rows = (0, 0) if f["turn_top"] is None else _edge_rows(f, f["turn_top"], 1)
-            add("EX", f["ex_side"], *_rows_price(f, *rows), f["ex_value"], -thr["EX"])
-        if f["suck"] is not None and thr["RS"] is not None and f["suck"] >= thr["RS"]:
-            add("RS", col, *_rows_price(f, 0, 2), f["suck"], thr["RS"])
-        need = max(CATALOG["SQ"][3], thr["SQ"]) if thr["SQ"] is not None else None
+            add("EX", f["ex_side"], *_rows_price(f, *rows), f["ex_value"], -limit("EX"))
+        if f["suck"] is not None and limit("RS") is not None and f["suck"] >= limit("RS"):
+            add("RS", col, *_rows_price(f, 0, 2), f["suck"], limit("RS"))
+        need = max(own("SQ", "min", CATALOG["SQ"][3]), limit("SQ")) if limit("SQ") is not None else None
         if need is not None and f["seq"] >= need:
             add("SQ", col, *_rows_price(f, 0, f["seq"] - 1), f["seq"], need)
-        need = max(CATALOG["SW"][3], thr["SW"]) if thr["SW"] is not None else None
+        need = max(own("SW", "min", CATALOG["SW"][3]), limit("SW")) if limit("SW") is not None else None
         if need is not None and f["sweep"][0] >= need:
             add("SW", col, *_rows_price(f, f["sweep"][1], f["sweep"][2]), f["sweep"][0], need)
         run = _vertical_run(f, thr["vert_cell"])
-        need = max(CATALOG["VL"][3], thr["VL"]) if thr["VL"] is not None else None
+        need = max(own("VL", "min", CATALOG["VL"][3]), limit("VL")) if limit("VL") is not None else None
         if need is not None and run[0] >= need:
             add("VL", col, *_rows_price(f, run[1], run[2]), run[0], need)
         row = _accdist_row(f)
-        if row is not None and thr["AD"] is not None and f["accdist"][0] >= thr["AD"]:
-            add("AD", col, *_row_price(f, row), f["accdist"][0], thr["AD"])
+        if row is not None and limit("AD") is not None and f["accdist"][0] >= limit("AD"):
+            add("AD", col, *_row_price(f, row), f["accdist"][0], limit("AD"))
 
     return result

@@ -1152,6 +1152,55 @@ Idea del usuario, tras ver que a 50000x la cocina iba atrás y perdía señales:
 
 **Los footprints y los Elementos OF del gráfico** se adelantaron después, el mismo día: ver «ORDER FLOW SOBRE LAS VELAS» y «ELEMENTOS DE ORDER FLOW», «Por adelantado al reproducir (27/11)». Con eso, el delta de volumen del gráfico va adelantado en la cocina cuando es el estimado de las velas (`getKitchenSeries`); el real, de los footprints ya vistos, sigue vela por vela.
 
+### Variables de VPA, Williams, SMC y order flow (27/11)
+
+Pedido del usuario: cada variable editable junto a su bloque, también en estas cuatro familias.
+
+- **`EVENT_PARAMS`** (`kitchen.py`) admite ahora dos formas por campo: un número `(clave de la regla, campo, de fábrica, mínimo, máximo)` o una opción `(clave de la regla, campo, [opciones])`, con la de fábrica primero. `YES_NO` (`"si"`, `"no"`) llega a la regla como verdadero o falso. `event_fields(código)` las da en una sola forma.
+- **Son los campos de `clean_rule` del probador,** con sus rangos: `vpa` (fire, legAtr, rangeBars, maxRangeAtr, pullBars, meter, decay), `wise` (lookback, angBars, minGapAtr, requireAo, teeth) y `smc` (scope, break, internal, swing, pick, area, mitigation, eqLength, eqThreshold, reclaim). Cada código trae solo los que lo mueven. La prueba comprueba que la regla armada conserva cada valor.
+- **Con el modal del indicador** (`Facts.events_of`): un campo en su valor de fábrica deja mandar al ajuste de la sesión; uno cambiado en el bloque manda. Antes estas familias no tenían campos y siempre mandaba la sesión.
+- **Order flow:** `of_elements.detect` acepta tres valores para todos los elementos. Como campos del bloque: `target` (en %, los relativos: `oe.CATALOG[código][2]`), `vol` (`oe.VOLUME_FILTERED`) y `absorb` (RL).
+  - `Facts.flow_params(código, p)` da el juego `(target, filtro de volumen, velas de la absorción)` de un bloque, con lo que no es suyo de fábrica;
+  - `FlowBook` lleva sus parámetros y `flow_book(símbolo, marco, parámetros)` da un libro por juego; el de fábrica (`OF_FACTORY`) es el de siempre, con el delta y la tabla de la vela;
+  - `Facts.flow_more(parámetros)` lee los eventos de ese libro y `Facts.flow_state(bloque)` dice su estado. En `evaluate`, el «detectando» va por bloque, y `pending` es verdadero si alguno sigue leyendo;
+  - `FLOW_BOOKS` pasó de 6 a 12.
+- **Página** (`kitchenCatalog.js`): `ELEMENTS[código]` trae `p`, `fields`, `selects` y `selectsAfter`; los Elementos OF, según `OF_RELATIVE` y `OF_VOLUME`. `changedFields(def, p)` da los campos fuera de su valor de fábrica, y el texto del bloque suma «(con ajustes propios)».
+- **Paridad página y motor:** `tests/kitchen_fields.mjs` vuelca los campos de la página y `test_los_campos_de_cada_evento_son_los_mismos_en_la_pagina_y_en_el_motor` los compara con `event_fields`: valor de fábrica, rango y opciones. Para sumar un campo se pone en los dos lados.
+
+**Probado en pantalla** el 27/11 (copia aislada, BTC 15m, 1,000 velas): el umbral del medidor VPA de 1 a 0.4 (de 23 a 117 veces), el filtro de volumen del Stacked Imbalance de 2 a 4 («detectando…», y de 83 a 41), y la ruptura de estructura interna (de 10 a 57).
+
+**Sin ver en pantalla:** Williams, order block, breaker, iguales, `target`, `absorb` y el ajuste del modal sobre un campo de fábrica.
+
+**Lo que faltaba** (patrones de vela, cambio de carácter, cajas, Volumen de Respuesta, canal gaussiano y el umbral propio por Elemento OF) se hizo el 28/11: sección siguiente.
+
+### Las demás variables y el umbral propio por Elemento OF (28/11)
+
+- **`EVENT_PARAMS` suma** los campos de `clean_rule` de:
+  - `pat` (HM, EN, DJ): trend, trendBars, minPart, swingBefore, swingAfter y minZ (0 en la cocina es «sin filtro»: `events_of` lo pasa a la regla como `None`); HM, además, wick;
+  - `cc`: swing, legs, ref y closes. El marco de la estructura lo sigue poniendo la cocina;
+  - `bx` y `cp`: maxHeight, con 0 como «cualquier alto» (la regla lo lleva como `None`);
+  - `be`: share, maxBody, rejection y pattern (`NO_YES`: un sí o no apagado de fábrica);
+  - `rv`: RF con spike, leg y arrow; RB con leg y rombo;
+  - `gc`: period, poles, mult y trend. Su salida propia no es de la cocina.
+- **`of_elements.detect(..., overrides=None)`:** `{código: {campo: valor}}`, acotado por `clean_overrides` con `OWN_FIELDS` (campo → de fábrica, mínimo, máximo). Sin él, o con todo de fábrica, da lo de siempre.
+  - `target`: los relativos menos RL. `day_thresholds(d, share)` guarda los umbrales por día y parte; `limit(código)` da el general o el propio;
+  - `vol`: los de `VOLUME_FILTERED`, cada uno con el suyo (`heavy(código)`);
+  - `min`: ST, VI, SQ, SW, VL (su literal de `CATALOG`) e IV (`INVERSE_MIN`, 2). En SQ, SW y VL sigue valiendo también su umbral relativo: cuenta el mayor;
+  - RL: `absorb` (velas) y `cell` (parte de las celdas: 0.05 es el percentil 95 de siempre). `target` no le hace nada: su umbral es de celdas;
+  - OP: `margin` (ATR) y `bars`;
+  - BR y GR: `usd`, que se suma al umbral relativo (cuenta el mayor).
+- **En la cocina:** los campos de los Elementos OF salen de `oe.OWN_FIELDS`; `target` y `cell` se muestran en % (`OF_PERCENT`).
+  - `Facts.flow_params(código, p)` da `OF_FACTORY` si todo sigue de fábrica, o `(código, ((campo, valor), ...))` con lo cambiado;
+  - `FlowBook._detect` llama a `detect` con los generales de fábrica y `overrides={código: {...}}`: un libro por elemento y juego de valores. Antes el libro iba por `(target, filtro, velas)` y lo compartían elementos distintos.
+- **Página** (`kitchenCatalog.js`): `P_SHAPE`, `R_LEG`, `BOX_HIGH` y `OF_MIN`. RL salió de `OF_RELATIVE`. Un RL guardado con `target` se abre igual: ese campo se ignora.
+- **Pruebas:** `test_las_variables_de_patrones_cajas_respuesta_y_canal_cambian_lo_que_detectan` (`test_kitchen.py`) y `test_valores_propios_por_elemento_sin_ellos_nada_cambia_y_cada_uno_mueve_solo_el_suyo` (`test_of_elements.py`). La de paridad página y motor cubre los campos nuevos.
+
+**Medido con los trades reales de BTC** (15m, 1 al 6 de octubre de 2026, solo leyendo): cada valor propio movió solo su elemento (ST con 5 niveles, de 34 a 11; EX con 15 %, de 17 a 59; OP con 1 ATR, de 31 a 5; RL con 15 % de las celdas, de 6 a 30), y con todos los campos de fábrica el resultado fue igual.
+
+**Sin ver en pantalla:** nada de esta sección.
+
+Con el z-score mínimo del patrón de vela y el patrón de rechazo en el borde de caja (sumados después, el mismo día), todos los campos de estas familias en `clean_rule` están en la cocina, salvo la salida propia del canal gaussiano.
+
 ### Flujo
 
 ```
@@ -1218,9 +1267,9 @@ MiniChart (getTradeBands)   filas bajo las velas, señales, líneas, zonas y la 
 
 ```bash
 cd backend
-.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 49 con el paso 1.3 y el pedido por adelantado
+.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 55 con el paso 1.3, el pedido por adelantado y las variables
 cd ../frontend
-node tests/kitchen.test.mjs                                  # 37 con el paso 1.3 y el pedido por adelantado
+node tests/kitchen.test.mjs                                  # 39 con el paso 1.3, el pedido por adelantado y las variables
 node tests/clock.test.mjs                                    # 34: una es la parada del reloj en la vela de la señal
 node tests/levels.test.mjs                                   # 56: dos son de los VP fijos de la cocina
 ```

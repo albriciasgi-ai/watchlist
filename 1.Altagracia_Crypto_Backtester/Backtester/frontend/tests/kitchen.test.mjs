@@ -3,7 +3,7 @@
 import assert from 'node:assert/strict';
 import {
   EVENT, FLOW_STATES, STATE, USER_ZONE_KINDS, VP_PARTS, ZONE_KINDS, ZONE_TYPES, allBlocks, blockDef, blockText, kindIn, lineName, pickText, protoOf,
-  zoneName, lineLabel, pageSource
+  zoneName, lineLabel, pageSource, changedFields
 } from '../src/components/kitchen/kitchenCatalog.js';
 import {
   LEAD_BARS, MAX_PICKS, MAX_STEPS, addBlock, addPick, addStep, allBlocksOf, blankDoc, candleVerdict, closedWindow, docForEngine, drawnZones, isBlank,
@@ -624,6 +624,57 @@ test('una orden nacida de la cocina lleva el nombre y la versión de su estrateg
   assert.equal(tag.note, 'Cocina: «Giro arriba» v3 · señal de corto · automática');
   const draft = kitchenTag({ name: '', signal: { time: at(1), side: 1 }, mode: 'ask', from: 'atr' });
   assert.equal(draft.note, 'Cocina: «Estrategia sin nombre» (sin guardar) · señal de largo · confirmada a mano');
+});
+
+// ==================== Variables de VPA, Williams, SMC y order flow (27/11) ====================
+
+test('los elementos de VPA, Williams, SMC y order flow traen sus variables, con su valor de fábrica', () => {
+  const fields = (id) => [...(blockDef(id).fields || []), ...(blockDef(id).selects || []), ...(blockDef(id).selectsAfter || [])].map(field => field[0]);
+  assert.deepEqual(fields('QB'), ['fire', 'rangeBars', 'maxRangeAtr']);
+  assert.deepEqual(fields('QE'), ['meter', 'decay']);
+  assert.deepEqual(fields('WD'), ['lookback', 'angBars', 'minGapAtr', 'requireAo']);
+  assert.deepEqual(fields('WA'), []);                           // El AO de tres barras no tiene nada que cambiar
+  assert.deepEqual(fields('OB'), ['internal', 'swing', 'scope', 'pick', 'area', 'mitigation']);
+  assert.deepEqual(fields('EQ'), ['eqLength', 'eqThreshold', 'reclaim']);
+  assert.deepEqual(fields('EX'), ['target']);                   // Un elemento relativo: qué parte de las velas marca
+  assert.deepEqual(fields('ST'), ['vol', 'min']);               // Uno que pide una vela de mucho volumen, con su mínimo de niveles
+  assert.deepEqual(fields('RL'), ['absorb', 'cell']);           // La absorción: sus velas y qué celdas son «mucho volumen»
+  assert.deepEqual(fields('OP'), ['vol', 'margin', 'bars']);
+  assert.deepEqual(fields('GR'), ['target', 'usd']);
+  assert.deepEqual(fields('VA'), []);
+  // Patrones, cambio de carácter, cajas, Volumen de Respuesta y canal gaussiano (28/11)
+  assert.deepEqual(fields('HM'), ['trendBars', 'minPart', 'swingBefore', 'swingAfter', 'minZ', 'wick', 'trend']);
+  assert.deepEqual(fields('EN'), ['trendBars', 'minPart', 'swingBefore', 'swingAfter', 'minZ', 'trend']);
+  assert.deepEqual(fields('CC'), ['swing', 'legs', 'ref', 'closes']);
+  assert.deepEqual(fields('BX'), ['maxHeight']);
+  assert.deepEqual(fields('BE'), ['share', 'maxBody', 'rejection', 'pattern']);
+  assert.deepEqual(fields('RF'), ['spike', 'leg', 'arrow']);
+  assert.deepEqual(fields('RB'), ['leg', 'rombo']);
+  assert.deepEqual(fields('GC'), ['period', 'poles', 'mult', 'trend']);
+  // Cada campo tiene su valor de fábrica en el bloque nuevo, dentro de su rango, y cada opción, una de las suyas
+  for (const def of allBlocks().filter(item => item.code)) {
+    for (const [key, , min, max] of def.fields || []) assert.ok(def.p[key] >= min && def.p[key] <= max, `${def.id}.${key}`);
+    for (const [key, , options] of [...(def.selects || []), ...(def.selectsAfter || [])]) assert.ok(options.some(([value]) => value === def.p[key]), `${def.id}.${key}`);
+  }
+  assert.deepEqual(protoOf('QE').p, { meter: 1, decay: 0.75, dir: 'favor' });
+  // Un documento guardado antes, sin esos campos, se abre con los de fábrica
+  const old = normalizeDoc({ side: 'long', gat: [{ blocks: [{ id: 'QB', p: { dir: 'contra' } }, { id: 'ST' }] }] });
+  assert.deepEqual(old.gat[0].blocks[0].p, { fire: 0.5, rangeBars: 20, maxRangeAtr: 6, dir: 'contra' });
+  assert.deepEqual(old.gat[0].blocks[1].p, { vol: 2, min: 3, dir: 'favor' });
+});
+
+test('un bloque con una variable cambiada lo dice en su texto y en la frase', () => {
+  const plain = protoOf('QB');
+  assert.deepEqual(changedFields(blockDef('QB'), plain.p), []);
+  assert.equal(blockText(plain, 'long'), 'Ruptura con volumen, alcista');
+  const tuned = protoOf('QB', { rangeBars: 40 });
+  assert.deepEqual(changedFields(blockDef('QB'), tuned.p), ['rangeBars']);
+  assert.equal(blockText(tuned, 'long'), 'Ruptura con volumen, alcista (con ajustes propios)');
+  assert.equal(blockText(protoOf('BS', { break: 'choch' }), 'short'), `${blockText(protoOf('BS'), 'short')} (con ajustes propios)`);
+  // Dar vuelta el sentido no es un ajuste propio
+  assert.doesNotMatch(blockText(protoOf('QB', { dir: 'contra' }), 'long'), /ajustes/);
+  const doc = addBlock(blankDoc(), 'auto', protoOf('ST', { vol: 3 }), at(0), H);
+  assert.match(phrase(doc), /Gatillo: .*\(con ajustes propios\)\. Salida:/);
 });
 
 // ==================== Pedido por adelantado (27/11) ====================

@@ -35,6 +35,19 @@ const OF_ELEMENTS = [
   'VA', 'OG', 'AP', 'SL', 'RL', 'EX', 'ZP', 'DT', 'RS', 'DD', 'PD', 'IV', 'AD', 'SW', 'VL', 'SQ', 'DB', 'PW', 'DV',
   'ST', 'VI', 'IR', 'RD', 'VD', 'TP', 'OP', 'XD', 'SM', 'BR', 'GR'
 ];
+// Lo que se le puede cambiar a cada uno (27/11), como en of_elements.detect: los relativos marcan una parte de las
+// velas (su umbral sale de los 30 días anteriores); otros solo cuentan en velas de mucho volumen
+const OF_RELATIVE = ['OG', 'EX', 'RS', 'PD', 'AD', 'SW', 'VL', 'SQ', 'DB', 'DV', 'XD', 'SM', 'BR', 'GR'];
+// Mínimo propio de cada elemento (of_elements.OWN_FIELDS, 28/11): [de fábrica, texto]
+const OF_MIN = {
+  ST: [3, 'Desequilibrios apilados, como mínimo'],
+  VI: [3, 'Desequilibrios a favor en la vela, como mínimo'],
+  SQ: [4, 'Niveles seguidos con el agresor creciendo, como mínimo'],
+  SW: [3, 'Niveles seguidos sin contrapartida, como mínimo'],
+  VL: [3, 'Niveles seguidos con mucho agresor, como mínimo'],
+  IV: [2, 'Desequilibrios contrarios seguidos, como mínimo']
+};
+const OF_VOLUME = ['ST', 'VI', 'IR', 'RD', 'VD', 'TP', 'OP'];
 
 // Cada tipo de zona: cómo se llama una (según su lado: 1 alcista, −1 bajista), cómo se llaman todas y qué indicador de
 // App 1 las dibuja
@@ -286,42 +299,136 @@ const BLOCKS = [
     help: 'Una vela toca una de las zonas de la capa de zona y cierra fuera de ella, del lado del trade: por debajo en un corto, por encima en un largo.' }
 ];
 
+// Campos de los elementos de VPA, Williams y SMC (27/11, pedido del usuario): los de su regla en el probador, con los
+// mismos rangos (kitchen.py, EVENT_PARAMS). Una prueba del motor compara las dos listas campo por campo
+const YES_NO = [['si', 'sí'], ['no', 'no']];
+const NO_YES = [['no', 'no'], ['si', 'sí']];
+const Q_FIRE = ['fire', 'Grado mínimo del elemento (0.1 a 1)', 0.1, 1, 0.05];
+const Q_LEG = ['legAtr', 'Tramo: con cuántos ATR gira', 0.5, 10, 0.5];
+const Q_RANGE = ['rangeBars', 'Velas del rango que se rompe', 5, 200, 1];
+const Q_HIGH = ['maxRangeAtr', 'Alto máximo de ese rango (ATR)', 1, 50, 0.5];
+const Q_PULL = ['pullBars', 'Velas en que puede llegar el retroceso', 1, 50, 1];
+const Q_METER = ['meter', 'Umbral del medidor', 0.2, 5, 0.1];
+const Q_DECAY = ['decay', 'Memoria del medidor (0 a 0.98)', 0, 0.98, 0.01];
+const Q_GRADE = { fire: 0.5, legAtr: 2 };
+const Q_BREAK = { fire: 0.5, rangeBars: 20, maxRangeAtr: 6 };
+const Q_GAUGE = { meter: 1, decay: 0.75 };
+const S_SCOPE = ['scope', 'Estructura', [['swing', 'la mayor'], ['internal', 'la interna']]];
+const S_IN = ['internal', 'Velas de la estructura interna', 2, 50, 1];
+const S_SW = ['swing', 'Velas de la estructura mayor', 5, 300, 1];
+const S_BLOCK = {
+  p: { scope: 'swing', pick: 'extreme', area: 'full', mitigation: 'close', internal: 5, swing: 50 },
+  selects: [S_SCOPE, ['pick', 'Vela del bloque', [['extreme', 'la del extremo del tramo'], ['opposite', 'la última en contra']]],
+    ['area', 'Zona del bloque', [['full', 'la vela entera'], ['body', 'solo el cuerpo']]],
+    ['mitigation', 'Se da por roto con', [['close', 'un cierre más allá'], ['wick', 'una mecha más allá']]]],
+  fields: [S_IN, S_SW]
+};
+
 // Eventos del probador de reglas: familia, indicador de App 1 que lo dibuja y campos que la cocina deja cambiar.
 // Su nombre es el del backtesting global (elementLabels.js) y se detectan con sus valores de fábrica
+// Patrones de vela, cambio de carácter, cajas, Volumen de Respuesta y canal gaussiano (28/11, pedido del usuario)
+const P_SHAPE = {
+  p: { trend: 'si', trendBars: 5, minPart: 0.5, swingBefore: 5, swingAfter: 2, minZ: 0 },
+  selects: [['trend', 'Pide un movimiento previo en contra', YES_NO]],
+  fields: [['trendBars', 'Velas de ese movimiento previo', 1, 50, 1],
+    ['minPart', 'Tamaño mínimo de lo que hace el patrón (ATR; 0 = cualquiera)', 0, 5, 0.1],
+    ['swingBefore', 'Su extremo pasa el de tantas velas anteriores (0 = no se pide)', 0, 50, 1],
+    ['swingAfter', 'Y tantas velas siguientes no lo alcanzan (0 = no se espera)', 0, 20, 1],
+    ['minZ', 'Volumen mínimo de su vela (z-score contra las 20 anteriores; 0 = sin filtro)', 0, 20, 0.1]]
+};
+const R_LEG = ['leg', 'Tramo: con cuántos ATR gira', 0.5, 10, 0.5];
+const BOX_HIGH = ['maxHeight', 'Alto máximo de la caja (ATR; 0 = cualquiera)', 0, 50, 0.5];
 const ELEMENTS = {
-  HM: { fam: 'velas', shown: 'Rejection Patterns' },
-  EN: { fam: 'velas', shown: 'Rejection Patterns' },
-  DJ: { fam: 'velas', shown: 'Rejection Patterns' },
+  HM: { fam: 'velas', shown: 'Rejection Patterns', ...P_SHAPE, p: { ...P_SHAPE.p, wick: 2 },
+    fields: [...P_SHAPE.fields, ['wick', 'Mecha mínima (cuerpos)', 0.5, 10, 0.5]] },
+  EN: { fam: 'velas', shown: 'Rejection Patterns', ...P_SHAPE },
+  DJ: { fam: 'velas', shown: 'Rejection Patterns', ...P_SHAPE },
   VH: { fam: 'velas', shown: null },
   FV: { fam: 'velas', shown: 'FVG', p: { minAtr: 0.3 }, fields: [['minAtr', 'Hueco mínimo (ATR)', 0, 5, 0.1]] },
   IM: { fam: 'velas', shown: null, p: { bars: 3, atr: 2 }, fields: [['atr', 'Avance mínimo (ATR)', 0.2, 20, 0.1], ['bars', 'En cuántas velas', 1, 50, 1]] },
   SP: { fam: 'estructura', shown: 'Swing', p: { bars: 5 }, fields: [['bars', 'Velas a cada lado', 2, 20, 1]] },
-  CC: { fam: 'estructura', shown: null },
-  BX: { fam: 'estructura', shown: 'Rangos horizontales' },
-  BE: { fam: 'estructura', shown: 'Rangos horizontales' },
-  CP: { fam: 'estructura', shown: 'Rangos horizontales', sided: false },
-  RF: { fam: 'velas', shown: 'Volumen de Respuesta' },
-  RB: { fam: 'velas', shown: 'Volumen de Respuesta' },
-  GC: { fam: 'lineas', shown: null },
-  QA: { fam: 'vpa', shown: 'Lector VPA' },
-  QV: { fam: 'vpa', shown: 'Lector VPA' },
-  QB: { fam: 'vpa', shown: 'Lector VPA' },
-  QF: { fam: 'vpa', shown: 'Lector VPA' },
-  QR: { fam: 'vpa', shown: 'Lector VPA' },
-  QT: { fam: 'vpa', shown: 'Lector VPA' },
-  QS: { fam: 'vpa', shown: 'Lector VPA' },
-  QC: { fam: 'vpa', shown: 'Lector VPA' },
-  QE: { fam: 'vpa', shown: 'Lector VPA' },
-  QG: { fam: 'vpa', shown: 'Lector VPA' },
-  WD: { fam: 'williams', shown: 'Tres sabios' },
+  CC: { fam: 'estructura', shown: null, p: { swing: 3, legs: 2, ref: 'origin', closes: 'si' },
+    fields: [['swing', 'Velas a cada lado de cada swing', 2, 20, 1], ['legs', 'Máximos y mínimos seguidos de la tendencia', 2, 5, 1]],
+    selectsAfter: [['ref', 'Swing que se rompe', [['origin', 'el que originó el último tramo'], ['last', 'el último']]],
+      ['closes', 'La tendencia se confirma con cierres', YES_NO]] },
+  BX: { fam: 'estructura', shown: 'Rangos horizontales', p: { maxHeight: 0 }, fields: [BOX_HIGH] },
+  BE: { fam: 'estructura', shown: 'Rangos horizontales', p: { share: 0.05, maxBody: 1, rejection: 0.6, pattern: 'no' },
+    selectsAfter: [['pattern', 'Pide además un patrón de rechazo a favor en la vela', NO_YES]],
+    fields: [['share', 'Parte de la caja que cuenta como borde (0.05 = 5 %)', 0.02, 0.5, 0.01],
+      ['maxBody', 'Cuerpo máximo de la vela (ATR; 0 = sin límite)', 0, 10, 0.1],
+      ['rejection', 'Dónde cierra la vela: 0 en el borde, 1 en su otro extremo', 0, 1, 0.05]] },
+  CP: { fam: 'estructura', shown: 'Rangos horizontales', sided: false, p: { maxHeight: 0 }, fields: [BOX_HIGH] },
+  RF: { fam: 'velas', shown: 'Volumen de Respuesta', p: { spike: 2, leg: 2, arrow: 'with' },
+    fields: [['spike', 'Volumen de la vela (veces lo normal de su hora)', 1.2, 20, 0.1], R_LEG],
+    selectsAfter: [['arrow', 'La vela va', [['with', 'a favor del tramo'], ['against', 'en contra del tramo'], ['any', 'como sea']]]] },
+  RB: { fam: 'velas', shown: 'Volumen de Respuesta', p: { leg: 2, rombo: 'turn' }, fields: [R_LEG],
+    selectsAfter: [['rombo', 'Se lee como', [['turn', 'giro: contra el tramo'], ['follow', 'continuación: a favor del tramo']]]] },
+  GC: { fam: 'lineas', shown: null, p: { period: 144, poles: 4, mult: 1.414, trend: 'si' },
+    fields: [['period', 'Periodo del filtro', 10, 1000, 1], ['poles', 'Polos', 1, 9, 1], ['mult', 'Ancho de las bandas', 0.2, 10, 0.1]],
+    selectsAfter: [['trend', 'Pide el canal a favor', YES_NO]] },
+  QA: { fam: 'vpa', shown: 'Lector VPA', p: Q_GRADE, fields: [Q_FIRE, Q_LEG] },
+  QV: { fam: 'vpa', shown: 'Lector VPA', p: Q_GRADE, fields: [Q_FIRE, Q_LEG] },
+  QB: { fam: 'vpa', shown: 'Lector VPA', p: Q_BREAK, fields: [Q_FIRE, Q_RANGE, Q_HIGH] },
+  QF: { fam: 'vpa', shown: 'Lector VPA', p: Q_BREAK, fields: [Q_FIRE, Q_RANGE, Q_HIGH] },
+  QR: { fam: 'vpa', shown: 'Lector VPA', p: { fire: 0.5, pullBars: 8, rangeBars: 20, maxRangeAtr: 6 }, fields: [Q_FIRE, Q_PULL, Q_RANGE, Q_HIGH] },
+  QT: { fam: 'vpa', shown: 'Lector VPA', p: Q_GRADE, fields: [Q_FIRE, Q_LEG] },
+  QS: { fam: 'vpa', shown: 'Lector VPA', p: Q_GRADE, fields: [Q_FIRE, Q_LEG] },
+  QC: { fam: 'vpa', shown: 'Lector VPA', p: { legAtr: 2 }, fields: [Q_LEG] },
+  QE: { fam: 'vpa', shown: 'Lector VPA', p: Q_GAUGE, fields: [Q_METER, Q_DECAY] },
+  QG: { fam: 'vpa', shown: 'Lector VPA', p: Q_GAUGE, fields: [Q_METER, Q_DECAY] },
+  WD: { fam: 'williams', shown: 'Tres sabios', p: { lookback: 1, angBars: 5, minGapAtr: 0, requireAo: 'si' },
+    fields: [['lookback', 'Velas anteriores que la barra tiene que superar', 1, 20, 1], ['angBars', 'Angulación: velas en que se abrió del Alligator', 1, 50, 1],
+      ['minGapAtr', 'Distancia mínima a la mandíbula (ATR)', 0, 10, 0.1]],
+    selectsAfter: [['requireAo', 'Pide el AO en contra', YES_NO]] },
   WA: { fam: 'williams', shown: 'Tres sabios' },
-  WF: { fam: 'williams', shown: 'Tres sabios' },
-  BS: { fam: 'estructura', shown: 'Estructura SMC' },
-  OB: { fam: 'estructura', shown: 'Estructura SMC' },
-  BK: { fam: 'estructura', shown: 'Estructura SMC' },
-  EQ: { fam: 'estructura', shown: 'Estructura SMC' }
+  WF: { fam: 'williams', shown: 'Tres sabios', p: { teeth: 'si' }, selects: [['teeth', 'Solo del lado correcto de los dientes', YES_NO]] },
+  BS: { fam: 'estructura', shown: 'Estructura SMC', p: { scope: 'swing', break: 'any', internal: 5, swing: 50 },
+    selects: [S_SCOPE, ['break', 'Ruptura', [['any', 'cualquiera'], ['bos', 'solo BOS (sigue la tendencia)'], ['choch', 'solo CHoCH (cambia el carácter)']]]],
+    fields: [S_IN, S_SW] },
+  OB: { fam: 'estructura', shown: 'Estructura SMC', ...S_BLOCK },
+  BK: { fam: 'estructura', shown: 'Estructura SMC', ...S_BLOCK },
+  EQ: { fam: 'estructura', shown: 'Estructura SMC', p: { eqLength: 3, eqThreshold: 0.1, reclaim: 'si' },
+    fields: [['eqLength', 'Velas a cada lado de cada extremo', 2, 20, 1], ['eqThreshold', 'Qué tan iguales (ATR de diferencia, como mucho)', 0.01, 2, 0.01]],
+    selectsAfter: [['reclaim', 'Pide que cierre de vuelta', YES_NO]] }
 };
-for (const code of OF_ELEMENTS) ELEMENTS[code] = { fam: 'of', shown: 'Elementos OF', flow: true };
+for (const code of OF_ELEMENTS) {
+  const item = { fam: 'of', shown: 'Elementos OF', flow: true, p: {}, fields: [] };
+  if (OF_RELATIVE.includes(code)) {
+    item.p.target = 5;
+    item.fields.push(['target', 'Parte de las velas que lo marcan (%, lo más marcado de 30 días)', 0.5, 30, 0.5]);
+  }
+  if (OF_VOLUME.includes(code)) {
+    item.p.vol = 2;
+    item.fields.push(['vol', 'Volumen mínimo de la vela (veces lo normal de las 20 anteriores; 0 = sin filtro)', 0, 10, 0.5]);
+  }
+  if (OF_MIN[code]) {
+    item.p.min = OF_MIN[code][0];
+    item.fields.push(['min', OF_MIN[code][1], 1, 50, 1]);
+  }
+  if (code === 'RL') {
+    item.p.absorb = 10;
+    item.fields.push(['absorb', 'Velas en que puede llegar el segundo intento', 1, 50, 1]);
+    item.p.cell = 5;
+    item.fields.push(['cell', 'Celdas que cuentan como mucho volumen (%, las mayores de 30 días)', 0.5, 30, 0.5]);
+  }
+  if (code === 'OP') {
+    item.p.margin = 0.25;
+    item.fields.push(['margin', 'Cuánto fuera del rango previo queda el POC (ATR)', 0, 5, 0.05]);
+    item.p.bars = 5;
+    item.fields.push(['bars', 'Velas previas de ese rango', 2, 50, 1]);
+  }
+  if (code === 'BR' || code === 'GR') {
+    item.p.usd = 0;
+    item.fields.push(['usd', 'Tamaño mínimo de la orden (USD; 0 = solo el umbral relativo)', 0, 1e12, 50000]);
+  }
+  ELEMENTS[code] = item;
+}
+
+/** Los campos de un bloque que ya no están en su valor de fábrica */
+export function changedFields(def, p = {}) {
+  const keys = [...(def.fields || []), ...(def.selects || []), ...(def.selectsAfter || [])].map(field => field[0]);
+  return keys.filter(key => key in (def.p || {}) && p[key] !== undefined && p[key] !== def.p[key]);
+}
 
 // Los que se leen mejor con sus propias palabras
 const SPECIAL = {
@@ -335,17 +442,25 @@ const SPECIAL = {
   CP: () => 'Compresión: se forma una caja'
 };
 
+// Las familias con modal propio en App 1: un campo que sigue en su valor de fábrica deja mandar al ajuste de ese modal
+const MODAL_FAMILIES = ['vpa', 'williams'];
 for (const [code, item] of Object.entries(ELEMENTS)) {
   const name = elementLabel(code);
   const sided = item.sided !== false;
-  BLOCKS.push({
+  const plain = SPECIAL[code] || ((p, side) => (sided ? name + word(p, side, ', alcista', ', bajista', ', a favor', ', en contra') : name));
+  const own = (item.fields?.length || 0) + (item.selects?.length || 0) + (item.selectsAfter?.length || 0) > 0;
+  const fromModal = MODAL_FAMILIES.includes(item.fam) || item.shown === 'Estructura SMC';
+  const def = {
     id: code, code, kind: EVENT, fam: item.fam, name, shown: item.shown, sided, flow: !!item.flow,
-    p: { ...(item.p || {}), ...(sided ? { dir: 'favor' } : {}) }, fields: item.fields,
-    text: SPECIAL[code] || ((p, side) => (sided ? name + word(p, side, ', alcista', ', bajista', ', a favor', ', en contra') : name)),
+    p: { ...(item.p || {}), ...(sided ? { dir: 'favor' } : {}) },
+    fields: item.fields?.length ? item.fields : undefined, selects: item.selects, selectsAfter: item.selectsAfter,
     help: item.flow
-      ? 'Elemento de order flow del backtesting global, detectado en los trades reales con sus valores de fábrica. Solo en las monedas con almacén de trades.'
-      : 'Elemento del backtesting global de App 1, detectado con las mismas reglas y sus valores de fábrica.'
-  });
+      ? `Elemento de order flow del backtesting global, detectado en los trades reales. Solo en las monedas con almacén de trades.${own ? ' Con sus valores de fábrica comparte la lectura con los demás; al cambiarle un valor se leen los trades de nuevo para él, y mientras tanto dice «detectando…».' : ' No tiene nada que cambiar.'}`
+      : `Elemento del backtesting global de App 1, detectado con las mismas reglas.${own && fromModal ? ' Un campo que dejes en su valor de fábrica usa el ajuste del modal del indicador, si lo cambiaste ahí; uno que cambies aquí manda.' : ''}`
+  };
+  // El bloque dice que tiene valores propios: la frase de la estrategia no los calla
+  def.text = (p, side) => `${plain(p, side)}${changedFields(def, p).length ? ' (con ajustes propios)' : ''}`;
+  BLOCKS.push(def);
 }
 
 const BY_ID = Object.fromEntries(BLOCKS.map(def => [def.id, def]));
