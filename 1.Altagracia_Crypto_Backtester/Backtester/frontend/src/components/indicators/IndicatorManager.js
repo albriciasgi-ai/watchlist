@@ -1471,8 +1471,8 @@ class IndicatorManager {
    * `known`: cuántas de esas velas ya ocurrieron en la hora simulada; las demás van por adelantado (27/11), para que la
    * cocina calcule antes de que lleguen. Solo es una lectura: nada de lo adelantado se dibuja ni cambia un indicador.
    * El VWAP (calculado una vez con todo el histórico), el interés abierto (cargado por tramos, que aquí se piden hasta
-   * la última vela) y el CVD (sale de las velas) dan valor en las adelantadas. El delta, que puede ser el real de los
-   * footprints ya vistos, y el Swing, solo en las ocurridas.
+   * la última vela) y el CVD (sale de las velas) dan valor en las adelantadas. El delta también, cuando es el estimado
+   * de las velas; si es el real de los footprints ya vistos, solo en las ocurridas. El Swing, solo en las ocurridas.
    */
   getKitchenSeries(candles, known = candles?.length) {
     const out = { lines: {}, nums: {}, marks: {}, settings: this.getKitchenSettings() };
@@ -1516,7 +1516,17 @@ class IndicatorManager {
     };
     attempt(() => {
       const volume = on('Volume Delta');
-      if (volume?.calculateVolumeDelta) out.nums.delta = byTime(volume.calculateVolumeDelta(past), 'volumeDelta');
+      if (!volume?.calculateVolumeDelta) return;
+      // El delta real sale de los footprints ya vistos, y no los hay de las velas que vienen: ahí no se adelanta. El
+      // estimado (el volumen con el signo de la vela, lo usual con mil velas) sale de las velas, y sí
+      const real = volume.deltaSource?.realDeltas?.(past) ?? null;
+      if (real || past === candles) {
+        out.nums.delta = byTime(volume.calculateVolumeDelta(past), 'volumeDelta');
+        return;
+      }
+      const shown = volume.usesRealDelta; // Lo que dice el panel no cambia por esta lectura
+      out.nums.delta = byTime(volume.calculateVolumeDelta(candles), 'volumeDelta');
+      volume.usesRealDelta = shown;
     });
     attempt(() => {
       const cvd = on('CVD');

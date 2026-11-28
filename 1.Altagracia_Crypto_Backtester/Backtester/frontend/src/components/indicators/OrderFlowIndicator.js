@@ -53,6 +53,10 @@ const ERROR_WAIT_MS = 5000;
 const LIVE_LAG_WAIT_MS = 10000; // el almacen va 1-2 min detras: si aun no llega a la hora pedida, se repide cada 10 s
 const LIVE_REFRESH_MS = 60000; // y cada minuto se repiden las velas sin datos o con hueco: la nube puede llenarlas despues
 const STEP_RESET_CHANGE = 0.3; // Si el precio se aleja 30% se elige otro step
+// Por adelantado, solo en reproducción (27/11): los footprints de las velas que vienen se piden antes a un depósito
+// que el dibujo no lee, y cada uno pasa a la vista cuando su vela cierra en la hora simulada
+const AHEAD_CANDLES = 300; // Velas adelantadas por pedido
+const AHEAD_MAX_CANDLES = 1200; // Si la reproducción se las come antes de que llegue el pedido siguiente, se pide más
 const SETTINGS_KEY = 'orderflow_settings_';
 
 /** Parámetros guardados de un símbolo; sin almacenamiento disponible quedan los de fábrica */
@@ -102,6 +106,9 @@ class OrderFlowIndicator extends IndicatorBase {
     this.error = null;
     this.nextRequestAt = 0;
     this.retryTimer = null;
+
+    // Depósito adelantado. `map` y `none` (velas sin trades) no los lee nadie más que _promoteAhead
+    this.ahead = { on: backtestingMode, map: new Map(), none: new Set(), to: null, loading: false, size: AHEAD_CANDLES };
 
     this.config = { ...this.getDefaultConfig(), ...loadOrderFlowSettings(symbol) };
 
@@ -211,6 +218,82 @@ class OrderFlowIndicator extends IndicatorBase {
     this.stepSize = null;
     this.stepPrice = null;
     this.generation += 1;
+    this._clearAhead();
+  }
+
+  _clearAhead() {
+    this.ahead.map.clear();
+    this.ahead.none.clear();
+    this.ahead.to = null;
+    this.ahead.size = AHEAD_CANDLES;
+  }
+
+  /** Pasa a la vista los footprints adelantados de las velas que ya cerraron en la hora simulada. Nada posterior */
+  _promoteAhead(knownUntil) {
+    for (const [timestamp, footprint] of this.ahead.map) {
+      if (timestamp + this.tfMs > knownUntil) break; // Van en orden: lo demás todavía no ocurre
+      footprint.knownUntil = timestamp + this.tfMs;
+      this.footprintMap.delete(timestamp);
+      this.footprintMap.set(timestamp, footprint);
+      this.noData.delete(timestamp);
+      this.ahead.map.delete(timestamp);
+    }
+    for (const timestamp of this.ahead.none) {
+      if (timestamp + this.tfMs > knownUntil) continue;
+      if (!this.footprintMap.has(timestamp)) this.noData.set(timestamp, timestamp + this.tfMs);
+      this.ahead.none.delete(timestamp);
+    }
+    while (this.footprintMap.size > MAX_FOOTPRINTS_IN_MEMORY) {
+      this.footprintMap.delete(this.footprintMap.keys().next().value);
+    }
+  }
+
+  /**
+   * Pide al depósito las velas que siguen a la hora simulada, cuando lo adelantado baja de la mitad. Solo mirando el
+   * presente de la simulación (la última vela a la vista es la última conocida) y con el step ya elegido.
+   */
+  _fetchAhead(visibleCandles, knownUntil, redraw) {
+    const ahead = this.ahead;
+    if (!ahead.on || ahead.loading || !(this._stepOverride() || this.stepSize)) return;
+    const nowEnd = Math.floor(knownUntil / this.tfMs) * this.tfMs; // Donde empieza la vela en formación
+    if (visibleCandles[visibleCandles.length - 1].timestamp + this.tfMs < nowEnd) return;
+    if (ahead.to !== null && ahead.to <= nowEnd) ahead.size = Math.min(AHEAD_MAX_CANDLES, ahead.size * 2); // Se agotó
+    if (ahead.to !== null && ahead.to - nowEnd >= (ahead.size / 2) * this.tfMs) return;
+
+    const start = Math.max(ahead.to ?? nowEnd, nowEnd);
+    const end = Math.min(nowEnd + ahead.size * this.tfMs, start + MAX_DAYS_TO_LOAD * DAY_MS);
+    if (end <= start) return;
+    ahead.loading = true;
+    const generation = this.generation;
+    fetch(`${API_BASE_URL}/api/orderflow/historical/${this.symbol}?${this._params(start, end, end)}`)
+      .then(response => {
+        if (!response.ok) throw new Error(`Error ${response.status}`);
+        return response.json();
+      })
+      .then(data => {
+        ahead.loading = false;
+        if (!data.success || generation !== this.generation) return;
+        const got = new Set();
+        for (const footprint of data.footprints) {
+          const timestamp = footprint.candle_timestamp;
+          // Solo velas completas: la que quede a medias en el borde se pide en vivo
+          if (timestamp < start || timestamp + this.tfMs > data.known_until || footprint.complete === false) continue;
+          got.add(timestamp);
+          // La que ya está a la vista completa no se repite; la que está a medias (en formación) sí: al cerrar la reemplaza
+          const have = this.footprintMap.get(timestamp);
+          if (!have || (have.knownUntil ?? 0) < timestamp + this.tfMs) ahead.map.set(timestamp, footprint);
+        }
+        const until = Math.min(end, Math.floor(data.known_until / this.tfMs) * this.tfMs);
+        for (let timestamp = start; timestamp < until; timestamp += this.tfMs) {
+          if (!got.has(timestamp)) ahead.none.add(timestamp);
+        }
+        ahead.to = end;
+        if (this.clock !== null) this._promoteAhead(this.clock);
+        redraw?.();
+      })
+      .catch(() => {
+        ahead.loading = false; // Sin lo adelantado, cada vela se pide al cerrar, como siempre
+      });
   }
 
   // Al retroceder el tiempo se descarta lo que solo se conocía en una hora posterior
@@ -222,8 +305,10 @@ class OrderFlowIndicator extends IndicatorBase {
       for (const timestamp of this.footprintMap.keys()) {
         if (timestamp + this.tfMs > knownUntil) this.footprintMap.delete(timestamp);
       }
+      this._clearAhead(); // Se pide de nuevo desde la hora a la que se volvió
     }
     this.clock = knownUntil;
+    if (this.ahead.on) this._promoteAhead(knownUntil);
   }
 
   _needsData(candle) {
@@ -248,6 +333,7 @@ class OrderFlowIndicator extends IndicatorBase {
     this._syncClock(knownUntil, visibleCandles[visibleCandles.length - 1].close);
     if (!this._canLoad(visibleCandles)) return;
     if (!this.backtestingMode) this._liveRefresh();
+    this._fetchAhead(visibleCandles, knownUntil, requestRedraw);
 
     const missing = visibleCandles.filter(candle => this._needsData(candle));
     if (missing.length === 0) return;
@@ -293,32 +379,7 @@ class OrderFlowIndicator extends IndicatorBase {
     this.isLoading = true;
     this.nextRequestAt = performance.now() + MIN_REQUEST_GAP_MS;
     const generation = this.generation;
-
-    const params = new URLSearchParams({
-      interval: String(this.tfMinutes),
-      start_timestamp: String(start),
-      end_timestamp: String(end),
-      known_until: String(knownUntil)
-    });
-    const step = this._stepOverride() || this.stepSize;
-    if (step) params.append('step', String(step));
-    if (!this.backtestingMode && !this._stepOverride()) {
-      // En vivo (suite) el step automatico es parejo: el servidor lo saca del rango tipico de las velas
-      // y vale para todas; sin tope de niveles por vela, que daba a cada vela su propio step
-      params.append('step_mode', 'uniform');
-    } else if (!this._stepOverride()) {
-      params.append('max_levels', String(this.config.maxLevels));
-    } else if (this.config.stepPerCandle) {
-      params.append('step_cap', 'candle');
-    }
-    params.append('imbalance_ratio', String(this.config.imbalanceRatio));
-    params.append('imbalance_mode', this.config.imbalanceMode);
-    // El mínimo en monedas de antes ya no se envía: ahora los filtros son relativos
-    params.append('imbalance_candle_pct', String(this.config.imbalanceCandleVolumePct || 0));
-    params.append('imbalance_candle_bars', String(this.config.imbalanceCandleVolumeBars || 20));
-    params.append('imbalance_cell_pct', String(this.config.imbalanceCellSharePct || 0));
-    params.append('imbalance_zero', String(this.config.imbalanceCountZero));
-    params.append('stacked_levels', String(this.config.stackedMinLevels));
+    const params = this._params(start, end, knownUntil);
 
     fetch(`${API_BASE_URL}/api/orderflow/historical/${this.symbol}?${params}`)
       .then(response => {
@@ -344,6 +405,36 @@ class OrderFlowIndicator extends IndicatorBase {
         this.isLoading = false;
         this.nextRequestAt = performance.now() + ERROR_WAIT_MS;
       });
+  }
+
+  /** Lo que se le pide al almacén para un tramo, con las reglas de imbalance vigentes */
+  _params(start, end, knownUntil) {
+    const params = new URLSearchParams({
+      interval: String(this.tfMinutes),
+      start_timestamp: String(start),
+      end_timestamp: String(end),
+      known_until: String(knownUntil)
+    });
+    const step = this._stepOverride() || this.stepSize;
+    if (step) params.append('step', String(step));
+    if (!this.backtestingMode && !this._stepOverride()) {
+      // En vivo (suite) el step automatico es parejo: el servidor lo saca del rango tipico de las velas
+      // y vale para todas; sin tope de niveles por vela, que daba a cada vela su propio step
+      params.append('step_mode', 'uniform');
+    } else if (!this._stepOverride()) {
+      params.append('max_levels', String(this.config.maxLevels));
+    } else if (this.config.stepPerCandle) {
+      params.append('step_cap', 'candle');
+    }
+    params.append('imbalance_ratio', String(this.config.imbalanceRatio));
+    params.append('imbalance_mode', this.config.imbalanceMode);
+    // El mínimo en monedas de antes ya no se envía: ahora los filtros son relativos
+    params.append('imbalance_candle_pct', String(this.config.imbalanceCandleVolumePct || 0));
+    params.append('imbalance_candle_bars', String(this.config.imbalanceCandleVolumeBars || 20));
+    params.append('imbalance_cell_pct', String(this.config.imbalanceCellSharePct || 0));
+    params.append('imbalance_zero', String(this.config.imbalanceCountZero));
+    params.append('stacked_levels', String(this.config.stackedMinLevels));
+    return params;
   }
 
   _store(data, start, end) {

@@ -540,6 +540,20 @@ GET /api/orderflow/coverage/{symbol}
 - Al retroceder el tiempo, `OrderFlowIndicator` borra lo que aún no se conocía y descarta respuestas pendientes con `generation`
 - Una vela cerrada se vuelve a pedir si su footprint quedó parcial
 
+### Por adelantado al reproducir (27/11)
+
+Pedido del usuario: a velocidad alta los footprints iban atrás, porque cada vela se pedía al cerrar. Ahora, solo en reproducción (`backtestingMode`):
+
+- **Depósito** (`this.ahead`): `map` (inicio de vela → footprint completo) y `none` (velas sin trades) de las velas que vienen. **No lo lee nadie más que `_promoteAhead`:** ni el dibujo, ni `footprints`, ni `realDeltas`, ni `priceExtent`.
+- **`_fetchAhead`:** pide desde la vela en formación `AHEAD_CANDLES` (300) velas, con `known_until` en su propio final, cuando lo adelantado baja de la mitad. Si la reproducción se lo come antes, el pedido siguiente es el doble, hasta `AHEAD_MAX_CANDLES` (1,200). Solo mirando el presente de la simulación (la última vela a la vista es la última conocida) y con el step ya elegido.
+- **`_promoteAhead(hora)`:** pasa a `footprintMap` los de las velas ya cerradas en la hora simulada, con `knownUntil` en su cierre. Corre en cada `_syncClock`. El de una vela en formación, que estaba a medias, se reemplaza al cerrar.
+- **Al retroceder la hora o cambiar una regla** (`_clearAhead`): el depósito se vacía, y una respuesta pedida antes no entra (`generation`).
+- **Lo que sigue en vivo:** el footprint parcial de la vela en formación.
+- **Paridad** (`test_pedido_por_adelantado_la_tabla_y_los_footprints_de_una_vela_cerrada_no_cambian` en `test_of_elements.py`): el footprint de una vela cerrada es igual pedido en su momento, con la hora más adelante, o pidiendo solo el tramo que viene; con step automático, con step fijo y con el filtro de volumen relativo.
+- **En vivo** (la suite) `ahead.on` es falso: se pide como siempre.
+
+**Probado en pantalla** el 27/11 (copia aislada, BTC 15m, 50000x): 6 días en 10 segundos con 3 pedidos adelantados de unas 170 velas (30 ms cada uno) y 4 de la vela en formación; al pausar, todas las velas a la vista tenían su footprint.
+
 ### Dibujo
 
 | Ancho de vela | Se muestra |
@@ -796,6 +810,17 @@ Pedido del usuario: decidir las reglas de cada setup probando a mano, sin gastar
 - **Tus trades por setup:** `observer.report()` trae `setups`: por cada setup de Elementos OF elegido para el análisis de una orden cerrada (`levels` con `kind` "Setup S14 (...) alcista: ..."), acierto y R con y sin él. Una orden cuenta una vez cada setup. El informe del Observador lo muestra en "Tus trades por setup"; lo que hizo la receta sola sigue siendo "Evaluar"
 - **Pruebas:** `test_el_ajuste_nunca_mira_las_fechas_reservadas`, `test_la_comprobacion_usa_todo_lo_reservado`, `test_rangos_largos_se_piden_por_tramos_sin_repetir_velas`, `test_informe_por_setup_cuenta_los_setups_elegidos` y dos en `ofsetups.test.mjs`. Probado en la copia aislada: 180 días de ajuste con corte el 01/07/2026 terminan el 30/06 y la comprobación cubre del 01/07 al 04/11
 - **Falta:** la fecha al azar del modo oculto puede caer en lo reservado. Practicar a mano ahí no ajusta la receta, pero sí muestra esas velas
+
+### Por adelantado al reproducir (27/11)
+
+En reproducción (`priceContext.knownCandles`), `OrderFlowElementsIndicator` pide antes los elementos, la tabla y los setups de las velas que vienen: `_aheadEnd` da el final del tramo (`AHEAD_CANDLES` 400 desde la última vela cerrada, el doble si se agota, hasta 1,600 y 30 días), y el pedido lleva `known_until` en ese final.
+
+- **El dibujo no cambió:** ya filtraba cada evento por su `known` (`knownEvents`), cada setup por el suyo, la tabla por velas cerradas, y las franjas se cortan con las velas conocidas (`bandEnd`). Si se suma algo que lea `events`, `bars` o `matches`, tiene que filtrar igual.
+- **Al retroceder la hora** lo cargado sirve: no se pide de nuevo.
+- **En vivo** (la suite, sin `knownCandles`) o mirando velas viejas, se pide como siempre. `ahead.on = false` lo apaga.
+- Pruebas: `tests/ofahead.test.mjs` (5) y, en el backend, la de paridad de `test_of_elements.py`.
+
+**Probado en pantalla** el 27/11 (copia aislada, BTC 15m, 50000x): 2 pedidos de unas 230 velas (0.4 s cada uno) en 10 segundos de reproducción, con los triángulos y la tabla al día al pausar. Los setups, sin ver.
 
 ### Dibujo (frontend)
 
@@ -1125,7 +1150,7 @@ Idea del usuario, tras ver que a 50000x la cocina iba atrás y perdía señales:
 
 **Sin ver en pantalla:** el interés abierto y el CVD adelantados, una estrategia con el delta o el Swing y su aviso, los otros marcos, retroceder con lo adelantado y cambiar la velocidad en plena reproducción.
 
-**Falta, pedido por el usuario:** el mismo trato para los footprints (`OrderFlowIndicator`) y los Elementos OF (`OrderFlowElementsIndicator`) del gráfico, que piden al backend con cada vela, cortado en la hora simulada. Los Elementos OF ya guardan la hora en que se conoce cada evento y su dibujo ya filtra por ella.
+**Los footprints y los Elementos OF del gráfico** se adelantaron después, el mismo día: ver «ORDER FLOW SOBRE LAS VELAS» y «ELEMENTOS DE ORDER FLOW», «Por adelantado al reproducir (27/11)». Con eso, el delta de volumen del gráfico va adelantado en la cocina cuando es el estimado de las velas (`getKitchenSeries`); el real, de los footprints ya vistos, sigue vela por vela.
 
 ### Flujo
 

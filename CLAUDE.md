@@ -55,6 +55,29 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 27 Noviembre 2026: Footprints y Elementos OF por Adelantado al Reproducir
+
+**Pedido:** tras adelantar la cocina, el usuario pidió lo mismo para los footprints y los Elementos OF del gráfico: son claves en sus estrategias y no pueden ir atrás al reproducir rápido.
+
+**Cambios:**
+1. **Footprints** (`OrderFlowIndicator.js`): en reproducción, los de las velas que vienen se piden antes (300 por pedido, hasta 1,200 si la reproducción se los come) a un depósito que el dibujo no lee. Cada uno pasa a la vista cuando su vela cierra en la hora simulada. La vela en formación se sigue pidiendo en vivo.
+2. **Elementos OF** (`OrderFlowElementsIndicator.js`): los elementos, la tabla de la vela y los setups de las velas que vienen se piden antes (400 por pedido, hasta 1,600). Cada evento ya traía la hora en que se conoce y el dibujo ya filtraba por ella: no hubo que cambiar el dibujo.
+3. **Cocina:** el delta de volumen del gráfico también va adelantado cuando es el estimado de las velas, que es lo usual con mil velas. Si es el real de los footprints ya vistos, sigue vela por vela.
+4. **Pruebas:** `orderflow.test.mjs` (42), `ofahead.test.mjs` (5, nuevo) y una más en `test_of_elements.py` (19).
+
+**IMPORTANTE:**
+- Basta recargar la página de App 1: no cambió el backend. Llega a la app del usuario al unir esta rama a main.
+- **Solo en reproducción.** La suite, en vivo, pide como siempre.
+- **La prueba que lo sostiene** (backend): el footprint, los elementos y la tabla de una vela cerrada son iguales pedidos en su momento o con la hora más adelante, también con el filtro de volumen relativo y pidiendo solo el tramo que viene.
+- **Nada del futuro a la vista:** lo adelantado de los footprints vive en un depósito aparte (`ahead.map`), que no leen el dibujo, el delta real ni la escala de precios. Al retroceder la hora o cambiar una regla se vacía.
+- **Probado en pantalla** en una copia aislada con BTC 15m, a 50000x con los dos indicadores encendidos: 6 días en 10 segundos, con 3 pedidos adelantados de footprints (unos 170 velas y 30 ms cada uno) y 2 de elementos (unas 230 velas y 0.4 s). Al pausar, el panel de delta decía «trades reales» (todas las velas a la vista tenían su footprint), y con zoom se veían las celdas, el delta y la tabla de las últimas velas.
+- **Sin ver en pantalla:** los setups adelantados, retroceder la hora, cambiar de marco reproduciendo, 1m, 5m, 1h y 4h, el 2.º gráfico y el delta estimado adelantado en la cocina (este, sin prueba propia: solo compila).
+- **Lo que sigue pidiéndose con cada vela:** el footprint parcial de la vela en formación, uno a la vez. A velocidad alta casi no se alcanza a ver.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` secciones "ORDER FLOW SOBRE LAS VELAS", "Por adelantado al reproducir (27/11)", y "ELEMENTOS DE ORDER FLOW", "Por adelantado al reproducir (27/11)"
+
+---
+
 ### App 1 - 27 Noviembre 2026: La Cocina Calcula por Adelantado y No se Atrasa al Reproducir Rápido
 
 **Pedido:** a 50000x la cocina no alcanzaba: las filas iban atrás y las señales se perdían. La idea fue del usuario: calcular antes lo de los próximos segundos de reproducción y, al avanzar, solo mostrar, sin enseñar nada del futuro. Pidió incluir el VWAP, el interés abierto, el delta y el CVD.
@@ -79,7 +102,7 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 - **Visto al probar, sin tocar:** con muchas órdenes por segundo, el backend rechaza parte de las imágenes de los trades (error 429, su límite de pedidos). Las órdenes quedan bien; a esos trades les falta la imagen.
 - **En 1 minuto, a 50000x, no alcanza:** son 833 velas por segundo y el tope adelantado es de 2,000. Va bien hasta unos 10000x.
 - **Sin ver en pantalla:** el interés abierto y el CVD adelantados (solo con las pruebas del recorte), una estrategia con el delta o el Swing y su aviso, 1m, 5m, 1h y 4h, retroceder la simulación con lo adelantado, y cambiar la velocidad en plena reproducción.
-- **Falta, pedido por el usuario:** lo mismo para los footprints y los Elementos OF del gráfico, que hoy piden al backend con cada vela.
+- **Los footprints y los Elementos OF del gráfico** se adelantaron después, el mismo día (entrada de arriba).
 
 **Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)", "Pedido por adelantado (27/11)"
 

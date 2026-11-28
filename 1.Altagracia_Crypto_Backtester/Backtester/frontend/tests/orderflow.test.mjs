@@ -62,6 +62,7 @@ function newIndicator() {
   holes.clear();
   const indicator = new OrderFlowIndicator('BTCUSDT', '15m', 7, true, T0);
   indicator.enabled = true;
+  indicator.ahead.on = false; // Estas pruebas miran el pedido vela por vela; lo adelantado tiene las suyas al final
   return indicator;
 }
 
@@ -553,6 +554,132 @@ test('las barras del area de valor van en otro color, y se puede apagar', () => 
   assert.equal(on.filter(f => f.style === outside).length, 2, 'dos fuera');
   const off = drawZoomed({ showValueArea: false }).calls.fills.filter(f => f.x < 100);
   assert.equal(off.filter(f => f.style === outside).length, 0, 'sin area: todas iguales');
+});
+
+// ==================== Por adelantado (27/11) ====================
+
+function aheadIndicator() {
+  const indicator = newIndicator();
+  indicator.ahead.on = true;
+  return indicator;
+}
+const shown = (indicator) => [...indicator.footprintMap.keys()].map(t => (t - T0) / TF);
+
+test('por adelantado: pide las velas que vienen a un deposito que la vista no lee', async () => {
+  const of = aheadIndicator();
+  const now = T0 + 3 * TF + 300000; // La vela 3 se esta formando
+  await draw(of, [closed(0), closed(1), closed(2), forming(3, now)], now);   // Primer pedido: lo visible, y elige el step
+  await draw(of, [closed(0), closed(1), closed(2), forming(3, now)], now);   // Con el step elegido, pide lo adelantado
+  const ahead = requests[requests.length - 1];
+  assert.equal(ahead.start, T0 + 3 * TF, 'desde la vela en formacion');
+  assert.equal(ahead.end, T0 + 303 * TF, '300 velas');
+  assert.equal(ahead.known, ahead.end, 'completas: hasta su propio final');
+  assert.equal(of.ahead.map.size, 300);
+  // Nada de eso se ve: ni en lo que se dibuja, ni en lo que leen otros
+  assert.deepEqual(shown(of), [0, 1, 2, 3]);
+  assert.equal(of.footprintMap.get(T0 + 3 * TF).complete, false, 'la vela en formacion sigue parcial, con lo ocurrido');
+  assert.ok(of.footprints.every(fp => fp.candle_timestamp <= T0 + 3 * TF));
+  assert.equal(of.realDeltas([closed(2), closed(4)]), null, 'el delta de una vela que no ha ocurrido no existe');
+  assert.equal(of.priceExtent([closed(10)]), null);
+});
+
+test('por adelantado: al avanzar, cada vela pasa a la vista cuando cierra, sin pedir nada', async () => {
+  const of = aheadIndicator();
+  const now = T0 + 3 * TF + 300000;
+  const view = (to, clock) => [...Array.from({ length: to }, (_, i) => closed(i)), forming(to, clock)];
+  await draw(of, view(3, now), now);
+  await draw(of, view(3, now), now);
+  const before = requests.length;
+  // La hora salta 40 velas, como a velocidad alta: las 40 ya estan, completas
+  const later = T0 + 43 * TF + 60000;
+  of._syncClock(later, 80000);
+  assert.equal(of.footprintMap.size, 43);
+  assert.ok([...of.footprintMap.values()].every(fp => fp.candle_timestamp + TF <= later && fp.complete));
+  assert.equal(of.ahead.map.size, 260, 'lo que sigue queda en el deposito');
+  assert.ok([...of.ahead.map.keys()].every(t => t + TF > later));
+  await draw(of, view(43, later), later);
+  assert.equal(requests.length, before + 1, 'solo pide la vela en formacion');
+  assert.deepEqual([requests[before].start, requests[before].end], [T0 + 43 * TF, T0 + 44 * TF]);
+});
+
+test('por adelantado: pide mas al pasar la mitad, y el doble si la reproduccion se lo come', async () => {
+  const of = aheadIndicator();
+  const view = (to, clock) => [closed(to - 1), forming(to, clock)];
+  let now = T0 + 3 * TF + 1000;
+  await draw(of, view(3, now), now);
+  await draw(of, view(3, now), now);
+  assert.equal(of.ahead.to, T0 + 303 * TF);
+  now = T0 + 100 * TF + 1000;                      // Quedan 203 adelantadas: todavia alcanza
+  let count = requests.length;
+  await draw(of, view(100, now), now);
+  assert.ok(requests.slice(count).every(r => r.end <= T0 + 101 * TF), 'no pide mas adelantado');
+  now = T0 + 160 * TF + 1000;                      // Quedan 143: menos de la mitad
+  await draw(of, view(160, now), now);
+  await draw(of, view(160, now), now);
+  const more = requests.find(r => r.start === T0 + 303 * TF);
+  assert.ok(more, 'sigue desde donde termino el anterior');
+  assert.equal(more.end, T0 + 460 * TF);
+  now = T0 + 470 * TF + 1000;                      // La reproduccion paso de lo adelantado
+  await draw(of, view(470, now), now);
+  await draw(of, view(470, now), now);
+  assert.equal(of.ahead.size, 600);
+  assert.equal(of.ahead.to, T0 + 1070 * TF);
+});
+
+test('por adelantado: una vela sin trades no se pide al llegar, y mirando el pasado no se adelanta nada', async () => {
+  const of = aheadIndicator();
+  const now = T0 + 3 * TF + 1000;
+  holes.add(T0 + 5 * TF);
+  await draw(of, [closed(2), forming(3, now)], now);
+  await draw(of, [closed(2), forming(3, now)], now);
+  assert.ok(of.ahead.none.has(T0 + 5 * TF));
+  const later = T0 + 6 * TF + 1000;
+  of._syncClock(later, 80000);
+  assert.equal(of.footprintMap.has(T0 + 5 * TF), false);
+  assert.equal(of._needsData(closed(5)), false, 'ya se sabe que no tuvo trades');
+  // Con la vista en velas viejas (la ultima a la vista no es la ultima conocida) no se pide nada adelantado
+  const past = aheadIndicator();
+  const farNow = T0 + 50 * TF + 1000;
+  await draw(past, [closed(0), closed(1)], farNow);
+  await draw(past, [closed(0), closed(1)], farNow);
+  assert.equal(past.ahead.to, null);
+});
+
+test('por adelantado: al retroceder o cambiar una regla, el deposito se vacia y lo pedido antes no entra', async () => {
+  const of = aheadIndicator();
+  const now = T0 + 10 * TF + 1000;
+  await draw(of, [closed(9), forming(10, now)], now);
+  await draw(of, [closed(9), forming(10, now)], now);
+  assert.equal(of.ahead.map.size, 300);
+  of._syncClock(T0 + 4 * TF + 1000, 80000);        // Retrocede
+  assert.equal(of.ahead.map.size, 0);
+  assert.equal(of.ahead.to, null);
+  assert.ok(shown(of).every(i => i < 4));
+  // Una respuesta adelantada que llega despues de cambiar una regla no se guarda
+  const slow = aheadIndicator();
+  await draw(slow, [closed(9), forming(10, now)], now);
+  holdResponses = true;
+  slow.nextRequestAt = 0;
+  slow._loadVisible([closed(9), forming(10, now)], { knownUntil: now, requestRedraw: () => {} });
+  const pending = requests[requests.length - 1];
+  assert.equal(pending.known, pending.end);
+  slow.updateConfig({ imbalanceRatio: 5 });
+  holdResponses = false;
+  pending.answer();
+  await flush();
+  await flush();
+  assert.equal(slow.ahead.map.size, 0);
+});
+
+test('en vivo (la suite) no se pide nada por adelantado', async () => {
+  requests = [];
+  const live = new OrderFlowIndicator('BTCUSDT', '15m', 7, false, null);
+  live.enabled = true;
+  assert.equal(live.ahead.on, false);
+  const now = T0 + 3 * TF + 1000;
+  await draw(live, [closed(2), forming(3)], now);
+  await draw(live, [closed(2), forming(3)], now);
+  assert.ok(requests.every(r => r.known <= now));
 });
 
 let failed = 0;

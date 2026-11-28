@@ -747,7 +747,7 @@ export default function KitchenPanel({
         <div className="kt-hint">Enciende {missing.map(name => `«${name}»`).join(', ')} en Indicadores: hay bloques que leen lo que ese indicador calcula en el gráfico, con tus ajustes. Mientras esté apagado no cuentan.</div>
       )}
       {slow && !isBlank(doc) && (
-        <div className="kt-note">Esta estrategia lee del gráfico el delta de volumen o el Swing, que solo existen para lo ya ocurrido: se calcula vela por vela y no por adelantado. A velocidad alta puede ir unas velas atrás; una señal vale hasta {candles(SIGNAL_LATE_MAX)} después de la suya.</div>
+        <div className="kt-note">Esta estrategia lee del gráfico el Swing, o el delta real de los footprints, que solo existen para lo ya ocurrido: se calcula vela por vela y no por adelantado. A velocidad alta puede ir unas velas atrás; una señal vale hasta {candles(SIGNAL_LATE_MAX)} después de la suya.</div>
       )}
       {lastTime === null && <div className="kt-note">Todavía no cerró ninguna vela en este marco: avanza la simulación.</div>}
       {flowInfo?.state === 'loading' && (
