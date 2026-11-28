@@ -637,9 +637,20 @@ test('los elementos de VPA, Williams, SMC y order flow traen sus variables, con 
   assert.deepEqual(fields('OB'), ['internal', 'swing', 'scope', 'pick', 'area', 'mitigation']);
   assert.deepEqual(fields('EQ'), ['eqLength', 'eqThreshold', 'reclaim']);
   assert.deepEqual(fields('EX'), ['target']);                   // Un elemento relativo: qué parte de las velas marca
-  assert.deepEqual(fields('ST'), ['vol']);                      // Uno que pide una vela de mucho volumen
-  assert.deepEqual(fields('RL'), ['target', 'absorb']);
+  assert.deepEqual(fields('ST'), ['vol', 'min']);               // Uno que pide una vela de mucho volumen, con su mínimo de niveles
+  assert.deepEqual(fields('RL'), ['absorb', 'cell']);           // La absorción: sus velas y qué celdas son «mucho volumen»
+  assert.deepEqual(fields('OP'), ['vol', 'margin', 'bars']);
+  assert.deepEqual(fields('GR'), ['target', 'usd']);
   assert.deepEqual(fields('VA'), []);
+  // Patrones, cambio de carácter, cajas, Volumen de Respuesta y canal gaussiano (28/11)
+  assert.deepEqual(fields('HM'), ['trendBars', 'minPart', 'swingBefore', 'swingAfter', 'wick', 'trend']);
+  assert.deepEqual(fields('EN'), ['trendBars', 'minPart', 'swingBefore', 'swingAfter', 'trend']);
+  assert.deepEqual(fields('CC'), ['swing', 'legs', 'ref', 'closes']);
+  assert.deepEqual(fields('BX'), ['maxHeight']);
+  assert.deepEqual(fields('BE'), ['share', 'maxBody', 'rejection']);
+  assert.deepEqual(fields('RF'), ['spike', 'leg', 'arrow']);
+  assert.deepEqual(fields('RB'), ['leg', 'rombo']);
+  assert.deepEqual(fields('GC'), ['period', 'poles', 'mult', 'trend']);
   // Cada campo tiene su valor de fábrica en el bloque nuevo, dentro de su rango, y cada opción, una de las suyas
   for (const def of allBlocks().filter(item => item.code)) {
     for (const [key, , min, max] of def.fields || []) assert.ok(def.p[key] >= min && def.p[key] <= max, `${def.id}.${key}`);
@@ -649,7 +660,7 @@ test('los elementos de VPA, Williams, SMC y order flow traen sus variables, con 
   // Un documento guardado antes, sin esos campos, se abre con los de fábrica
   const old = normalizeDoc({ side: 'long', gat: [{ blocks: [{ id: 'QB', p: { dir: 'contra' } }, { id: 'ST' }] }] });
   assert.deepEqual(old.gat[0].blocks[0].p, { fire: 0.5, rangeBars: 20, maxRangeAtr: 6, dir: 'contra' });
-  assert.deepEqual(old.gat[0].blocks[1].p, { vol: 2, dir: 'favor' });
+  assert.deepEqual(old.gat[0].blocks[1].p, { vol: 2, min: 3, dir: 'favor' });
 });
 
 test('un bloque con una variable cambiada lo dice en su texto y en la frase', () => {

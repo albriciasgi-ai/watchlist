@@ -129,7 +129,18 @@ _Q_METER, _Q_DECAY = ("vpa", "meter", 1.0, 0.2, 5.0), ("vpa", "decay", 0.75, 0.0
 _S_SCOPE, _S_IN, _S_SW = ("smc", "scope", ["swing", "internal"]), ("smc", "internal", 5, 2, 50), ("smc", "swing", 50, 5, 300)
 _S_BLOCK = (_S_SCOPE, ("smc", "pick", ["extreme", "opposite"]), ("smc", "area", ["full", "body"]),
             ("smc", "mitigation", ["close", "wick"]), _S_IN, _S_SW)
+_P_SHAPE = (("pat", "trend", YES_NO), ("pat", "trendBars", 5, 1, 50), ("pat", "minPart", 0.5, 0.0, 5.0),
+            ("pat", "swingBefore", 5, 0, 50), ("pat", "swingAfter", 2, 0, 20))
+_R_LEG = ("rv", "leg", 2.0, 0.5, 10.0)
 EVENT_PARAMS = {
+    # Patrones de vela, cambio de carácter, cajas, Volumen de Respuesta y canal gaussiano (28/11, pedido del usuario)
+    "HM": _P_SHAPE + (("pat", "wick", 2.0, 0.5, 10.0),), "EN": _P_SHAPE, "DJ": _P_SHAPE,
+    "CC": (("cc", "swing", 3, 2, 20), ("cc", "legs", 2, 2, 5), ("cc", "ref", ["origin", "last"]), ("cc", "closes", YES_NO)),
+    "BX": (("bx", "maxHeight", 0.0, 0.0, 50.0),), "CP": (("cp", "maxHeight", 0.0, 0.0, 50.0),),   # 0 = cajas de cualquier alto
+    "BE": (("be", "share", 0.05, 0.02, 0.5), ("be", "maxBody", 1.0, 0.0, 10.0), ("be", "rejection", 0.6, 0.0, 1.0)),
+    "RF": (("rv", "spike", 2.0, 1.2, 20.0), _R_LEG, ("rv", "arrow", ["with", "against", "any"])),
+    "RB": (_R_LEG, ("rv", "rombo", ["turn", "follow"])),
+    "GC": (("gc", "period", 144, 10, 1000), ("gc", "poles", 4, 1, 9), ("gc", "mult", 1.414, 0.2, 10.0), ("gc", "trend", YES_NO)),
     "FV": (("fv", "minAtr", 0.3, 0.0, 5.0),),
     "IM": (("im", "bars", 3, 1, 50), ("im", "atr", 2.0, 0.2, 20.0)),
     "SP": (("sp", "bars", 5, 2, 20),),
@@ -146,18 +157,19 @@ EVENT_PARAMS = {
     "OB": _S_BLOCK, "BK": _S_BLOCK,
     "EQ": (("smc", "eqLength", 3, 2, 20), ("smc", "eqThreshold", 0.1, 0.01, 2.0), ("smc", "reclaim", YES_NO)),
 }
-# Elementos OF: lo que acepta of_elements.detect. `target` (en %): la parte de las velas que marca un elemento relativo;
-# `vol`: el filtro de volumen de los que solo cuentan en velas de mucho volumen; `absorb`: las velas del segundo
-# intento de la absorción. Cada juego distinto de valores es otra detección sobre los trades (ver FlowBook)
+# Elementos OF: los valores propios de cada elemento (of_elements.OWN_FIELDS, 28/11): la parte de las velas que lo
+# marcan (`target`), su filtro de volumen (`vol`), su mínimo de niveles (`min`), y lo de la absorción, el Open POC y
+# las órdenes. `target` y `cell` se muestran en %. Un bloque con algo cambiado es otra detección sobre los trades,
+# solo para ese elemento (ver FlowBook)
 OF_FACTORY = (oe.DEFAULT_TARGET, oe.DEFAULT_VOL_FILTER, oe.ABSORB_BARS)
+OF_PERCENT = ("target", "cell")
 for _code in OF_CODES:
     _own = []
-    if oe.CATALOG[_code][2]:
-        _own.append(("of", "target", round(oe.DEFAULT_TARGET * 100, 2), 0.5, 30.0))
-    if _code in oe.VOLUME_FILTERED:
-        _own.append(("of", "vol", oe.DEFAULT_VOL_FILTER, 0.0, 10.0))
-    if _code == "RL":
-        _own.append(("of", "absorb", oe.ABSORB_BARS, 1, oe.ABSORB_MAX_BARS))
+    for _field, (_default, _low, _high) in oe.OWN_FIELDS.get(_code, {}).items():
+        if _field in OF_PERCENT:
+            _own.append(("of", _field, round(_default * 100, 2), round(_low * 100, 2), round(_high * 100, 2)))
+        else:
+            _own.append(("of", _field, _default, _low, _high))
     if _own:
         EVENT_PARAMS[_code] = tuple(_own)
 
@@ -471,7 +483,7 @@ class FlowBook:
 
     def __init__(self, symbol, tf, params=OF_FACTORY):
         self.symbol, self.tf = symbol, int(tf)
-        # (target, filtro de volumen, velas de la absorción) con que detecta: los de fábrica, o los de un bloque
+        # Con qué detecta: OF_FACTORY, o (código, ((campo, valor), ...)) con lo que un bloque cambió en su elemento
         self.params = tuple(params)
         self.tf_ms = self.tf * 60000
         self.size = FLOW_BLOCK_DAYS[self.tf] * oe.DAY_MS
@@ -490,8 +502,10 @@ class FlowBook:
     def _detect(self, start, known):
         end = start + self.size
         # Una vela de más, para que la última del bloque vea a su siguiente (VA abandonada), como el probador
-        target, vol_filter, absorb = self.params
-        part = oe.detect(self.symbol, self.tf, start, min(end + self.tf_ms, known) - 1, known, target, 0, vol_filter, absorb_bars=absorb)
+        target, vol_filter, absorb = OF_FACTORY
+        overrides = None if self.params == OF_FACTORY else {self.params[0]: dict(self.params[1])}
+        part = oe.detect(self.symbol, self.tf, start, min(end + self.tf_ms, known) - 1, known, target, 0, vol_filter,
+                         absorb_bars=absorb, overrides=overrides)
         bars = {b["t"]: (b["delta"], b["vol"], b.get("cum"), b.get("maxd"), b.get("mind")) for b in part["bars"] if start <= b["t"] < end}
         events = [(e["code"], e["t"], e["known"], e["dir"]) for e in part["events"] if start <= e["t"] < end and e["known"] <= known]
         expected = max(0, (min(end, known) - start) // self.tf_ms)
@@ -697,13 +711,15 @@ class Facts:
 
     @staticmethod
     def flow_params(code, p=None):
-        """Con qué parámetros hay que detectar el order flow para un bloque: los suyos donde los cambió, y lo demás de
-        fábrica. Así dos bloques con los valores de fábrica, o con los mismos, comparten una detección."""
-        own = {field: (p or {}).get(field, default) for _, field, default, _, _, _ in event_fields(code)}
-        target = float(own["target"]) / 100 if "target" in own else OF_FACTORY[0]
-        vol = float(own["vol"]) if "vol" in own else OF_FACTORY[1]
-        absorb = int(own["absorb"]) if "absorb" in own else OF_FACTORY[2]
-        return (round(target, 5), round(vol, 3), absorb)
+        """Con qué hay que detectar el order flow para un bloque: OF_FACTORY si todo sigue de fábrica, o
+        (código, ((campo, valor), ...)) con lo que cambió en su elemento. Así los bloques de fábrica comparten una
+        detección, y dos bloques del mismo elemento con los mismos valores, otra."""
+        own = {}
+        for _, field, default, low, high, options in event_fields(code):
+            value = _field_value((p or {}).get(field, default), default, low, high, options)
+            if value != default:
+                own[field] = round(value / 100, 6) if field in OF_PERCENT else value
+        return (code, tuple(sorted(own.items()))) if own else OF_FACTORY
 
     def flow_state(self, block, wait=0.0):
         """El estado del order flow que lee ese bloque: "ready", "loading", "none" o "error"."""

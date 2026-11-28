@@ -37,7 +37,16 @@ const OF_ELEMENTS = [
 ];
 // Lo que se le puede cambiar a cada uno (27/11), como en of_elements.detect: los relativos marcan una parte de las
 // velas (su umbral sale de los 30 días anteriores); otros solo cuentan en velas de mucho volumen
-const OF_RELATIVE = ['OG', 'RL', 'EX', 'RS', 'PD', 'AD', 'SW', 'VL', 'SQ', 'DB', 'DV', 'XD', 'SM', 'BR', 'GR'];
+const OF_RELATIVE = ['OG', 'EX', 'RS', 'PD', 'AD', 'SW', 'VL', 'SQ', 'DB', 'DV', 'XD', 'SM', 'BR', 'GR'];
+// Mínimo propio de cada elemento (of_elements.OWN_FIELDS, 28/11): [de fábrica, texto]
+const OF_MIN = {
+  ST: [3, 'Desequilibrios apilados, como mínimo'],
+  VI: [3, 'Desequilibrios a favor en la vela, como mínimo'],
+  SQ: [4, 'Niveles seguidos con el agresor creciendo, como mínimo'],
+  SW: [3, 'Niveles seguidos sin contrapartida, como mínimo'],
+  VL: [3, 'Niveles seguidos con mucho agresor, como mínimo'],
+  IV: [2, 'Desequilibrios contrarios seguidos, como mínimo']
+};
 const OF_VOLUME = ['ST', 'VI', 'IR', 'RD', 'VD', 'TP', 'OP'];
 
 // Cada tipo de zona: cómo se llama una (según su lado: 1 alcista, −1 bajista), cómo se llaman todas y qué indicador de
@@ -316,21 +325,44 @@ const S_BLOCK = {
 
 // Eventos del probador de reglas: familia, indicador de App 1 que lo dibuja y campos que la cocina deja cambiar.
 // Su nombre es el del backtesting global (elementLabels.js) y se detectan con sus valores de fábrica
+// Patrones de vela, cambio de carácter, cajas, Volumen de Respuesta y canal gaussiano (28/11, pedido del usuario)
+const P_SHAPE = {
+  p: { trend: 'si', trendBars: 5, minPart: 0.5, swingBefore: 5, swingAfter: 2 },
+  selects: [['trend', 'Pide un movimiento previo en contra', YES_NO]],
+  fields: [['trendBars', 'Velas de ese movimiento previo', 1, 50, 1],
+    ['minPart', 'Tamaño mínimo de lo que hace el patrón (ATR; 0 = cualquiera)', 0, 5, 0.1],
+    ['swingBefore', 'Su extremo pasa el de tantas velas anteriores (0 = no se pide)', 0, 50, 1],
+    ['swingAfter', 'Y tantas velas siguientes no lo alcanzan (0 = no se espera)', 0, 20, 1]]
+};
+const R_LEG = ['leg', 'Tramo: con cuántos ATR gira', 0.5, 10, 0.5];
+const BOX_HIGH = ['maxHeight', 'Alto máximo de la caja (ATR; 0 = cualquiera)', 0, 50, 0.5];
 const ELEMENTS = {
-  HM: { fam: 'velas', shown: 'Rejection Patterns' },
-  EN: { fam: 'velas', shown: 'Rejection Patterns' },
-  DJ: { fam: 'velas', shown: 'Rejection Patterns' },
+  HM: { fam: 'velas', shown: 'Rejection Patterns', ...P_SHAPE, p: { ...P_SHAPE.p, wick: 2 },
+    fields: [...P_SHAPE.fields, ['wick', 'Mecha mínima (cuerpos)', 0.5, 10, 0.5]] },
+  EN: { fam: 'velas', shown: 'Rejection Patterns', ...P_SHAPE },
+  DJ: { fam: 'velas', shown: 'Rejection Patterns', ...P_SHAPE },
   VH: { fam: 'velas', shown: null },
   FV: { fam: 'velas', shown: 'FVG', p: { minAtr: 0.3 }, fields: [['minAtr', 'Hueco mínimo (ATR)', 0, 5, 0.1]] },
   IM: { fam: 'velas', shown: null, p: { bars: 3, atr: 2 }, fields: [['atr', 'Avance mínimo (ATR)', 0.2, 20, 0.1], ['bars', 'En cuántas velas', 1, 50, 1]] },
   SP: { fam: 'estructura', shown: 'Swing', p: { bars: 5 }, fields: [['bars', 'Velas a cada lado', 2, 20, 1]] },
-  CC: { fam: 'estructura', shown: null },
-  BX: { fam: 'estructura', shown: 'Rangos horizontales' },
-  BE: { fam: 'estructura', shown: 'Rangos horizontales' },
-  CP: { fam: 'estructura', shown: 'Rangos horizontales', sided: false },
-  RF: { fam: 'velas', shown: 'Volumen de Respuesta' },
-  RB: { fam: 'velas', shown: 'Volumen de Respuesta' },
-  GC: { fam: 'lineas', shown: null },
+  CC: { fam: 'estructura', shown: null, p: { swing: 3, legs: 2, ref: 'origin', closes: 'si' },
+    fields: [['swing', 'Velas a cada lado de cada swing', 2, 20, 1], ['legs', 'Máximos y mínimos seguidos de la tendencia', 2, 5, 1]],
+    selectsAfter: [['ref', 'Swing que se rompe', [['origin', 'el que originó el último tramo'], ['last', 'el último']]],
+      ['closes', 'La tendencia se confirma con cierres', YES_NO]] },
+  BX: { fam: 'estructura', shown: 'Rangos horizontales', p: { maxHeight: 0 }, fields: [BOX_HIGH] },
+  BE: { fam: 'estructura', shown: 'Rangos horizontales', p: { share: 0.05, maxBody: 1, rejection: 0.6 },
+    fields: [['share', 'Parte de la caja que cuenta como borde (0.05 = 5 %)', 0.02, 0.5, 0.01],
+      ['maxBody', 'Cuerpo máximo de la vela (ATR; 0 = sin límite)', 0, 10, 0.1],
+      ['rejection', 'Dónde cierra la vela: 0 en el borde, 1 en su otro extremo', 0, 1, 0.05]] },
+  CP: { fam: 'estructura', shown: 'Rangos horizontales', sided: false, p: { maxHeight: 0 }, fields: [BOX_HIGH] },
+  RF: { fam: 'velas', shown: 'Volumen de Respuesta', p: { spike: 2, leg: 2, arrow: 'with' },
+    fields: [['spike', 'Volumen de la vela (veces lo normal de su hora)', 1.2, 20, 0.1], R_LEG],
+    selectsAfter: [['arrow', 'La vela va', [['with', 'a favor del tramo'], ['against', 'en contra del tramo'], ['any', 'como sea']]]] },
+  RB: { fam: 'velas', shown: 'Volumen de Respuesta', p: { leg: 2, rombo: 'turn' }, fields: [R_LEG],
+    selectsAfter: [['rombo', 'Se lee como', [['turn', 'giro: contra el tramo'], ['follow', 'continuación: a favor del tramo']]]] },
+  GC: { fam: 'lineas', shown: null, p: { period: 144, poles: 4, mult: 1.414, trend: 'si' },
+    fields: [['period', 'Periodo del filtro', 10, 1000, 1], ['poles', 'Polos', 1, 9, 1], ['mult', 'Ancho de las bandas', 0.2, 10, 0.1]],
+    selectsAfter: [['trend', 'Pide el canal a favor', YES_NO]] },
   QA: { fam: 'vpa', shown: 'Lector VPA', p: Q_GRADE, fields: [Q_FIRE, Q_LEG] },
   QV: { fam: 'vpa', shown: 'Lector VPA', p: Q_GRADE, fields: [Q_FIRE, Q_LEG] },
   QB: { fam: 'vpa', shown: 'Lector VPA', p: Q_BREAK, fields: [Q_FIRE, Q_RANGE, Q_HIGH] },
@@ -366,9 +398,25 @@ for (const code of OF_ELEMENTS) {
     item.p.vol = 2;
     item.fields.push(['vol', 'Volumen mínimo de la vela (veces lo normal de las 20 anteriores; 0 = sin filtro)', 0, 10, 0.5]);
   }
+  if (OF_MIN[code]) {
+    item.p.min = OF_MIN[code][0];
+    item.fields.push(['min', OF_MIN[code][1], 1, 50, 1]);
+  }
   if (code === 'RL') {
     item.p.absorb = 10;
     item.fields.push(['absorb', 'Velas en que puede llegar el segundo intento', 1, 50, 1]);
+    item.p.cell = 5;
+    item.fields.push(['cell', 'Celdas que cuentan como mucho volumen (%, las mayores de 30 días)', 0.5, 30, 0.5]);
+  }
+  if (code === 'OP') {
+    item.p.margin = 0.25;
+    item.fields.push(['margin', 'Cuánto fuera del rango previo queda el POC (ATR)', 0, 5, 0.05]);
+    item.p.bars = 5;
+    item.fields.push(['bars', 'Velas previas de ese rango', 2, 50, 1]);
+  }
+  if (code === 'BR' || code === 'GR') {
+    item.p.usd = 0;
+    item.fields.push(['usd', 'Tamaño mínimo de la orden (USD; 0 = solo el umbral relativo)', 0, 1e12, 50000]);
   }
   ELEMENTS[code] = item;
 }

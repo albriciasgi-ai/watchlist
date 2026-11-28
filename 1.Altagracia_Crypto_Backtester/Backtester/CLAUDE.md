@@ -1171,7 +1171,35 @@ Pedido del usuario: cada variable editable junto a su bloque, también en estas 
 
 **Sin ver en pantalla:** Williams, order block, breaker, iguales, `target`, `absorb` y el ajuste del modal sobre un campo de fábrica.
 
-**Falta:** variables para los patrones de vela, el cambio de carácter, las cajas, el Volumen de Respuesta y el canal gaussiano (sus campos están en `clean_rule`). Un umbral propio por Elemento OF pediría cambiar `of_elements.py`.
+**Lo que faltaba** (patrones de vela, cambio de carácter, cajas, Volumen de Respuesta, canal gaussiano y el umbral propio por Elemento OF) se hizo el 28/11: sección siguiente.
+
+### Las demás variables y el umbral propio por Elemento OF (28/11)
+
+- **`EVENT_PARAMS` suma** los campos de `clean_rule` de:
+  - `pat` (HM, EN, DJ): trend, trendBars, minPart, swingBefore, swingAfter; HM, además, wick. `minZ` no entra;
+  - `cc`: swing, legs, ref y closes. El marco de la estructura lo sigue poniendo la cocina;
+  - `bx` y `cp`: maxHeight, con 0 como «cualquier alto» (la regla lo lleva como `None`);
+  - `be`: share, maxBody y rejection. `pattern` no entra;
+  - `rv`: RF con spike, leg y arrow; RB con leg y rombo;
+  - `gc`: period, poles, mult y trend. Su salida propia no es de la cocina.
+- **`of_elements.detect(..., overrides=None)`:** `{código: {campo: valor}}`, acotado por `clean_overrides` con `OWN_FIELDS` (campo → de fábrica, mínimo, máximo). Sin él, o con todo de fábrica, da lo de siempre.
+  - `target`: los relativos menos RL. `day_thresholds(d, share)` guarda los umbrales por día y parte; `limit(código)` da el general o el propio;
+  - `vol`: los de `VOLUME_FILTERED`, cada uno con el suyo (`heavy(código)`);
+  - `min`: ST, VI, SQ, SW, VL (su literal de `CATALOG`) e IV (`INVERSE_MIN`, 2). En SQ, SW y VL sigue valiendo también su umbral relativo: cuenta el mayor;
+  - RL: `absorb` (velas) y `cell` (parte de las celdas: 0.05 es el percentil 95 de siempre). `target` no le hace nada: su umbral es de celdas;
+  - OP: `margin` (ATR) y `bars`;
+  - BR y GR: `usd`, que se suma al umbral relativo (cuenta el mayor).
+- **En la cocina:** los campos de los Elementos OF salen de `oe.OWN_FIELDS`; `target` y `cell` se muestran en % (`OF_PERCENT`).
+  - `Facts.flow_params(código, p)` da `OF_FACTORY` si todo sigue de fábrica, o `(código, ((campo, valor), ...))` con lo cambiado;
+  - `FlowBook._detect` llama a `detect` con los generales de fábrica y `overrides={código: {...}}`: un libro por elemento y juego de valores. Antes el libro iba por `(target, filtro, velas)` y lo compartían elementos distintos.
+- **Página** (`kitchenCatalog.js`): `P_SHAPE`, `R_LEG`, `BOX_HIGH` y `OF_MIN`. RL salió de `OF_RELATIVE`. Un RL guardado con `target` se abre igual: ese campo se ignora.
+- **Pruebas:** `test_las_variables_de_patrones_cajas_respuesta_y_canal_cambian_lo_que_detectan` (`test_kitchen.py`) y `test_valores_propios_por_elemento_sin_ellos_nada_cambia_y_cada_uno_mueve_solo_el_suyo` (`test_of_elements.py`). La de paridad página y motor cubre los campos nuevos.
+
+**Medido con los trades reales de BTC** (15m, 1 al 6 de octubre de 2026, solo leyendo): cada valor propio movió solo su elemento (ST con 5 niveles, de 34 a 11; EX con 15 %, de 17 a 59; OP con 1 ATR, de 31 a 5; RL con 15 % de las celdas, de 6 a 30), y con todos los campos de fábrica el resultado fue igual.
+
+**Sin ver en pantalla:** nada de esta sección.
+
+**Falta:** el z-score mínimo del patrón de vela y el patrón de rechazo en el borde de caja.
 
 ### Flujo
 
@@ -1239,7 +1267,7 @@ MiniChart (getTradeBands)   filas bajo las velas, señales, líneas, zonas y la 
 
 ```bash
 cd backend
-.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 54 con el paso 1.3, el pedido por adelantado y las variables
+.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 55 con el paso 1.3, el pedido por adelantado y las variables
 cd ../frontend
 node tests/kitchen.test.mjs                                  # 39 con el paso 1.3, el pedido por adelantado y las variables
 node tests/clock.test.mjs                                    # 34: una es la parada del reloj en la vela de la señal

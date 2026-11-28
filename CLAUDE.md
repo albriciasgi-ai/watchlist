@@ -55,6 +55,44 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 28 Noviembre 2026: Variables en los Demás Bloques de la Cocina y Umbral Propio por Elemento OF
+
+**Pedido:** lo que había quedado fuera al dar variables a los bloques: los patrones de vela, el cambio de carácter, las cajas, el Volumen de Respuesta y el canal gaussiano, y un umbral propio por Elemento OF, que pedía cambiar el motor de order flow.
+
+**Cambios:**
+1. **Patrones de vela** (martillo o estrella, envolvente, doji): si piden un movimiento previo y de cuántas velas, el tamaño mínimo en ATR y las velas del swing antes y después. El martillo, además, su mecha mínima.
+2. **Cambio de carácter:** las velas de cada swing, los máximos y mínimos seguidos de la tendencia, qué swing se rompe y si la tendencia se confirma con cierres.
+3. **Cajas:** el alto máximo de la caja en la ruptura y en la compresión (0 = cualquiera). En el borde, la parte de la caja que cuenta como borde, el cuerpo máximo de la vela y dónde tiene que cerrar.
+4. **Volumen de Respuesta:** en la flecha, el volumen pedido, el tramo y si va a favor del tramo, en contra o como sea. En el rombo, el tramo y si se lee como giro o como continuación.
+5. **Canal gaussiano:** periodo, polos, ancho de las bandas y si pide el canal a favor.
+6. **Motor de order flow** (`of_elements.detect`, parámetro nuevo `overrides`): cada elemento puede llevar sus propios valores. En la cocina:
+   - los relativos: su parte de las velas, ahora propia de cada uno;
+   - los que piden mucho volumen: su propio filtro;
+   - el mínimo de niveles de Stacked, Volume Imbalance, Sequencing, Sweep, Vertical Liquidity e Inverse Imbalance;
+   - la absorción: sus velas y qué parte de las celdas cuenta como «mucho volumen»;
+   - el Open POC: cuánto fuera del rango queda el POC y de cuántas velas es ese rango;
+   - el barrido real y la orden grande: un tamaño mínimo en USD.
+7. **Pruebas:** `test_kitchen.py` (55), `test_of_elements.py` (20) y `kitchen.test.mjs` (39).
+
+**IMPORTANTE:**
+- El backend de App 1 (9000) se recarga solo; hay que recargar su página. Llega a la app del usuario al unir esta rama a main.
+- **Sin valores propios, el motor de order flow da lo de siempre:** el probador, la suite, el indicador y los setups no cambian. Una prueba lo compara con todos los campos en su valor de fábrica.
+- **Medido con los trades reales de BTC** (15m, del 1 al 6 de octubre, solo leyendo):
+  - Stacked con 5 niveles: de 34 a 11; con 2, 56; con filtro de volumen 4, 16;
+  - Exhaustion Print con el 15 % de las velas: de 17 a 59;
+  - Open POC con 1 ATR de margen: de 31 a 5;
+  - la absorción con el 15 % de las celdas: de 6 a 30;
+  - en cada caso, los demás elementos quedaron iguales.
+- **Corregido de la entrada anterior:** el campo «parte de las velas» de la absorción no hacía nada (su umbral es de celdas, no de velas). Ahora tiene el suyo, «celdas que cuentan como mucho volumen».
+- **Cada bloque de order flow con algo cambiado es otra lectura de los trades,** solo para ese elemento. Dos bloques del mismo elemento con los mismos valores la comparten; los de fábrica comparten la de siempre.
+- **El tamaño mínimo en USD se suma al umbral relativo:** en BTC, 3 millones no quitó ninguna orden grande, porque el umbral relativo ya estaba por encima.
+- **Sin ver en pantalla:** nada de esta entrada. Los campos usan los mismos controles de los bloques que se vieron el 27/11, y una prueba compara la lista de la página con la del motor, campo por campo.
+- **Lo que sigue sin variables:** el filtro de volumen del patrón de vela (z-score mínimo) y el patrón de rechazo en el borde de caja.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)", "Las demás variables y el umbral propio por Elemento OF (28/11)"
+
+---
+
 ### App 1 - 27 Noviembre 2026: Variables en los Bloques de VPA, Williams, SMC y Order Flow de la Cocina
 
 **Pedido:** antes del paso 1.4, dar variables a los bloques de VPA, Williams, SMC y order flow, que tenían pocas o ninguna. El usuario quiere cada variable de cada indicador editable junto a su bloque.

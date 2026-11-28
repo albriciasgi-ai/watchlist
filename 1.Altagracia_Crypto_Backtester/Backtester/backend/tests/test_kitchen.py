@@ -220,7 +220,7 @@ def test_la_capa_de_zona_queda_dentro_de_rango_y_sin_zonas_desconocidas():
     assert len(many["picks"]) == kitchen.MAX_PICKS and many["picks"][0]["dir"] == "any"
     doc = kitchen.clean_doc({"gat": [{"blocks": [{"id": "ztoca", "p": {"dir": "contra"}}, {"id": "zrech"}, {"id": "ST"}, {"id": "cvd", "p": {"n": 999}}]}]})
     assert [b["id"] for b in doc["gat"][0]["blocks"]] == ["ztoca", "zrech", "ST", "cvd"]
-    assert doc["gat"][0]["blocks"][0]["p"] == {} and doc["gat"][0]["blocks"][2]["p"] == {"dir": "favor", "vol": 2.0}
+    assert doc["gat"][0]["blocks"][0]["p"] == {} and doc["gat"][0]["blocks"][2]["p"] == {"dir": "favor", "vol": 2.0, "min": 3}
     assert doc["gat"][0]["blocks"][3]["p"] == {"n": 100, "min": 0.0, "dir": "favor"} and doc["gat"][0]["blocks"][3]["conv"] == "during"
     assert kitchen.uses_flow(doc) and not kitchen.uses_flow(kitchen.clean_doc({"gat": [{"blocks": [{"id": "zrech"}, {"id": "VH"}]}]}))
 
@@ -672,11 +672,12 @@ class FakeFlow:
     def delta(t):
         return float((t // MS * 37) % 11 - 5)
 
-    def __call__(self, symbol, tf, start, end, known, target, band_days, vol_filter, live=False, absorb_bars=10):
+    def __call__(self, symbol, tf, start, end, known, target, band_days, vol_filter, live=False, absorb_bars=10, overrides=None):
         if self.hold is not None:
             self.hold.wait(10)
         self.calls.append((start, end, known))
-        self.params = getattr(self, "params", set()) | {(target, vol_filter, absorb_bars)}
+        own = tuple(sorted((code, tuple(sorted(fields.items()))) for code, fields in (overrides or {}).items()))
+        self.params = getattr(self, "params", set()) | {(target, vol_filter, absorb_bars, own)}
         bars, events = [], []
         t = -(-start // MS) * MS
         while t <= end and t + MS <= known:
@@ -783,7 +784,7 @@ def test_el_delta_y_el_cvd_salen_del_almacen_con_la_cuenta_del_probador(flow):
     block = kitchen.clean_block({"uid": "c", "id": "cvd", "p": {"n": 6}}, "ctx")
     assert np.array_equal(facts.truth(block, 1), run > 0) and np.array_equal(facts.truth(block, -1), run < 0)
     # Lo que se ofrece al elegir una vela: la 301 (7 × 43, impar) trae un «ST» alcista; la 300, un delta de −4 sobre 100
-    assert {"id": "ST", "p": {"vol": 2.0}, "d": 1, "late": 0} in facts.candidates(301)["events"]
+    assert {"id": "ST", "p": {"vol": 2.0, "min": 3}, "d": 1, "late": 0} in facts.candidates(301)["events"]
     found = facts.candidates(300)
     assert delta[300] == -4 and {"id": "delta", "p": {}, "d": -1, "obs": {"share": 4.0}} in found["states"]
     assert [s["d"] for s in found["states"] if s["id"] == "cvd"] == [1 if delta[281:301].sum() > 0 else -1]
@@ -920,6 +921,36 @@ def test_una_variable_cambia_lo_que_detecta_el_bloque():
     assert count("WD", requireAo="no") >= count("WD", requireAo="si")
 
 
+def test_las_variables_de_patrones_cajas_respuesta_y_canal_cambian_lo_que_detectan():
+    """28/11: patrones de vela, cambio de carácter, cajas, Volumen de Respuesta y canal gaussiano, con sus campos."""
+    bars = walk(3000)
+    facts = kitchen.Facts("TEST", 60, bars)
+    count = lambda code, **p: len(facts.events_of(code, kitchen.clean_block({"uid": "x", "id": code, "p": p}, "step")["p"]))
+    # Un patrón sin pedir tamaño ni swing sale al menos tantas veces; sin tendencia previa, también
+    for code in ("HM", "EN", "DJ"):
+        assert count(code, minPart=0, swingBefore=0, swingAfter=0) >= count(code)
+        assert count(code, trend="no") >= count(code)
+    assert count("HM", minPart=0, swingBefore=0, swingAfter=0, wick=0.5) > count("HM", minPart=0, swingBefore=0, swingAfter=0, wick=6)
+    # El cambio de carácter: con swings de más velas hay menos
+    assert count("CC", swing=2) > count("CC", swing=12)
+    # La flecha del Volumen de Respuesta: con más volumen pedido quedan menos, y «como sea» da al menos las de «a favor»
+    assert count("RF", spike=1.2, arrow="any") > count("RF", spike=6, arrow="any")
+    assert count("RF", arrow="any") >= count("RF", arrow="with")
+    # El canal gaussiano: sin pedir el canal a favor, al menos las mismas; otro periodo es otro canal
+    assert count("GC", trend="no") >= count("GC", trend="si")
+    asked = {}
+    real = facts.family
+    facts.family = lambda name, extra=None: (asked.update(extra or {}), real(name, extra))[1]
+    facts.events_of("GC", {"period": 50, "poles": 2, "mult": 2.0, "trend": "no"})
+    assert asked["gc"] == {"period": 50, "poles": 2, "mult": 2.0, "trend": False}
+    # Las cajas: 0 es «de cualquier alto» (la regla lo lleva como sin tope), y un tope deja a lo sumo las mismas
+    facts.events_of("BX", {"maxHeight": 0})
+    assert facts.rule(("BX",), {"bx": asked["bx"]})["bx"]["maxHeight"] is None
+    facts.family = real
+    assert count("BX", maxHeight=1.0) <= count("BX", maxHeight=0)
+    assert count("BE", share=0.4, maxBody=0, rejection=0) >= count("BE")
+
+
 def test_un_campo_de_fabrica_deja_mandar_al_ajuste_del_modal_y_uno_cambiado_manda():
     facts = kitchen.Facts("TEST", 60, walk(700))
     facts.session = kitchen.clean_session({"vpa": {"meter": 2.0, "decay": 0.5}})
@@ -936,19 +967,23 @@ def test_un_campo_de_fabrica_deja_mandar_al_ajuste_del_modal_y_uno_cambiado_mand
 def test_un_elemento_of_con_sus_variables_tiene_su_propia_deteccion(flow):
     """Cada juego de valores de un Elemento OF es otra detección sobre los trades: en su propio libro, en segundo plano,
     con su propio estado. Dos bloques con los valores de fábrica, o con los mismos, comparten una."""
-    assert kitchen.Facts.flow_params("ST", {"vol": 3.5, "target": 9}) == (0.05, 3.5, 10)      # El ST no tiene `target`
-    assert kitchen.Facts.flow_params("EX", {"target": 8}) == (0.08, 2.0, 10)
-    assert kitchen.Facts.flow_params("RL", {"absorb": 25}) == (0.05, 2.0, 25)
+    assert kitchen.Facts.flow_params("ST", {"vol": 3.5, "target": 9, "min": 5}) == ("ST", (("min", 5), ("vol", 3.5)))   # El ST no tiene `target`
+    assert kitchen.Facts.flow_params("EX", {"target": 8}) == ("EX", (("target", 0.08),))
+    assert kitchen.Facts.flow_params("RL", {"absorb": 25, "cell": 2, "target": 9}) == ("RL", (("absorb", 25), ("cell", 0.02)))
+    assert kitchen.Facts.flow_params("OP", {"margin": 0.5, "bars": 5}) == ("OP", (("margin", 0.5),))    # Lo que sigue de fábrica no viaja
+    assert kitchen.Facts.flow_params("GR", {"usd": 2e6}) == ("GR", (("usd", 2e6),))
+    assert kitchen.Facts.flow_params("ST", {"vol": 2, "min": 3}) == kitchen.OF_FACTORY                  # Todo de fábrica: la detección de siempre
     assert kitchen.Facts.flow_params("VA", {"vol": 9, "target": 9, "absorb": 9}) == kitchen.OF_FACTORY   # La VA no tiene variables
-    block = kitchen.clean_block({"uid": "x", "id": "RL", "p": {"target": 99, "absorb": 0}}, "step")
-    assert (block["p"]["target"], block["p"]["absorb"]) == (30.0, 1)
+    block = kitchen.clean_block({"uid": "x", "id": "RL", "p": {"cell": 99, "absorb": 0}}, "step")
+    assert (block["p"]["cell"], block["p"]["absorb"]) == (30.0, 1)
     bars = walk(400, ms=MS)
     doc = {"side": "both", "gat": [{"mode": "any", "blocks": [{"uid": "a", "id": "ST"}, {"uid": "b", "id": "ST", "p": {"vol": 3.5}},
                                                               {"uid": "c", "id": "ST", "p": {"vol": 3.5, "dir": "contra"}}]}]}
     first = kitchen.evaluate("FLOW", 60, rows(bars), doc, view=200)
     assert first["success"]
     result = ask("FLOW", 60, rows(bars), doc, view=200)
-    assert flow.params == {(0.05, 2.0, 10), (0.05, 3.5, 10)}       # Dos detecciones: la de fábrica y la del bloque
+    # Dos detecciones: la de fábrica y la del bloque, que lleva lo suyo como valores propios de su elemento
+    assert flow.params == {(0.05, 2.0, 10, ()), (0.05, 2.0, 10, (("ST", (("vol", 3.5),)),))}
     assert all("pending" not in result["blocks"][uid] for uid in "abc")
     assert result["blocks"]["a"]["count"] == result["blocks"]["b"]["count"] > 0   # El almacén de mentira no mira el filtro
     # Mientras su detección no llega, ese bloque lo dice y los demás ya cuentan

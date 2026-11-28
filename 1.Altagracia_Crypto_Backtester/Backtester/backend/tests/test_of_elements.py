@@ -238,6 +238,43 @@ def test_filtro_de_volumen_solo_deja_velas_de_mucho_volumen(store):
     assert all(e["value"] >= 1.2 for e in strict["events"] if e["code"] in oe.VOLUME_FILTERED and e["code"] != "VI")
 
 
+def test_valores_propios_por_elemento_sin_ellos_nada_cambia_y_cada_uno_mueve_solo_el_suyo(store):
+    """28/11: un elemento puede llevar su propio umbral (`overrides`). Sin él, o con los valores de fábrica, detect da
+    lo de siempre; con uno cambiado, cambia ese elemento y ningún otro."""
+    day = DAY0 + dt.timedelta(days=31)
+    start, end = _ms(day), _ms(day + dt.timedelta(days=2))
+    run = lambda **own: oe.detect(SYMBOL, 15, start, end, end, band_days=0, vol_filter=0, overrides=own or None)
+    base = run()
+    keys = lambda r, code=None: sorted(_key(e) for e in r["events"] if code is None or e["code"] == code)
+    others = lambda r, code: sorted(_key(e) for e in r["events"] if e["code"] != code)
+    factory = {code: {field: spec[0] for field, spec in fields.items()} for code, fields in oe.OWN_FIELDS.items()}
+    usual = oe.detect(SYMBOL, 15, start, end, end, band_days=0)     # Con el filtro de volumen de fábrica
+    assert keys(oe.detect(SYMBOL, 15, start, end, end, band_days=0, overrides=factory)) == keys(usual)   # Todos los campos, de fábrica
+    assert keys(run(ZZ={"min": 9}, ST={"nada": 1})) == keys(base)   # Lo desconocido se descarta
+    assert oe.clean_overrides({"ST": {"min": 999, "vol": -4}}) == {"ST": {"min": 50, "vol": 0.0}}
+    count = lambda r, code: len(keys(r, code))
+    # La parte de las velas de un relativo: más parte, más marcas; y solo las suyas
+    wide, tight = run(DV={"target": 0.25}), run(DV={"target": 0.01})
+    assert count(wide, "DV") > count(base, "DV") > count(tight, "DV")
+    assert others(wide, "DV") == others(base, "DV") and set(keys(tight, "DV")) <= set(keys(base, "DV"))
+    # El filtro de volumen de uno solo: los demás siguen sin filtro
+    busy = max(oe.VOLUME_FILTERED, key=lambda code: count(base, code))   # El que más marca en este almacén
+    strict = run(**{busy: {"vol": 1.2}})
+    assert count(strict, busy) < count(base, busy) and others(strict, busy) == others(base, busy)
+    # El mínimo literal: con más niveles quedan menos, y con menos, más
+    assert count(run(ST={"min": 5}), "ST") <= count(base, "ST") <= count(run(ST={"min": 1}), "ST")
+    assert count(run(VI={"min": 12}), "VI") <= count(base, "VI") < count(run(VI={"min": 1}), "VI")
+    assert count(run(IV={"min": 3}), "IV") <= count(base, "IV") <= count(run(IV={"min": 1}), "IV")
+    assert count(run(SQ={"min": 9}), "SQ") <= count(base, "SQ")
+    # El Open POC: con más margen quedan menos
+    assert count(run(OP={"margin": 3.0}), "OP") <= count(base, "OP") <= count(run(OP={"margin": 0.0}), "OP")
+    # La absorción: sus velas son las de `absorb_bars`, y con más celdas contando como mucho volumen hay al menos las mismas
+    assert keys(run(RL={"absorb": 30}), "RL") == keys(oe.detect(SYMBOL, 15, start, end, end, band_days=0, vol_filter=0, absorb_bars=30), "RL")
+    assert count(run(RL={"cell": 0.3}), "RL") >= count(base, "RL")
+    # Las órdenes: un tamaño mínimo enorme las deja fuera
+    assert count(run(GR={"usd": 1e12}), "GR") == 0 and count(run(BR={"usd": 1e12}), "BR") == 0
+
+
 def test_un_dia_sin_flujo_se_recalcula_cuando_el_flujo_aparece(store, tmp_path, monkeypatch):
     flow_root = tmp_path / "flow"
     monkeypatch.setattr(oe, "FLOW_DIR", flow_root)
