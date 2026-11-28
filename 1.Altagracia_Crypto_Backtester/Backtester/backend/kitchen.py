@@ -114,16 +114,69 @@ FLOW_BLOCK_DAYS = {1: 1, 5: 1, 15: 2, 30: 2, 60: 5, 240: 20}
 FLOW_LEAD = 120           # El CVD y los plazos entre pasos miran hacia atrás
 FLOW_WAIT = 0.6           # Segundos: pasado eso, la respuesta dice «detectando» y la página vuelve a preguntar
 FLOW_KEEP = 80            # Bloques en memoria por moneda y marco
-FLOW_BOOKS = 6            # Monedas y marcos con bloques en memoria
+FLOW_BOOKS = 12           # Monedas y marcos con bloques en memoria
 FLOW_STALE_S = 300        # Un bloque al que le faltan velas se detecta otra vez pasado este tiempo: el almacén puede estar armándose
 STORE_CHECK_S = 60        # Cada cuánto se vuelve a mirar si la moneda tiene almacén
 
-# Parámetros que la cocina deja cambiar en un evento del probador: (clave de la regla, campo, de fábrica, mínimo, máximo)
+# Parámetros que la cocina deja cambiar en un evento del probador. Un número: (clave de la regla, campo, de fábrica,
+# mínimo, máximo). Una opción: (clave de la regla, campo, [opciones]), con la de fábrica primero; "si" y "no" son un
+# sí o no de la regla. Los rangos son los de clean_rule del probador. De VPA, Williams y SMC (27/11, pedido del
+# usuario) cada elemento trae solo los campos que lo mueven
+YES_NO = ["si", "no"]
+_Q_FIRE, _Q_LEG = ("vpa", "fire", 0.5, 0.1, 1.0), ("vpa", "legAtr", 2.0, 0.5, 10.0)
+_Q_RANGE, _Q_HIGH, _Q_PULL = ("vpa", "rangeBars", 20, 5, 200), ("vpa", "maxRangeAtr", 6.0, 1.0, 50.0), ("vpa", "pullBars", 8, 1, 50)
+_Q_METER, _Q_DECAY = ("vpa", "meter", 1.0, 0.2, 5.0), ("vpa", "decay", 0.75, 0.0, 0.98)
+_S_SCOPE, _S_IN, _S_SW = ("smc", "scope", ["swing", "internal"]), ("smc", "internal", 5, 2, 50), ("smc", "swing", 50, 5, 300)
+_S_BLOCK = (_S_SCOPE, ("smc", "pick", ["extreme", "opposite"]), ("smc", "area", ["full", "body"]),
+            ("smc", "mitigation", ["close", "wick"]), _S_IN, _S_SW)
 EVENT_PARAMS = {
     "FV": (("fv", "minAtr", 0.3, 0.0, 5.0),),
     "IM": (("im", "bars", 3, 1, 50), ("im", "atr", 2.0, 0.2, 20.0)),
     "SP": (("sp", "bars", 5, 2, 20),),
+    # Lector VPA: el grado desde el que cuenta el elemento y el tramo; en las rupturas, el rango que se rompe; en el
+    # retroceso, sus velas; en el medidor, su umbral y su memoria. El clímax siempre tiene grado 1
+    "QA": (_Q_FIRE, _Q_LEG), "QV": (_Q_FIRE, _Q_LEG), "QT": (_Q_FIRE, _Q_LEG), "QS": (_Q_FIRE, _Q_LEG), "QC": (_Q_LEG,),
+    "QB": (_Q_FIRE, _Q_RANGE, _Q_HIGH), "QF": (_Q_FIRE, _Q_RANGE, _Q_HIGH), "QR": (_Q_FIRE, _Q_PULL, _Q_RANGE, _Q_HIGH),
+    "QE": (_Q_METER, _Q_DECAY), "QG": (_Q_METER, _Q_DECAY),
+    # Sabios de Williams. El AO de tres barras no tiene nada que cambiar
+    "WD": (("wise", "lookback", 1, 1, 20), ("wise", "angBars", 5, 1, 50), ("wise", "minGapAtr", 0.0, 0.0, 10.0), ("wise", "requireAo", YES_NO)),
+    "WF": (("wise", "teeth", YES_NO),),
+    # Estructura SMC
+    "BS": (_S_SCOPE, ("smc", "break", ["any", "bos", "choch"]), _S_IN, _S_SW),
+    "OB": _S_BLOCK, "BK": _S_BLOCK,
+    "EQ": (("smc", "eqLength", 3, 2, 20), ("smc", "eqThreshold", 0.1, 0.01, 2.0), ("smc", "reclaim", YES_NO)),
 }
+# Elementos OF: lo que acepta of_elements.detect. `target` (en %): la parte de las velas que marca un elemento relativo;
+# `vol`: el filtro de volumen de los que solo cuentan en velas de mucho volumen; `absorb`: las velas del segundo
+# intento de la absorción. Cada juego distinto de valores es otra detección sobre los trades (ver FlowBook)
+OF_FACTORY = (oe.DEFAULT_TARGET, oe.DEFAULT_VOL_FILTER, oe.ABSORB_BARS)
+for _code in OF_CODES:
+    _own = []
+    if oe.CATALOG[_code][2]:
+        _own.append(("of", "target", round(oe.DEFAULT_TARGET * 100, 2), 0.5, 30.0))
+    if _code in oe.VOLUME_FILTERED:
+        _own.append(("of", "vol", oe.DEFAULT_VOL_FILTER, 0.0, 10.0))
+    if _code == "RL":
+        _own.append(("of", "absorb", oe.ABSORB_BARS, 1, oe.ABSORB_MAX_BARS))
+    if _own:
+        EVENT_PARAMS[_code] = tuple(_own)
+
+
+def event_fields(code):
+    """Los campos que la cocina deja cambiar en un evento: (clave de la regla, campo, de fábrica, mínimo, máximo,
+    opciones). Un número no tiene opciones; una opción no tiene mínimo ni máximo."""
+    for entry in EVENT_PARAMS.get(code, ()):
+        if isinstance(entry[2], list):
+            yield entry[0], entry[1], entry[2][0], None, None, entry[2]
+        else:
+            yield entry[0], entry[1], entry[2], entry[3], entry[4], None
+
+
+def _field_value(given, default, low, high, options):
+    if options is not None:
+        return given if given in options else default
+    value = _num(given, default, low, high)
+    return int(round(value)) if isinstance(default, int) else value
 # Parámetros de los estados y de los eventos de las líneas: campo -> (de fábrica, mínimo, máximo)
 BLOCK_PARAMS = {
     "side": {"line": "e50"},
@@ -216,9 +269,8 @@ def clean_block(raw, place):
             else:
                 value = _num(given.get(key), spec[0], spec[1], spec[2])
                 p[key] = int(round(value)) if isinstance(spec[0], int) else value
-    for _, key, default, low, high in EVENT_PARAMS.get(bid, ()):
-        value = _num(given.get(key), default, low, high)
-        p[key] = int(round(value)) if isinstance(default, int) else value
+    for _, key, default, low, high, options in event_fields(bid):
+        p[key] = _field_value(given.get(key), default, low, high, options)
     if bid not in NEUTRAL:
         # El volumen o el interés abierto suben o bajan sin importar el lado del trade: su sentido puede ser fijo
         fixed = bid in PAGE_IDS and given.get("dir") in ABS_DIRS
@@ -417,8 +469,10 @@ class FlowBook:
     Un bloque detectado con más velas sirve para un pedido con menos (la simulación retrocedió): al leerlo se dejan
     fuera las velas y los eventos que ese pedido todavía no conoce."""
 
-    def __init__(self, symbol, tf):
+    def __init__(self, symbol, tf, params=OF_FACTORY):
         self.symbol, self.tf = symbol, int(tf)
+        # (target, filtro de volumen, velas de la absorción) con que detecta: los de fábrica, o los de un bloque
+        self.params = tuple(params)
         self.tf_ms = self.tf * 60000
         self.size = FLOW_BLOCK_DAYS[self.tf] * oe.DAY_MS
         self.blocks = {}
@@ -436,7 +490,8 @@ class FlowBook:
     def _detect(self, start, known):
         end = start + self.size
         # Una vela de más, para que la última del bloque vea a su siguiente (VA abandonada), como el probador
-        part = oe.detect(self.symbol, self.tf, start, min(end + self.tf_ms, known) - 1, known, oe.DEFAULT_TARGET, 0, oe.DEFAULT_VOL_FILTER)
+        target, vol_filter, absorb = self.params
+        part = oe.detect(self.symbol, self.tf, start, min(end + self.tf_ms, known) - 1, known, target, 0, vol_filter, absorb_bars=absorb)
         bars = {b["t"]: (b["delta"], b["vol"], b.get("cum"), b.get("maxd"), b.get("mind")) for b in part["bars"] if start <= b["t"] < end}
         events = [(e["code"], e["t"], e["known"], e["dir"]) for e in part["events"] if start <= e["t"] < end and e["known"] <= known]
         expected = max(0, (min(end, known) - start) // self.tf_ms)
@@ -502,12 +557,12 @@ class FlowBook:
         return {"state": "ready", "events": events, "bars": bars}
 
 
-def flow_book(symbol, tf):
-    key = (symbol, int(tf))
+def flow_book(symbol, tf, params=OF_FACTORY):
+    key = (symbol, int(tf)) if tuple(params) == OF_FACTORY else (symbol, int(tf), tuple(params))
     with _lock:
         book = _books.get(key)
         if book is None:
-            book = _books[key] = FlowBook(symbol, tf)
+            book = _books[key] = FlowBook(symbol, tf, params)
         _books.move_to_end(key)
         while len(_books) > FLOW_BOOKS:
             _books.popitem(last=False)
@@ -544,6 +599,7 @@ class Facts:
         self._vpa = {}
         self._zones, self._layers = {}, {}
         self._flow, self._flow_first, self._cvd = None, None, {}
+        self._flow_more = {}                   # Elementos OF detectados con otros parámetros que los de fábrica
         self.session = clean_session(None)     # Los ajustes del modal de cada indicador en el pedido en curso
         self.page = clean_page(None, self.n)   # Lo del gráfico en el pedido en curso (evaluate lo pone, con el candado)
 
@@ -618,20 +674,73 @@ class Facts:
 
     def events_of(self, code, p=None):
         if code in OF_CODES:
-            flow = self.flow()
+            flow = self.flow_more(self.flow_params(code, p))
             return flow["events"].get(code, []) if flow["state"] == "ready" else []
-        extra = {}
-        for rule_key, field, default, low, high in EVENT_PARAMS.get(code, ()):
-            extra.setdefault(rule_key, {})[field] = (p or {}).get(field, default)
+        as_rule = lambda value, options: (value == "si") if options is YES_NO else value
+        extra, changed = {}, {}
+        for rule_key, field, default, _, _, options in event_fields(code):
+            value = (p or {}).get(field, default)
+            extra.setdefault(rule_key, {})[field] = as_rule(value, options)
+            if value != default:
+                changed.setdefault(rule_key, set()).add(field)
         # Los de la misma familia van juntos: sus otros códigos, con los valores de fábrica
         for other in FAMILIES[FAMILY_OF[code]]:
-            for rule_key, field, default, _, _ in EVENT_PARAMS.get(other, ()):
-                extra.setdefault(rule_key, {}).setdefault(field, default)
-        # Con los ajustes del modal del indicador, si la sesión los trae; lo que cambia la cocina en el bloque manda
+            for rule_key, field, default, _, _, options in event_fields(other):
+                extra.setdefault(rule_key, {}).setdefault(field, as_rule(default, options))
+        # Con los ajustes del modal del indicador, si la sesión los trae. Lo que la cocina cambió en el bloque manda;
+        # un campo que sigue en su valor de fábrica deja mandar al ajuste del modal
         family = FAMILY_OF[code]
         if family in SESSION_FAMILIES and self.session.get(family):
-            extra[family] = {**self.session[family], **extra.get(family, {})}
+            own = extra.get(family, {})
+            extra[family] = {**own, **self.session[family], **{field: own[field] for field in changed.get(family, ())}}
         return self.family(family, extra or None)[code]
+
+    @staticmethod
+    def flow_params(code, p=None):
+        """Con qué parámetros hay que detectar el order flow para un bloque: los suyos donde los cambió, y lo demás de
+        fábrica. Así dos bloques con los valores de fábrica, o con los mismos, comparten una detección."""
+        own = {field: (p or {}).get(field, default) for _, field, default, _, _, _ in event_fields(code)}
+        target = float(own["target"]) / 100 if "target" in own else OF_FACTORY[0]
+        vol = float(own["vol"]) if "vol" in own else OF_FACTORY[1]
+        absorb = int(own["absorb"]) if "absorb" in own else OF_FACTORY[2]
+        return (round(target, 5), round(vol, 3), absorb)
+
+    def flow_state(self, block, wait=0.0):
+        """El estado del order flow que lee ese bloque: "ready", "loading", "none" o "error"."""
+        if block["id"] in OF_CODES:
+            return self.flow_more(self.flow_params(block["id"], block["p"]), wait)
+        return self.flow(wait)
+
+    def flow_more(self, params, wait=0.0):
+        """Los Elementos OF detectados con otros parámetros que los de fábrica: su propia detección sobre los trades,
+        en su propio libro. Con los de fábrica es `flow()`."""
+        if tuple(params) == OF_FACTORY:
+            return self.flow(wait)
+        found = self._flow_more.get(params)
+        if found is not None:
+            return found
+        if self.tf not in FLOW_BLOCK_DAYS or not has_store(self.symbol):
+            return {"state": "none"}
+        first = self._flow_first if self._flow_first is not None else max(0, self.n - 1000 - FLOW_LEAD)
+        got = flow_book(self.symbol, self.tf, params).get(self.bars[first]["t"], self.bars[-1]["t"], wait)
+        if got["state"] != "ready":
+            return got
+        if len(self._flow_more) > 8:
+            self._flow_more.clear()
+        self._flow_more[params] = {"state": "ready", "events": self._flow_rows(got)}
+        return self._flow_more[params]
+
+    def _flow_rows(self, got):
+        """Los eventos de un libro, por código: (vela del elemento, vela con que se conoce, lado), en posiciones."""
+        events = {}
+        for code, rows in got["events"].items():
+            found = []
+            for t, known, way in rows:
+                at, at_known = self.index.get(t), self.index.get(known - self.tf_ms)
+                if at is not None and at_known is not None and at_known >= at:
+                    found.append((at, at_known, int(way)))
+            events[code] = sorted(found)
+        return events
 
     # ---------- Order flow
     def want_flow(self, start):
@@ -639,6 +748,7 @@ class Facts:
         first = max(0, int(start) - FLOW_LEAD)
         if self._flow_first is None or first < self._flow_first:
             self._flow_first, self._flow, self._cvd = first, None, {}
+            self._flow_more = {}
             self._truth = {key: value for key, value in self._truth.items()
                            if key[0] not in OF_CODES and key[0] not in FLOW_STATE_IDS and '"s": "of_' not in key[1]}
 
@@ -655,14 +765,7 @@ class Facts:
         got = flow_book(self.symbol, self.tf).get(self.bars[first]["t"], self.bars[-1]["t"], wait)
         if got["state"] != "ready":
             return got
-        events = {}
-        for code, rows in got["events"].items():
-            found = []
-            for t, known, way in rows:
-                at, at_known = self.index.get(t), self.index.get(known - self.tf_ms)
-                if at is not None and at_known is not None and at_known >= at:
-                    found.append((at, at_known, int(way)))
-            events[code] = sorted(found)
+        events = self._flow_rows(got)
         delta, vol = np.full(self.n, np.nan), np.full(self.n, np.nan)
         table = {name: np.full(self.n, np.nan) for name in ("of_cum", "of_maxd", "of_mind")}
         for t, row in got["bars"].items():
@@ -1209,7 +1312,7 @@ class Facts:
         if key not in self._truth and len(self._truth) > 400:
             self._truth.clear()   # Con cada cambio de lo que manda la página queda una entrada
         if key not in self._truth:
-            if block_flow(block) and self.flow()["state"] != "ready":
+            if block_flow(block) and self.flow_state(block)["state"] != "ready":
                 return np.zeros(self.n, dtype=bool)   # Sin guardar: se calcula cuando llegue el order flow
             if bid in STATE_IDS:
                 out = self.state(bid, p, d)
@@ -1429,7 +1532,7 @@ class Facts:
                 if (code, way, known) in seen:
                     continue  # Un elemento sin lado sale una vez por cada lado (la compresión): aquí cuenta una sola
                 seen.add((code, way, known))
-                p = {field: default for _, field, default, _, _ in EVENT_PARAMS.get(code, ())}
+                p = {field: default for _, field, default, _, _, _ in event_fields(code)}
                 events.append({"id": code, "p": p, "d": way, "late": known - at})
         return {"states": states, "events": events}
 
@@ -1536,8 +1639,10 @@ def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, 
         facts.session = clean_session(settings)
         facts.want_flow(start)
         flow = facts.flow(FLOW_WAIT) if uses_flow(doc) or pick is not None else None
-        sides = [facts.side(doc, sd) for sd in SIDES[doc["side"]]]
         every = doc["ctx"] + [b for g in doc["gat"] for b in g["blocks"]]
+        # Un Elemento OF con parámetros propios tiene su propia detección: se pide ya, y su estado va por bloque
+        states = {b["uid"]: facts.flow_state(b, FLOW_WAIT) for b in every if block_flow(b)}
+        sides = [facts.side(doc, sd) for sd in SIDES[doc["side"]]]
         blocks = {}
         for block in every:
             mask = np.zeros(n, dtype=bool)
@@ -1545,8 +1650,8 @@ def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, 
                 if block["uid"] in s["shown"]:
                     mask |= s["shown"][block["uid"]]
             blocks[block["uid"]] = {"runs": _runs(mask, start), "count": int(mask[start:].sum())}
-            if flow is not None and flow["state"] != "ready" and block_flow(block):
-                blocks[block["uid"]]["pending"] = flow["state"]   # Sin order flow todavía (o sin almacén): no cuenta
+            if block["uid"] in states and states[block["uid"]]["state"] != "ready":
+                blocks[block["uid"]]["pending"] = states[block["uid"]]["state"]   # Sin order flow todavía (o sin almacén): no cuenta
         used_steps = [gi for gi, g in enumerate(doc["gat"]) if g["blocks"]]
         ctx_mask = np.zeros(n, dtype=bool)
         near = np.zeros(n, dtype=bool)
@@ -1568,7 +1673,8 @@ def evaluate(symbol, tf, rows, doc=None, view=1000, pick=None, pick_price=None, 
         if flow is not None:
             flow_out = {key: flow[key] for key in ("state", "done", "total", "cover", "message") if key in flow}
         out = {"success": True, "tf": tf, "bars": n, "seen": seen, "times": [b["t"] for b in bars[start:]],
-               "doc": doc, "blocks": blocks, "flow": flow_out, "pending": bool(flow_out and flow_out["state"] == "loading"),
+               "doc": doc, "blocks": blocks, "flow": flow_out,
+               "pending": bool(flow_out and flow_out["state"] == "loading") or any(s["state"] == "loading" for s in states.values()),
                "zone": _zone_answer(facts, doc, sides, start),
                "context": {"has": bool(doc["ctx"]), "runs": _runs(ctx_mask, start) if doc["ctx"] else [],
                            "count": int(ctx_mask[start:].sum()) if doc["ctx"] else 0},
@@ -1612,8 +1718,8 @@ def catalog():
         out = {}
         for key, spec in BLOCK_PARAMS.get(bid, {}).items():
             out[key] = {"line": spec} if isinstance(spec, str) else {"options": spec} if isinstance(spec, list) else {"default": spec[0], "min": spec[1], "max": spec[2]}
-        for _, key, default, low, high in EVENT_PARAMS.get(bid, ()):
-            out[key] = {"default": default, "min": low, "max": high}
+        for _, key, default, low, high, options in event_fields(bid):
+            out[key] = {"options": options} if options is not None else {"default": default, "min": low, "max": high}
         return out
     return {"states": [{"id": bid, "sided": bid not in NEUTRAL, "p": fields(bid)} for bid in STATE_IDS],
             "events": [{"id": bid, "sided": bid not in NEUTRAL, "p": fields(bid)} for bid in LINE_EVENT_IDS + ZONE_EVENT_IDS + PAGE_EVENT_IDS + EVENT_CODES],

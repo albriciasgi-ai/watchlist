@@ -55,6 +55,43 @@ Este repositorio contiene **11 aplicaciones relacionadas** para trading de cript
 
 ## HISTORIAL DE CAMBIOS RECIENTES
 
+### App 1 - 27 Noviembre 2026: Variables en los Bloques de VPA, Williams, SMC y Order Flow de la Cocina
+
+**Pedido:** antes del paso 1.4, dar variables a los bloques de VPA, Williams, SMC y order flow, que tenían pocas o ninguna. El usuario quiere cada variable de cada indicador editable junto a su bloque.
+
+**Cambios:**
+1. **Lector VPA:** el grado desde el que cuenta el elemento y el tramo en ATR. En las rupturas, las velas y el alto máximo del rango que se rompe; en el retroceso, sus velas; en el medidor (cruza y gira), su umbral y su memoria.
+2. **Sabios de Williams:** en la barra divergente, las velas anteriores que supera, la angulación, la distancia mínima a la mandíbula y si pide el AO en contra. En la ruptura de fractal, si exige el lado correcto de los dientes. El AO de tres barras no tiene nada que cambiar.
+3. **Estructura SMC:**
+   - ruptura de estructura: la mayor o la interna, BOS o CHoCH, y las velas de cada estructura;
+   - order block y breaker: además, qué vela se toma, cuerpo o vela entera y con qué se da por roto;
+   - barrido de iguales: las velas por lado, qué tan iguales y si pide el cierre de vuelta.
+4. **Elementos OF:**
+   - los 15 relativos: qué parte de las velas los marcan (5 % de fábrica);
+   - los 7 que piden mucho volumen: el filtro de volumen (2 veces de fábrica; 0 lo apaga);
+   - la absorción: además, las velas del segundo intento.
+5. **Un bloque con un valor cambiado lo dice:** «(con ajustes propios)» en su texto y en la frase de la estrategia.
+6. **Pruebas:** `test_kitchen.py` (54) y `kitchen.test.mjs` (39).
+
+**IMPORTANTE:**
+- El backend de App 1 (9000) se recarga solo; hay que recargar su página. Llega a la app del usuario al unir esta rama a main.
+- **Son los campos de la regla del probador,** con sus mismos rangos: lo que se afine aquí tiene equivalente directo en el backtesting global (paso 1.4). Una prueba compara la lista de la página con la del motor, campo por campo.
+- **Un documento guardado antes se abre igual:** cada campo nuevo entra con su valor de fábrica.
+- **VPA, Williams y SMC con el modal del indicador:** un campo que sigue en su valor de fábrica usa el ajuste del modal, si se cambió ahí; uno cambiado en el bloque manda.
+- **Order flow:** cada juego distinto de valores es otra lectura de los trades, en segundo plano. El bloque dice «detectando…» mientras tanto y los demás siguen contando. Dos bloques con los mismos valores comparten la lectura.
+- **Probado en pantalla** en una copia aislada con BTC 15m:
+  - el umbral del medidor VPA de 1 a 0.4: de 23 a 117 veces;
+  - el filtro de volumen del Stacked Imbalance de 2 a 4: «detectando…» y después de 83 a 41 veces, sin mover los otros bloques;
+  - la ruptura de estructura de la mayor a la interna: de 10 a 57 veces;
+  - las opciones de cada bloque, con su texto de ayuda, y la frase con «(con ajustes propios)».
+- **Sin ver en pantalla:** Williams, order block, breaker e iguales, la parte de las velas de un elemento relativo, las velas de la absorción y el ajuste del modal mandando sobre un campo de fábrica (todo con sus pruebas).
+- **Lo que sigue sin variables en su bloque:** los patrones de vela, el cambio de carácter, las cajas, el Volumen de Respuesta y el canal gaussiano. Sus campos existen en el probador; no se pidieron ahora.
+- **De los Elementos OF no hay un umbral por elemento:** el motor de order flow acepta esos tres valores para todos. Un mínimo propio de cada elemento (niveles apilados, tamaño de la orden) pediría cambiar `of_elements.py`.
+
+**Ver:** `1.Altagracia_Crypto_Backtester/Backtester/CLAUDE.md` sección "COCINA DE ESTRATEGIAS (26/11/2026)", "Variables de VPA, Williams, SMC y order flow (27/11)"
+
+---
+
 ### App 1 - 27 Noviembre 2026: Footprints y Elementos OF por Adelantado al Reproducir
 
 **Pedido:** tras adelantar la cocina, el usuario pidió lo mismo para los footprints y los Elementos OF del gráfico: son claves en sus estrategias y no pueden ir atrás al reproducir rápido.

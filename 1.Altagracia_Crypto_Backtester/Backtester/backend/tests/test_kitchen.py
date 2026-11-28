@@ -220,7 +220,7 @@ def test_la_capa_de_zona_queda_dentro_de_rango_y_sin_zonas_desconocidas():
     assert len(many["picks"]) == kitchen.MAX_PICKS and many["picks"][0]["dir"] == "any"
     doc = kitchen.clean_doc({"gat": [{"blocks": [{"id": "ztoca", "p": {"dir": "contra"}}, {"id": "zrech"}, {"id": "ST"}, {"id": "cvd", "p": {"n": 999}}]}]})
     assert [b["id"] for b in doc["gat"][0]["blocks"]] == ["ztoca", "zrech", "ST", "cvd"]
-    assert doc["gat"][0]["blocks"][0]["p"] == {} and doc["gat"][0]["blocks"][2]["p"] == {"dir": "favor"}
+    assert doc["gat"][0]["blocks"][0]["p"] == {} and doc["gat"][0]["blocks"][2]["p"] == {"dir": "favor", "vol": 2.0}
     assert doc["gat"][0]["blocks"][3]["p"] == {"n": 100, "min": 0.0, "dir": "favor"} and doc["gat"][0]["blocks"][3]["conv"] == "during"
     assert kitchen.uses_flow(doc) and not kitchen.uses_flow(kitchen.clean_doc({"gat": [{"blocks": [{"id": "zrech"}, {"id": "VH"}]}]}))
 
@@ -672,10 +672,11 @@ class FakeFlow:
     def delta(t):
         return float((t // MS * 37) % 11 - 5)
 
-    def __call__(self, symbol, tf, start, end, known, target, band_days, vol_filter, live=False):
+    def __call__(self, symbol, tf, start, end, known, target, band_days, vol_filter, live=False, absorb_bars=10):
         if self.hold is not None:
             self.hold.wait(10)
         self.calls.append((start, end, known))
+        self.params = getattr(self, "params", set()) | {(target, vol_filter, absorb_bars)}
         bars, events = [], []
         t = -(-start // MS) * MS
         while t <= end and t + MS <= known:
@@ -782,7 +783,7 @@ def test_el_delta_y_el_cvd_salen_del_almacen_con_la_cuenta_del_probador(flow):
     block = kitchen.clean_block({"uid": "c", "id": "cvd", "p": {"n": 6}}, "ctx")
     assert np.array_equal(facts.truth(block, 1), run > 0) and np.array_equal(facts.truth(block, -1), run < 0)
     # Lo que se ofrece al elegir una vela: la 301 (7 × 43, impar) trae un «ST» alcista; la 300, un delta de −4 sobre 100
-    assert {"id": "ST", "p": {}, "d": 1, "late": 0} in facts.candidates(301)["events"]
+    assert {"id": "ST", "p": {"vol": 2.0}, "d": 1, "late": 0} in facts.candidates(301)["events"]
     found = facts.candidates(300)
     assert delta[300] == -4 and {"id": "delta", "p": {}, "d": -1, "obs": {"share": 4.0}} in found["states"]
     assert [s["d"] for s in found["states"] if s["id"] == "cvd"] == [1 if delta[281:301].sum() > 0 else -1]
@@ -846,6 +847,120 @@ def test_la_pagina_conoce_los_mismos_bloques_que_el_motor():
     assert listed("USER_ZONE_KINDS") == set(kitchen.USER_KINDS) == set(catalog["zones"]["user"])
     assert listed("OF_ELEMENTS") == set(kitchen.OF_CODES) == set(catalog["flow"]["events"])
     assert listed("FLOW_STATES") == set(kitchen.FLOW_STATE_IDS)
+
+
+# ==================== Variables de VPA, Williams, SMC y order flow (27/11) ====================
+
+@pytest.mark.skipif(shutil.which("node") is None, reason="sin node")
+def test_los_campos_de_cada_evento_son_los_mismos_en_la_pagina_y_en_el_motor():
+    """La página tiene su propia lista de campos por bloque (kitchenCatalog.js). Tiene que ser la del motor: los mismos
+    campos, el mismo valor de fábrica, el mismo rango y las mismas opciones. Si no, un valor que la pantalla deja
+    escribir se recortaría sin aviso, o un campo no haría nada."""
+    run = subprocess.run(["node", str(HERE / "kitchen_fields.mjs")], capture_output=True, text=True, timeout=60, encoding="utf-8")
+    assert run.returncode == 0, run.stderr[-600:]
+    page = json.loads(run.stdout)
+    assert set(page) == set(kitchen.EVENT_CODES)
+    for code in kitchen.EVENT_CODES:
+        wanted_p, nums, opts = {}, {}, {}
+        for _, field, default, low, high, options in kitchen.event_fields(code):
+            wanted_p[field] = default
+            if options is None:
+                nums[field] = [low, high]
+            else:
+                opts[field] = options
+        assert page[code]["p"] == wanted_p, f"{code}: valores de fábrica distintos"
+        assert page[code]["nums"] == nums, f"{code}: rangos distintos"
+        assert page[code]["opts"] == opts, f"{code}: opciones distintas"
+
+def test_cada_variable_de_un_evento_queda_en_rango_y_llega_a_la_regla_del_probador():
+    """Cada campo que la cocina deja cambiar en un elemento de VPA, Williams o SMC entra a la regla del probador con su
+    nombre y dentro del rango de clean_rule; una opción desconocida vuelve a la de fábrica, y un sí o no llega como tal."""
+    facts = kitchen.Facts("TEST", 60, walk(700))
+    seen = 0
+    for code in kitchen.EVENT_CODES:
+        if code in kitchen.OF_CODES:
+            continue
+        for rule_key, field, default, low, high, options in kitchen.event_fields(code):
+            wild = {field: "nada" if options else 1e9}
+            block = kitchen.clean_block({"uid": "x", "id": code, "p": wild}, "step")
+            assert block["p"][field] == (default if options else high), f"{code}.{field} fuera de rango"
+            other = options[1] if options else (low if default != low else high)
+            block = kitchen.clean_block({"uid": "x", "id": code, "p": {field: other}}, "step")
+            assert block["p"][field] == other
+            asked = {}
+            real = facts.family
+            facts.family = lambda name, extra=None: (asked.update(extra or {}), real(name, extra))[1]
+            facts.events_of(code, block["p"])
+            facts.family = real
+            want = (other == "si") if options is kitchen.YES_NO else other
+            assert asked[rule_key][field] == want, f"{code}.{field} no llegó a la regla"
+            # Y la regla que arma el probador lo conserva: el rango de la cocina es el suyo
+            rule = facts.rule((code,), {rule_key: {field: want}})
+            assert rule[rule_key][field] == want, f"{code}.{field}: el probador lo cambia"
+            seen += 1
+    assert seen >= 40
+    assert not list(kitchen.event_fields("WA"))   # El AO de tres barras no tiene nada que cambiar
+
+
+def test_una_variable_cambia_lo_que_detecta_el_bloque():
+    bars = walk(1500)
+    facts = kitchen.Facts("TEST", 60, bars)
+    count = lambda code, **p: len(facts.events_of(code, kitchen.clean_block({"uid": "x", "id": code, "p": p}, "step")["p"]))
+    # El medidor VPA cruza su umbral más veces con un umbral bajo que con uno alto
+    assert count("QE", meter=0.3) > count("QE", meter=2.5)
+    # Un elemento del lector cuenta desde un grado: con el grado al máximo quedan menos
+    assert count("QA", fire=0.1) >= count("QA", fire=1.0) and count("QV", fire=0.1) > count("QV", fire=1.0)
+    # La estructura interna rompe más veces que la mayor, y pedir solo los cambios de carácter deja menos
+    assert count("BS", scope="internal") > count("BS", scope="swing")
+    assert count("BS", scope="internal", **{"break": "choch"}) < count("BS", scope="internal")
+    # Los iguales: con más tolerancia hay más barridos; sin pedir el cierre de vuelta, al menos los mismos
+    assert count("EQ", eqThreshold=1.5) > count("EQ", eqThreshold=0.02)
+    assert count("EQ", reclaim="no") >= count("EQ", reclaim="si")
+    # La barra divergente sin pedir el AO en contra sale al menos tantas veces
+    assert count("WD", requireAo="no") >= count("WD", requireAo="si")
+
+
+def test_un_campo_de_fabrica_deja_mandar_al_ajuste_del_modal_y_uno_cambiado_manda():
+    facts = kitchen.Facts("TEST", 60, walk(700))
+    facts.session = kitchen.clean_session({"vpa": {"meter": 2.0, "decay": 0.5}})
+    asked = {}
+    real = facts.family
+    facts.family = lambda name, extra=None: (asked.update(extra or {}), real(name, extra))[1]
+    facts.events_of("QE", {"meter": 1.0, "decay": 0.75})          # Los dos de fábrica: valen los del modal
+    assert (asked["vpa"]["meter"], asked["vpa"]["decay"]) == (2.0, 0.5)
+    facts.events_of("QE", {"meter": 0.4, "decay": 0.75})          # El umbral cambiado en el bloque manda; la memoria, la del modal
+    assert (asked["vpa"]["meter"], asked["vpa"]["decay"]) == (0.4, 0.5)
+    facts.family = real
+
+
+def test_un_elemento_of_con_sus_variables_tiene_su_propia_deteccion(flow):
+    """Cada juego de valores de un Elemento OF es otra detección sobre los trades: en su propio libro, en segundo plano,
+    con su propio estado. Dos bloques con los valores de fábrica, o con los mismos, comparten una."""
+    assert kitchen.Facts.flow_params("ST", {"vol": 3.5, "target": 9}) == (0.05, 3.5, 10)      # El ST no tiene `target`
+    assert kitchen.Facts.flow_params("EX", {"target": 8}) == (0.08, 2.0, 10)
+    assert kitchen.Facts.flow_params("RL", {"absorb": 25}) == (0.05, 2.0, 25)
+    assert kitchen.Facts.flow_params("VA", {"vol": 9, "target": 9, "absorb": 9}) == kitchen.OF_FACTORY   # La VA no tiene variables
+    block = kitchen.clean_block({"uid": "x", "id": "RL", "p": {"target": 99, "absorb": 0}}, "step")
+    assert (block["p"]["target"], block["p"]["absorb"]) == (30.0, 1)
+    bars = walk(400, ms=MS)
+    doc = {"side": "both", "gat": [{"mode": "any", "blocks": [{"uid": "a", "id": "ST"}, {"uid": "b", "id": "ST", "p": {"vol": 3.5}},
+                                                              {"uid": "c", "id": "ST", "p": {"vol": 3.5, "dir": "contra"}}]}]}
+    first = kitchen.evaluate("FLOW", 60, rows(bars), doc, view=200)
+    assert first["success"]
+    result = ask("FLOW", 60, rows(bars), doc, view=200)
+    assert flow.params == {(0.05, 2.0, 10), (0.05, 3.5, 10)}       # Dos detecciones: la de fábrica y la del bloque
+    assert all("pending" not in result["blocks"][uid] for uid in "abc")
+    assert result["blocks"]["a"]["count"] == result["blocks"]["b"]["count"] > 0   # El almacén de mentira no mira el filtro
+    # Mientras su detección no llega, ese bloque lo dice y los demás ya cuentan
+    import threading
+    flow.hold = threading.Event()
+    slow = {"side": "both", "gat": [{"mode": "any", "blocks": [{"uid": "a", "id": "ST"}, {"uid": "d", "id": "ST", "p": {"vol": 5}}]}]}
+    waiting = kitchen.evaluate("FLOW", 60, rows(bars), slow, view=200)
+    assert waiting["pending"] and waiting["blocks"]["d"].get("pending") == "loading" and "pending" not in waiting["blocks"]["a"]
+    assert waiting["blocks"]["a"]["count"] > 0
+    flow.hold.set()
+    done = ask("FLOW", 60, rows(bars), slow, view=200)
+    assert "pending" not in done["blocks"]["d"] and done["blocks"]["d"]["count"] > 0
 
 
 # ==================== Lo que calcula el gráfico, con los ajustes de la sesión (27/11) ====================

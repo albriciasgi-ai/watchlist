@@ -1152,6 +1152,27 @@ Idea del usuario, tras ver que a 50000x la cocina iba atrás y perdía señales:
 
 **Los footprints y los Elementos OF del gráfico** se adelantaron después, el mismo día: ver «ORDER FLOW SOBRE LAS VELAS» y «ELEMENTOS DE ORDER FLOW», «Por adelantado al reproducir (27/11)». Con eso, el delta de volumen del gráfico va adelantado en la cocina cuando es el estimado de las velas (`getKitchenSeries`); el real, de los footprints ya vistos, sigue vela por vela.
 
+### Variables de VPA, Williams, SMC y order flow (27/11)
+
+Pedido del usuario: cada variable editable junto a su bloque, también en estas cuatro familias.
+
+- **`EVENT_PARAMS`** (`kitchen.py`) admite ahora dos formas por campo: un número `(clave de la regla, campo, de fábrica, mínimo, máximo)` o una opción `(clave de la regla, campo, [opciones])`, con la de fábrica primero. `YES_NO` (`"si"`, `"no"`) llega a la regla como verdadero o falso. `event_fields(código)` las da en una sola forma.
+- **Son los campos de `clean_rule` del probador,** con sus rangos: `vpa` (fire, legAtr, rangeBars, maxRangeAtr, pullBars, meter, decay), `wise` (lookback, angBars, minGapAtr, requireAo, teeth) y `smc` (scope, break, internal, swing, pick, area, mitigation, eqLength, eqThreshold, reclaim). Cada código trae solo los que lo mueven. La prueba comprueba que la regla armada conserva cada valor.
+- **Con el modal del indicador** (`Facts.events_of`): un campo en su valor de fábrica deja mandar al ajuste de la sesión; uno cambiado en el bloque manda. Antes estas familias no tenían campos y siempre mandaba la sesión.
+- **Order flow:** `of_elements.detect` acepta tres valores para todos los elementos. Como campos del bloque: `target` (en %, los relativos: `oe.CATALOG[código][2]`), `vol` (`oe.VOLUME_FILTERED`) y `absorb` (RL).
+  - `Facts.flow_params(código, p)` da el juego `(target, filtro de volumen, velas de la absorción)` de un bloque, con lo que no es suyo de fábrica;
+  - `FlowBook` lleva sus parámetros y `flow_book(símbolo, marco, parámetros)` da un libro por juego; el de fábrica (`OF_FACTORY`) es el de siempre, con el delta y la tabla de la vela;
+  - `Facts.flow_more(parámetros)` lee los eventos de ese libro y `Facts.flow_state(bloque)` dice su estado. En `evaluate`, el «detectando» va por bloque, y `pending` es verdadero si alguno sigue leyendo;
+  - `FLOW_BOOKS` pasó de 6 a 12.
+- **Página** (`kitchenCatalog.js`): `ELEMENTS[código]` trae `p`, `fields`, `selects` y `selectsAfter`; los Elementos OF, según `OF_RELATIVE` y `OF_VOLUME`. `changedFields(def, p)` da los campos fuera de su valor de fábrica, y el texto del bloque suma «(con ajustes propios)».
+- **Paridad página y motor:** `tests/kitchen_fields.mjs` vuelca los campos de la página y `test_los_campos_de_cada_evento_son_los_mismos_en_la_pagina_y_en_el_motor` los compara con `event_fields`: valor de fábrica, rango y opciones. Para sumar un campo se pone en los dos lados.
+
+**Probado en pantalla** el 27/11 (copia aislada, BTC 15m, 1,000 velas): el umbral del medidor VPA de 1 a 0.4 (de 23 a 117 veces), el filtro de volumen del Stacked Imbalance de 2 a 4 («detectando…», y de 83 a 41), y la ruptura de estructura interna (de 10 a 57).
+
+**Sin ver en pantalla:** Williams, order block, breaker, iguales, `target`, `absorb` y el ajuste del modal sobre un campo de fábrica.
+
+**Falta:** variables para los patrones de vela, el cambio de carácter, las cajas, el Volumen de Respuesta y el canal gaussiano (sus campos están en `clean_rule`). Un umbral propio por Elemento OF pediría cambiar `of_elements.py`.
+
 ### Flujo
 
 ```
@@ -1218,9 +1239,9 @@ MiniChart (getTradeBands)   filas bajo las velas, señales, líneas, zonas y la 
 
 ```bash
 cd backend
-.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 49 con el paso 1.3 y el pedido por adelantado
+.venv\Scripts\python.exe -m pytest tests/test_kitchen.py     # 54 con el paso 1.3, el pedido por adelantado y las variables
 cd ../frontend
-node tests/kitchen.test.mjs                                  # 37 con el paso 1.3 y el pedido por adelantado
+node tests/kitchen.test.mjs                                  # 39 con el paso 1.3, el pedido por adelantado y las variables
 node tests/clock.test.mjs                                    # 34: una es la parada del reloj en la vela de la señal
 node tests/levels.test.mjs                                   # 56: dos son de los VP fijos de la cocina
 ```
